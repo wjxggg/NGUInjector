@@ -298,56 +298,56 @@ namespace NGUInjector
                         MergeBlacklist = new int[] { }
                     };
 
-                Settings.MassUpdate(temp);
+                    Settings.MassUpdate(temp);
 
-                Log($"Created default settings");
-            }
+                    Log($"Created default settings");
+                }
 
                 settingsForm = new SettingsForm();
 
-            if (string.IsNullOrEmpty(Settings.AllocationFile))
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.AllocationFile = "default";
-                Settings.SetSaveDisabled(false);
-            }
+                if (string.IsNullOrEmpty(Settings.AllocationFile))
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.AllocationFile = "default";
+                    Settings.SetSaveDisabled(false);
+                }
 
-            if (Settings.TitanGoldTargets == null || Settings.TitanGoldTargets.Length == 0)
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.TitanGoldTargets = new bool[ZoneHelpers.TitanZones.Length];
-                Settings.SetSaveDisabled(false);
-            }
+                if (Settings.TitanGoldTargets == null || Settings.TitanGoldTargets.Length == 0)
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.TitanGoldTargets = new bool[ZoneHelpers.TitanZones.Length];
+                    Settings.SetSaveDisabled(false);
+                }
 
-            if (Settings.TitanMoneyDone == null || Settings.TitanMoneyDone.Length == 0)
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.TitanMoneyDone = new bool[ZoneHelpers.TitanZones.Length];
-                Settings.SetSaveDisabled(false);
-            }
+                if (Settings.TitanMoneyDone == null || Settings.TitanMoneyDone.Length == 0)
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.TitanMoneyDone = new bool[ZoneHelpers.TitanZones.Length];
+                    Settings.SetSaveDisabled(false);
+                }
 
-            if (Settings.TitanSwapTargets == null || Settings.TitanSwapTargets.Length == 0)
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.TitanSwapTargets = new bool[ZoneHelpers.TitanZones.Length];
-                Settings.SetSaveDisabled(false);
-            }
+                if (Settings.TitanSwapTargets == null || Settings.TitanSwapTargets.Length == 0)
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.TitanSwapTargets = new bool[ZoneHelpers.TitanZones.Length];
+                    Settings.SetSaveDisabled(false);
+                }
 
-            if (Settings.SpecialBoostBlacklist == null)
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.SpecialBoostBlacklist = new int[0];
-                Settings.SetSaveDisabled(false);
-            }
+                if (Settings.SpecialBoostBlacklist == null)
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.SpecialBoostBlacklist = new int[0];
+                    Settings.SetSaveDisabled(false);
+                }
 
-            if (Settings.BlacklistedBosses == null)
-            {
-                Settings.SetSaveDisabled(true);
-                Settings.BlacklistedBosses = new int[0];
-                Settings.SetSaveDisabled(false);
-            }
+                if (Settings.BlacklistedBosses == null)
+                {
+                    Settings.SetSaveDisabled(true);
+                    Settings.BlacklistedBosses = new int[0];
+                    Settings.SetSaveDisabled(false);
+                }
 
-            WishManager = new WishManager();
+                WishManager = new WishManager();
 
                 LoadAllocation();
                 LoadAllocationProfiles();
