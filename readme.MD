@@ -48,6 +48,7 @@ To access these settings, open the **settings.json** (in your Desktop folder, me
 - **_questLoadout** - Assign your questing loadout here. Follow similar pattern as other loadout fields (example: [257, 170, 293, 236])
 - **_manageConsumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file (see Section on Consumables below for details)
 - **_autoBuyConsumables** - Set this to true to have the injector auto purchase any consumables you try to use that you do not own. Will only buy consumables if you have the AP to purchase them.
+- **_autoBuyAdventure** - Set to true to auto purchase adventure stats. Will buy anything in the "Adventure Stats" tab that has a custom value set above 0 in a group, together with the EMR purchases (if enabled) once there is enough EXP to buy everything.
 - **_wishBlacklist** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities (example: [131, 132, 128, 135,139]
 - **_cardSortEnabled** - Set this to true to have the injector sort cards based on the priorities given in **_cardSortOrder**. (**false** by default).
 - **_cardSortOrder** - Give a list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that match will be sorted by the second priority, and so on. The available priority options are:
