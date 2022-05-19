@@ -489,22 +489,34 @@ namespace NGUInjector.Managers
                 needed.Add(item.equipment.GetNeededBoosts());
             }
 
-            if (needed.Power > 0)
-            {
-                _controller.selectAutoPowerTransform();
-                return;
-            }
+            var boostPriorities = Main.Settings.BoostPriority.Length > 0 ? Main.Settings.BoostPriority : new string[] { "Power", "Toughness", "Special" };
 
-            if (needed.Toughness > 0)
+            foreach (var boostPriority in boostPriorities)
             {
-                _controller.selectAutoToughTransform();
-                return;
-            }
-
-            if (needed.Special > 0)
-            {
-                _controller.selectAutoSpecialTransform();
-                return;
+                switch (boostPriority)
+                {
+                    case "Power":
+                        if (needed.Power > 0)
+                        {
+                            _controller.selectAutoPowerTransform();
+                            return;
+                        }
+                        break;
+                    case "Toughness":
+                        if (needed.Toughness > 0)
+                        {
+                            _controller.selectAutoToughTransform();
+                            return;
+                        }
+                        break;
+                    case "Special":
+                        if (needed.Special > 0)
+                        {
+                            _controller.selectAutoSpecialTransform();
+                            return;
+                        }
+                        break;
+                }
             }
 
             var cube = new Cube

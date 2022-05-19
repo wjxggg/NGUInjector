@@ -290,6 +290,7 @@ namespace NGUInjector
                         AutoCastCards = false,
                         CardsTrashQuality = 0,
                         CardSortOrder = new string[0],
+                        BoostPriority = new string[0],
                         CardSortEnabled = false,
                         TrashCardCost = 0,
                         DontCastCardType = new string[0],
@@ -516,6 +517,170 @@ namespace NGUInjector
             //}
         }
 
+        public float nakedAdventurePower()
+        {
+            return Character.inventoryController.adventureAttackBonus();
+        }
+
+        public float cubePower()
+        {
+            return Character.inventoryController.cubePower();
+        }
+
+        public float nakedAdventureToughness()
+        {
+            return Character.inventoryController.adventureDefenseBonus();
+        }
+
+        public float cubeToughnses()
+        {
+            return Character.inventoryController.cubeToughness();
+        }
+
+        public long totalNudeEnergyCap()
+        {
+            double num = (double)
+                (
+                    // Base Energy Cap
+                    (float)Character.capEnergy
+
+                    // Perk Modifier
+                    * Character.adventureController.itopod.totalEnergyCapBonus()
+
+                    // MacGuffin Modifier
+                    * Character.inventory.macguffinBonuses[1]
+                );
+
+            // Quirk Modifier
+            num *= (double)Character.beastQuestPerkController.totalEnergyCapBonus();
+
+            // Wish modifier
+            num *= (double)Character.wishesController.totalEnergyCapBonus();
+
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            long num2 = Convert.ToInt64(num);
+
+            if (num2 < 1)
+            {
+                num2 = 1L;
+            }
+
+            return num2;
+        }
+
+        public long totalNudeMagicCap()
+        {
+            double num = (double)
+                (
+                    // Base Energy Cap
+                    (float)Character.magic.capMagic
+
+                    // Perk Modifier
+                    * Character.adventureController.itopod.totalMagicCapBonus()
+
+                    // MacGuffin Modifier
+                    * Character.inventory.macguffinBonuses[3]
+                );
+
+            // Quirk Modifier
+            num *= (double)Character.beastQuestPerkController.totalMagicCapBonus();
+
+            // Wish modifier
+            num *= (double)Character.wishesController.totalMagicCapBonus();
+
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            long num2 = Convert.ToInt64(num);
+
+            if (num2 < 1)
+            {
+                num2 = 1L;
+            }
+
+            return num2;
+        }
+
+        public float totalNudeEnergyPower()
+        {
+            double num = Character.energyPower * Character.adventureController.itopod.totalEnergyPowerBonus();
+            num *= (double)Character.inventory.macguffinBonuses[0];
+            num *= (double)Character.beastQuestPerkController.totalEnergyPowerBonus();
+            num *= (double)Character.wishesController.totalEnergyPowerBonus();
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            if (num >= (double)Character.hardCapPowBar())
+            {
+                num = Character.hardCapPowBar();
+            }
+
+            return (float)num;
+        }
+
+        public float totalNudeMagicPower()
+        {
+            double num = Character.magic.magicPower * Character.adventureController.itopod.totalMagicPowerBonus() * Character.inventory.macguffinBonuses[2];
+            num *= (double)Character.beastQuestPerkController.totalMagicPowerBonus();
+            num *= (double)Character.wishesController.totalMagicPowerBonus();
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            if (num >= (double)Character.hardCapPowBar())
+            {
+                num = Character.hardCapPowBar();
+            }
+
+            return (float)num;
+        }
+
+        public long totalNudeEnergyBar()
+        {
+            double num = (float)Character.energyBars * Character.adventureController.itopod.totalEnergyBarBonus() * Character.beastQuestPerkController.totalEnergyBarBonus() * Character.wishesController.totalEnergyBarBonus() * Character.inventory.macguffinBonuses[6];
+            if (num > (double)Character.hardCapPowBar())
+            {
+                num = Character.hardCapPowBar();
+            }
+
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            return (long)num;
+        }
+        public long totalNudeMagicBar()
+        {
+            double num = (float)Character.magic.magicPerBar * Character.adventureController.itopod.totalMagicBarBonus() * Character.beastQuestPerkController.totalMagicBarBonus() * Character.wishesController.totalMagicBarBonus() * Character.inventory.macguffinBonuses[7];
+            if (num > (double)Character.hardCapPowBar())
+            {
+                num = Character.hardCapPowBar();
+            }
+
+            if (num > 9.2233720368547758E+18)
+            {
+                num = 9.2233720368547758E+18;
+            }
+
+            if (num < 1.0)
+            {
+                num = 1.0;
+            }
+
+            return (long)num;
+        }
+
+
         private void QuickSave()
         {
             Log("Writing quicksave and json");
@@ -530,6 +695,27 @@ namespace NGUInjector
             {
                 writer.WriteLine(data);
             }
+
+            //Base Power
+            Log($"Base Power: {nakedAdventurePower()}");
+            //Base Toughness
+            Log($"Base Toughness: {nakedAdventureToughness()}");
+            //Cube Power
+            Log($"Cube Power: {cubePower()}");
+            //Cube Toughness
+            Log($"Cube Power: {cubeToughnses()}");
+            //Nude Energy Cap
+            Log($"Nude Energy Cap: {totalNudeEnergyCap()}");
+            //Nude Magic Cap
+            Log($"Nude Magic Cap: {totalNudeMagicCap()}");
+            //Nude Energy Power
+            Log($"Nude Energy Power: {totalNudeEnergyPower()}");
+            //Nude Magic Power
+            Log($"Nude Magic Power: {totalNudeMagicPower()}");
+            //Nude Energy Bars
+            Log($"Nude Energy Bars: {totalNudeEnergyBar()}");
+            //Nude Magic Bars
+            Log($"Nude Magic Bars: {totalNudeMagicBar()}");
 
             Character.saveLoad.saveGamestateToSteamCloud();
         }
