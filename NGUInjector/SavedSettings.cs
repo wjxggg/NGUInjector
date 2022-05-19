@@ -116,6 +116,7 @@ namespace NGUInjector
         [SerializeField] private bool _autoBuyConsumables;
         [SerializeField] private bool _doMove69;
         [SerializeField] private int[] _mergeBlacklist;
+        [SerializeField] private string[] _boostPriority;
 
         private readonly string _savePath;
         private bool _disableSave;
@@ -288,6 +289,7 @@ namespace NGUInjector
             _trashCardCost = other._trashCardCost;
             _dontCastCardType = other._dontCastCardType;
             _cardSortOrder = other._cardSortOrder;
+            _boostPriority = other._boostPriority;
             _cardSortEnabled = other._cardSortEnabled;
             _trashChunkers = other._trashChunkers;
             _hackAdvance = other.HackAdvance;
@@ -1266,6 +1268,16 @@ namespace NGUInjector
             {
                 if (value == _cardSortOrder) return;
                 _cardSortOrder = value;
+                SaveSettings();
+            }
+        }
+        public string[] BoostPriority
+        {
+            get => _boostPriority;
+            set
+            {
+                if (value == _boostPriority) return;
+                _boostPriority = value;
                 SaveSettings();
             }
         }

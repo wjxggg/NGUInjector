@@ -1,4 +1,3 @@
-
 # NGUInjector
 
 NGUInjector is an automation platform for the steam version of NGU Idle.
@@ -37,21 +36,23 @@ A logs folder will also be created with the following files:
 Saving either file will automatically reload the settings in the configuration file. Reloading the game isn't necessary
 
 # Settings.json Configurations
+
 With the latest fork, many changes have been added that aren't found in the GUI.
 
 To access these settings, open the **settings.json** (in your Desktop folder, mentioned above) and scroll down to find the following configuration options:
 
-- **_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
-- **_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
-- **_manageQuestLoadouts** - Set this to true to have the injector swap to a Questing loadout when doing manual questing
-- **_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
-- **_questLoadout** - Assign your questing loadout here. Follow similar pattern as other loadout fields (example: [257, 170, 293, 236])
-- **_manageConsumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file (see Section on Consumables below for details)
-- **_autoBuyConsumables** - Set this to true to have the injector auto purchase any consumables you try to use that you do not own. Will only buy consumables if you have the AP to purchase them.
-- **_autoBuyAdventure** - Set to true to auto purchase adventure stats. Will buy anything in the "Adventure Stats" tab that has a custom value set above 0 in a group, together with the EMR purchases (if enabled) once there is enough EXP to buy everything.
-- **_wishBlacklist** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities (example: [131, 132, 128, 135,139]
-- **_cardSortEnabled** - Set this to true to have the injector sort cards based on the priorities given in **_cardSortOrder**. (**false** by default).
-- **_cardSortOrder** - Give a list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that match will be sorted by the second priority, and so on. The available priority options are:
+- **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
+- **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
+- **\_manageQuestLoadouts** - Set this to true to have the injector swap to a Questing loadout when doing manual questing
+- **\_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
+- **\_questLoadout** - Assign your questing loadout here. Follow similar pattern as other loadout fields (example: [257, 170, 293, 236])
+- **\_manageConsumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file (see Section on Consumables below for details)
+- **\_autoBuyConsumables** - Set this to true to have the injector auto purchase any consumables you try to use that you do not own. Will only buy consumables if you have the AP to purchase them.
+- **\_autoBuyAdventure** - Set to true to auto purchase adventure stats. Will buy anything in the "Adventure Stats" tab that has a custom value set above 0 in a group, together with the EMR purchases (if enabled) once there is enough EXP to buy everything.
+- **\_wishBlacklist** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities (example: [131, 132, 128, 135,139]
+- **\_boostPriority** - The priority in which items should be boosted. Defaults to **["Power", "Toughness", "Special"]**
+- **\_cardSortEnabled** - Set this to true to have the injector sort cards based on the priorities given in **\_cardSortOrder**. (**false** by default).
+- **\_cardSortOrder** - Give a list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that match will be sorted by the second priority, and so on. The available priority options are:
   - **"RARITY"** - The card rarity ("Good"/"Okay", etc.). (high->low)
   - **"TIER"** - The card tier. (high->low)
   - **"COST"** - The total mayo cost. (high->low)
@@ -60,7 +61,7 @@ To access these settings, open the **settings.json** (in your Desktop folder, me
   - **"VALUE"** - The CHANGE value divided by the card cost. (high->low)
   - **"NORMALVALUE"** - The VALUE, normalized by the card bonus type. (e.g. Gold always gives higher changes than PP, so this will try to account for that). (high->low)
   - **"TYPE:xxxx"** - The card bonus type. Replace 'xxxx' with a specific card bonus type, i.e. one of: "energyNGUSpeed", "magicNGUSpeed", "wandoosSpeed", "augSpeed", "TMSpeed", "hackSpeed", "wishSpeed", "atkDefStats", "adventureStat", "dropChance", "goldDrop", "dayCareSpeed", "PP", "QP".
-  - **Example:** 
+  - **Example:**
     ```
       "_cardSortEnabled": true,
       "_cardSortOrder": ["PROTECTED", "TYPE:adventureStat", "TYPE:hackSpeed", "VALUE"]
@@ -216,12 +217,14 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - Items to equip before throwing money in the pit
 
 ![Cards](https://i.imgur.com/0OXulFY.png)
+
 - **Manage Mayo** Will prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
 - **Auto Trash Cards** Will trash cards according to the settings below
 - **Trash Adventure Cards** If checked, adventure cards are trashed according to your settings. If not checked, no adventure cards are deleted, regarless of settings
 - **Auto Cast Cards** Will cast any card that is not trashed according to your settings
 - **Trash All Cards of Type** WIll trash these card types regardless of your other settings
 - **Trash Chunkers** Will trash chunkers of the types in your trash all list.
+
 # Allocation
 
 Allocation profiles can be found in the profiles folder and contain time breakpoints for configuring your gear, diggers, energy allocation and magic allocation. Sample allocation files can be found in the sampleprofile folder.
@@ -500,6 +503,7 @@ Challenges must be given a number afterwards to specify which challenge is being
 ```
 
 ## Consumables
+
 A Consumables breakpoint is structured as follows:
 
 ```
@@ -512,6 +516,7 @@ A Consumables breakpoint is structured as follows:
 ```
 
 Consumables are indexed as follows:
+
 - **EPOT-A** - Energy Potion alpha
 - **EPOT-B** - Energy Potion beta
 - **EPOT-C** - Energy Potion delta
@@ -543,12 +548,9 @@ When firing up NGU and injector, if the 4hour breakpoint is your latest one, it 
 
 If you had set that breakpoint to use a Lucky Charm AND a Super Lucky Charm, the injector will use **both** Lucky Charm and Super Lucky Charm again **once**.
 
-
 Be mindful of this or your AP will be sad. No one likes sad AP.
 
-
 Beta potions and Macguffin Muffins are smart enough to only activate if not already active.
-
 
 # Zone Stat Overrides
 
