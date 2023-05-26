@@ -457,29 +457,27 @@ namespace NGUInjector.Managers
             //If we have a boost locked, we want to stay on that until its maxxed
             var lockedBoosts = converted.Where(x => x.id < 40 && x.locked).ToArray();
             if (lockedBoosts.Any())
-            {
-                foreach (var locked in lockedBoosts)
-                {
-                    //Unlock level 100 boosts
-                    if (locked.level == 100)
-                    {
-                        _character.inventory.inventory[locked.slot].removable = true;
-                        continue;
-                    }
-
-                    if (locked.id <= 13)
+            {                
+				//Unlock level 100 boosts
+				lockedBoosts.Where(x.level == 100).ForEach(maxLockedBoost => _character.inventory.inventory[maxLockedBoost.slot].removable = true);
+				
+				int? minId = lockedBoosts.Where(x.level != 100).DefaultIfEmpty().Min(x => x.Id);
+				if(minId.HasValue)
+				{
+                    if (minId <= 13)
                     {
                         _controller.selectAutoPowerTransform();
-                    }else if (locked.id <= 26)
+                    }
+					else if (minId <= 26)
                     {
                         _controller.selectAutoToughTransform();
-                    }else if (locked.id <= 39)
+                    }
+					else if (locked.id <= 39)
                     {
                         _controller.selectAutoSpecialTransform();
                     }
-                }
-
-                return;
+					
+					return;
             }
 
             var needed = new BoostsNeeded();
