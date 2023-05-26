@@ -61,7 +61,7 @@ namespace NGUInjector.Managers
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Cube) obj);
+            return Equals((Cube)obj);
         }
 
         public override int GetHashCode()
@@ -81,8 +81,8 @@ namespace NGUInjector.Managers
         private readonly int[] _pendants = { 53, 76, 94, 142, 170, 229, 295, 388, 430, 504 };
         private readonly int[] _lootys = { 67, 128, 169, 230, 296, 389, 431, 505 };
         private readonly int[] _convertibles;
-        private readonly int[] _wandoos = {66, 169};
-        private readonly int[] _guffs = {198, 200, 199, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 228, 211, 250, 291, 289, 290, 298, 299, 300};
+        private readonly int[] _wandoos = { 66, 169 };
+        private readonly int[] _guffs = { 198, 200, 199, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 228, 211, 250, 291, 289, 290, 298, 299, 300 };
         private readonly int[] _mergeBlacklist = { 367, 368, 369, 370, 371, 372 };
         private BoostsNeeded _previousBoostsNeeded = null;
         private Cube _lastCube = null;
@@ -91,7 +91,7 @@ namespace NGUInjector.Managers
 
 
         //Wandoos 98, Giant Seed, Wandoos XL, Lonely Flubber, Wanderer's Cane, Guffs, Lemmi
-        private readonly int[] _filterExcludes = { 66, 92, 163, 120, 154, 195, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287  };
+        private readonly int[] _filterExcludes = { 66, 92, 163, 120, 154, 195, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287 };
         public InventoryManager()
         {
             _character = Main.Character;
@@ -120,7 +120,7 @@ namespace NGUInjector.Managers
             {
                 if (Settings.BoostBlacklist.Contains(id))
                     continue;
-                
+
                 var f = FindItemSlot(ci, id);
                 if (f != null)
                     result.Add(f);
@@ -457,27 +457,28 @@ namespace NGUInjector.Managers
             //If we have a boost locked, we want to stay on that until its maxxed
             var lockedBoosts = converted.Where(x => x.id < 40 && x.locked).ToArray();
             if (lockedBoosts.Any())
-            {                
-				//Unlock level 100 boosts
-				lockedBoosts.Where(x.level == 100).ForEach(maxLockedBoost => _character.inventory.inventory[maxLockedBoost.slot].removable = true);
-				
-				int? minId = lockedBoosts.Where(x.level != 100).DefaultIfEmpty().Min(x => x.Id);
-				if(minId.HasValue)
-				{
+            {
+                //Unlock level 100 boosts
+                lockedBoosts.Where(x => x.level == 100).ToList().ForEach(maxLockedBoost => _character.inventory.inventory[maxLockedBoost.slot].removable = true);
+
+                int? minId = lockedBoosts.Where(x => x.level != 100).DefaultIfEmpty().Min(x => x.id);
+                if (minId.HasValue)
+                {
                     if (minId <= 13)
                     {
                         _controller.selectAutoPowerTransform();
                     }
-					else if (minId <= 26)
+                    else if (minId <= 26)
                     {
                         _controller.selectAutoToughTransform();
                     }
-					else if (locked.id <= 39)
+                    else if (minId <= 39)
                     {
                         _controller.selectAutoSpecialTransform();
                     }
-					
-					return;
+
+                    return;
+                }
             }
 
             var needed = new BoostsNeeded();
@@ -539,7 +540,8 @@ namespace NGUInjector.Managers
                     {
                         _controller.selectAutoPowerTransform();
                     }
-                }else if (Settings.CubePriority == 2)
+                }
+                else if (Settings.CubePriority == 2)
                 {
                     _controller.selectAutoPowerTransform();
                 }
@@ -547,7 +549,7 @@ namespace NGUInjector.Managers
                 {
                     _controller.selectAutoToughTransform();
                 }
-                
+
                 return;
             }
 
