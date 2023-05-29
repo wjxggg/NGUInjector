@@ -31,6 +31,7 @@ namespace NGUInjector
         internal static StreamWriter AllocationWriter;
         internal static StreamWriter PitSpinWriter;
         internal static StreamWriter CardsWriter;
+        internal static StreamWriter DebugWriter;
         internal static Main reference;
         private YggdrasilManager _yggManager;
         private InventoryManager _invManager;
@@ -45,9 +46,6 @@ namespace NGUInjector
         internal static WishManager WishManager;
         internal const string Version = "3.6.14";
         private static int _furthestZone;
-
-
-        internal static bool Test { get; set; }
 
         private static string _dir;
         private static string _profilesDir;
@@ -92,6 +90,12 @@ namespace NGUInjector
         {
             CardsWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
+
+        internal static void LogDebug(string msg)
+        {
+            DebugWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+        }
+
         internal static string GetProfilesDir()
         {
             return _profilesDir;
@@ -114,6 +118,7 @@ namespace NGUInjector
                 AllocationWriter.Close();
                 PitSpinWriter.Close();
                 CardsWriter.Close();
+                DebugWriter.Close();
                 settingsForm.Close();
                 settingsForm.Dispose();
 
@@ -150,6 +155,7 @@ namespace NGUInjector
                 AllocationWriter = new StreamWriter(Path.Combine(logDir, "allocation.log")) { AutoFlush = true };
                 PitSpinWriter = new StreamWriter(Path.Combine(logDir, "pitspin.log"), true) { AutoFlush = true };
                 CardsWriter = new StreamWriter(Path.Combine(logDir, "cards.log")) { AutoFlush = true };
+                DebugWriter = new StreamWriter(Path.Combine(logDir, "debug.log")) { AutoFlush = true };
 
                 _profilesDir = Path.Combine(_dir, "profiles");
                 if (!Directory.Exists(_profilesDir))
@@ -918,6 +924,7 @@ namespace NGUInjector
 
                 if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
                 {
+                    ZoneHelpers.RefreshTitanSnapshots();
                     LoadoutManager.TryTitanSwap();
                     DiggerManager.TryTitanSwap();
                 }
@@ -1250,7 +1257,7 @@ namespace NGUInjector
                 return;
             }
 
-            if (Settings.CombatMode == 0)
+            if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone))
             {
                 _combManager.ManualZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.PrecastBuffs, Settings.FastCombat, Settings.BeastMode);
             }

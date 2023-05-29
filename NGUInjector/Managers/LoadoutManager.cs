@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
@@ -65,9 +66,7 @@ namespace NGUInjector.Managers
             if (CurrentLock != LockType.Quest && !CanAcquireOrHasLock(LockType.Titan))
                 return;
 
-            var ts = ZoneHelpers.TitansSpawningSoon();
-
-            if (CurrentLock == LockType.Quest && ts.SpawningSoon)
+            if (CurrentLock == LockType.Quest && ZoneHelpers.AnyTitansSpawningSoon())
             {
                 SaveTempLoadout();
                 ReleaseLock();
@@ -78,8 +77,11 @@ namespace NGUInjector.Managers
             if (CurrentLock == LockType.Titan)
             {
                 //If we haven't AKed yet, just return
-                if (ZoneHelpers.TitansSpawningSoon().SpawningSoon)
+                if (ZoneHelpers.AnyTitansSpawningSoon())
+                {
+                    //LogDebug("Waiting for kill...");
                     return;
+                }
 
                 //Titans have been AKed, restore back to original gear
                 if (_swappedQuestToTitan)
@@ -91,30 +93,34 @@ namespace NGUInjector.Managers
                 {
                     RestoreGear();
                     ReleaseLock();
+                    //LogDebug("Releasing Titan Lock");
                 }
 
                 return;
             }
 
             //No lock currently, check if titans are spawning
-            if (ts.SpawningSoon)
+            if (ZoneHelpers.AnyTitansSpawningSoon())
             {
                 Log("Equipping Loadout for Titans");
 
                 //Titans are spawning soon, grab a lock and swap
                 AcquireLock(LockType.Titan);
                 SaveCurrentLoadout();
+                //LogDebug("Locking Titan");
 
-                if (Settings.ManageGoldLoadouts && ts.RunMoneyLoadout)
+                if (Settings.ManageGoldLoadouts && ZoneHelpers.ShouldRunGoldLoadout())
                 {
                     Log("Equipping Gold Drop Loadout");
                     ChangeGear(Settings.GoldDropLoadout);
                     Settings.DoGoldSwap = false;
+                    //LogDebug("Gold Gear swap");
                 }
                 else
                 {
                     Log("Equipping Titan Loadout");
                     ChangeGear(Settings.TitanLoadout);
+                    //LogDebug("Titan Gear swap");
                 }
             }
         }
@@ -142,12 +148,12 @@ namespace NGUInjector.Managers
                 ReleaseLock();
                 _swappedQuestToMoneyPit = true;
             }
-            
+
             else if (!CanAcquireOrHasLock(LockType.MoneyPit))
             {
                 return false;
             }
-                
+
             Log("Equipping Money Pit");
             AcquireLock(LockType.MoneyPit);
             SaveCurrentLoadout();
@@ -234,7 +240,8 @@ namespace NGUInjector.Managers
                 return true;
             }
 
-            if (CurrentLock == LockType.Quest) {
+            if (CurrentLock == LockType.Quest)
+            {
                 LoadoutManager.RestoreOriginalQuestGear();
                 LoadoutManager.ReleaseLock();
             }

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
+using System.Text;
 using static NGUInjector.Main;
 using static NGUInjector.Managers.CombatHelpers;
 
@@ -15,6 +18,25 @@ namespace NGUInjector.Managers
         private float _fightTimer = 0;
         private string _enemyName;
         private DateTime move69Cooldown = DateTime.MinValue;
+
+        public enum WalderpCombatMove { Regular, Strong, Piercing, Ultimate }
+        private int _walderpAttacksTillCommand = 0;
+        private WalderpCombatMove? _forcedMove = null;
+        private WalderpCombatMove? _bannedMove = null;
+
+        public void SetWalderpForcedMove(WalderpCombatMove? forcedMove)
+        {
+            _walderpAttacksTillCommand = 5;
+            _forcedMove = forcedMove;
+            _bannedMove = null;
+        }
+
+        public void SetWalderpBannedMove(WalderpCombatMove? bannedMove)
+        {
+            _walderpAttacksTillCommand = 5;
+            _forcedMove = null;
+            _bannedMove = bannedMove;
+        }
 
         public CombatManager()
         {
@@ -232,50 +254,191 @@ namespace NGUInjector.Managers
         {
             var ac = _character.adventureController;
 
-            if (ac.ultimateAttackMove.button.IsInteractable())
+            bool inWalderpZone = ZoneHelpers.ZoneIsWalderp(_character.adventure.zone);
+
+            if (inWalderpZone)
+            {
+                ParseLogForWalderp();
+
+                if (_walderpAttacksTillCommand <= 1)
+                {
+                    if (_walderpAttacksTillCommand == 1)
+                    {
+                        if (ac.strongAttackMove.button.IsInteractable())
+                        {
+                            ac.strongAttackMove.doMove();
+                        }
+                        else if (ac.regularAttackMove.button.IsInteractable())
+                        {
+                            ac.regularAttackMove.doMove();
+                        }
+                    }
+                    return;
+                }
+
+                if (_forcedMove.HasValue)
+                {
+                    switch (_forcedMove.Value)
+                    {
+                        case WalderpCombatMove.Regular:
+                            if (ac.regularAttackMove.button.IsInteractable())
+                            {
+                                ac.regularAttackMove.doMove();
+                                _forcedMove = null;
+                            }
+                            break;
+                        case WalderpCombatMove.Strong:
+                            if (ac.strongAttackMove.button.IsInteractable())
+                            {
+                                ac.strongAttackMove.doMove();
+                                _forcedMove = null;
+                            }
+                            break;
+                        case WalderpCombatMove.Piercing:
+                            if (ac.pierceMove.button.IsInteractable())
+                            {
+                                ac.pierceMove.doMove();
+                                _forcedMove = null;
+                            }
+                            break;
+                        case WalderpCombatMove.Ultimate:
+                            if (ac.ultimateAttackMove.button.IsInteractable())
+                            {
+                                ac.ultimateAttackMove.doMove();
+                                _forcedMove = null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
+                }
+            }
+
+            if (ac.ultimateAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Ultimate)
             {
                 if (fastCombat)
                 {
                     ac.ultimateAttackMove.doMove();
+                    _bannedMove = null;
                     return;
                 }
 
                 if (ChargeActive())
                 {
                     ac.ultimateAttackMove.doMove();
+                    _bannedMove = null;
                     return;
                 }
 
                 if (GetChargeCooldown() > .45)
                 {
                     ac.ultimateAttackMove.doMove();
+                    _bannedMove = null;
                     return;
                 }
             }
 
-            if (ac.pierceMove.button.IsInteractable())
+            if (ac.pierceMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Piercing)
             {
                 ac.pierceMove.doMove();
+                _bannedMove = null;
                 return;
             }
 
             if (Settings.DoMove69 && Move69Ready() && Move69CooldownReady())
             {
                 Main.PlayerController.move69();
+                _bannedMove = null;
                 move69Cooldown = DateTime.Now;
             }
 
-            if (ac.strongAttackMove.button.IsInteractable())
+            if (ac.strongAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Strong)
             {
                 ac.strongAttackMove.doMove();
+                _bannedMove = null;
                 return;
             }
 
-            if (ac.regularAttackMove.button.IsInteractable())
+            if (ac.regularAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Regular)
             {
                 ac.regularAttackMove.doMove();
+                _bannedMove = null;
                 return;
             }
+        }
+
+        private void ParseLogForWalderp()
+        {
+            var bLog = _character.adventureController.log;
+            var type = bLog.GetType().GetField("Eventlog",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var val = type?.GetValue(bLog);
+            if (val == null)
+                return;
+
+            var log = (List<string>)val;
+            for (var i = log.Count - 1; i >= 0; i--)
+            {
+                var line = log[i];
+
+                if (!line.StartsWith("<color=red>")) continue;
+                if (line.EndsWith("<b></b>")) continue;
+
+                //LogDebug(line);
+
+                if (line.StartsWith("<color=red>HIT ME"))
+                {
+                    //LogDebug($"Banning {GetWalderpCombatMove(line)}");
+                    SetWalderpBannedMove(GetWalderpCombatMove(line));
+
+                    log[i] = $"{line}<b></b>";
+
+                    break;
+                }
+                else if (line.StartsWith("<color=red>WALDERP SAYS"))
+                {
+                    //LogDebug($"Forcing {GetWalderpCombatMove(line)}");
+                    SetWalderpForcedMove(GetWalderpCombatMove(line));
+
+                    log[i] = $"{line}<b></b>";
+
+                    break;
+                }
+                else if (line.StartsWith("<color=red>WALDERP "))
+                {
+                    _walderpAttacksTillCommand--;
+                    //LogDebug($"Walderp Attacks Left: {_walderpAttacksTillCommand}");
+
+                    log[i] = $"{line}<b></b>";
+
+                    break;
+                }
+            }
+        }
+
+        private WalderpCombatMove? GetWalderpCombatMove(string line)
+        {
+            WalderpCombatMove? move = null;
+
+            if (line.Contains("REGULAR ATTACK"))
+            {
+                move = WalderpCombatMove.Regular;
+            }
+            else if (line.Contains("STRONG ATTACK"))
+            {
+                move = WalderpCombatMove.Strong;
+            }
+            else if (line.Contains("PIERCING ATTACK"))
+            {
+                move = WalderpCombatMove.Piercing;
+            }
+            else if (line.Contains("ULTIMATE ATTACK"))
+            {
+                move = WalderpCombatMove.Ultimate;
+            }
+
+            return move;
         }
 
         internal bool Move69CooldownReady()
@@ -295,6 +458,11 @@ namespace NGUInjector.Managers
 
         internal void MoveToZone(int zone)
         {
+            //Walderp does one move before his command when first entering the zone
+            _walderpAttacksTillCommand = 1;
+            _forcedMove = null;
+            _bannedMove = null;
+
             _character.adventureController.zoneSelector.changeZone(zone);
         }
 
@@ -460,7 +628,7 @@ namespace NGUInjector.Managers
                     return;
                 }
             }
-            
+
             //Move to the zone
             if (_character.adventure.zone != zone)
             {
@@ -536,7 +704,7 @@ namespace NGUInjector.Managers
                     }
                 }
 
-                
+
                 return;
             }
 
