@@ -10,6 +10,7 @@ using NGUInjector.AllocationProfiles.RebirthStuff;
 using NGUInjector.Managers;
 using SimpleJSON;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace NGUInjector.AllocationProfiles
 {
@@ -627,6 +628,7 @@ namespace NGUInjector.AllocationProfiles
             var toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
             SetInput(toAdd);
 
+            var nextBP = GetNextBreakpoint(false, bp.Time);
             foreach (var prio in temp)
             {
                 if (!prio.IsCapPrio())
@@ -634,6 +636,7 @@ namespace NGUInjector.AllocationProfiles
                     prioCount--;
                 }
 
+                prio.NextBreakpointTime = nextBP?.Time;
                 if (prio.Allocate())
                 {
                     toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
@@ -769,35 +772,37 @@ namespace NGUInjector.AllocationProfiles
             if (bps == null)
                 return null;
 
-            foreach (var b in bps)
+            AllocationBreakPoint bp = GetBreakpoint(energy, _character.rebirthTime.totalseconds);
+
+            if (energy && _currentEnergyBreakpoint == null)
             {
-                var rbTime = _character.rebirthTime.totalseconds;
-                if (rbTime > b.Time)
-                {
-                    if (energy && _currentEnergyBreakpoint == null)
-                    {
-                        _currentEnergyBreakpoint = b;
-                    }
-
-                    if (!energy && _currentMagicBreakpoint == null)
-                    {
-                        _currentMagicBreakpoint = b;
-                    }
-
-                    return b;
-                }
+                _currentEnergyBreakpoint = bp;
             }
 
-            if (energy)
+            if (!energy && _currentMagicBreakpoint == null)
             {
-                _currentEnergyBreakpoint = null;
-            }
-            else
-            {
-                _currentMagicBreakpoint = null;
+                _currentMagicBreakpoint = bp;
             }
 
-            return null;
+            return bp;
+        }
+
+        private AllocationBreakPoint GetBreakpoint(bool energy, double time)
+        {
+            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
+            if (bps == null)
+                return null;
+
+            return bps.OrderByDescending(x => x.Time).FirstOrDefault(x => x.Time <= time);
+        }
+
+        private AllocationBreakPoint GetNextBreakpoint(bool energy, double time)
+        {
+            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
+            if (bps == null)
+                return null;
+
+            return bps.OrderByDescending(x => x.Time).LastOrDefault(x => x.Time > time);
         }
 
         private AllocationBreakPoint GetCurrentR3Breakpoint()
