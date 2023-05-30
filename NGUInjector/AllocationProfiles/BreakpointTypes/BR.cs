@@ -21,8 +21,7 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
 
         internal override bool Allocate()
         {
-            CastRituals(Index, NextBreakpointTime);
-            return true;
+            return CastRituals(Index, NextBreakpointTime) > 0;
         }
 
         protected override bool CorrectResourceType()
@@ -30,9 +29,10 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
             return Type == ResourceType.Magic;
         }
 
-        private void CastRituals(int secondsToRun, double? nextBreakpointTime)
+        private long CastRituals(int secondsToRun, double? nextBreakpointTime)
         {
             var allocationLeft = (long)MaxAllocation;
+            long totalAllocated = 0;
 
             for (var i = Character.bloodMagic.ritual.Count - 1; i >= 0; i--)
             {
@@ -101,89 +101,12 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
                 var cap = CalculateMaxAllocation(i, allocationLeft);
                 SetInput(cap);
                 Character.bloodMagicController.bloodMagics[i].add();
+                totalAllocated += cap;
                 allocationLeft -= cap;
             }
+
+            return totalAllocated;
         }
-
-        //private void CastRituals()
-        //{
-        //    var allocationLeft = (long)MaxAllocation;
-        //    for (var i = Character.bloodMagic.ritual.Count - 1; i >= 0; i--)
-        //    {
-        //        if (allocationLeft <= 0)
-        //            break;
-        //        if (Character.magic.idleMagic == 0)
-        //            break;
-        //        if (i >= Character.bloodMagicController.ritualsUnlocked())
-        //            continue;
-        //        var goldCost = Character.bloodMagicController.bloodMagics[i].baseCost * Character.totalDiscount();
-        //        if (goldCost > Character.realGold && Character.bloodMagic.ritual[i].progress <= 0.0)
-        //        {
-        //            if (Character.bloodMagic.ritual[i].magic > 0)
-        //            {
-        //                Character.bloodMagicController.bloodMagics[i].removeAllMagic();
-        //            }
-
-        //            continue;
-        //        }
-
-        //        var tLeft = RitualTimeLeft(i, allocationLeft);
-
-        //        if (tLeft > 3600)
-        //            continue;
-
-        //        if (RebirthTime > 0 && Main.Settings.AutoRebirth)
-        //        {
-        //            if (Character.rebirthTime.totalseconds - tLeft < 0)
-        //                continue;
-        //        }
-
-        //        var cap = CalculateMaxAllocation(i, allocationLeft);
-        //        SetInput(cap);
-        //        Character.bloodMagicController.bloodMagics[i].add();
-        //        allocationLeft -= cap;
-        //    }
-        //}
-
-        //private void CastRitualEndTime(int endTime)
-        //{
-        //    var allocationLeft = (long)MaxAllocation;
-        //    for (var i = Character.bloodMagic.ritual.Count - 1; i >= 0; i--)
-        //    {
-        //        if (allocationLeft <= 0)
-        //            break;
-        //        if (Character.magic.idleMagic == 0)
-        //            break;
-        //        if (i >= Character.bloodMagicController.ritualsUnlocked())
-        //            continue;
-        //        var goldCost = Character.bloodMagicController.bloodMagics[i].baseCost * Character.totalDiscount();
-        //        if (goldCost > Character.realGold && Character.bloodMagic.ritual[i].progress <= 0.0)
-        //        {
-        //            if (Character.bloodMagic.ritual[i].magic > 0)
-        //            {
-        //                Character.bloodMagicController.bloodMagics[i].removeAllMagic();
-        //            }
-
-        //            continue;
-        //        }
-
-        //        var tLeft = RitualTimeLeft(i, allocationLeft);
-
-        //        if (RebirthTime > 0 && Main.Settings.AutoRebirth)
-        //        {
-        //            if (Character.rebirthTime.totalseconds - tLeft < 0)
-        //                continue;
-        //        }
-
-        //        if (Character.rebirthTime.totalseconds + tLeft > endTime)
-        //            continue;
-
-        //        var cap = CalculateMaxAllocation(i, allocationLeft);
-        //        SetInput(cap);
-        //        Character.bloodMagicController.bloodMagics[i].add();
-        //        allocationLeft -= cap;
-        //    }
-        //}
 
         private float RitualProgressPerTick(int id, long remaining)
         {
