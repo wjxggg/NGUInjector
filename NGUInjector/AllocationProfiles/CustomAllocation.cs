@@ -10,6 +10,7 @@ using NGUInjector.AllocationProfiles.RebirthStuff;
 using NGUInjector.Managers;
 using SimpleJSON;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace NGUInjector.AllocationProfiles
 {
@@ -569,29 +570,42 @@ namespace NGUInjector.AllocationProfiles
             var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
             if (temp.Count == 0)
                 return;
-            var prioCount = temp.Count(x => !x.IsCapPrio());
-            
 
-            if (temp.Any(x => x is BasicTrainingBP))
-                _character.removeAllEnergy();
-            else
-                _character.removeMostEnergy();
-
-            var toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
-            SetInput(toAdd);
-
-            foreach (var prio in temp)
+            bool shouldRetry = true;
+            while (shouldRetry)
             {
-                if (!prio.IsCapPrio())
-                {
-                    prioCount--;
-                }
+                var successList = new List<BaseBreakpoint>();
+                shouldRetry = false;
+                var prioCount = temp.Count(x => !x.IsCapPrio());
 
-                if (prio.Allocate())
+                if (temp.Any(x => x is BasicTrainingBP))
+                    _character.removeAllEnergy();
+                else
+                    _character.removeMostEnergy();
+
+                var toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
+                SetInput(toAdd);
+
+                foreach (var prio in temp)
                 {
-                    toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
-                    SetInput(toAdd);
+                    if (!prio.IsCapPrio())
+                    {
+                        prioCount--;
+                    }
+
+                    if (prio.Allocate())
+                    {
+                        successList.Add(prio);
+                        toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
+                        SetInput(toAdd);
+                    }
+                    else
+                    {
+                        shouldRetry = true;
+                    }
                 }
+                temp = successList;
+                shouldRetry &= temp.Any();
             }
 
             _character.NGUController.refreshMenu();
@@ -621,24 +635,41 @@ namespace NGUInjector.AllocationProfiles
             var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
             if (temp.Count == 0)
                 return;
-            var prioCount = temp.Count(x => !x.IsCapPrio());
 
-            _character.removeMostMagic();
-            var toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
-            SetInput(toAdd);
-
-            foreach (var prio in temp)
+            bool shouldRetry = true;
+            while (shouldRetry)
             {
-                if (!prio.IsCapPrio())
-                {
-                    prioCount--;
-                }
+                var successList = new List<BaseBreakpoint>();
+                shouldRetry = false;
 
-                if (prio.Allocate())
+                var prioCount = temp.Count(x => !x.IsCapPrio());
+
+                _character.removeMostMagic();
+                var toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
+                SetInput(toAdd);
+
+                var nextBP = GetNextBreakpoint(false, bp.Time);
+                foreach (var prio in temp)
                 {
-                    toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
-                    SetInput(toAdd);
+                    if (!prio.IsCapPrio())
+                    {
+                        prioCount--;
+                    }
+
+                    prio.NextBreakpointTime = nextBP?.Time;
+                    if (prio.Allocate())
+                    {
+                        successList.Add(prio);
+                        toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
+                        SetInput(toAdd);
+                    }
+                    else
+                    {
+                        shouldRetry = true;
+                    }
                 }
+                temp = successList;
+                shouldRetry &= temp.Any();
             }
 
             _character.timeMachineController.updateMenu();
@@ -769,35 +800,37 @@ namespace NGUInjector.AllocationProfiles
             if (bps == null)
                 return null;
 
-            foreach (var b in bps)
+            AllocationBreakPoint bp = GetBreakpoint(energy, _character.rebirthTime.totalseconds);
+
+            if (energy && _currentEnergyBreakpoint == null)
             {
-                var rbTime = _character.rebirthTime.totalseconds;
-                if (rbTime > b.Time)
-                {
-                    if (energy && _currentEnergyBreakpoint == null)
-                    {
-                        _currentEnergyBreakpoint = b;
-                    }
-
-                    if (!energy && _currentMagicBreakpoint == null)
-                    {
-                        _currentMagicBreakpoint = b;
-                    }
-
-                    return b;
-                }
+                _currentEnergyBreakpoint = bp;
             }
 
-            if (energy)
+            if (!energy && _currentMagicBreakpoint == null)
             {
-                _currentEnergyBreakpoint = null;
-            }
-            else
-            {
-                _currentMagicBreakpoint = null;
+                _currentMagicBreakpoint = bp;
             }
 
-            return null;
+            return bp;
+        }
+
+        private AllocationBreakPoint GetBreakpoint(bool energy, double time)
+        {
+            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
+            if (bps == null)
+                return null;
+
+            return bps.OrderByDescending(x => x.Time).FirstOrDefault(x => x.Time <= time);
+        }
+
+        private AllocationBreakPoint GetNextBreakpoint(bool energy, double time)
+        {
+            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
+            if (bps == null)
+                return null;
+
+            return bps.OrderByDescending(x => x.Time).LastOrDefault(x => x.Time > time);
         }
 
         private AllocationBreakPoint GetCurrentR3Breakpoint()

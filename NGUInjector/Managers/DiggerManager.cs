@@ -24,10 +24,9 @@ namespace NGUInjector.Managers
             if (!CanAcquireOrHasLock(LockType.Titan))
                 return;
 
-            var ts = ZoneHelpers.TitansSpawningSoon();
             if (CurrentLock == LockType.Titan)
             {
-                if (ts.SpawningSoon)
+                if (ZoneHelpers.AnyTitansSpawningSoon())
                     return;
 
                 RestoreDiggers();
@@ -35,7 +34,7 @@ namespace NGUInjector.Managers
                 return;
             }
 
-            if (ts.SpawningSoon)
+            if (ZoneHelpers.AnyTitansSpawningSoon())
             {
                 CurrentLock = LockType.Titan;
                 SaveDiggers();
