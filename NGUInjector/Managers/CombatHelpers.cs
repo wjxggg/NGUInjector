@@ -2,12 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Text;
 
 namespace NGUInjector.Managers
 {
     internal static class CombatHelpers
     {
+        private static int _currentCombatZone = -1;
+        internal static int CurrentCombatZone
+        {
+            get { return IsCurrentlyGoldSniping || IsCurrentlyQuesting || IsCurrentlyAdventuring ? _currentCombatZone : -1; }
+            set { _currentCombatZone = value; }
+        }
+
+        internal static bool IsCurrentlyGoldSniping { get; set; }
+        internal static bool IsCurrentlyQuesting { get; set; }
+        internal static bool IsCurrentlyAdventuring { get; set; }
+
         internal static bool CastCharge()
         {
             if (Main.Character.adventureController.chargeMove.button.IsInteractable())
@@ -31,7 +43,7 @@ namespace NGUInjector.Managers
         }
 
         internal static bool ChargeReady()
-        { 
+        {
             return Main.Character.adventureController.chargeMove.button.IsInteractable();
         }
 

@@ -1170,6 +1170,10 @@ namespace NGUInjector
 
         private void SnipeZone()
         {
+            CombatHelpers.IsCurrentlyGoldSniping = false;
+            CombatHelpers.IsCurrentlyQuesting = false;
+            CombatHelpers.IsCurrentlyAdventuring = false;
+
             if (!Settings.GlobalEnabled)
                 return;
 
@@ -1187,6 +1191,7 @@ namespace NGUInjector
                 if (Character.machine.realBaseGold == 0.0)
                 {
                     _combManager.ManualZone(0, false, false, false, true, false);
+                    CombatHelpers.IsCurrentlyGoldSniping = true;
                     return;
                 }
                 //Go to our gold loadout zone next to get a high gold drop
@@ -1198,16 +1203,15 @@ namespace NGUInjector
                         _furthestZone = ZoneHelpers.GetMaxReachableZone(false);
 
                         _combManager.ManualZone(bestZone.Zone, true, bestZone.FightType == 1, false, bestZone.FightType == 2, false);
+                        CombatHelpers.IsCurrentlyGoldSniping = true;
                         return;
                     }
                 }
             }
 
             var questZone = _questManager.IsQuesting();
-            if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) ||
-                !CombatManager.IsZoneUnlocked(Settings.SnipeZone) ||
-                ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) &&
-                !ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone)))
+            if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone) || !ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) ||
+                (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && !ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
             {
                 if (questZone > 0)
                 {
@@ -1220,6 +1224,7 @@ namespace NGUInjector
                         _combManager.IdleZone(questZone, false, false);
                     }
 
+                    CombatHelpers.IsCurrentlyQuesting = true;
                     return;
                 }
             }
@@ -1254,6 +1259,7 @@ namespace NGUInjector
                     _combManager.IdleZone(tempZone, false, Settings.ITOPODRecoverHP);
                 }
 
+                CombatHelpers.IsCurrentlyAdventuring = true;
                 return;
             }
 
@@ -1265,6 +1271,7 @@ namespace NGUInjector
             {
                 _combManager.IdleZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth);
             }
+            CombatHelpers.IsCurrentlyAdventuring = true;
         }
 
         private void MoveToITOPOD()
@@ -1404,7 +1411,7 @@ namespace NGUInjector
 
         public void ResetBoostProgress()
         {
-
+            _invManager.Reset();
         }
     }
 }
