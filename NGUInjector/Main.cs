@@ -1411,6 +1411,7 @@ namespace NGUInjector
 
         public void ResetBoostProgress()
         {
+            Log($"Resetting Boost Average");
             _invManager.Reset();
         }
     }

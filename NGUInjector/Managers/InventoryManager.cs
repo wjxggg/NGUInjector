@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using static NGUInjector.Main;
+using static System.Resources.ResXFileRef;
 
 namespace NGUInjector.Managers
 {
 
     public class FixedSizedQueue
     {
-        private Queue<decimal> queue = new Queue<decimal>();
+        private Queue<float> queue = new Queue<float>();
 
         public int Size { get; private set; }
 
@@ -18,7 +19,7 @@ namespace NGUInjector.Managers
             Size = size;
         }
 
-        public void Enqueue(decimal obj)
+        public void Enqueue(float obj)
         {
             queue.Enqueue(obj);
 
@@ -33,7 +34,7 @@ namespace NGUInjector.Managers
             queue.Clear();
         }
 
-        public decimal Avg()
+        public float Avg()
         {
             try
             {
@@ -374,10 +375,17 @@ namespace NGUInjector.Managers
                 Toughness = _character.inventory.cubeToughness
             };
 
-            foreach (var item in boostSlots)
-            {
-                needed.Add(item.equipment.GetNeededBoosts());
-            }
+            //foreach (var item in boostSlots)
+            //{
+            //    var eq = item.equipment;
+
+            //    LogDebug($"{eq.id}:{item.name} (Lv {eq.level});
+            //    LogDebug($"\tAtk {eq.curAttack}/{Extensions.CalcCap(eq.capAttack, eq.level)}");
+            //    LogDebug($"\tDef {eq.curDefense}/{Extensions.CalcCap(eq.capDefense, eq.level)}");
+            //    LogDebug($"\tSpec1 {eq.spec1Cur}/{Extensions.CalcCap(eq.spec1Cap, eq.level)} | Spec2 {eq.spec2Cur}/{Extensions.CalcCap(eq.spec2Cap, eq.level)} | Spec3 {eq.spec3Cur}/{Extensions.CalcCap(eq.spec3Cap, eq.level)}");
+
+            //    needed.Add(item.equipment.GetNeededBoosts());
+            //}
 
             var current = needed.Power + needed.Toughness + needed.Special;
 
@@ -434,7 +442,7 @@ namespace NGUInjector.Managers
                     output = toughnessDiff > 0 ? $"{output} {toughnessDiff} Toughness." : output;
                     output = powerDiff > 0 ? $"{output} {powerDiff} Power." : output;
 
-                    _cubeBoostAvg.Enqueue((decimal)(toughnessDiff + powerDiff));
+                    _cubeBoostAvg.Enqueue(toughnessDiff + powerDiff);
                     output = $"{output} Average Per Minute: {_cubeBoostAvg.Avg():0}";
                     Log(output);
                     Log($"Cube Power: {cube.Power} ({_character.inventoryController.cubePowerSoftcap()} softcap). Cube Toughness: {cube.Toughness} ({_character.inventoryController.cubeToughnessSoftcap()} softcap)");
@@ -618,9 +626,9 @@ namespace NGUInjector.Managers
 
     public class BoostsNeeded
     {
-        internal decimal Power { get; set; }
-        internal decimal Toughness { get; set; }
-        internal decimal Special { get; set; }
+        internal float Power { get; set; }
+        internal float Toughness { get; set; }
+        internal float Special { get; set; }
 
         public BoostsNeeded()
         {
@@ -636,7 +644,7 @@ namespace NGUInjector.Managers
             Special += other.Special;
         }
 
-        public decimal Total()
+        public float Total()
         {
             return Power + Toughness + Special;
         }
