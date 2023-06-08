@@ -51,7 +51,7 @@ namespace NGUInjector.AllocationProfiles
                     var text = File.ReadAllText(_allocationPath);
                     var parsed = JSON.Parse(text);
                     var breakpoints = parsed["Breakpoints"];
-                    _wrapper = new BreakpointWrapper {Breakpoints = new Breakpoints()};
+                    _wrapper = new BreakpointWrapper { Breakpoints = new Breakpoints() };
                     var rb = breakpoints["Rebirth"];
                     var rbtime = breakpoints["RebirthTime"];
                     if (rb == null)
@@ -68,10 +68,11 @@ namespace NGUInjector.AllocationProfiles
                         _wrapper.Breakpoints.Rebirth = BaseRebirth.CreateRebirth(target, type, rb["Challenges"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray());
                     }
 
-                    _wrapper.Breakpoints.ConsumablesBreakpoints = breakpoints["Consumables"].Children.Select(bp => new ConsumablesBreakpoint {
-                            Time = ParseTime(bp["Time"]),
-                            Consumables = ParseConsumableItemNames(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray()),
-                            Quantity = GetConsumablesQuantities(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray())
+                    _wrapper.Breakpoints.ConsumablesBreakpoints = breakpoints["Consumables"].Children.Select(bp => new ConsumablesBreakpoint
+                    {
+                        Time = ParseTime(bp["Time"]),
+                        Consumables = ParseConsumableItemNames(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray()),
+                        Quantity = GetConsumablesQuantities(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray())
                     }).OrderByDescending(x => x.Time).ToArray();
 
 
@@ -112,11 +113,11 @@ namespace NGUInjector.AllocationProfiles
                         }).OrderByDescending(x => x.Time).ToArray();
 
                     _wrapper.Breakpoints.Wandoos = breakpoints["Wandoos"].Children
-                        .Select(bp => new WandoosBreakpoint {Time = ParseTime(bp["Time"]), OS = bp["OS"].AsInt})
+                        .Select(bp => new WandoosBreakpoint { Time = ParseTime(bp["Time"]), OS = bp["OS"].AsInt })
                         .OrderByDescending(x => x.Time).ToArray();
 
                     _wrapper.Breakpoints.NGUBreakpoints = breakpoints["NGUDiff"].Children
-                        .Select(bp => new NGUDiffBreakpoint {Time = ParseTime(bp["Time"]), Diff = bp["Diff"].AsInt})
+                        .Select(bp => new NGUDiffBreakpoint { Time = ParseTime(bp["Time"]), Diff = bp["Diff"].AsInt })
                         .Where(x => x.Diff <= 2).OrderByDescending(x => x.Time).ToArray();
 
                     Main.Log(BuildAllocationString());
@@ -289,13 +290,16 @@ namespace NGUInjector.AllocationProfiles
             if (rb is NoRebirth)
             {
                 builder.AppendLine($"Rebirth Disabled.");
-            }else if (rb is NumberRebirth nrb)
+            }
+            else if (rb is NumberRebirth nrb)
             {
                 builder.AppendLine($"Rebirthing when number bonus is {nrb.MultTarget}x previous number");
-            }else if (rb is TimeRebirth trb)
+            }
+            else if (rb is TimeRebirth trb)
             {
                 builder.AppendLine($"Rebirthing at {trb.RebirthTime} seconds");
-            }else if (rb is BossNumRebirth brb)
+            }
+            else if (rb is BossNumRebirth brb)
             {
                 builder.AppendLine($"Rebirthing when number allows you +{brb.NumBosses} bosses");
             }
@@ -442,115 +446,20 @@ namespace NGUInjector.AllocationProfiles
 
         public void CastBloodSpells()
         {
-            CastBloodSpells(false);
-        }
-
-        public void CastBloodSpells(bool rebirth)
-        {
             if (!Main.Settings.CastBloodSpells)
                 return;
 
             if (_wrapper.Breakpoints.Rebirth is TimeRebirth trb && Main.Settings.AutoRebirth)
             {
-                if (trb.RebirthTime - _character.rebirthTime.totalseconds < 30 * 60 && !rebirth)
+                if (trb.RebirthTime - _character.rebirthTime.totalseconds < 30 * 60)// && !rebirth)
                 {
                     return;
                 }
             }
 
-            float iron = 0;
-            long mcguffA = 0;
-            long mcguffB = 0;
-            if (Main.Settings.BloodMacGuffinBThreshold > 0)
-            {
-                if (_character.adventure.itopod.perkLevel[73] >= 1L &&
-                    _character.settings.rebirthDifficulty >= difficulty.evil)
-                {
-                    if (_character.bloodMagic.macguffin2Time.totalseconds > _character.bloodMagicController.spells.macguffin2Cooldown)
-                    {
-                        if (_character.bloodMagic.bloodPoints >= _character.bloodSpells.minMacguffin2Blood())
-                        {
-                            var a = _character.bloodMagic.bloodPoints / _character.bloodSpells.minMacguffin2Blood();
-                            mcguffB = (int) (Math.Log(a, 20.0) + 1.0);
-                        }
-
-                        if (Main.Settings.BloodMacGuffinBThreshold <= mcguffB)
-                        {
-                            _character.bloodSpells.castMacguffin2Spell();
-                            Main.LogPitSpin("Casting Blood MacGuffin B Spell power @ " + mcguffB);
-                            return;
-                        }
-                        else
-                        {
-                            if (rebirth)
-                            {
-                                Main.Log("Casting Failed Blood MacGuffin B Spell - Insufficient Power " + mcguffB +
-                                         " of " + Main.Settings.BloodMacGuffinBThreshold);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (Main.Settings.BloodMacGuffinAThreshold > 0)
-            {
-                if (_character.adventure.itopod.perkLevel[72] >= 1L)
-                {
-                    if (_character.bloodMagic.macguffin1Time.totalseconds >= _character.bloodMagicController.spells.macguffin1Cooldown)
-                    {
-                        if (_character.bloodMagic.bloodPoints > _character.bloodSpells.minMacguffin1Blood())
-                        {
-                            var a = _character.bloodMagic.bloodPoints / _character.bloodSpells.minMacguffin1Blood();
-                            mcguffA = (int) ((Math.Log(a, 10.0) + 1.0) *
-                                             _character.wishesController.totalBloodGuffbonus());
-                        }
-                        if (Main.Settings.BloodMacGuffinAThreshold <= mcguffA)
-                        {
-                            _character.bloodSpells.castMacguffin1Spell();
-                            Main.LogPitSpin("Casting Blood MacGuffin A Spell power @ " + mcguffA);
-                            return;
-                        }
-                        else
-                        {
-                            if (rebirth)
-                            {
-                                Main.Log("Casting Failed Blood MacGuffin A Spell - Insufficient Power " + mcguffA +
-                                         " of " + Main.Settings.BloodMacGuffinAThreshold);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (Main.Settings.IronPillThreshold > 100)
-            {
-                if (_character.bloodMagic.adventureSpellTime.totalseconds >
-                    _character.bloodSpells.adventureSpellCooldown)
-                {
-                    if (_character.bloodMagic.bloodPoints > _character.bloodSpells.minAdventureBlood())
-                    {
-                        iron = (float) Math.Floor(Math.Pow(_character.bloodMagic.bloodPoints, 0.25));
-                        if (_character.settings.rebirthDifficulty >= difficulty.evil)
-                        {
-                            iron *= _character.adventureController.itopod.ironPillBonus();
-                        }
-                    }
-
-                    if (Main.Settings.IronPillThreshold <= iron)
-                    {
-                        _character.bloodSpells.castAdventurePowerupSpell();
-                        Main.LogPitSpin("Casting Iron Blood Spell power @ " + iron);
-                    }
-                    else
-                    {
-                        if (rebirth)
-                        {
-                            Main.Log("Casting Failed Iron Blood Spell - Insufficient Power " + iron + " of " +
-                                     Main.Settings.IronPillThreshold);
-                        }
-                    }
-                }
-            }
+            BloodMagicManager.CastGuffB(false);
+            BloodMagicManager.CastGuffA(false);
+            BloodMagicManager.CastIronPill(false);
         }
 
         public override void AllocateEnergy()
@@ -696,10 +605,10 @@ namespace NGUInjector.AllocationProfiles
             var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
             if (temp.Count == 0)
                 return;
-            
+
             var prioCount = temp.Count(x => !x.IsCapPrio() && !(x is HackBP)) + (temp.Any(x => x is HackBP && !x.IsCapPrio()) ? 1 : 0);
             _character.removeAllRes3();
-            var toAdd = (long) Math.Ceiling((double) _character.res3.idleRes3 / prioCount);
+            var toAdd = (long)Math.Ceiling((double)_character.res3.idleRes3 / prioCount);
             SetInput(toAdd);
 
             var hackAllocated = false;
@@ -769,10 +678,23 @@ namespace NGUInjector.AllocationProfiles
             if (_hasDiggerSwapped) return;
 
             if (!DiggerManager.CanSwap()) return;
-            _hasDiggerSwapped = true;
-            _currentDiggerBreakpoint = bp;
 
-            DiggerManager.EquipDiggers(bp.Diggers);
+            //Main.LogDebug($"Setting diggers from bp {bp.Time}: {string.Join(",", bp.Diggers.Select(x => x.ToString()))}");
+            
+            _hasDiggerSwapped = DiggerManager.TryEquipDiggers(bp.Diggers);
+            
+            //Main.LogDebug($"Result: {_hasDiggerSwapped}");
+
+            if (_hasDiggerSwapped)
+            {
+                Main.Log($"Equipping Diggers: {string.Join(",", bp.Diggers.Select(x => x.ToString()))}");
+                _currentDiggerBreakpoint = bp;
+            }
+            else
+            {
+                //Main.LogDebug($"Not all configured diggers enabled, retry at next loop...");
+            }
+
             _character.allDiggers.refreshMenu();
         }
 
@@ -787,7 +709,7 @@ namespace NGUInjector.AllocationProfiles
             {
                 _didConsumeConsumables = false;
             }
-            
+
             if (_didConsumeConsumables) return;
             _didConsumeConsumables = true;
             _currentConsumablesBreakpoint = bp;

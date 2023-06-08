@@ -40,6 +40,7 @@ namespace NGUInjector
         private CardManager _cardManager;
         private CookingManager _cookingManager;
         private ConsumablesManager _consumablesManager;
+        private BloodMagicManager _bloodManager;
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
@@ -198,6 +199,7 @@ namespace NGUInjector
                 _cardManager = new CardManager();
                 _cookingManager = new CookingManager();
                 _consumablesManager = new ConsumablesManager();
+                _bloodManager = new BloodMagicManager();
                 LoadoutManager.ReleaseLock();
                 DiggerManager.ReleaseLock();
 
@@ -253,6 +255,9 @@ namespace NGUInjector
                         IronPillThreshold = 10000,
                         BloodMacGuffinAThreshold = 6,
                         BloodMacGuffinBThreshold = 6,
+                        IronPillOnRebirth = false,
+                        BloodMacGuffinAOnRebirth = false,
+                        BloodMacGuffinBOnRebirth = false,
                         CubePriority = 0,
                         CombatEnabled = false,
                         GlobalEnabled = false,

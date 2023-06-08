@@ -379,7 +379,7 @@ namespace NGUInjector.Managers
             //{
             //    var eq = item.equipment;
 
-            //    LogDebug($"{eq.id}:{item.name} (Lv {eq.level});
+            //    LogDebug($"{eq.id}:{item.name} (Lv {eq.level})");
             //    LogDebug($"\tAtk {eq.curAttack}/{Extensions.CalcCap(eq.capAttack, eq.level)}");
             //    LogDebug($"\tDef {eq.curDefense}/{Extensions.CalcCap(eq.capDefense, eq.level)}");
             //    LogDebug($"\tSpec1 {eq.spec1Cur}/{Extensions.CalcCap(eq.spec1Cap, eq.level)} | Spec2 {eq.spec2Cur}/{Extensions.CalcCap(eq.spec2Cap, eq.level)} | Spec3 {eq.spec3Cur}/{Extensions.CalcCap(eq.spec3Cap, eq.level)}");

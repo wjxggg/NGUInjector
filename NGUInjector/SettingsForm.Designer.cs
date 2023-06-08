@@ -224,6 +224,9 @@
             this.balanceMayo = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.IronPillOnRebirth = new System.Windows.Forms.CheckBox();
+            this.GuffAOnRebirth = new System.Windows.Forms.CheckBox();
+            this.GuffBOnRebirth = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -381,6 +384,9 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.GuffBOnRebirth);
+            this.tabPage2.Controls.Add(this.GuffAOnRebirth);
+            this.tabPage2.Controls.Add(this.IronPillOnRebirth);
             this.tabPage2.Controls.Add(this.ProfileEditButton);
             this.tabPage2.Controls.Add(this.CastBloodSpells);
             this.tabPage2.Controls.Add(this.IronPillThreshold);
@@ -1801,6 +1807,27 @@
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
+            // IronPillOnRebirth
+            // 
+            resources.ApplyResources(this.IronPillOnRebirth, "IronPillOnRebirth");
+            this.IronPillOnRebirth.Name = "IronPillOnRebirth";
+            this.IronPillOnRebirth.UseVisualStyleBackColor = true;
+            this.IronPillOnRebirth.CheckedChanged += new System.EventHandler(this.IronPillOnRebirth_CheckedChanged);
+            // 
+            // GuffAOnRebirth
+            // 
+            resources.ApplyResources(this.GuffAOnRebirth, "GuffAOnRebirth");
+            this.GuffAOnRebirth.Name = "GuffAOnRebirth";
+            this.GuffAOnRebirth.UseVisualStyleBackColor = true;
+            this.GuffAOnRebirth.CheckedChanged += new System.EventHandler(this.GuffAOnRebirth_CheckedChanged);
+            // 
+            // GuffBOnRebirth
+            // 
+            resources.ApplyResources(this.GuffBOnRebirth, "GuffBOnRebirth");
+            this.GuffBOnRebirth.Name = "GuffBOnRebirth";
+            this.GuffBOnRebirth.UseVisualStyleBackColor = true;
+            this.GuffBOnRebirth.CheckedChanged += new System.EventHandler(this.GuffBOnRebirth_CheckedChanged);
+            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -2057,5 +2084,8 @@
         private System.Windows.Forms.ListBox DontCastList;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.CheckBox TrashChunkers;
+        private System.Windows.Forms.CheckBox GuffAOnRebirth;
+        private System.Windows.Forms.CheckBox IronPillOnRebirth;
+        private System.Windows.Forms.CheckBox GuffBOnRebirth;
     }
 }
