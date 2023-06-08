@@ -56,6 +56,9 @@ namespace NGUInjector
         [SerializeField] private int _ironPillThreshold;
         [SerializeField] private int _bloodMacGuffinAThreshold;
         [SerializeField] private int _bloodMacGuffinBThreshold;
+        [SerializeField] private bool _ironPillOnRebirth;
+        [SerializeField] private bool _bloodMacGuffinAOnRebirth;
+        [SerializeField] private bool _bloodMacGuffinBOnRebirth;
         [SerializeField] private bool _autoBuyEm;
         [SerializeField] private bool _autoBuyAdventure;
         [SerializeField] private double _bloodNumberThreshold;
@@ -226,6 +229,9 @@ namespace NGUInjector
             _ironPillThreshold = other.IronPillThreshold;
             _bloodMacGuffinAThreshold = other.BloodMacGuffinAThreshold;
             _bloodMacGuffinBThreshold = other.BloodMacGuffinBThreshold;
+            _ironPillOnRebirth = other.IronPillOnRebirth;
+            _bloodMacGuffinAOnRebirth = other.BloodMacGuffinAOnRebirth;
+            _bloodMacGuffinBOnRebirth = other.BloodMacGuffinBOnRebirth;
             _autoBuyEm = other.AutoBuyEM;
             _autoBuyAdventure = other.AutoBuyAdventure;
             _bloodNumberThreshold = other.BloodNumberThreshold;
@@ -752,6 +758,39 @@ namespace NGUInjector
             {
                 if (value == _bloodMacGuffinBThreshold) return;
                 _bloodMacGuffinBThreshold = value;
+                SaveSettings();
+            }
+        }
+
+        public bool IronPillOnRebirth
+        {
+            get => _ironPillOnRebirth;
+            set
+            {
+                if (value == _ironPillOnRebirth) return;
+                _ironPillOnRebirth = value;
+                SaveSettings();
+            }
+        }
+
+        public bool BloodMacGuffinAOnRebirth
+        {
+            get => _bloodMacGuffinAOnRebirth;
+            set
+            {
+                if (value == _bloodMacGuffinAOnRebirth) return;
+                _bloodMacGuffinAOnRebirth = value;
+                SaveSettings();
+            }
+        }
+
+        public bool BloodMacGuffinBOnRebirth
+        {
+            get => _bloodMacGuffinBOnRebirth;
+            set
+            {
+                if (value == _bloodMacGuffinBOnRebirth) return;
+                _bloodMacGuffinBOnRebirth = value;
                 SaveSettings();
             }
         }

@@ -40,6 +40,7 @@ namespace NGUInjector
         private CardManager _cardManager;
         private CookingManager _cookingManager;
         private ConsumablesManager _consumablesManager;
+        private BloodMagicManager _bloodManager;
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
@@ -198,6 +199,7 @@ namespace NGUInjector
                 _cardManager = new CardManager();
                 _cookingManager = new CookingManager();
                 _consumablesManager = new ConsumablesManager();
+                _bloodManager = new BloodMagicManager();
                 LoadoutManager.ReleaseLock();
                 DiggerManager.ReleaseLock();
 
@@ -253,6 +255,9 @@ namespace NGUInjector
                         IronPillThreshold = 10000,
                         BloodMacGuffinAThreshold = 6,
                         BloodMacGuffinBThreshold = 6,
+                        IronPillOnRebirth = false,
+                        BloodMacGuffinAOnRebirth = false,
+                        BloodMacGuffinBOnRebirth = false,
                         CubePriority = 0,
                         CombatEnabled = false,
                         GlobalEnabled = false,
@@ -1170,6 +1175,10 @@ namespace NGUInjector
 
         private void SnipeZone()
         {
+            CombatHelpers.IsCurrentlyGoldSniping = false;
+            CombatHelpers.IsCurrentlyQuesting = false;
+            CombatHelpers.IsCurrentlyAdventuring = false;
+
             if (!Settings.GlobalEnabled)
                 return;
 
@@ -1187,6 +1196,7 @@ namespace NGUInjector
                 if (Character.machine.realBaseGold == 0.0)
                 {
                     _combManager.ManualZone(0, false, false, false, true, false);
+                    CombatHelpers.IsCurrentlyGoldSniping = true;
                     return;
                 }
                 //Go to our gold loadout zone next to get a high gold drop
@@ -1198,16 +1208,15 @@ namespace NGUInjector
                         _furthestZone = ZoneHelpers.GetMaxReachableZone(false);
 
                         _combManager.ManualZone(bestZone.Zone, true, bestZone.FightType == 1, false, bestZone.FightType == 2, false);
+                        CombatHelpers.IsCurrentlyGoldSniping = true;
                         return;
                     }
                 }
             }
 
             var questZone = _questManager.IsQuesting();
-            if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) ||
-                !CombatManager.IsZoneUnlocked(Settings.SnipeZone) ||
-                ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) &&
-                !ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone)))
+            if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone) || !ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) ||
+                (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && !ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
             {
                 if (questZone > 0)
                 {
@@ -1220,6 +1229,7 @@ namespace NGUInjector
                         _combManager.IdleZone(questZone, false, false);
                     }
 
+                    CombatHelpers.IsCurrentlyQuesting = true;
                     return;
                 }
             }
@@ -1254,6 +1264,7 @@ namespace NGUInjector
                     _combManager.IdleZone(tempZone, false, Settings.ITOPODRecoverHP);
                 }
 
+                CombatHelpers.IsCurrentlyAdventuring = true;
                 return;
             }
 
@@ -1265,6 +1276,7 @@ namespace NGUInjector
             {
                 _combManager.IdleZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth);
             }
+            CombatHelpers.IsCurrentlyAdventuring = true;
         }
 
         private void MoveToITOPOD()
@@ -1404,7 +1416,8 @@ namespace NGUInjector
 
         public void ResetBoostProgress()
         {
-
+            Log($"Resetting Boost Average");
+            _invManager.Reset();
         }
     }
 }

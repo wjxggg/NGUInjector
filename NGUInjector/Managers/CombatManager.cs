@@ -19,19 +19,19 @@ namespace NGUInjector.Managers
         private string _enemyName;
         private DateTime move69Cooldown = DateTime.MinValue;
 
-        public enum WalderpCombatMove { Regular, Strong, Piercing, Ultimate }
+        private enum WalderpCombatMove { Regular, Strong, Piercing, Ultimate }
         private int _walderpAttacksTillCommand = 0;
         private WalderpCombatMove? _forcedMove = null;
         private WalderpCombatMove? _bannedMove = null;
 
-        public void SetWalderpForcedMove(WalderpCombatMove? forcedMove)
+        private void SetWalderpForcedMove(WalderpCombatMove? forcedMove)
         {
             _walderpAttacksTillCommand = 5;
             _forcedMove = forcedMove;
             _bannedMove = null;
         }
 
-        public void SetWalderpBannedMove(WalderpCombatMove? bannedMove)
+        private void SetWalderpBannedMove(WalderpCombatMove? bannedMove)
         {
             _walderpAttacksTillCommand = 5;
             _forcedMove = null;
@@ -115,7 +115,7 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (ac.currentEnemy.curHP / ac.currentEnemy.maxHP < .2)
+            if (!ZoneHelpers.ZoneIsTitan(_character.adventure.zone) && ac.currentEnemy.curHP / ac.currentEnemy.maxHP < .2)
             {
                 return false;
             }
@@ -128,7 +128,7 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (GetHPPercentage() < .5)
+            if (GetHPPercentage() < .75)
             {
                 if (CastHeal())
                 {
@@ -136,7 +136,7 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (GetHPPercentage() < .5 && !HealReady())
+            if (GetHPPercentage() < .6 && !HealReady())
             {
                 if (CastHyperRegen())
                 {
@@ -260,21 +260,7 @@ namespace NGUInjector.Managers
             {
                 ParseLogForWalderp();
 
-                if (_walderpAttacksTillCommand <= 1)
-                {
-                    if (_walderpAttacksTillCommand == 1)
-                    {
-                        if (ac.strongAttackMove.button.IsInteractable())
-                        {
-                            ac.strongAttackMove.doMove();
-                        }
-                        else if (ac.regularAttackMove.button.IsInteractable())
-                        {
-                            ac.regularAttackMove.doMove();
-                        }
-                    }
-                    return;
-                }
+                //LogDebug($"Moves left: {_walderpAttacksTillCommand}, Forced:{_forcedMove}, Banned:{_bannedMove}");
 
                 if (_forcedMove.HasValue)
                 {
@@ -310,6 +296,22 @@ namespace NGUInjector.Managers
                             break;
                         default:
                             break;
+                    }
+                    return;
+                }
+
+                if (!_bannedMove.HasValue && _walderpAttacksTillCommand <= 1)
+                {
+                    if (_walderpAttacksTillCommand == 1)
+                    {
+                        if (ac.strongAttackMove.button.IsInteractable())
+                        {
+                            ac.strongAttackMove.doMove();
+                        }
+                        else if (ac.regularAttackMove.button.IsInteractable())
+                        {
+                            ac.regularAttackMove.doMove();
+                        }
                     }
                     return;
                 }
@@ -349,7 +351,6 @@ namespace NGUInjector.Managers
             if (Settings.DoMove69 && Move69Ready() && Move69CooldownReady())
             {
                 Main.PlayerController.move69();
-                _bannedMove = null;
                 move69Cooldown = DateTime.Now;
             }
 
@@ -414,6 +415,10 @@ namespace NGUInjector.Managers
 
                     break;
                 }
+                else
+                {
+                    log[i] = $"{line}<b></b>";
+                }
             }
         }
 
@@ -463,6 +468,7 @@ namespace NGUInjector.Managers
             _forcedMove = null;
             _bannedMove = null;
 
+            CurrentCombatZone = zone;
             _character.adventureController.zoneSelector.changeZone(zone);
         }
 

@@ -301,6 +301,10 @@ namespace NGUInjector
             GuffBThreshold.Value = newSettings.BloodMacGuffinBThreshold;
             YggSwapThreshold.Value = newSettings.YggSwapThreshold;
 
+            IronPillOnRebirth.Checked = newSettings.IronPillOnRebirth;
+            GuffAOnRebirth.Checked = newSettings.BloodMacGuffinAOnRebirth;
+            GuffBOnRebirth.Checked = newSettings.BloodMacGuffinBOnRebirth;
+
             MoreBlockParry.Checked = newSettings.MoreBlockParry;
             WishSortOrder.Checked = newSettings.WishSortOrder;
             WishSortPriorities.Checked = newSettings.WishSortPriorities;
@@ -1265,7 +1269,6 @@ namespace NGUInjector
             if (_initializing) return;
             var temp = Main.Settings.TitanSwapTargets.ToArray();
             temp[(int)e.Item.Tag] = e.Item.Checked;
-            Main.Log($"{(int)e.Item.Tag} - {e.Item.Checked}");
             Main.Settings.TitanSwapTargets = temp;
         }
 
@@ -1362,6 +1365,24 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.CastBloodSpells = CastBloodSpells.Checked;
+        }
+
+        private void IronPillOnRebirth_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.IronPillOnRebirth = IronPillOnRebirth.Checked;
+        }
+
+        private void GuffAOnRebirth_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.BloodMacGuffinAOnRebirth = GuffAOnRebirth.Checked;
+        }
+
+        private void GuffBOnRebirth_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.BloodMacGuffinBOnRebirth = GuffBOnRebirth.Checked;
         }
 
         private void QuestCombatMode_SelectedIndexChanged(object sender, EventArgs e)

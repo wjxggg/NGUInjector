@@ -22,7 +22,7 @@ namespace NGUInjector
         public static ih MaxItem(this IEnumerable<ih> items)
         {
             return items.Aggregate(
-                new { max = int.MinValue, t = (ih)null, b = decimal.MaxValue },
+                new { max = int.MinValue, t = (ih)null, b = float.MaxValue },
                 (state, el) =>
                 {
                     var current = el.locked ? el.level + 101 : el.level;
@@ -100,22 +100,22 @@ namespace NGUInjector
             var n = new BoostsNeeded();
 
             if (eq.capAttack != 0.0)
-                n.Power += CalcCap(eq.capAttack, eq.level) - (decimal)eq.curAttack;
+                n.Power += Math.Max(CalcCap(eq.capAttack, eq.level) - eq.curAttack, 0f);
 
             if (eq.capDefense != 0.0)
-                n.Toughness += CalcCap(eq.capDefense, eq.level) - (decimal)eq.curDefense;
+                n.Toughness += Math.Max(CalcCap(eq.capDefense, eq.level) - eq.curDefense, 0f);
 
             if (Settings.SpecialBoostBlacklist.Contains(eq.id))
                 return n;
 
             if (eq.spec1Type != specType.None)
-                n.Special += CalcCap(eq.spec1Cap, eq.level) - (decimal)eq.spec1Cur;
+                n.Special += Math.Max(CalcCap(eq.spec1Cap, eq.level) - eq.spec1Cur, 0f);
 
             if (eq.spec2Type != specType.None)
-                n.Special += CalcCap(eq.spec2Cap, eq.level) - (decimal)eq.spec2Cur;
+                n.Special += Math.Max(CalcCap(eq.spec2Cap, eq.level) - eq.spec2Cur, 0f);
 
             if (eq.spec3Type != specType.None)
-                n.Special += CalcCap(eq.spec3Cap, eq.level) - (decimal)eq.spec3Cur;
+                n.Special += Math.Max(CalcCap(eq.spec3Cap, eq.level) - eq.spec3Cur, 0f);
 
             return n;
         }
@@ -198,9 +198,9 @@ namespace NGUInjector
             return (float)num;
         }
 
-        private static decimal CalcCap(float cap, float level)
+        internal static float CalcCap(float cap, int level)
         {
-            return (decimal)Mathf.Floor(cap * (float)(1.0 + level / 100.0));
+            return Mathf.Floor(cap * (1f + (float)level / 100f));
         }
 
         internal static void DoAllocations(this CustomAllocation allocation)
