@@ -63,33 +63,33 @@ namespace NGUInjector
 
         internal static void Log(string msg)
         {
-            OutputWriter.WriteLine($"{ DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            OutputWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogLoot(string msg)
         {
-            LootWriter.WriteLine($"{ DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            LootWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogCombat(string msg)
         {
-            CombatWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            CombatWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogPitSpin(string msg)
         {
-            PitSpinWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            PitSpinWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogAllocation(string msg)
         {
             if (!Settings.DebugAllocation) return;
-            AllocationWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            AllocationWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogCard(string msg)
         {
-            CardsWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{ DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
+            CardsWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
         internal static void LogDebug(string msg)
@@ -815,10 +815,36 @@ namespace NGUInjector
                         needsAllocation = true;
 
                     if (bc.character.attack / 5.0 > bc.character.bossDefense && bc.character.defense / 5.0 > bc.character.bossAttack)
+                    {
                         bc.startNuke();
+                    }
                     else
                     {
-                        if (bc.character.attack > (bc.character.bossDefense * 1.4) && bc.character.defense > bc.character.bossAttack * 1.4)
+                        double characterDamage = (bc.character.attack * 0.02) - (bc.character.bossDefense * 0.02);
+                        double bossDamage = (bc.character.bossAttack * 0.02) - (bc.character.defense * 0.02);
+
+                        bool doFight;
+
+                        if (characterDamage <= 0)
+                        {
+                            //Character does no damage - don't fight
+                            doFight = false;
+                        }
+                        else if (bossDamage <= 0)
+                        {
+                            //Boss does no damage - fight
+                            doFight = true;
+                        }
+                        else
+                        {
+                            double characterAttacksToKill = Math.Ceiling(bc.character.bossCurHP / characterDamage);
+                            double bossAttacksToKill = Math.Ceiling(bc.character.curHP / bossDamage);
+
+                            //Boss attack logic executes first, so fight only if the character will kill the boss in fewer attacks than the boss will kill the character
+                            doFight = characterAttacksToKill < bossAttacksToKill;
+                        }
+
+                        if (doFight)
                         {
                             bc.beginFight();
                             bc.stopButton.gameObject.SetActive(true);
