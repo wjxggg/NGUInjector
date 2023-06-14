@@ -375,17 +375,17 @@ namespace NGUInjector.Managers
                 Toughness = _character.inventory.cubeToughness
             };
 
-            //foreach (var item in boostSlots)
-            //{
-            //    var eq = item.equipment;
+            foreach (var item in boostSlots)
+            {
+                //var eq = item.equipment;
 
-            //    LogDebug($"{eq.id}:{item.name} (Lv {eq.level})");
-            //    LogDebug($"\tAtk {eq.curAttack}/{Extensions.CalcCap(eq.capAttack, eq.level)}");
-            //    LogDebug($"\tDef {eq.curDefense}/{Extensions.CalcCap(eq.capDefense, eq.level)}");
-            //    LogDebug($"\tSpec1 {eq.spec1Cur}/{Extensions.CalcCap(eq.spec1Cap, eq.level)} | Spec2 {eq.spec2Cur}/{Extensions.CalcCap(eq.spec2Cap, eq.level)} | Spec3 {eq.spec3Cur}/{Extensions.CalcCap(eq.spec3Cap, eq.level)}");
+                //LogDebug($"{eq.id}:{item.name} (Lv {eq.level})");
+                //LogDebug($"\tAtk {eq.curAttack}/{Extensions.CalcCap(eq.capAttack, eq.level)}");
+                //LogDebug($"\tDef {eq.curDefense}/{Extensions.CalcCap(eq.capDefense, eq.level)}");
+                //LogDebug($"\tSpec1 {eq.spec1Cur}/{Extensions.CalcCap(eq.spec1Cap, eq.level)} | Spec2 {eq.spec2Cur}/{Extensions.CalcCap(eq.spec2Cap, eq.level)} | Spec3 {eq.spec3Cur}/{Extensions.CalcCap(eq.spec3Cap, eq.level)}");
 
-            //    needed.Add(item.equipment.GetNeededBoosts());
-            //}
+                needed.Add(item.equipment.GetNeededBoosts());
+            }
 
             var current = needed.Power + needed.Toughness + needed.Special;
 
