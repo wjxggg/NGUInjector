@@ -334,7 +334,10 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             if (!Main.Settings.CastBloodSpells)
                 return;
 
-            BloodMagicManager.CastGuffB(true);
+            if (Main.Character.bloodMagic.bloodPoints > 0)
+            {
+                BloodMagicManager.CastGuffB(true);
+            }
 
             if (Main.Character.bloodMagic.bloodPoints > 0)
             {

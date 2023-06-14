@@ -69,7 +69,7 @@ namespace NGUInjector.Managers
                             if (Main.Settings.BloodMacGuffinBThreshold <= mcguffB || (rebirth && Main.Settings.BloodMacGuffinBOnRebirth))
                             {
                                 Main.Character.bloodSpells.castMacguffin2Spell();
-                                Main.LogPitSpin("Casting Blood MacGuffin B Spell power @ " + mcguffB);
+                                Main.LogPitSpin("Casting Blood Spell MacGuffin B power @ " + mcguffB);
                                 return;
                             }
                             else
@@ -89,9 +89,9 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (rebirth)
+            if (rebirth && reason != FailureReason.Disabled)
             {
-                string msg = $"Casting Failed Blood MacGuffin B Spell - {GetFailureMessage(reason, minBlood, mcguffB, Main.Settings.BloodMacGuffinBThreshold)}";
+                string msg = $"Casting Failed Blood Spell MacGuffin B - {GetFailureMessage(reason, minBlood, mcguffB, Main.Settings.BloodMacGuffinBThreshold)}";
                 Main.Log(msg);
             }
         }
@@ -121,7 +121,7 @@ namespace NGUInjector.Managers
                             if (Main.Settings.BloodMacGuffinAThreshold <= mcguffA || (rebirth && Main.Settings.BloodMacGuffinBOnRebirth))
                             {
                                 Main.Character.bloodSpells.castMacguffin1Spell();
-                                Main.LogPitSpin("Casting Blood MacGuffin A Spell power @ " + mcguffA);
+                                Main.LogPitSpin("Casting Blood Spell MacGuffin A power @ " + mcguffA);
                                 return;
                             }
                             else
@@ -141,9 +141,9 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (rebirth)
+            if (rebirth && reason != FailureReason.Disabled)
             {
-                string msg = $"Casting Failed Blood MacGuffin A Spell - {GetFailureMessage(reason, minBlood, mcguffA, Main.Settings.BloodMacGuffinAThreshold)}";
+                string msg = $"Casting Failed Blood Spell MacGuffin A - {GetFailureMessage(reason, minBlood, mcguffA, Main.Settings.BloodMacGuffinAThreshold)}";
                 Main.Log(msg);
             }
         }
@@ -174,7 +174,7 @@ namespace NGUInjector.Managers
                         if (Main.Settings.IronPillThreshold <= iron || (rebirth && Main.Settings.IronPillOnRebirth))
                         {
                             Main.Character.bloodSpells.castAdventurePowerupSpell();
-                            Main.LogPitSpin("Casting Iron Blood Spell power @ " + iron);
+                            Main.LogPitSpin("Casting Blood Spell Iron Pill power @ " + iron);
                             return;
                         }
                         else
@@ -193,9 +193,9 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (rebirth)
+            if (rebirth && reason != FailureReason.Disabled)
             {
-                string msg = $"Casting Failed Blood Iron Pill Spell - {GetFailureMessage(reason, minBlood, iron, Main.Settings.IronPillThreshold)}";
+                string msg = $"Casting Failed Blood Spell Iron Pill - {GetFailureMessage(reason, minBlood, iron, Main.Settings.IronPillThreshold)}";
                 Main.Log(msg);
             }
         }
