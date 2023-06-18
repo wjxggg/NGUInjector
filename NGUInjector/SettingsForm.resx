@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="moneyPitError.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="moneyPitThresholdError.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -4621,7 +4621,7 @@
     <value>NoControl</value>
   </data>
   <data name="MoneyPitAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 262</value>
+    <value>286, 263</value>
   </data>
   <data name="MoneyPitAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4675,7 +4675,7 @@
     <value>NoControl</value>
   </data>
   <data name="MoneyPitThresholdSave.Location" type="System.Drawing.Point, System.Drawing">
-    <value>246, 41</value>
+    <value>267, 41</value>
   </data>
   <data name="MoneyPitThresholdSave.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 20</value>
@@ -5319,10 +5319,10 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Injector Settings</value>
   </data>
-  <data name="&gt;&gt;moneyPitError.Name" xml:space="preserve">
-    <value>moneyPitError</value>
+  <data name="&gt;&gt;moneyPitThresholdError.Name" xml:space="preserve">
+    <value>moneyPitThresholdError</value>
   </data>
-  <data name="&gt;&gt;moneyPitError.Type" xml:space="preserve">
+  <data name="&gt;&gt;moneyPitThresholdError.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;yggErrorProvider.Name" xml:space="preserve">
@@ -5367,6 +5367,12 @@
   <data name="&gt;&gt;wishErrorProvider.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;moneyPitErrorProvider.Name" xml:space="preserve">
+    <value>moneyPitErrorProvider</value>
+  </data>
+  <data name="&gt;&gt;moneyPitErrorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
     <value>columnHeader2</value>
   </data>
@@ -5386,24 +5392,27 @@
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="yggErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>146, 17</value>
+    <value>375, 17</value>
   </metadata>
   <metadata name="invPrioErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>290, 17</value>
+    <value>519, 17</value>
   </metadata>
   <metadata name="invBlacklistErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>451, 17</value>
+    <value>680, 17</value>
   </metadata>
   <metadata name="titanErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>622, 17</value>
+    <value>851, 17</value>
   </metadata>
   <metadata name="goldErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>758, 17</value>
+    <value>987, 17</value>
   </metadata>
   <metadata name="numberErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>906, 17</value>
+    <value>1135, 17</value>
   </metadata>
   <metadata name="wishErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1060, 17</value>
+    <value>1289, 17</value>
+  </metadata>
+  <metadata name="moneyPitErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1436, 17</value>
   </metadata>
 </root>
