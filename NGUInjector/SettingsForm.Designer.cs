@@ -84,6 +84,7 @@
             this.ManageMagic = new System.Windows.Forms.CheckBox();
             this.ManageEnergy = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label35 = new System.Windows.Forms.Label();
             this.YggSwapThreshold = new System.Windows.Forms.NumericUpDown();
             this.HarvestSafety = new System.Windows.Forms.CheckBox();
             this.HarvestAllButton = new System.Windows.Forms.Button();
@@ -236,7 +237,6 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label35 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -682,6 +682,11 @@
             resources.ApplyResources(this.tabPage3, "tabPage3");
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label35
+            // 
+            resources.ApplyResources(this.label35, "label35");
+            this.label35.Name = "label35";
             // 
             // YggSwapThreshold
             // 
@@ -1651,7 +1656,7 @@
             0});
             this.WishAddInput.Name = "WishAddInput";
             this.WishAddInput.Value = new decimal(new int[] {
-            40,
+            1,
             0,
             0,
             0});
@@ -1913,11 +1918,6 @@
             // questErrorProvider
             // 
             this.questErrorProvider.ContainerControl = this;
-            // 
-            // label35
-            // 
-            resources.ApplyResources(this.label35, "label35");
-            this.label35.Name = "label35";
             // 
             // SettingsForm
             // 

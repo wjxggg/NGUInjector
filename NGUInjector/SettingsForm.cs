@@ -226,15 +226,14 @@ namespace NGUInjector
             EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
             EnemyBlacklistZone.SelectedIndex = 0;
 
-
-            blacklistLabel.Text = "";
-            yggItemLabel.Text = "";
-            priorityBoostLabel.Text = "";
-            titanLabel.Text = "";
-            GoldItemLabel.Text = "";
-            questItemLabel.Text = "";
-            AddWishLabel.Text = "";
-            MoneyPitLabel.Text = "";
+            //yggItemLabel.Text = "";
+            //priorityBoostLabel.Text = "";
+            //blacklistLabel.Text = "";
+            //titanLabel.Text = "";
+            //GoldItemLabel.Text = "";
+            //questItemLabel.Text = "";
+            //AddWishLabel.Text = "";
+            //MoneyPitLabel.Text = "";
 
             yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
@@ -253,6 +252,15 @@ namespace NGUInjector
             _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
             _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 1, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
             _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
+
+            TryItemBoxTextChanged(_yggControls, out _);
+            TryItemBoxTextChanged(_priorityControls, out _);
+            TryItemBoxTextChanged(_blacklistControls, out _);
+            TryItemBoxTextChanged(_titanControls, out _);
+            TryItemBoxTextChanged(_goldControls, out _);
+            TryItemBoxTextChanged(_questControls, out _);
+            TryItemBoxTextChanged(_wishControls, out _);
+            TryItemBoxTextChanged(_pitControls, out _);
 
             prioUpButton.Text = char.ConvertFromUtf32(8593);
             prioDownButton.Text = char.ConvertFromUtf32(8595);
