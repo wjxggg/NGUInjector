@@ -236,6 +236,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label35 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -665,6 +666,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label35);
             this.tabPage3.Controls.Add(this.YggSwapThreshold);
             this.tabPage3.Controls.Add(this.HarvestSafety);
             this.tabPage3.Controls.Add(this.HarvestAllButton);
@@ -1912,6 +1914,11 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
+            // label35
+            // 
+            resources.ApplyResources(this.label35, "label35");
+            this.label35.Name = "label35";
+            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -2183,5 +2190,6 @@
         private System.Windows.Forms.ListBox questLoadoutBox;
         private System.Windows.Forms.ErrorProvider questErrorProvider;
         private System.Windows.Forms.CheckBox ManageQuestLoadout;
+        private System.Windows.Forms.Label label35;
     }
 }
