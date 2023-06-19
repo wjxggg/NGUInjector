@@ -86,6 +86,7 @@ namespace NGUInjector
         private ItemControlGroup _blacklistControls;
         private ItemControlGroup _titanControls;
         private ItemControlGroup _goldControls;
+        private ItemControlGroup _questControls;
         private ItemControlGroup _wishControls;
         private ItemControlGroup _pitControls;
 
@@ -231,12 +232,16 @@ namespace NGUInjector
             priorityBoostLabel.Text = "";
             titanLabel.Text = "";
             GoldItemLabel.Text = "";
+            questItemLabel.Text = "";
+            AddWishLabel.Text = "";
+            MoneyPitLabel.Text = "";
 
             yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
             blacklistAddItem.TextChanged += blacklistAddItem_TextChanged;
             titanAddItem.TextChanged += titanAddItem_TextChanged;
             GoldItemBox.TextChanged += GoldItemBox_TextChanged;
+            QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
             WishAddInput.TextChanged += WishAddInput_TextChanged;
             MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
 
@@ -245,6 +250,7 @@ namespace NGUInjector
             _blacklistControls = new ItemControlGroup(blacklistBox, blacklistAddItem, invBlacklistErrProvider, blacklistLabel, () => Main.Settings.BoostBlacklist, (settings) => Main.Settings.BoostBlacklist = settings);
             _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
             _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
+            _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
             _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 1, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
             _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
 
@@ -335,6 +341,7 @@ namespace NGUInjector
             AllowFallthrough.Checked = newSettings.AllowZoneFallback;
             QuestCombatMode.SelectedIndex = newSettings.QuestCombatMode;
             ManageQuests.Checked = newSettings.AutoQuest;
+            ManageQuestLoadout.Checked = newSettings.ManageQuestLoadouts;
             AllowMajor.Checked = newSettings.AllowMajorQuests;
             AbandonMinors.Checked = newSettings.AbandonMinors;
             AbandonMinorThreshold.Value = newSettings.MinorAbandonThreshold;
@@ -465,6 +472,19 @@ namespace NGUInjector
             else
             {
                 GoldLoadout.Items.Clear();
+            }
+
+            temp = newSettings.QuestLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
+            if (temp.Count > 0)
+            {
+                questLoadoutBox.DataSource = null;
+                questLoadoutBox.DataSource = new BindingSource(temp, null);
+                questLoadoutBox.ValueMember = "Key";
+                questLoadoutBox.DisplayMember = "Value";
+            }
+            else
+            {
+                questLoadoutBox.Items.Clear();
             }
 
             temp = newSettings.MoneyPitLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
@@ -829,6 +849,12 @@ namespace NGUInjector
             Main.Settings.SwapTitanLoadouts = SwapTitanLoadout.Checked;
         }
 
+        private void ManageQuestLoadout_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageQuestLoadouts = ManageQuestLoadout.Checked;
+        }
+
         private void titanAddItem_TextChanged(object sender, EventArgs e)
         {
             TryItemBoxTextChanged(_titanControls, out _);
@@ -960,6 +986,26 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
+        }
+
+        private void QuestLoadoutBox_TextChanged(object sender, EventArgs e)
+        {
+            TryItemBoxTextChanged(_questControls, out _);
+        }
+
+        private void QuestLoadoutItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _questControls);
+        }
+
+        private void questAddButton_Click(object sender, EventArgs e)
+        {
+            ItemListAdd(_questControls);
+        }
+
+        private void questRemoveButton_Click(object sender, EventArgs e)
+        {
+            ItemListRemove(_questControls);
         }
 
         private void AutoSpellSwap_CheckedChanged(object sender, EventArgs e)

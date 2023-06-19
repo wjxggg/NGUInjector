@@ -175,6 +175,13 @@
             this.GoldLoadoutAdd = new System.Windows.Forms.Button();
             this.GoldLoadout = new System.Windows.Forms.ListBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.ManageQuestLoadout = new System.Windows.Forms.CheckBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.questRemoveButton = new System.Windows.Forms.Button();
+            this.QuestLoadoutItem = new System.Windows.Forms.NumericUpDown();
+            this.questItemLabel = new System.Windows.Forms.Label();
+            this.questAddButton = new System.Windows.Forms.Button();
+            this.questLoadoutBox = new System.Windows.Forms.ListBox();
             this.ButterMinors = new System.Windows.Forms.CheckBox();
             this.ButterMajors = new System.Windows.Forms.CheckBox();
             this.ManualMinor = new System.Windows.Forms.CheckBox();
@@ -228,6 +235,7 @@
             this.balanceMayo = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -258,6 +266,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ResnipeInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoldItemBox)).BeginInit();
             this.tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.QuestLoadoutItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).BeginInit();
             this.tabPage9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.WishAddInput)).BeginInit();
@@ -265,6 +274,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).BeginInit();
             this.tabPage11.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // moneyPitThresholdError
@@ -1415,6 +1425,13 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.ManageQuestLoadout);
+            this.tabPage8.Controls.Add(this.label30);
+            this.tabPage8.Controls.Add(this.questRemoveButton);
+            this.tabPage8.Controls.Add(this.QuestLoadoutItem);
+            this.tabPage8.Controls.Add(this.questItemLabel);
+            this.tabPage8.Controls.Add(this.questAddButton);
+            this.tabPage8.Controls.Add(this.questLoadoutBox);
             this.tabPage8.Controls.Add(this.ButterMinors);
             this.tabPage8.Controls.Add(this.ButterMajors);
             this.tabPage8.Controls.Add(this.ManualMinor);
@@ -1429,6 +1446,62 @@
             resources.ApplyResources(this.tabPage8, "tabPage8");
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // ManageQuestLoadout
+            // 
+            resources.ApplyResources(this.ManageQuestLoadout, "ManageQuestLoadout");
+            this.ManageQuestLoadout.Name = "ManageQuestLoadout";
+            this.ManageQuestLoadout.UseVisualStyleBackColor = true;
+            this.ManageQuestLoadout.CheckedChanged += new System.EventHandler(this.ManageQuestLoadout_CheckedChanged);
+            // 
+            // label30
+            // 
+            resources.ApplyResources(this.label30, "label30");
+            this.label30.Name = "label30";
+            // 
+            // questRemoveButton
+            // 
+            resources.ApplyResources(this.questRemoveButton, "questRemoveButton");
+            this.questRemoveButton.Name = "questRemoveButton";
+            this.questRemoveButton.UseVisualStyleBackColor = true;
+            this.questRemoveButton.Click += new System.EventHandler(this.questRemoveButton_Click);
+            // 
+            // QuestLoadoutItem
+            // 
+            resources.ApplyResources(this.QuestLoadoutItem, "QuestLoadoutItem");
+            this.QuestLoadoutItem.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.QuestLoadoutItem.Name = "QuestLoadoutItem";
+            this.QuestLoadoutItem.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.QuestLoadoutItem.KeyDown += new System.Windows.Forms.KeyEventHandler(this.QuestLoadoutItem_KeyDown);
+            // 
+            // questItemLabel
+            // 
+            resources.ApplyResources(this.questItemLabel, "questItemLabel");
+            this.questItemLabel.Name = "questItemLabel";
+            // 
+            // questAddButton
+            // 
+            resources.ApplyResources(this.questAddButton, "questAddButton");
+            this.questAddButton.Name = "questAddButton";
+            this.questAddButton.UseVisualStyleBackColor = true;
+            this.questAddButton.Click += new System.EventHandler(this.questAddButton_Click);
+            // 
+            // questLoadoutBox
+            // 
+            this.questLoadoutBox.FormattingEnabled = true;
+            this.questLoadoutBox.Items.AddRange(new object[] {
+            resources.GetString("questLoadoutBox.Items"),
+            resources.GetString("questLoadoutBox.Items1")});
+            resources.ApplyResources(this.questLoadoutBox, "questLoadoutBox");
+            this.questLoadoutBox.Name = "questLoadoutBox";
             // 
             // ButterMinors
             // 
@@ -1835,6 +1908,10 @@
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
+            // questErrorProvider
+            // 
+            this.questErrorProvider.ContainerControl = this;
+            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -1883,6 +1960,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.GoldItemBox)).EndInit();
             this.tabPage8.ResumeLayout(false);
             this.tabPage8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.QuestLoadoutItem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).EndInit();
             this.tabPage9.ResumeLayout(false);
             this.tabPage9.PerformLayout();
@@ -1893,6 +1971,7 @@
             this.tabPage11.ResumeLayout(false);
             this.tabPage11.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2096,5 +2175,13 @@
         private System.Windows.Forms.CheckBox GuffAOnRebirth;
         private System.Windows.Forms.CheckBox IronPillOnRebirth;
         private System.Windows.Forms.CheckBox GuffBOnRebirth;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Button questRemoveButton;
+        private System.Windows.Forms.NumericUpDown QuestLoadoutItem;
+        private System.Windows.Forms.Label questItemLabel;
+        private System.Windows.Forms.Button questAddButton;
+        private System.Windows.Forms.ListBox questLoadoutBox;
+        private System.Windows.Forms.ErrorProvider questErrorProvider;
+        private System.Windows.Forms.CheckBox ManageQuestLoadout;
     }
 }
