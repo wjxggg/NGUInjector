@@ -548,7 +548,7 @@ namespace NGUInjector
                 return false;
             }
 
-            var itemName = controls.GetDisplayName(val);
+            var itemName = controls.GetDisplayName(val).Replace("<b><color=blue>[QUEST ITEM]</color></b>", "[QUEST ITEM]");
             bool isValid = true;
 
             if (controls.CheckIsEquipment)
