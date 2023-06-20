@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using NGUInjector.AllocationProfiles;
@@ -16,12 +17,79 @@ namespace NGUInjector
 {
     public partial class SettingsForm : Form
     {
+        private class ItemControlGroup
+        {
+            public ListBox ItemList { get; }
+            public NumericUpDown ItemBox { get; }
+            public ErrorProvider ErrorProvider { get; }
+            public Label ItemLabel { get; }
+
+            public Func<int[]> GetSettings { get; }
+            public Action<int[]> SaveSettings { get; }
+
+            public int MinVal { get; }
+            public int MaxVal { get; }
+
+            public bool CheckIsEquipment { get; }
+            public Func<int, string> GetDisplayName { get; }
+
+
+            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, ErrorProvider errorProvider, Label itemLabel, Func<int[]> getSettings, Action<int[]> saveSettings)
+            {
+                ItemList = itemList;
+                ItemBox = itemBox;
+                ErrorProvider = errorProvider;
+                ItemLabel = itemLabel;
+
+                GetSettings = getSettings;
+                SaveSettings = saveSettings;
+
+                MinVal = 1;
+                MaxVal = Consts.MAX_GEAR_ID;
+
+                CheckIsEquipment = true;
+                GetDisplayName = (id) => Main.Character.itemInfo.itemName[id];
+            }
+            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, ErrorProvider errorProvider, Label itemLabel, Func<int[]> getSettings, Action<int[]> saveSettings, int minVal, int maxVal, bool checkIsEquipment, Func<int, string> getDisplayName)
+                : this(itemList, itemBox, errorProvider, itemLabel, getSettings, saveSettings)
+            {
+                MinVal = minVal;
+                MaxVal = maxVal;
+
+                CheckIsEquipment = checkIsEquipment;
+                GetDisplayName = getDisplayName;
+            }
+
+            public void ClearError()
+            {
+                SetError("");
+            }
+
+            public void SetError(string message)
+            {
+                if (ErrorProvider != null)
+                {
+                    ErrorProvider.SetError(ItemBox, message);
+                }
+            }
+        }
+
         internal readonly Dictionary<int, string> TitanList;
         internal readonly Dictionary<int, string> ZoneList;
         internal readonly Dictionary<int, string> CombatModeList;
         internal readonly Dictionary<int, string> CubePriorityList;
         internal readonly Dictionary<int, string> SpriteEnemyList;
         private bool _initializing = true;
+
+        private ItemControlGroup _yggControls;
+        private ItemControlGroup _priorityControls;
+        private ItemControlGroup _blacklistControls;
+        private ItemControlGroup _titanControls;
+        private ItemControlGroup _goldControls;
+        private ItemControlGroup _questControls;
+        private ItemControlGroup _wishControls;
+        private ItemControlGroup _pitControls;
+
         public SettingsForm()
         {
             InitializeComponent();
@@ -31,7 +99,7 @@ namespace NGUInjector
             {
                 {0, "None"}, {1, "Balanced"}, {2, "Power"}, {3, "Toughness"}
             };
-            CombatModeList = new Dictionary<int, string> {{0, "Manual"}, {1, "Idle"}};
+            CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
             TitanList = new Dictionary<int, string>
             {
                 {0, "None"},
@@ -50,7 +118,7 @@ namespace NGUInjector
                 {13, "Tippi"},
                 {14, "Traitor"},
             };
-            
+
             ZoneList = new Dictionary<int, string>
             {
                 {-1, "Safe Zone: Awakening Site"},
@@ -120,11 +188,11 @@ namespace NGUInjector
             List<string> rarities = Enum.GetNames(typeof(rarity)).ToList();
             rarities.Insert(0, "Don't trash");
             TrashQuality.Items.AddRange(rarities.ToArray());
-            
+
             object[] arr = new object[31];
             for (int i = 0; i < arr.Length; i++) arr[i] = i;
             TrashTier.Items.AddRange(arr);
-            
+
             object[] bonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
             DontCastSelection.Items.AddRange(bonusTypes);
             DontCastSelection.SelectedIndex = 0;
@@ -148,30 +216,51 @@ namespace NGUInjector
             CombatTargetZone.DataSource = new BindingSource(ZoneList, null);
             CombatTargetZone.ValueMember = "Key";
             CombatTargetZone.DisplayMember = "Value";
-            
+
             //Remove ITOPOD for non combat zones
             ZoneList.Remove(1000);
             ZoneList.Remove(-1);
 
             EnemyBlacklistZone.ValueMember = "Key";
             EnemyBlacklistZone.DisplayMember = "Value";
-            EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key) ).ToDictionary(x => x.Key, x=> x.Value), null);
+            EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
             EnemyBlacklistZone.SelectedIndex = 0;
 
+            //yggItemLabel.Text = "";
+            //priorityBoostLabel.Text = "";
+            //blacklistLabel.Text = "";
+            //titanLabel.Text = "";
+            //GoldItemLabel.Text = "";
+            //questItemLabel.Text = "";
+            //AddWishLabel.Text = "";
+            //MoneyPitLabel.Text = "";
 
-            blacklistLabel.Text = "";
-            yggItemLabel.Text = "";
-            priorityBoostLabel.Text = "";
-            titanLabel.Text = "";
-            GoldItemLabel.Text = "";
-
+            yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
             blacklistAddItem.TextChanged += blacklistAddItem_TextChanged;
-            yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             titanAddItem.TextChanged += titanAddItem_TextChanged;
             GoldItemBox.TextChanged += GoldItemBox_TextChanged;
+            QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
             WishAddInput.TextChanged += WishAddInput_TextChanged;
-            MoneyPitInput.TextChanged += MoneyPitLoadout_TextChanged;
+            MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
+
+            _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
+            _priorityControls = new ItemControlGroup(priorityBoostBox, priorityBoostItemAdd, invPrioErrorProvider, priorityBoostLabel, () => Main.Settings.PriorityBoosts, (settings) => Main.Settings.PriorityBoosts = settings);
+            _blacklistControls = new ItemControlGroup(blacklistBox, blacklistAddItem, invBlacklistErrProvider, blacklistLabel, () => Main.Settings.BoostBlacklist, (settings) => Main.Settings.BoostBlacklist = settings);
+            _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
+            _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
+            _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
+            _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 1, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
+            _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
+
+            TryItemBoxTextChanged(_yggControls, out _);
+            TryItemBoxTextChanged(_priorityControls, out _);
+            TryItemBoxTextChanged(_blacklistControls, out _);
+            TryItemBoxTextChanged(_titanControls, out _);
+            TryItemBoxTextChanged(_goldControls, out _);
+            TryItemBoxTextChanged(_questControls, out _);
+            TryItemBoxTextChanged(_wishControls, out _);
+            TryItemBoxTextChanged(_pitControls, out _);
 
             prioUpButton.Text = char.ConvertFromUtf32(8593);
             prioDownButton.Text = char.ConvertFromUtf32(8595);
@@ -231,7 +320,7 @@ namespace NGUInjector
         {
             control.SelectedIndex = setting >= 1000 ? 43 : setting + 1;
         }
-        
+
         internal void UpdateFromSettings(SavedSettings newSettings)
         {
             _initializing = true;
@@ -239,7 +328,7 @@ namespace NGUInjector
             AutoFightBosses.Checked = newSettings.AutoFight;
             AutoITOPOD.Checked = newSettings.AutoQuestITOPOD;
             AutoMoneyPit.Checked = newSettings.AutoMoneyPit;
-            MoneyPitThreshold.Text = $"{newSettings.MoneyPitThreshold:#.##E+00}"; 
+            MoneyPitThreshold.Text = $"{newSettings.MoneyPitThreshold:#.##E+00}";
             ManageEnergy.Checked = newSettings.ManageEnergy;
             ManageMagic.Checked = newSettings.ManageMagic;
             ManageGear.Checked = newSettings.ManageGear;
@@ -260,6 +349,7 @@ namespace NGUInjector
             AllowFallthrough.Checked = newSettings.AllowZoneFallback;
             QuestCombatMode.SelectedIndex = newSettings.QuestCombatMode;
             ManageQuests.Checked = newSettings.AutoQuest;
+            ManageQuestLoadout.Checked = newSettings.ManageQuestLoadouts;
             AllowMajor.Checked = newSettings.AllowMajorQuests;
             AbandonMinors.Checked = newSettings.AbandonMinors;
             AbandonMinorThreshold.Value = newSettings.MinorAbandonThreshold;
@@ -323,7 +413,7 @@ namespace NGUInjector
             if (newSettings.DontCastCardType != null)
             {
                 DontCastList.Items.Clear();
-                DontCastList.Items.AddRange(newSettings.DontCastCardType); 
+                DontCastList.Items.AddRange(newSettings.DontCastCardType);
             }
 
             var temp = newSettings.YggdrasilLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
@@ -338,7 +428,7 @@ namespace NGUInjector
             {
                 yggdrasilLoadoutBox.Items.Clear();
             }
-            
+
 
             temp = newSettings.PriorityBoosts.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
             if (temp.Count > 0)
@@ -352,7 +442,7 @@ namespace NGUInjector
             {
                 priorityBoostBox.Items.Clear();
             }
-            
+
             temp = newSettings.BoostBlacklist.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
             if (temp.Count > 0)
             {
@@ -390,6 +480,19 @@ namespace NGUInjector
             else
             {
                 GoldLoadout.Items.Clear();
+            }
+
+            temp = newSettings.QuestLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
+            if (temp.Count > 0)
+            {
+                questLoadoutBox.DataSource = null;
+                questLoadoutBox.DataSource = new BindingSource(temp, null);
+                questLoadoutBox.ValueMember = "Key";
+                questLoadoutBox.DisplayMember = "Value";
+            }
+            else
+            {
+                questLoadoutBox.Items.Clear();
             }
 
             temp = newSettings.MoneyPitLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
@@ -433,6 +536,122 @@ namespace NGUInjector
 
             Refresh();
             _initializing = false;
+        }
+
+        private bool TryItemBoxTextChanged(ItemControlGroup controls, out int val)
+        {
+            controls.ClearError();
+
+            if (!int.TryParse(controls.ItemBox.Controls[0].Text, out val) || val < controls.MinVal || val > controls.MaxVal)
+            {
+                controls.ItemLabel.Text = "";
+                return false;
+            }
+
+            var itemName = controls.GetDisplayName(val).Replace("<b><color=blue>[QUEST ITEM]</color></b>", "[QUEST ITEM]");
+            bool isValid = true;
+
+            if (controls.CheckIsEquipment)
+            {
+                var itemType = Main.Character.itemInfo.type[val];
+                isValid = itemType == part.Head || itemType == part.Chest || itemType == part.Legs || itemType == part.Boots || itemType == part.Weapon || itemType == part.Accessory;
+                if (!isValid)
+                {
+                    itemName += " (UNEQUIPPABLE)";
+                }
+            }
+            controls.ItemLabel.Text = itemName;
+
+            return isValid;
+        }
+
+        private void ItemBoxKeyDown(KeyEventArgs e, ItemControlGroup controls)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                ItemListAdd(controls);
+            }
+        }
+
+        private void ItemListAdd(ItemControlGroup controls)
+        {
+            controls.ClearError();
+
+            if (!TryItemBoxTextChanged(controls, out int val))
+            {
+                controls.SetError("Invalid item id");
+                return;
+            }
+
+            int[] currentSettings = controls.GetSettings();
+            if (currentSettings.Contains(val))
+            {
+                return;
+            }
+
+            var temp = currentSettings.ToList();
+            temp.Add(val);
+            controls.SaveSettings(temp.ToArray());
+        }
+
+        private void ItemListRemove(ItemControlGroup controls)
+        {
+            controls.ClearError();
+
+            var item = controls.ItemList.SelectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            var id = (KeyValuePair<int, string>)item;
+
+            var temp = controls.GetSettings().ToList();
+            temp.RemoveAll(x => x == id.Key);
+            controls.SaveSettings(temp.ToArray());
+        }
+
+        private void ItemListUp(ItemControlGroup controls)
+        {
+            controls.ClearError();
+
+            var index = controls.ItemList.SelectedIndex;
+            if (index == -1 || index == 0)
+            {
+                return;
+            }
+
+            var temp = controls.GetSettings().ToList();
+            var item = temp[index];
+            temp.RemoveAt(index);
+            temp.Insert(index - 1, item);
+            controls.SaveSettings(temp.ToArray());
+
+            controls.ItemList.SelectedIndex = index - 1;
+        }
+
+        private void ItemListDown(ItemControlGroup controls)
+        {
+            controls.ClearError();
+
+            var index = controls.ItemList.SelectedIndex;
+            if (index == -1)
+            {
+                return;
+            }
+
+            var temp = controls.GetSettings().ToList();
+            if (index == temp.Count - 1)
+            {
+                return;
+            }
+
+            var item = temp[index];
+            temp.RemoveAt(index);
+            temp.Insert(index + 1, item);
+            controls.SaveSettings(temp.ToArray());
+
+            controls.ItemList.SelectedIndex = index + 1;
         }
 
         internal void UpdateProfileList(string[] profileList, string selectedProfile)
@@ -486,20 +705,20 @@ namespace NGUInjector
             {
                 if (saved < 0)
                 {
-                    moneyPitError.SetError(MoneyPitThreshold, "Not a valid value");
+                    moneyPitThresholdError.SetError(MoneyPitThreshold, "Not a valid value");
                     return;
                 }
                 Main.Settings.MoneyPitThreshold = saved;
             }
             else
             {
-                moneyPitError.SetError(MoneyPitThreshold, "Not a valid value");
+                moneyPitThresholdError.SetError(MoneyPitThreshold, "Not a valid value");
             }
         }
 
-        private void MoneyPitThreshold_TextChanged_1(object sender, EventArgs e)
+        private void MoneyPitThreshold_TextChanged(object sender, EventArgs e)
         {
-            moneyPitError.SetError(MoneyPitThreshold, "");
+            moneyPitThresholdError.SetError(MoneyPitThreshold, "");
         }
 
         private void ManageEnergy_CheckedChanged(object sender, EventArgs e)
@@ -552,43 +771,22 @@ namespace NGUInjector
 
         private void yggLoadoutItem_TextChanged(object sender, EventArgs e)
         {
-            yggErrorProvider.SetError(yggLoadoutItem, "");
-            var val = decimal.ToInt32(yggLoadoutItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            yggItemLabel.Text = itemName;
+            TryItemBoxTextChanged(_yggControls, out _);
+        }
+
+        private void yggLoadoutItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _yggControls);
         }
 
         private void yggAddButton_Click(object sender, EventArgs e)
         {
-            yggErrorProvider.SetError(yggLoadoutItem, "");
-            var val = decimal.ToInt32(yggLoadoutItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                yggErrorProvider.SetError(yggLoadoutItem, "Not a valid item id");
-                return;
-            }
-
-            if (Main.Settings.YggdrasilLoadout.Contains(val))
-                return;
-            var temp = Main.Settings.YggdrasilLoadout.ToList();
-            temp.Add(val);
-            Main.Settings.YggdrasilLoadout = temp.ToArray();
+            ItemListAdd(_yggControls);
         }
 
         private void yggRemoveButton_Click(object sender, EventArgs e)
         {
-            yggErrorProvider.SetError(yggLoadoutItem, "");
-            var item= yggdrasilLoadoutBox.SelectedItem;
-            if (item == null)
-                return;
-
-            var id = (KeyValuePair<int, string>)item;
-
-            var temp = Main.Settings.YggdrasilLoadout.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.YggdrasilLoadout = temp.ToArray();
+            ItemListRemove(_yggControls);
         }
 
         private void ManageInventory_CheckedChanged(object sender, EventArgs e)
@@ -603,97 +801,54 @@ namespace NGUInjector
             Main.Settings.AutoConvertBoosts = ManageBoostConvert.Checked;
         }
 
+        private void priorityBoostItemAdd_TextChanged(object sender, EventArgs e)
+        {
+            TryItemBoxTextChanged(_priorityControls, out _);
+        }
+
+        private void priorityBoostItemAdd_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _priorityControls);
+        }
+
         private void priorityBoostAdd_Click(object sender, EventArgs e)
         {
-            invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-            var val = decimal.ToInt32(priorityBoostItemAdd.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                invPrioErrorProvider.SetError(priorityBoostItemAdd, "Not a valid item id");
-                return;
-            }
-
-            if (Main.Settings.PriorityBoosts.Contains(val)) return;
-            var temp = Main.Settings.PriorityBoosts.ToList();
-            temp.Add(val);
-            Main.Settings.PriorityBoosts = temp.ToArray();
+            ItemListAdd(_priorityControls);
         }
 
         private void priorityBoostRemove_Click(object sender, EventArgs e)
         {
-            invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-            var item = priorityBoostBox.SelectedItem;
-            if (item == null)
-                return;
-
-            var id = (KeyValuePair<int, string>)item;
-
-            var temp = Main.Settings.PriorityBoosts.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.PriorityBoosts = temp.ToArray();
+            ItemListRemove(_priorityControls);
         }
 
         private void prioUpButton_Click(object sender, EventArgs e)
         {
-            invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-            var index = priorityBoostBox.SelectedIndex;
-            if (index == -1 || index == 0)
-                return;
-
-            var temp = Main.Settings.PriorityBoosts.ToList();
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index - 1, item);
-            Main.Settings.PriorityBoosts = temp.ToArray();
-            priorityBoostBox.SelectedIndex = index - 1;
+            ItemListUp(_priorityControls);
         }
 
         private void prioDownButton_Click(object sender, EventArgs e)
         {
-            invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-            var index = priorityBoostBox.SelectedIndex;
-            if (index == -1)
-                return;
+            ItemListDown(_priorityControls);
+        }
 
-            var temp = Main.Settings.PriorityBoosts.ToList();
-            if (index == temp.Count - 1)
-                return;
+        private void blacklistAddItem_TextChanged(object sender, EventArgs e)
+        {
+            TryItemBoxTextChanged(_blacklistControls, out _);
+        }
 
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index + 1, item);
-            Main.Settings.PriorityBoosts = temp.ToArray();
-            priorityBoostBox.SelectedIndex = index + 1;
+        private void blacklistAddItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _blacklistControls);
         }
 
         private void blacklistAdd_Click(object sender, EventArgs e)
         {
-            invBlacklistErrProvider.SetError(blacklistAddItem, "");
-            var val = decimal.ToInt32(blacklistAddItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                invBlacklistErrProvider.SetError(blacklistAddItem, "Not a valid item id");
-                return;
-            }
-
-            if (Main.Settings.BoostBlacklist.Contains(val)) return;
-            var temp = Main.Settings.BoostBlacklist.ToList();
-            temp.Add(val);
-            Main.Settings.BoostBlacklist = temp.ToArray();
+            ItemListAdd(_blacklistControls);
         }
 
         private void blacklistRemove_Click(object sender, EventArgs e)
         {
-            invBlacklistErrProvider.SetError(blacklistAddItem, "");
-            var item = blacklistBox.SelectedItem;
-            if (item == null)
-                return;
-
-            var id = (KeyValuePair<int, string>)item;
-
-            var temp = Main.Settings.BoostBlacklist.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.BoostBlacklist = temp.ToArray();
+            ItemListRemove(_blacklistControls);
         }
 
         private void SwapTitanLoadout_CheckedChanged(object sender, EventArgs e)
@@ -702,44 +857,30 @@ namespace NGUInjector
             Main.Settings.SwapTitanLoadouts = SwapTitanLoadout.Checked;
         }
 
+        private void ManageQuestLoadout_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageQuestLoadouts = ManageQuestLoadout.Checked;
+        }
+
         private void titanAddItem_TextChanged(object sender, EventArgs e)
         {
-            titanErrProvider.SetError(titanAddItem, "");
-            var val = decimal.ToInt32(titanAddItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            titanLabel.Text = itemName;
+            TryItemBoxTextChanged(_titanControls, out _);
+        }
+
+        private void titanAddItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _titanControls);
         }
 
         private void titanAdd_Click(object sender, EventArgs e)
         {
-            titanErrProvider.SetError(titanAddItem, "");
-            var val = decimal.ToInt32(titanAddItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                invBlacklistErrProvider.SetError(titanAddItem, "Not a valid item id");
-                return;
-            }
-
-            if (Main.Settings.TitanLoadout.Contains(val)) return;
-            var temp = Main.Settings.TitanLoadout.ToList();
-            temp.Add(val);
-            Main.Settings.TitanLoadout = temp.ToArray();
+            ItemListAdd(_titanControls);
         }
 
         private void titanRemove_Click(object sender, EventArgs e)
         {
-            titanErrProvider.SetError(titanAddItem, "");
-            var selectedItem = titanLoadout.SelectedItem;
-            if (selectedItem == null)
-                return;
-
-            var item = (KeyValuePair<int, string>)selectedItem;
-
-            var temp = Main.Settings.TitanLoadout.ToList();
-            temp.RemoveAll(x => x == item.Key);
-            Main.Settings.TitanLoadout = temp.ToArray();
+            ItemListRemove(_titanControls);
         }
 
         private void CombatActive_CheckedChanged(object sender, EventArgs e)
@@ -783,7 +924,7 @@ namespace NGUInjector
         {
             if (_initializing) return;
             var selected = CombatTargetZone.SelectedItem;
-            var item = (KeyValuePair<int, string>) selected;
+            var item = (KeyValuePair<int, string>)selected;
             Main.Settings.SnipeZone = item.Key;
         }
 
@@ -801,42 +942,22 @@ namespace NGUInjector
 
         private void GoldItemBox_TextChanged(object sender, EventArgs e)
         {
-            goldErrorProvider.SetError(GoldItemBox, "");
-            var val = decimal.ToInt32(GoldItemBox.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            GoldItemLabel.Text = itemName;
+            TryItemBoxTextChanged(_goldControls, out _);
+        }
+
+        private void GoldItemBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _goldControls);
         }
 
         private void GoldLoadoutAdd_Click(object sender, EventArgs e)
         {
-            goldErrorProvider.SetError(GoldItemBox, "");
-            var val = decimal.ToInt32(GoldItemBox.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                goldErrorProvider.SetError(GoldItemBox, "Invalid item id");
-                return;
-            }
-
-            if (Main.Settings.GoldDropLoadout.Contains(val)) return;
-            var temp = Main.Settings.GoldDropLoadout.ToList();
-            temp.Add(val);
-            Main.Settings.GoldDropLoadout = temp.ToArray();
+            ItemListAdd(_goldControls);
         }
 
         private void GoldLoadoutRemove_Click(object sender, EventArgs e)
         {
-            goldErrorProvider.SetError(GoldItemBox, "");
-            var selected = GoldLoadout.SelectedItem;
-            if (selected == null)
-                return;
-
-            var id = (KeyValuePair<int, string>)selected;
-
-            var temp = Main.Settings.GoldDropLoadout.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.GoldDropLoadout = temp.ToArray();
+            ItemListRemove(_goldControls);
         }
 
         private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -875,135 +996,24 @@ namespace NGUInjector
             Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
         }
 
-        private void priorityBoostItemAdd_TextChanged(object sender, EventArgs e)
+        private void QuestLoadoutBox_TextChanged(object sender, EventArgs e)
         {
-            invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-            var val = decimal.ToInt32(priorityBoostItemAdd.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            priorityBoostLabel.Text = itemName;
+            TryItemBoxTextChanged(_questControls, out _);
         }
 
-        private void priorityBoostItemAdd_KeyDown(object sender, KeyEventArgs e)
+        private void QuestLoadoutItem_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                invPrioErrorProvider.SetError(priorityBoostItemAdd, "");
-                var val = decimal.ToInt32(priorityBoostItemAdd.Value);
-                if (val < 40 || val > Consts.MAX_GEAR_ID)
-                {
-                    invPrioErrorProvider.SetError(priorityBoostItemAdd, "Not a valid item id");
-                    return;
-                }
-
-                ActiveControl = priorityBoostLabel;
-
-                if (Main.Settings.PriorityBoosts.Contains(val))
-                    return;
-                var temp = Main.Settings.PriorityBoosts.ToList();
-                temp.Add(val);
-                Main.Settings.PriorityBoosts = temp.ToArray();
-            }
+            ItemBoxKeyDown(e, _questControls);
         }
 
-        private void blacklistAddItem_KeyDown(object sender, KeyEventArgs e)
+        private void questAddButton_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                invBlacklistErrProvider.SetError(blacklistAddItem, "");
-                var val = decimal.ToInt32(blacklistAddItem.Value);
-                if (val < 40 || val > Consts.MAX_GEAR_ID)
-                {
-                    invBlacklistErrProvider.SetError(blacklistAddItem, "Not a valid item id");
-                    return;
-                }
-
-                ActiveControl = blacklistLabel;
-
-                if (Main.Settings.BoostBlacklist.Contains(val))
-                    return;
-                var temp = Main.Settings.BoostBlacklist.ToList();
-                temp.Add(val);
-                Main.Settings.BoostBlacklist = temp.ToArray();
-            }
+            ItemListAdd(_questControls);
         }
 
-        private void blacklistAddItem_TextChanged(object sender, EventArgs e)
+        private void questRemoveButton_Click(object sender, EventArgs e)
         {
-            invBlacklistErrProvider.SetError(blacklistAddItem, "");
-            var val = decimal.ToInt32(blacklistAddItem.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            blacklistLabel.Text = itemName;
-        }
-
-        private void yggLoadoutItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                yggErrorProvider.SetError(yggLoadoutItem, "");
-                var val = decimal.ToInt32(yggLoadoutItem.Value);
-                if (val < 40 || val > Consts.MAX_GEAR_ID)
-                {
-                    yggErrorProvider.SetError(yggLoadoutItem, "Not a valid item id");
-                    return;
-                }
-
-                ActiveControl = yggItemLabel;
-
-                if (Main.Settings.YggdrasilLoadout.Contains(val))
-                    return;
-                var temp = Main.Settings.YggdrasilLoadout.ToList();
-                temp.Add(val);
-                Main.Settings.YggdrasilLoadout = temp.ToArray();
-            }
-            
-        }
-
-        private void titanAddItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                titanErrProvider.SetError(titanAddItem, "");
-                var val = decimal.ToInt32(titanAddItem.Value);
-                if (val < 40 || val > Consts.MAX_GEAR_ID)
-                {
-                    invBlacklistErrProvider.SetError(titanAddItem, "Not a valid item id");
-                    return;
-                }
-
-                ActiveControl = titanLabel;
-
-                if (Main.Settings.TitanLoadout.Contains(val))
-                    return;
-                var temp = Main.Settings.TitanLoadout.ToList();
-                temp.Add(val);
-                Main.Settings.TitanLoadout = temp.ToArray();
-            }
-        }
-
-        private void GoldItemBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                goldErrorProvider.SetError(GoldItemBox, "");
-                var val = decimal.ToInt32(GoldItemBox.Value);
-                if (val < 40 || val > Consts.MAX_GEAR_ID)
-                {
-                    goldErrorProvider.SetError(GoldItemBox, "Invalid item id");
-                    return;
-                }
-
-                ActiveControl = GoldItemLabel;
-
-                if (Main.Settings.GoldDropLoadout.Contains(val))
-                    return;
-                var temp = Main.Settings.GoldDropLoadout.ToList();
-                temp.Add(val);
-                Main.Settings.GoldDropLoadout = temp.ToArray();
-            }
+            ItemListRemove(_questControls);
         }
 
         private void AutoSpellSwap_CheckedChanged(object sender, EventArgs e)
@@ -1083,97 +1093,34 @@ namespace NGUInjector
             Main.Settings.ActivateFruits = ActivateFruits.Checked;
         }
 
-        private void WishUpButton_Click(object sender, EventArgs e)
-        {
-            wishErrorProvider.SetError(WishAddInput, "");
-            var index = WishPriority.SelectedIndex;
-            if (index == -1 || index == 0)
-                return;
-
-            var temp = Main.Settings.WishPriorities.ToList();
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index -1, item);
-            Main.Settings.WishPriorities = temp.ToArray();
-            WishPriority.SelectedIndex = index - 1;
-        }
-
-        private void WishDownButton_Click(object sender, EventArgs e)
-        {
-            wishErrorProvider.SetError(WishAddInput, "");
-            var index = WishPriority.SelectedIndex;
-            if (index == -1)
-                return;
-
-            var temp = Main.Settings.WishPriorities.ToList();
-
-            if (index == temp.Count - 1)
-                return;
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index + 1, item);
-            Main.Settings.WishPriorities = temp.ToArray();
-            WishPriority.SelectedIndex = index + 1;
-        }
-
-        private void AddWishButton_Click(object sender, EventArgs e)
-        {
-            wishErrorProvider.SetError(WishAddInput, "");
-            var val = decimal.ToInt32(WishAddInput.Value);
-            if (val < 0 || val > Consts.MAX_WISH_ID)
-            {
-                wishErrorProvider.SetError(WishAddInput, "Not a valid Wish ID");
-                return;
-            }
-
-            if (Main.Settings.WishPriorities.Contains(val)) return;
-            var temp = Main.Settings.WishPriorities.ToList();
-            temp.Add(val);
-            Main.Settings.WishPriorities = temp.ToArray();
-        }
-
-        private void RemoveWishButton_Click(object sender, EventArgs e)
-        {
-            wishErrorProvider.SetError(WishAddInput, "");
-
-            var item = WishPriority.SelectedItem;
-            if (item == null)
-                return;
-
-            var id = (KeyValuePair<int, string>)item;
-
-            var temp = Main.Settings.WishPriorities.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.WishPriorities = temp.ToArray();
-        }
-
         private void WishAddInput_TextChanged(object sender, EventArgs e)
         {
-            wishErrorProvider.SetError(WishAddInput, "");
-            var val = decimal.ToInt32(WishAddInput.Value);
-            if (val < 0 || val > Consts.MAX_WISH_ID)
-                return;
-            var wishName = Main.Character.wishesController.properties[val].wishName;
-            AddWishLabel.Text = wishName;
+            TryItemBoxTextChanged(_wishControls, out _);
         }
 
         private void WishAddInput_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                wishErrorProvider.SetError(WishAddInput, "");
-                var val = decimal.ToInt32(WishAddInput.Value);
-                if (val < 0 || val > Consts.MAX_WISH_ID)
-                {
-                    wishErrorProvider.SetError(WishAddInput, "Not a valid Wish ID");
-                    return;
-                }
+            ItemBoxKeyDown(e, _wishControls);
+        }
 
-                if (Main.Settings.WishPriorities.Contains(val)) return;
-                var temp = Main.Settings.WishPriorities.ToList();
-                temp.Add(val);
-                Main.Settings.WishPriorities = temp.ToArray();
-            }
+        private void AddWishButton_Click(object sender, EventArgs e)
+        {
+            ItemListAdd(_wishControls);
+        }
+
+        private void RemoveWishButton_Click(object sender, EventArgs e)
+        {
+            ItemListRemove(_wishControls);
+        }
+
+        private void WishUpButton_Click(object sender, EventArgs e)
+        {
+            ItemListUp(_wishControls);
+        }
+
+        private void WishDownButton_Click(object sender, EventArgs e)
+        {
+            ItemListDown(_wishControls);
         }
 
         private void BeastMode_CheckedChanged(object sender, EventArgs e)
@@ -1318,41 +1265,24 @@ namespace NGUInjector
             Main.Settings.DisableOverlay = DisableOverlay.Checked;
         }
 
-        private void MoneyPitRemove_Click(object sender, EventArgs e)
+        private void MoneyPitInput_TextChanged(object sender, EventArgs e)
         {
-            var item = MoneyPitLoadout.SelectedItem;
-            if (item == null)
-                return;
+            TryItemBoxTextChanged(_pitControls, out _);
+        }
 
-            var id = (KeyValuePair<int, string>)item;
-
-            var temp = Main.Settings.MoneyPitLoadout.ToList();
-            temp.RemoveAll(x => x == id.Key);
-            Main.Settings.MoneyPitLoadout = temp.ToArray();
+        private void MoneyPitInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _pitControls);
         }
 
         private void MoneyPitAdd_Click(object sender, EventArgs e)
         {
-            var val = decimal.ToInt32(MoneyPitInput.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-            {
-                return;
-            }
-
-            if (Main.Settings.MoneyPitLoadout.Contains(val))
-                return;
-            var temp = Main.Settings.MoneyPitLoadout.ToList();
-            temp.Add(val);
-            Main.Settings.MoneyPitLoadout = temp.ToArray();
+            ItemListAdd(_pitControls);
         }
 
-        private void MoneyPitLoadout_TextChanged(object sender, EventArgs e)
+        private void MoneyPitRemove_Click(object sender, EventArgs e)
         {
-            var val = decimal.ToInt32(MoneyPitInput.Value);
-            if (val < 40 || val > Consts.MAX_GEAR_ID)
-                return;
-            var itemName = Main.Character.itemInfo.itemName[val];
-            MoneyPitLabel.Text = itemName;
+            ItemListRemove(_pitControls);
         }
 
         private void UpgradeDiggers_CheckedChanged(object sender, EventArgs e)
@@ -1406,7 +1336,7 @@ namespace NGUInjector
         private void EnemyBlacklistZone_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selected = EnemyBlacklistZone.SelectedItem;
-            var item = (KeyValuePair<int, string>) selected;
+            var item = (KeyValuePair<int, string>)selected;
             var values = Main.Character.adventureController.enemyList[item.Key]
                 .Select(x => new KeyValuePair<int, string>(x.spriteID, x.name)).ToList();
             EnemyBlacklistNames.DataSource = null;
@@ -1495,7 +1425,7 @@ namespace NGUInjector
 
         private void DontCastAdd_Click(object sender, EventArgs e)
         {
-            if(DontCastSelection.SelectedItem != null && !DontCastList.Items.Contains(DontCastSelection.SelectedItem))
+            if (DontCastSelection.SelectedItem != null && !DontCastList.Items.Contains(DontCastSelection.SelectedItem))
             {
                 DontCastList.Items.Add(DontCastSelection.SelectedItem);
                 Main.Settings.DontCastCardType = DontCastList.Items.Cast<string>().ToArray();
@@ -1504,7 +1434,7 @@ namespace NGUInjector
 
         private void DontCastRemove_Click(object sender, EventArgs e)
         {
-            if(DontCastList.SelectedItem != null)
+            if (DontCastList.SelectedItem != null)
             {
                 DontCastList.Items.RemoveAt(DontCastList.SelectedIndex);
                 Main.Settings.DontCastCardType = DontCastList.Items.Cast<string>().ToArray();

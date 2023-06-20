@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="moneyPitError.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="moneyPitThresholdError.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -1347,6 +1347,33 @@
   <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="label35.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label35.Location" type="System.Drawing.Point, System.Drawing">
+    <value>313, 10</value>
+  </data>
+  <data name="label35.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 13</value>
+  </data>
+  <data name="label35.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="label35.Text" xml:space="preserve">
+    <value>Minimum Fruit Level for Swap</value>
+  </data>
+  <data name="&gt;&gt;label35.Name" xml:space="preserve">
+    <value>label35</value>
+  </data>
+  <data name="&gt;&gt;label35.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label35.Parent" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;label35.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="YggSwapThreshold.Location" type="System.Drawing.Point, System.Drawing">
     <value>316, 29</value>
   </data>
@@ -1366,7 +1393,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;YggSwapThreshold.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="HarvestSafety.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1393,7 +1420,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;HarvestSafety.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="HarvestAllButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1423,7 +1450,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;HarvestAllButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="ActivateFruits.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1453,7 +1480,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;ActivateFruits.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1486,7 +1513,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="yggRemoveButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1516,7 +1543,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;yggRemoveButton.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="yggLoadoutItem.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 252</value>
@@ -1537,7 +1564,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;yggLoadoutItem.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="yggItemLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1567,7 +1594,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;yggItemLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="yggAddButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -1594,7 +1621,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;yggAddButton.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="yggdrasilLoadoutBox.Items" xml:space="preserve">
     <value>test</value>
@@ -1621,7 +1648,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;yggdrasilLoadoutBox.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="YggdrasilSwap.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1651,7 +1678,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;YggdrasilSwap.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="ManageYggdrasil.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1681,7 +1708,7 @@
     <value>tabPage3</value>
   </data>
   <data name="&gt;&gt;ManageYggdrasil.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -3849,6 +3876,204 @@
   <data name="&gt;&gt;tabPage7.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <data name="ManageQuestLoadout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ManageQuestLoadout.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ManageQuestLoadout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 8</value>
+  </data>
+  <data name="ManageQuestLoadout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 17</value>
+  </data>
+  <data name="ManageQuestLoadout.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="ManageQuestLoadout.Text" xml:space="preserve">
+    <value>Swap Loadout for Quests</value>
+  </data>
+  <data name="&gt;&gt;ManageQuestLoadout.Name" xml:space="preserve">
+    <value>ManageQuestLoadout</value>
+  </data>
+  <data name="&gt;&gt;ManageQuestLoadout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ManageQuestLoadout.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;ManageQuestLoadout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label30.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label30.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="label30.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label30.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 79</value>
+  </data>
+  <data name="label30.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 16</value>
+  </data>
+  <data name="label30.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="label30.Text" xml:space="preserve">
+    <value>Loadout</value>
+  </data>
+  <data name="&gt;&gt;label30.Name" xml:space="preserve">
+    <value>label30</value>
+  </data>
+  <data name="&gt;&gt;label30.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label30.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;label30.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="questRemoveButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="questRemoveButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="questRemoveButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>210, 171</value>
+  </data>
+  <data name="questRemoveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>80, 23</value>
+  </data>
+  <data name="questRemoveButton.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="questRemoveButton.Text" xml:space="preserve">
+    <value>Remove Item</value>
+  </data>
+  <data name="&gt;&gt;questRemoveButton.Name" xml:space="preserve">
+    <value>questRemoveButton</value>
+  </data>
+  <data name="&gt;&gt;questRemoveButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;questRemoveButton.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;questRemoveButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="QuestLoadoutItem.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 274</value>
+  </data>
+  <data name="QuestLoadoutItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 20</value>
+  </data>
+  <data name="QuestLoadoutItem.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="&gt;&gt;QuestLoadoutItem.Name" xml:space="preserve">
+    <value>QuestLoadoutItem</value>
+  </data>
+  <data name="&gt;&gt;QuestLoadoutItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;QuestLoadoutItem.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;QuestLoadoutItem.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="questItemLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="questItemLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="questItemLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 297</value>
+  </data>
+  <data name="questItemLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="questItemLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="questItemLabel.Text" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="&gt;&gt;questItemLabel.Name" xml:space="preserve">
+    <value>questItemLabel</value>
+  </data>
+  <data name="&gt;&gt;questItemLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;questItemLabel.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;questItemLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="questAddButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="questAddButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>210, 274</value>
+  </data>
+  <data name="questAddButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 20</value>
+  </data>
+  <data name="questAddButton.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="questAddButton.Text" xml:space="preserve">
+    <value>Add Item</value>
+  </data>
+  <data name="&gt;&gt;questAddButton.Name" xml:space="preserve">
+    <value>questAddButton</value>
+  </data>
+  <data name="&gt;&gt;questAddButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;questAddButton.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;questAddButton.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="questLoadoutBox.Items" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="questLoadoutBox.Items1" xml:space="preserve">
+    <value>test2</value>
+  </data>
+  <data name="questLoadoutBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 107</value>
+  </data>
+  <data name="questLoadoutBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>174, 160</value>
+  </data>
+  <data name="questLoadoutBox.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="&gt;&gt;questLoadoutBox.Name" xml:space="preserve">
+    <value>questLoadoutBox</value>
+  </data>
+  <data name="&gt;&gt;questLoadoutBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;questLoadoutBox.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;questLoadoutBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
   <data name="ButterMinors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -3856,7 +4081,7 @@
     <value>NoControl</value>
   </data>
   <data name="ButterMinors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 54</value>
+    <value>361, 31</value>
   </data>
   <data name="ButterMinors.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 17</value>
@@ -3877,7 +4102,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ButterMinors.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>7</value>
   </data>
   <data name="ButterMajors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3886,7 +4111,7 @@
     <value>NoControl</value>
   </data>
   <data name="ButterMajors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 54</value>
+    <value>230, 31</value>
   </data>
   <data name="ButterMajors.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 17</value>
@@ -3907,7 +4132,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ButterMajors.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>8</value>
   </data>
   <data name="ManualMinor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3916,7 +4141,7 @@
     <value>NoControl</value>
   </data>
   <data name="ManualMinor.Location" type="System.Drawing.Point, System.Drawing">
-    <value>271, 31</value>
+    <value>129, 31</value>
   </data>
   <data name="ManualMinor.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 17</value>
@@ -3937,7 +4162,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ManualMinor.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>9</value>
   </data>
   <data name="QuestFastCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3946,7 +4171,7 @@
     <value>NoControl</value>
   </data>
   <data name="QuestFastCombat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>328, 134</value>
+    <value>230, 58</value>
   </data>
   <data name="QuestFastCombat.Size" type="System.Drawing.Size, System.Drawing">
     <value>85, 17</value>
@@ -3967,7 +4192,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;QuestFastCombat.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>10</value>
   </data>
   <data name="AbandonMinors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3976,16 +4201,16 @@
     <value>NoControl</value>
   </data>
   <data name="AbandonMinors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 31</value>
+    <value>361, 54</value>
   </data>
   <data name="AbandonMinors.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 17</value>
+    <value>178, 17</value>
   </data>
   <data name="AbandonMinors.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
   <data name="AbandonMinors.Text" xml:space="preserve">
-    <value>Abandon Minor Quests</value>
+    <value>Abandon Minor Quests for Major</value>
   </data>
   <data name="&gt;&gt;AbandonMinors.Name" xml:space="preserve">
     <value>AbandonMinors</value>
@@ -3997,13 +4222,13 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AbandonMinors.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>11</value>
   </data>
   <data name="AbandonMinorThreshold.Location" type="System.Drawing.Point, System.Drawing">
-    <value>201, 99</value>
+    <value>541, 80</value>
   </data>
   <data name="AbandonMinorThreshold.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 20</value>
+    <value>63, 20</value>
   </data>
   <data name="AbandonMinorThreshold.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -4018,7 +4243,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AbandonMinorThreshold.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>12</value>
   </data>
   <data name="label13.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4027,7 +4252,7 @@
     <value>NoControl</value>
   </data>
   <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 101</value>
+    <value>358, 82</value>
   </data>
   <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
     <value>177, 13</value>
@@ -4048,7 +4273,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>13</value>
   </data>
   <data name="label12.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4057,7 +4282,7 @@
     <value>NoControl</value>
   </data>
   <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 134</value>
+    <value>7, 57</value>
   </data>
   <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 13</value>
@@ -4078,7 +4303,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>14</value>
   </data>
   <data name="QuestCombatMode.Items" xml:space="preserve">
     <value>Idle</value>
@@ -4087,10 +4312,10 @@
     <value>Manual</value>
   </data>
   <data name="QuestCombatMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>201, 132</value>
+    <value>86, 54</value>
   </data>
   <data name="QuestCombatMode.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 21</value>
+    <value>138, 21</value>
   </data>
   <data name="QuestCombatMode.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -4105,7 +4330,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;QuestCombatMode.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>15</value>
   </data>
   <data name="AllowMajor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4135,7 +4360,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AllowMajor.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>16</value>
   </data>
   <data name="ManageQuests.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4165,7 +4390,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ManageQuests.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>17</value>
   </data>
   <data name="tabPage8.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -4621,7 +4846,7 @@
     <value>NoControl</value>
   </data>
   <data name="MoneyPitAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 262</value>
+    <value>286, 263</value>
   </data>
   <data name="MoneyPitAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4675,7 +4900,7 @@
     <value>NoControl</value>
   </data>
   <data name="MoneyPitThresholdSave.Location" type="System.Drawing.Point, System.Drawing">
-    <value>246, 41</value>
+    <value>267, 41</value>
   </data>
   <data name="MoneyPitThresholdSave.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 20</value>
@@ -5319,10 +5544,10 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Injector Settings</value>
   </data>
-  <data name="&gt;&gt;moneyPitError.Name" xml:space="preserve">
-    <value>moneyPitError</value>
+  <data name="&gt;&gt;moneyPitThresholdError.Name" xml:space="preserve">
+    <value>moneyPitThresholdError</value>
   </data>
-  <data name="&gt;&gt;moneyPitError.Type" xml:space="preserve">
+  <data name="&gt;&gt;moneyPitThresholdError.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;yggErrorProvider.Name" xml:space="preserve">
@@ -5367,6 +5592,12 @@
   <data name="&gt;&gt;wishErrorProvider.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;moneyPitErrorProvider.Name" xml:space="preserve">
+    <value>moneyPitErrorProvider</value>
+  </data>
+  <data name="&gt;&gt;moneyPitErrorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
     <value>columnHeader2</value>
   </data>
@@ -5379,6 +5610,12 @@
   <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;questErrorProvider.Name" xml:space="preserve">
+    <value>questErrorProvider</value>
+  </data>
+  <data name="&gt;&gt;questErrorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SettingsForm</value>
   </data>
@@ -5386,24 +5623,30 @@
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="yggErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>146, 17</value>
+    <value>375, 17</value>
   </metadata>
   <metadata name="invPrioErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>290, 17</value>
+    <value>519, 17</value>
   </metadata>
   <metadata name="invBlacklistErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>451, 17</value>
+    <value>680, 17</value>
   </metadata>
   <metadata name="titanErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>622, 17</value>
+    <value>851, 17</value>
   </metadata>
   <metadata name="goldErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>758, 17</value>
+    <value>987, 17</value>
   </metadata>
   <metadata name="numberErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>906, 17</value>
+    <value>1135, 17</value>
   </metadata>
   <metadata name="wishErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1060, 17</value>
+    <value>1289, 17</value>
+  </metadata>
+  <metadata name="moneyPitErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1436, 17</value>
+  </metadata>
+  <metadata name="questErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1611, 17</value>
   </metadata>
 </root>

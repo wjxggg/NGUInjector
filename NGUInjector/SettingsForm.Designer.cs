@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            this.moneyPitError = new System.Windows.Forms.ErrorProvider(this.components);
+            this.moneyPitThresholdError = new System.Windows.Forms.ErrorProvider(this.components);
             this.yggErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.invPrioErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.invBlacklistErrProvider = new System.Windows.Forms.ErrorProvider(this.components);
@@ -38,6 +38,7 @@
             this.goldErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.numberErrProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.wishErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.moneyPitErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.DisableOverlay = new System.Windows.Forms.CheckBox();
@@ -49,6 +50,9 @@
             this.AutoFightBosses = new System.Windows.Forms.CheckBox();
             this.AutoITOPOD = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.GuffBOnRebirth = new System.Windows.Forms.CheckBox();
+            this.GuffAOnRebirth = new System.Windows.Forms.CheckBox();
+            this.IronPillOnRebirth = new System.Windows.Forms.CheckBox();
             this.ProfileEditButton = new System.Windows.Forms.Button();
             this.CastBloodSpells = new System.Windows.Forms.CheckBox();
             this.IronPillThreshold = new System.Windows.Forms.NumericUpDown();
@@ -80,6 +84,7 @@
             this.ManageMagic = new System.Windows.Forms.CheckBox();
             this.ManageEnergy = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label35 = new System.Windows.Forms.Label();
             this.YggSwapThreshold = new System.Windows.Forms.NumericUpDown();
             this.HarvestSafety = new System.Windows.Forms.CheckBox();
             this.HarvestAllButton = new System.Windows.Forms.Button();
@@ -171,6 +176,13 @@
             this.GoldLoadoutAdd = new System.Windows.Forms.Button();
             this.GoldLoadout = new System.Windows.Forms.ListBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.ManageQuestLoadout = new System.Windows.Forms.CheckBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.questRemoveButton = new System.Windows.Forms.Button();
+            this.QuestLoadoutItem = new System.Windows.Forms.NumericUpDown();
+            this.questItemLabel = new System.Windows.Forms.Label();
+            this.questAddButton = new System.Windows.Forms.Button();
+            this.questLoadoutBox = new System.Windows.Forms.ListBox();
             this.ButterMinors = new System.Windows.Forms.CheckBox();
             this.ButterMajors = new System.Windows.Forms.CheckBox();
             this.ManualMinor = new System.Windows.Forms.CheckBox();
@@ -224,10 +236,8 @@
             this.balanceMayo = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.IronPillOnRebirth = new System.Windows.Forms.CheckBox();
-            this.GuffAOnRebirth = new System.Windows.Forms.CheckBox();
-            this.GuffBOnRebirth = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.moneyPitError)).BeginInit();
+            this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invBlacklistErrProvider)).BeginInit();
@@ -235,6 +245,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberErrProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishErrorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.moneyPitErrorProvider)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -256,6 +267,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ResnipeInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoldItemBox)).BeginInit();
             this.tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.QuestLoadoutItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).BeginInit();
             this.tabPage9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.WishAddInput)).BeginInit();
@@ -263,11 +275,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).BeginInit();
             this.tabPage11.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
-            // moneyPitError
+            // moneyPitThresholdError
             // 
-            this.moneyPitError.ContainerControl = this;
+            this.moneyPitThresholdError.ContainerControl = this;
             // 
             // yggErrorProvider
             // 
@@ -296,6 +309,10 @@
             // wishErrorProvider
             // 
             this.wishErrorProvider.ContainerControl = this;
+            // 
+            // moneyPitErrorProvider
+            // 
+            this.moneyPitErrorProvider.ContainerControl = this;
             // 
             // tabControl1
             // 
@@ -420,6 +437,27 @@
             resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // GuffBOnRebirth
+            // 
+            resources.ApplyResources(this.GuffBOnRebirth, "GuffBOnRebirth");
+            this.GuffBOnRebirth.Name = "GuffBOnRebirth";
+            this.GuffBOnRebirth.UseVisualStyleBackColor = true;
+            this.GuffBOnRebirth.CheckedChanged += new System.EventHandler(this.GuffBOnRebirth_CheckedChanged);
+            // 
+            // GuffAOnRebirth
+            // 
+            resources.ApplyResources(this.GuffAOnRebirth, "GuffAOnRebirth");
+            this.GuffAOnRebirth.Name = "GuffAOnRebirth";
+            this.GuffAOnRebirth.UseVisualStyleBackColor = true;
+            this.GuffAOnRebirth.CheckedChanged += new System.EventHandler(this.GuffAOnRebirth_CheckedChanged);
+            // 
+            // IronPillOnRebirth
+            // 
+            resources.ApplyResources(this.IronPillOnRebirth, "IronPillOnRebirth");
+            this.IronPillOnRebirth.Name = "IronPillOnRebirth";
+            this.IronPillOnRebirth.UseVisualStyleBackColor = true;
+            this.IronPillOnRebirth.CheckedChanged += new System.EventHandler(this.IronPillOnRebirth_CheckedChanged);
             // 
             // ProfileEditButton
             // 
@@ -628,6 +666,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label35);
             this.tabPage3.Controls.Add(this.YggSwapThreshold);
             this.tabPage3.Controls.Add(this.HarvestSafety);
             this.tabPage3.Controls.Add(this.HarvestAllButton);
@@ -643,6 +682,11 @@
             resources.ApplyResources(this.tabPage3, "tabPage3");
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label35
+            // 
+            resources.ApplyResources(this.label35, "label35");
+            this.label35.Name = "label35";
             // 
             // YggSwapThreshold
             // 
@@ -1388,6 +1432,13 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.ManageQuestLoadout);
+            this.tabPage8.Controls.Add(this.label30);
+            this.tabPage8.Controls.Add(this.questRemoveButton);
+            this.tabPage8.Controls.Add(this.QuestLoadoutItem);
+            this.tabPage8.Controls.Add(this.questItemLabel);
+            this.tabPage8.Controls.Add(this.questAddButton);
+            this.tabPage8.Controls.Add(this.questLoadoutBox);
             this.tabPage8.Controls.Add(this.ButterMinors);
             this.tabPage8.Controls.Add(this.ButterMajors);
             this.tabPage8.Controls.Add(this.ManualMinor);
@@ -1402,6 +1453,62 @@
             resources.ApplyResources(this.tabPage8, "tabPage8");
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // ManageQuestLoadout
+            // 
+            resources.ApplyResources(this.ManageQuestLoadout, "ManageQuestLoadout");
+            this.ManageQuestLoadout.Name = "ManageQuestLoadout";
+            this.ManageQuestLoadout.UseVisualStyleBackColor = true;
+            this.ManageQuestLoadout.CheckedChanged += new System.EventHandler(this.ManageQuestLoadout_CheckedChanged);
+            // 
+            // label30
+            // 
+            resources.ApplyResources(this.label30, "label30");
+            this.label30.Name = "label30";
+            // 
+            // questRemoveButton
+            // 
+            resources.ApplyResources(this.questRemoveButton, "questRemoveButton");
+            this.questRemoveButton.Name = "questRemoveButton";
+            this.questRemoveButton.UseVisualStyleBackColor = true;
+            this.questRemoveButton.Click += new System.EventHandler(this.questRemoveButton_Click);
+            // 
+            // QuestLoadoutItem
+            // 
+            resources.ApplyResources(this.QuestLoadoutItem, "QuestLoadoutItem");
+            this.QuestLoadoutItem.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.QuestLoadoutItem.Name = "QuestLoadoutItem";
+            this.QuestLoadoutItem.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.QuestLoadoutItem.KeyDown += new System.Windows.Forms.KeyEventHandler(this.QuestLoadoutItem_KeyDown);
+            // 
+            // questItemLabel
+            // 
+            resources.ApplyResources(this.questItemLabel, "questItemLabel");
+            this.questItemLabel.Name = "questItemLabel";
+            // 
+            // questAddButton
+            // 
+            resources.ApplyResources(this.questAddButton, "questAddButton");
+            this.questAddButton.Name = "questAddButton";
+            this.questAddButton.UseVisualStyleBackColor = true;
+            this.questAddButton.Click += new System.EventHandler(this.questAddButton_Click);
+            // 
+            // questLoadoutBox
+            // 
+            this.questLoadoutBox.FormattingEnabled = true;
+            this.questLoadoutBox.Items.AddRange(new object[] {
+            resources.GetString("questLoadoutBox.Items"),
+            resources.GetString("questLoadoutBox.Items1")});
+            resources.ApplyResources(this.questLoadoutBox, "questLoadoutBox");
+            this.questLoadoutBox.Name = "questLoadoutBox";
             // 
             // ButterMinors
             // 
@@ -1443,7 +1550,7 @@
             resources.ApplyResources(this.AbandonMinorThreshold, "AbandonMinorThreshold");
             this.AbandonMinorThreshold.Name = "AbandonMinorThreshold";
             this.AbandonMinorThreshold.Value = new decimal(new int[] {
-            10,
+            30,
             0,
             0,
             0});
@@ -1549,7 +1656,7 @@
             0});
             this.WishAddInput.Name = "WishAddInput";
             this.WishAddInput.Value = new decimal(new int[] {
-            40,
+            1,
             0,
             0,
             0});
@@ -1619,6 +1726,7 @@
             0,
             0,
             0});
+            this.MoneyPitInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoneyPitInput_KeyDown);
             // 
             // MoneyPitLabel
             // 
@@ -1652,7 +1760,7 @@
             // 
             resources.ApplyResources(this.MoneyPitThreshold, "MoneyPitThreshold");
             this.MoneyPitThreshold.Name = "MoneyPitThreshold";
-            this.MoneyPitThreshold.TextChanged += new System.EventHandler(this.MoneyPitThreshold_TextChanged_1);
+            this.MoneyPitThreshold.TextChanged += new System.EventHandler(this.MoneyPitThreshold_TextChanged);
             // 
             // label7
             // 
@@ -1807,26 +1915,9 @@
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
-            // IronPillOnRebirth
+            // questErrorProvider
             // 
-            resources.ApplyResources(this.IronPillOnRebirth, "IronPillOnRebirth");
-            this.IronPillOnRebirth.Name = "IronPillOnRebirth";
-            this.IronPillOnRebirth.UseVisualStyleBackColor = true;
-            this.IronPillOnRebirth.CheckedChanged += new System.EventHandler(this.IronPillOnRebirth_CheckedChanged);
-            // 
-            // GuffAOnRebirth
-            // 
-            resources.ApplyResources(this.GuffAOnRebirth, "GuffAOnRebirth");
-            this.GuffAOnRebirth.Name = "GuffAOnRebirth";
-            this.GuffAOnRebirth.UseVisualStyleBackColor = true;
-            this.GuffAOnRebirth.CheckedChanged += new System.EventHandler(this.GuffAOnRebirth_CheckedChanged);
-            // 
-            // GuffBOnRebirth
-            // 
-            resources.ApplyResources(this.GuffBOnRebirth, "GuffBOnRebirth");
-            this.GuffBOnRebirth.Name = "GuffBOnRebirth";
-            this.GuffBOnRebirth.UseVisualStyleBackColor = true;
-            this.GuffBOnRebirth.CheckedChanged += new System.EventHandler(this.GuffBOnRebirth_CheckedChanged);
+            this.questErrorProvider.ContainerControl = this;
             // 
             // SettingsForm
             // 
@@ -1838,7 +1929,7 @@
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsForm_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.moneyPitError)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.invBlacklistErrProvider)).EndInit();
@@ -1846,6 +1937,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberErrProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishErrorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.moneyPitErrorProvider)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -1875,6 +1967,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.GoldItemBox)).EndInit();
             this.tabPage8.ResumeLayout(false);
             this.tabPage8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.QuestLoadoutItem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).EndInit();
             this.tabPage9.ResumeLayout(false);
             this.tabPage9.PerformLayout();
@@ -1885,12 +1978,13 @@
             this.tabPage11.ResumeLayout(false);
             this.tabPage11.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.ErrorProvider moneyPitError;
+        private System.Windows.Forms.ErrorProvider moneyPitThresholdError;
         private System.Windows.Forms.ErrorProvider yggErrorProvider;
         private System.Windows.Forms.ErrorProvider invPrioErrorProvider;
         private System.Windows.Forms.ErrorProvider invBlacklistErrProvider;
@@ -1898,6 +1992,7 @@
         private System.Windows.Forms.ErrorProvider goldErrorProvider;
         private System.Windows.Forms.ErrorProvider numberErrProvider;
         private System.Windows.Forms.ErrorProvider wishErrorProvider;
+        private System.Windows.Forms.ErrorProvider moneyPitErrorProvider;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TabControl tabControl1;
@@ -2087,5 +2182,14 @@
         private System.Windows.Forms.CheckBox GuffAOnRebirth;
         private System.Windows.Forms.CheckBox IronPillOnRebirth;
         private System.Windows.Forms.CheckBox GuffBOnRebirth;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Button questRemoveButton;
+        private System.Windows.Forms.NumericUpDown QuestLoadoutItem;
+        private System.Windows.Forms.Label questItemLabel;
+        private System.Windows.Forms.Button questAddButton;
+        private System.Windows.Forms.ListBox questLoadoutBox;
+        private System.Windows.Forms.ErrorProvider questErrorProvider;
+        private System.Windows.Forms.CheckBox ManageQuestLoadout;
+        private System.Windows.Forms.Label label35;
     }
 }

@@ -449,7 +449,7 @@ namespace NGUInjector.AllocationProfiles
             if (!Main.Settings.CastBloodSpells)
                 return;
 
-            if (_wrapper.Breakpoints.Rebirth is TimeRebirth trb && Main.Settings.AutoRebirth)
+            if (_wrapper.Breakpoints.Rebirth is TimeRebirth trb && trb.RebirthTime > 0 && Main.Settings.AutoRebirth)
             {
                 if (trb.RebirthTime - _character.rebirthTime.totalseconds < 30 * 60)// && !rebirth)
                 {
