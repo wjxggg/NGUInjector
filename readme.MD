@@ -43,9 +43,7 @@ To access these settings, open the **settings.json** (in your Desktop folder, me
 
 - **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
 - **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
-- **\_manageQuestLoadouts** - Set this to true to have the injector swap to a Questing loadout when doing manual questing
 - **\_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
-- **\_questLoadout** - Assign your questing loadout here. Follow similar pattern as other loadout fields (example: [257, 170, 293, 236])
 - **\_manageConsumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file (see Section on Consumables below for details)
 - **\_autoBuyConsumables** - Set this to true to have the injector auto purchase any consumables you try to use that you do not own. Will only buy consumables if you have the AP to purchase them.
 - **\_autoBuyAdventure** - Set to true to auto purchase adventure stats. Will buy anything in the "Adventure Stats" tab that has a custom value set above 0 in a group, together with the EMR purchases (if enabled) once there is enough EXP to buy everything.
@@ -91,7 +89,7 @@ An in game menu can be opened using the F1 button.
 - **Auto Buy Energy/Magic/R3** - Automatically spend EXP on energy/magic/R3. Will use the custom caps set by the user in the spend exp page. Will always buy unlocked exp spends in groups.
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation Settings](https://i.imgur.com/fCN6DgA.png)
+![Allocation Settings](https://i.imgur.com/fA7AKdg.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press change allocation after swapping to change to load the new allocation. Press edit to open the allocation file in a text editor.
 
@@ -118,8 +116,9 @@ An in game menu can be opened using the F1 button.
 - **Iron Pill** - Amount of +stats to cast Iron Pill at.
 - **Guff A** - Number of +levels to cast Guff A at
 - **Guff B** - Number of +levels to cast Guff B at
+- **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/XtRSANt.png)
+![Yggdrasil](https://i.imgur.com/2eQsz1X.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
@@ -188,20 +187,22 @@ An in game menu can be opened using the F1 button.
 - **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/4AuAUhy.png)
+![Quests](https://i.imgur.com/W0NiWez.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
+- **Swap Loadout for Quests** - Equip the gear in Quest Loadout when engaged in Manual questing
 - **Allow Major Quests**
   - If this option is enabled, when major quests are available they will be accepted and automation will manually farm the items from the appropriate zone
   - If this option is disabled, major quests will not be accepted.
   - When no major quests are available, minor quests will be accepted and idled.
-- **Abandon Minor Quests** - If enabled and minor quest progress is below the minor quest threshold, the minor quest will be abandoned and a major quest will be picked up.
 - **Manual Minors** - If enabled will manual minor quests as well as majors
 - **Use Butter on Majors** - If enabled will attempt to butter major quests
 - **Use Butter on Minors** - If enabled will attempt to butter minor quests
-- **Abandon Minor Quest Threshold** - Quest progress before which its acceptable to abandon minor quests.
 - **Combat Mode** - If set to manual, will perform a combat routine to do your quest zone. Otherwise will idle the zone.
 - **Fast Combat** - If enabled will skip all buffs during combat.
+- **Abandon Minor Quests** - If enabled and minor quest progress is below the minor quest threshold, the minor quest will be abandoned and a major quest will be picked up.
+- **Abandon Minor Quest Threshold** - Quest progress before which its acceptable to abandon minor quests.
+- **Loadout** - The gear to equip when in a manual quest.
 
 ![Wishes](https://i.imgur.com/h4eNEsr.png)
 

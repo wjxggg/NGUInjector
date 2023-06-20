@@ -1550,7 +1550,7 @@
             resources.ApplyResources(this.AbandonMinorThreshold, "AbandonMinorThreshold");
             this.AbandonMinorThreshold.Name = "AbandonMinorThreshold";
             this.AbandonMinorThreshold.Value = new decimal(new int[] {
-            10,
+            30,
             0,
             0,
             0});

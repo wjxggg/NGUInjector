@@ -4225,7 +4225,7 @@
     <value>11</value>
   </data>
   <data name="AbandonMinorThreshold.Location" type="System.Drawing.Point, System.Drawing">
-    <value>541, 72</value>
+    <value>541, 80</value>
   </data>
   <data name="AbandonMinorThreshold.Size" type="System.Drawing.Size, System.Drawing">
     <value>63, 20</value>
@@ -4252,7 +4252,7 @@
     <value>NoControl</value>
   </data>
   <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 74</value>
+    <value>358, 82</value>
   </data>
   <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
     <value>177, 13</value>
