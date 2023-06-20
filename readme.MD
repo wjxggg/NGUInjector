@@ -187,22 +187,22 @@ An in game menu can be opened using the F1 button.
 - **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/W0NiWez.png)
+![Quests](https://i.imgur.com/H1wceYl.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
-- **Swap Loadout for Quests** - Equip the gear in Quest Loadout when engaged in Manual questing
 - **Allow Major Quests**
   - If this option is enabled, when major quests are available they will be accepted and automation will manually farm the items from the appropriate zone
   - If this option is disabled, major quests will not be accepted.
   - When no major quests are available, minor quests will be accepted and idled.
-- **Manual Minors** - If enabled will manual minor quests as well as majors
 - **Use Butter on Majors** - If enabled will attempt to butter major quests
+- **Manual Minors** - If enabled will manual minor quests as well as majors
 - **Use Butter on Minors** - If enabled will attempt to butter minor quests
-- **Combat Mode** - If set to manual, will perform a combat routine to do your quest zone. Otherwise will idle the zone.
-- **Fast Combat** - If enabled will skip all buffs during combat.
 - **Abandon Minor Quests** - If enabled and minor quest progress is below the minor quest threshold, the minor quest will be abandoned and a major quest will be picked up.
 - **Abandon Minor Quest Threshold** - Quest progress before which its acceptable to abandon minor quests.
+- **Swap Loadout for Quests** - Equip the gear in Quest Loadout when engaged in Manual questing
 - **Loadout** - The gear to equip when in a manual quest.
+- **Combat Mode** - If engaged in manual questing and this option is set to manual, will perform a combat routine in the quest zone. Otherwise will idle the zone.
+- **Fast Combat** - If enabled will skip all buffs during combat.
 
 ![Wishes](https://i.imgur.com/h4eNEsr.png)
 

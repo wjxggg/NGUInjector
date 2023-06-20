@@ -190,7 +190,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadSafety.Location" type="System.Drawing.Point, System.Drawing">
-    <value>396, 310</value>
+    <value>454, 305</value>
   </data>
   <data name="UnloadSafety.Size" type="System.Drawing.Size, System.Drawing">
     <value>15, 14</value>
@@ -217,7 +217,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 305</value>
+    <value>475, 300</value>
   </data>
   <data name="UnloadButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -247,16 +247,16 @@
     <value>NoControl</value>
   </data>
   <data name="VersionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 310</value>
+    <value>556, 305</value>
   </data>
   <data name="VersionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 13</value>
+    <value>90, 13</value>
   </data>
   <data name="VersionLabel.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
   <data name="VersionLabel.Text" xml:space="preserve">
-    <value>Version: 2.2.0</value>
+    <value>Version: 3.7.0-rc2</value>
   </data>
   <data name="&gt;&gt;VersionLabel.Name" xml:space="preserve">
     <value>VersionLabel</value>
@@ -3883,7 +3883,7 @@
     <value>NoControl</value>
   </data>
   <data name="ManageQuestLoadout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>129, 8</value>
+    <value>7, 59</value>
   </data>
   <data name="ManageQuestLoadout.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 17</value>
@@ -4081,7 +4081,7 @@
     <value>NoControl</value>
   </data>
   <data name="ButterMinors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 31</value>
+    <value>396, 31</value>
   </data>
   <data name="ButterMinors.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 17</value>
@@ -4111,7 +4111,7 @@
     <value>NoControl</value>
   </data>
   <data name="ButterMajors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>230, 31</value>
+    <value>129, 31</value>
   </data>
   <data name="ButterMajors.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 17</value>
@@ -4141,7 +4141,7 @@
     <value>NoControl</value>
   </data>
   <data name="ManualMinor.Location" type="System.Drawing.Point, System.Drawing">
-    <value>129, 31</value>
+    <value>295, 31</value>
   </data>
   <data name="ManualMinor.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 17</value>
@@ -4171,7 +4171,7 @@
     <value>NoControl</value>
   </data>
   <data name="QuestFastCombat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>230, 58</value>
+    <value>430, 117</value>
   </data>
   <data name="QuestFastCombat.Size" type="System.Drawing.Size, System.Drawing">
     <value>85, 17</value>
@@ -4201,7 +4201,7 @@
     <value>NoControl</value>
   </data>
   <data name="AbandonMinors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 54</value>
+    <value>295, 54</value>
   </data>
   <data name="AbandonMinors.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 17</value>
@@ -4225,7 +4225,7 @@
     <value>11</value>
   </data>
   <data name="AbandonMinorThreshold.Location" type="System.Drawing.Point, System.Drawing">
-    <value>541, 80</value>
+    <value>475, 80</value>
   </data>
   <data name="AbandonMinorThreshold.Size" type="System.Drawing.Size, System.Drawing">
     <value>63, 20</value>
@@ -4252,7 +4252,7 @@
     <value>NoControl</value>
   </data>
   <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 82</value>
+    <value>292, 82</value>
   </data>
   <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
     <value>177, 13</value>
@@ -4282,7 +4282,7 @@
     <value>NoControl</value>
   </data>
   <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 57</value>
+    <value>207, 116</value>
   </data>
   <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 13</value>
@@ -4312,7 +4312,7 @@
     <value>Manual</value>
   </data>
   <data name="QuestCombatMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>86, 54</value>
+    <value>286, 113</value>
   </data>
   <data name="QuestCombatMode.Size" type="System.Drawing.Size, System.Drawing">
     <value>138, 21</value>
