@@ -190,7 +190,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadSafety.Location" type="System.Drawing.Point, System.Drawing">
-    <value>396, 310</value>
+    <value>454, 305</value>
   </data>
   <data name="UnloadSafety.Size" type="System.Drawing.Size, System.Drawing">
     <value>15, 14</value>
@@ -217,7 +217,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 305</value>
+    <value>475, 300</value>
   </data>
   <data name="UnloadButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -247,16 +247,16 @@
     <value>NoControl</value>
   </data>
   <data name="VersionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 310</value>
+    <value>556, 305</value>
   </data>
   <data name="VersionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 13</value>
+    <value>90, 13</value>
   </data>
   <data name="VersionLabel.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
   <data name="VersionLabel.Text" xml:space="preserve">
-    <value>Version: 2.2.0</value>
+    <value>Version: 3.7.0-rc2</value>
   </data>
   <data name="&gt;&gt;VersionLabel.Name" xml:space="preserve">
     <value>VersionLabel</value>
