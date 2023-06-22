@@ -45,7 +45,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.7.0-rc2";
+        internal const string Version = "3.7.0-rc3";
         private static int _furthestZone;
 
         private static string _dir;
@@ -97,6 +97,11 @@ namespace NGUInjector
             DebugWriter.WriteLine($"{DateTime.Now.ToShortDateString()}-{DateTime.Now.ToShortTimeString()} ({Math.Floor(Character.rebirthTime.totalseconds)}s): {msg}");
         }
 
+        internal static string GetSettingsDir()
+        {
+            return _dir;
+        }
+
         internal static string GetProfilesDir()
         {
             return _profilesDir;
@@ -138,7 +143,7 @@ namespace NGUInjector
         {
             try
             {
-                _dir = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%/Desktop"), "NGUInjector");
+                _dir = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%/AppData/LocalLow"), "NGUInjector");
                 if (!Directory.Exists(_dir))
                 {
                     Directory.CreateDirectory(_dir);
