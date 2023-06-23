@@ -1406,11 +1406,21 @@ namespace NGUInjector
             Main.Settings.AutoCastCards = AutoCastCards.Checked;
         }
 
+        private void OpenSettingsFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start(Main.GetSettingsDir());
+        }
+
         private void ProfileEditButton_Click(object sender, EventArgs e)
         {
             var filename = Main.Settings.AllocationFile + ".json";
             var path = Path.Combine(Main.GetProfilesDir(), filename);
             Process.Start(path);
+        }
+
+        private void OpenProfileFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start(Main.GetProfilesDir());
         }
 
         private void trashAdventureCards_CheckedChanged(object sender, EventArgs e)

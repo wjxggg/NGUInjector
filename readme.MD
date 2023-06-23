@@ -4,7 +4,7 @@ NGUInjector is an automation platform for the steam version of NGU Idle.
 
 # Instructions
 
-Releases can be found in the releases section of the github page [here](https://github.com/benanderson1/NGUInjector-Continued/releases/). Do not download the source code archive, instead download the zip file with the release version in the name (dist_3.6.3.zip for example). Extract the downloaded archive to a directory of your choice. To start automation, run inject.bat in the extracted folder when NGU Idle is open. DO NOT RUN AS ADMINISTRATOR.
+Releases can be found in the releases section of the github page [here](https://github.com/JConquistador/NGUInjector/releases). Do not download the source code archive, instead download the zip file with the release version in the name (dist_3.6.3.zip for example). Extract the downloaded archive to a directory of your choice. To start automation, run inject.bat in the extracted folder when NGU Idle is open.
 
 You'll know the injection has worked if you see the following in the upper left portion of NGU.
 
@@ -14,7 +14,9 @@ To upgrade to a new release, unload the injector from the General Settings page 
 
 # Configuration
 
-After injecting the dll, a new folder will be created on your Desktop called NGUInjector. Settings files will be automatically written to this directory. The following files are of interest:
+** IMPORTANT NOTE ** For those upgrading from an older version of NGUInjector (< 3.7.0), your configuration folder will be recreated in the directory shown below. Your old settings and profiles are NOT gone. Simply copy the old NGUInjector folder from the desktop to the new location.
+
+After injecting the dll, a new folder will be created in your AppData directory called NGUInjector (full path is %UserProfile%\AppData\LocalLow\NGUInjector). Settings files will be automatically written to this directory. The following files are of interest:
 
 - **settings.json** - Contains settings used by the application. Most settings can be configured from the in-game menu.
 - **zoneOverrides.json** - Override the default values for Idle/Manual Power/Toughness for gold sniping
@@ -33,13 +35,13 @@ A logs folder will also be created with the following files:
 - **allocation.log** - Logs information about allocating energy/magic/gear/diggers
 - **pitspin.log** - Logs important things like fruit harvests, money pit, daily spin. This log file will not be overwritten.
 
-Saving either file will automatically reload the settings in the configuration file. Reloading the game isn't necessary
+Saving settings.json, zoneOverrides.json, or any profile will automatically reload the settings in the Injector. Reloading the game isn't necessary
 
 # Settings.json Configurations
 
 With the latest fork, many changes have been added that aren't found in the GUI.
 
-To access these settings, open the **settings.json** (in your Desktop folder, mentioned above) and scroll down to find the following configuration options:
+To access these settings, open the **settings.json** (in your AppData NGUInjector folder, mentioned above) and scroll down to find the following configuration options:
 
 - **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
 - **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
@@ -79,7 +81,7 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General Settings](https://i.imgur.com/SZWHfA3.png)
+![General Settings](https://i.imgur.com/4cNdlp4.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
@@ -87,11 +89,14 @@ An in game menu can be opened using the F1 button.
 - **Auto Move to ITOPOD** - Automatically move to ITOPOD when nothing else is happening in automation.
 - **Auto Fight Bosses** - Automatically nuke/fight bosses.
 - **Auto Buy Energy/Magic/R3** - Automatically spend EXP on energy/magic/R3. Will use the custom caps set by the user in the spend exp page. Will always buy unlocked exp spends in groups.
+
+- **Open Settings Folder** - Opens a folder to the NGUInjector folder which contains the settings, profiles and logs.
+
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation Settings](https://i.imgur.com/fA7AKdg.png)
+![Allocation Settings](https://i.imgur.com/g7lmHXM.png)
 
-- **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press change allocation after swapping to change to load the new allocation. Press edit to open the allocation file in a text editor.
+- **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
 - **Manage Energy** - Manage energy based on breakpoints in your selected allocation file
 - **Manage Magic** - Manage magic based on breakpoints in your selected allocation file
@@ -563,7 +568,7 @@ The stats for the zones can be manually overriden using the `zoneOverrides.json`
 
 ## Quicksave + NGUSav.ES JSON
 
-Pressing the F3 button will dump a NGU save file as well as a ngusav.es JSON file in the folder on desktop, which can be loaded into Gear Optimizer.
+Pressing the F3 button will dump a NGU save file as well as a ngusav.es JSON file in the AppData NGUInjector folder, which can be loaded into Gear Optimizer.
 
 ## Quickload
 
@@ -575,7 +580,7 @@ Pressing the F5 button will dump your current equipment to the log file for use 
 
 ## Monitor Loot Log File
 
-The adventure log will automatically be monitored and loot dropped will be written to loot.log in the folder on your desktop.
+The adventure log will automatically be monitored and loot dropped will be written to loot.log in the AppData NGUInjector folder.
 
 ## Monitor Money Pit/Daily Spin/Yggdrasil Results
 

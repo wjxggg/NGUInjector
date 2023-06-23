@@ -237,6 +237,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.OpenSettingsFolder = new System.Windows.Forms.Button();
+            this.OpenProfileFolder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -333,6 +335,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.OpenSettingsFolder);
             this.tabPage1.Controls.Add(this.DisableOverlay);
             this.tabPage1.Controls.Add(this.UnloadSafety);
             this.tabPage1.Controls.Add(this.UnloadButton);
@@ -401,6 +404,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.OpenProfileFolder);
             this.tabPage2.Controls.Add(this.GuffBOnRebirth);
             this.tabPage2.Controls.Add(this.GuffAOnRebirth);
             this.tabPage2.Controls.Add(this.IronPillOnRebirth);
@@ -1919,6 +1923,20 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
+            // OpenSettingsFolder
+            // 
+            resources.ApplyResources(this.OpenSettingsFolder, "OpenSettingsFolder");
+            this.OpenSettingsFolder.Name = "OpenSettingsFolder";
+            this.OpenSettingsFolder.UseVisualStyleBackColor = true;
+            this.OpenSettingsFolder.Click += new System.EventHandler(this.OpenSettingsFolder_Click);
+            // 
+            // OpenProfileFolder
+            // 
+            resources.ApplyResources(this.OpenProfileFolder, "OpenProfileFolder");
+            this.OpenProfileFolder.Name = "OpenProfileFolder";
+            this.OpenProfileFolder.UseVisualStyleBackColor = true;
+            this.OpenProfileFolder.Click += new System.EventHandler(this.OpenProfileFolder_Click);
+            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -2191,5 +2209,7 @@
         private System.Windows.Forms.ErrorProvider questErrorProvider;
         private System.Windows.Forms.CheckBox ManageQuestLoadout;
         private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Button OpenSettingsFolder;
+        private System.Windows.Forms.Button OpenProfileFolder;
     }
 }
