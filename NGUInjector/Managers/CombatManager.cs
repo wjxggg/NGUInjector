@@ -472,17 +472,9 @@ namespace NGUInjector.Managers
             _character.adventureController.zoneSelector.changeZone(zone);
         }
 
-        internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
+        private bool HandleBeastMode(bool beastMode, out bool beastModeWasToggled)
         {
-            if (zone == -1)
-            {
-                if (_character.adventure.zone != -1)
-                {
-                    MoveToZone(-1);
-                    return;
-                }
-            }
-
+            beastModeWasToggled = false;
             //Beast mode checks
             if (_character.adventureController.hasBeastMode())
             {
@@ -497,13 +489,38 @@ namespace NGUInjector.Managers
                     if (canToggleBeastMode)
                     {
                         _character.adventureController.beastModeMove.doMove();
+                        beastModeWasToggled = true;
                     }
                     else if (_character.adventure.autoattacking)
                     {
                         _character.adventureController.idleAttackMove.setToggle();
                     }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
+        {
+            if (zone == -1)
+            {
+                if (_character.adventure.zone != -1)
+                {
+                    MoveToZone(-1);
                     return;
                 }
+            }
+
+            //If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is enabled
+            if (!HandleBeastMode(beastMode, out bool beastModeWasToggled))
+            {
+                if (!beastModeWasToggled && _character.adventure.zone != -1)
+                {
+                    MoveToZone(-1);
+                }
+                return;
             }
 
             //Enable idle attack if its not on
@@ -581,18 +598,25 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (_character.adventure.beastModeOn && !beastMode && _character.adventureController.beastModeMove.button.interactable)
+            //If beast mode was toggled, return to allow button cooldown, otherwise continue with manual combat
+            HandleBeastMode(beastMode, out bool beastModeWasToggled);
+            if (beastModeWasToggled)
             {
-                _character.adventureController.beastModeMove.doMove();
                 return;
             }
 
-            if (!_character.adventure.beastModeOn && beastMode &&
-                _character.adventureController.beastModeMove.button.interactable)
-            {
-                _character.adventureController.beastModeMove.doMove();
-                return;
-            }
+            //if (_character.adventure.beastModeOn && !beastMode && _character.adventureController.beastModeMove.button.interactable)
+            //{
+            //    _character.adventureController.beastModeMove.doMove();
+            //    return;
+            //}
+
+            //if (!_character.adventure.beastModeOn && beastMode &&
+            //    _character.adventureController.beastModeMove.button.interactable)
+            //{
+            //    _character.adventureController.beastModeMove.doMove();
+            //    return;
+            //}
 
             //Move back to safe zone if we're in the wrong zone
             if (_character.adventure.zone != zone && _character.adventure.zone != -1)
