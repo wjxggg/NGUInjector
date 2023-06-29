@@ -1257,7 +1257,7 @@ namespace NGUInjector
                     }
                     else
                     {
-                        _combManager.IdleZone(questZone, false, false);
+                        _combManager.IdleZone(questZone, false, false, Settings.BeastMode);
                     }
 
                     CombatHelpers.IsCurrentlyQuesting = true;
@@ -1292,7 +1292,7 @@ namespace NGUInjector
                 }
                 else
                 {
-                    _combManager.IdleZone(tempZone, false, Settings.ITOPODRecoverHP);
+                    _combManager.IdleZone(tempZone, false, Settings.ITOPODRecoverHP, Settings.ITOPODBeastMode);
                 }
 
                 CombatHelpers.IsCurrentlyAdventuring = true;
@@ -1305,7 +1305,7 @@ namespace NGUInjector
             }
             else
             {
-                _combManager.IdleZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth);
+                _combManager.IdleZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.BeastMode);
             }
             CombatHelpers.IsCurrentlyAdventuring = true;
         }

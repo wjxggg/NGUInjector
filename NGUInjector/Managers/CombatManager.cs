@@ -472,7 +472,7 @@ namespace NGUInjector.Managers
             _character.adventureController.zoneSelector.changeZone(zone);
         }
 
-        internal void IdleZone(int zone, bool bossOnly, bool recoverHealth)
+        internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
         {
             if (zone == -1)
             {
@@ -482,25 +482,34 @@ namespace NGUInjector.Managers
                     return;
                 }
             }
+
+            //Beast mode checks
+            if (_character.adventureController.hasBeastMode())
+            {
+                bool canToggleBeastMode = _character.adventureController.beastModeMove.button.interactable;
+                bool isBeastModeActive = _character.adventure.beastModeOn;
+
+                bool needToToggle = isBeastModeActive != beastMode;
+
+                //If the button is inaccessible, we need to stay in manual mode until we can press it
+                if (needToToggle)
+                {
+                    if (canToggleBeastMode)
+                    {
+                        _character.adventureController.beastModeMove.doMove();
+                    }
+                    else if (_character.adventure.autoattacking)
+                    {
+                        _character.adventureController.idleAttackMove.setToggle();
+                    }
+                    return;
+                }
+            }
+
             //Enable idle attack if its not on
             if (!_character.adventure.autoattacking)
             {
                 _character.adventureController.idleAttackMove.setToggle();
-                return;
-            }
-
-            //Turn on beast mode depending
-            if (_character.adventure.beastModeOn && !Settings.BeastMode && _character.adventureController.beastModeMove.button.interactable)
-            {
-                _character.adventureController.beastModeMove.doMove();
-                return;
-            }
-
-            //Turn off beast mode depending
-            if (!_character.adventure.beastModeOn && Settings.BeastMode &&
-                _character.adventureController.beastModeMove.button.interactable)
-            {
-                _character.adventureController.beastModeMove.doMove();
                 return;
             }
 
