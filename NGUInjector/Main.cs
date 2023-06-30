@@ -15,6 +15,7 @@ using NGUInjector.AllocationProfiles;
 using NGUInjector.Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Resources.ResXFileRef;
 using Application = UnityEngine.Application;
 
 namespace NGUInjector
@@ -880,15 +881,17 @@ namespace NGUInjector
 
             if (Settings.AutoSpellSwap)
             {
-                var spaghetti = (Character.bloodMagicController.lootBonus() - 1) * 100;
-                var counterfeit = ((Character.bloodMagicController.goldBonus() - 1)) * 100;
+                var spaghetti = (int)Math.Round((Character.bloodMagicController.lootBonus() - 1) * 100, 0);
+                var counterfeit = (int)Math.Round((Character.bloodMagicController.goldBonus() - 1) * 100, 0);
                 var number = Character.bloodMagic.rebirthPower;
-                Character.bloodMagic.rebirthAutoSpell = Settings.BloodNumberThreshold > 0 && number <= Settings.BloodNumberThreshold;
-                Character.bloodMagic.goldAutoSpell = Settings.CounterfeitThreshold > 0 && counterfeit <= Settings.CounterfeitThreshold;
-                Character.bloodMagic.lootAutoSpell = Settings.SpaghettiThreshold > 0 && spaghetti <= Settings.SpaghettiThreshold;
+                Character.bloodMagic.rebirthAutoSpell = Settings.BloodNumberThreshold > 0 && number < Settings.BloodNumberThreshold;
+                Character.bloodMagic.goldAutoSpell = Settings.CounterfeitThreshold > 0 && counterfeit < Settings.CounterfeitThreshold;
+                Character.bloodMagic.lootAutoSpell = Settings.SpaghettiThreshold > 0 && spaghetti < Settings.SpaghettiThreshold;
                 Character.bloodSpells.updateGoldToggleState();
                 Character.bloodSpells.updateLootToggleState();
                 Character.bloodSpells.updateRebirthToggleState();
+
+                LogDebug($"Spaghetti:{spaghetti} < Threshold:{Settings.SpaghettiThreshold} ? - {Character.bloodMagic.lootAutoSpell}");
             }
         }
 
@@ -908,7 +911,7 @@ namespace NGUInjector
                 if (Settings.ManageInventory && !Controller.midDrag)
                 {
                     var converted = Character.inventory.GetConvertedInventory().ToArray();
-                    var boostSlots = _invManager.GetBoostSlots(converted);
+                    var boostSlots = InventoryManager.GetBoostSlots(converted);
                     _invManager.EnsureFiltered(converted);
                     _invManager.ManageConvertibles(converted);
                     _invManager.MergeEquipped(converted);
@@ -1427,7 +1430,7 @@ namespace NGUInjector
 
         public void ShowBoostProgress()
         {
-            var boostSlots = _invManager.GetBoostSlots(Character.inventory.GetConvertedInventory().ToArray());
+            var boostSlots = InventoryManager.GetBoostSlots(Character.inventory.GetConvertedInventory().ToArray());
             try
             {
                 _invManager.ShowBoostProgress(boostSlots);
