@@ -890,8 +890,6 @@ namespace NGUInjector
                 Character.bloodSpells.updateGoldToggleState();
                 Character.bloodSpells.updateLootToggleState();
                 Character.bloodSpells.updateRebirthToggleState();
-
-                LogDebug($"Spaghetti:{spaghetti} < Threshold:{Settings.SpaghettiThreshold} ? - {Character.bloodMagic.lootAutoSpell}");
             }
         }
 
