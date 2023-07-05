@@ -113,7 +113,7 @@ namespace NGUInjector.Managers
             _cubeBoostAvg.Reset();
         }
 
-        internal ih[] GetBoostSlots(ih[] ci)
+        internal static ih[] GetBoostSlots(ih[] ci)
         {
             var result = new List<ih>();
             //First, find items in our priority list

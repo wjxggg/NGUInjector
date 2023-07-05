@@ -14,7 +14,7 @@ To upgrade to a new release, unload the injector from the General Settings page 
 
 # Configuration
 
-** IMPORTANT NOTE ** For those upgrading from an older version of NGUInjector (< 3.7.0), your configuration folder will be recreated in the directory shown below. Your old settings and profiles are NOT gone. Simply copy the old NGUInjector folder from the desktop to the new location.
+**IMPORTANT NOTE** For those upgrading from an older version of NGUInjector (< 3.7.0), your configuration folder will be recreated in the directory shown below. Your old settings and profiles are NOT gone. Simply copy the old NGUInjector folder from the desktop to the new location.
 
 After injecting the dll, a new folder will be created in your AppData directory called NGUInjector (full path is %UserProfile%\AppData\LocalLow\NGUInjector). Settings files will be automatically written to this directory. The following files are of interest:
 
