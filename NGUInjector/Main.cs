@@ -46,7 +46,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.7.0-rc4";
+        internal const string Version = "3.7.0";
         private static int _furthestZone;
 
         private static string _dir;
@@ -1223,7 +1223,7 @@ namespace NGUInjector
             }
 
             //This logic should trigger only if Time Machine is ready
-            if (Character.buttons.brokenTimeMachine.interactable)
+            if (Character.buttons.brokenTimeMachine.interactable && !Character.challenges.timeMachineChallenge.inChallenge)
             {
                 if (Character.machine.realBaseGold == 0.0)
                 {

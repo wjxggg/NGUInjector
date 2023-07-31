@@ -472,7 +472,7 @@ namespace NGUInjector.Managers
             _character.adventureController.zoneSelector.changeZone(zone);
         }
 
-        private bool HandleBeastMode(bool beastMode, out bool beastModeWasToggled)
+        private bool CheckBeastModeToggle(bool beastMode, out bool beastModeWasToggled)
         {
             beastModeWasToggled = false;
             //Beast mode checks
@@ -491,15 +491,11 @@ namespace NGUInjector.Managers
                         _character.adventureController.beastModeMove.doMove();
                         beastModeWasToggled = true;
                     }
-                    else if (_character.adventure.autoattacking)
-                    {
-                        _character.adventureController.idleAttackMove.setToggle();
-                    }
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
@@ -514,11 +510,18 @@ namespace NGUInjector.Managers
             }
 
             //If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is enabled
-            if (!HandleBeastMode(beastMode, out bool beastModeWasToggled))
+            if (CheckBeastModeToggle(beastMode, out bool beastModeWasToggled))
             {
-                if (!beastModeWasToggled && _character.adventure.zone != -1)
+                if (!beastModeWasToggled)
                 {
-                    MoveToZone(-1);
+                    if (_character.adventure.zone != -1)
+                    {
+                        MoveToZone(-1);
+                    }
+                    if (_character.adventure.autoattacking)
+                    {
+                        _character.adventureController.idleAttackMove.setToggle();
+                    }
                 }
                 return;
             }
@@ -581,25 +584,19 @@ namespace NGUInjector.Managers
                 }
             }
 
-            //Start by turning off auto attack if its on unless we can only idle attack
-            if (!_character.adventure.autoattacking)
+            //If we havent unlocked any attacks yet, use the Idle loop, otherwise turn off idle mode
+            if(_character.training.attackTraining[1] == 0)
             {
-                if (_character.training.attackTraining[1] == 0)
-                {
-                    _character.adventureController.idleAttackMove.setToggle();
-                    return;
-                }
+                IdleZone(zone, bossOnly, recoverHealth, beastMode);
+                return;
             }
-            else
+            else if (_character.adventure.autoattacking)
             {
-                if (_character.training.attackTraining[1] > 0)
-                {
-                    _character.adventureController.idleAttackMove.setToggle();
-                }
+                _character.adventureController.idleAttackMove.setToggle();
             }
 
-            //If beast mode was toggled, return to allow button cooldown, otherwise continue with manual combat
-            HandleBeastMode(beastMode, out bool beastModeWasToggled);
+            //If we need to toggle beast mode, just do the normal combat loop until the cooldown is ready
+            CheckBeastModeToggle(beastMode, out bool beastModeWasToggled);
             if (beastModeWasToggled)
             {
                 return;
