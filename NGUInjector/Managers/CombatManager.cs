@@ -468,6 +468,11 @@ namespace NGUInjector.Managers
             _forcedMove = null;
             _bannedMove = null;
 
+            if (_character.adventure.zone != zone)
+            {
+                _isFighting = false;
+                _fightTimer = 0;
+            }
             CurrentCombatZone = zone;
             _character.adventureController.zoneSelector.changeZone(zone);
         }
@@ -500,13 +505,10 @@ namespace NGUInjector.Managers
 
         internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
         {
-            if (zone == -1)
+            if (zone == -1 && _character.adventure.zone != -1)
             {
-                if (_character.adventure.zone != -1)
-                {
-                    MoveToZone(-1);
-                    return;
-                }
+                MoveToZone(-1);
+                return;
             }
 
             //If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is enabled
@@ -534,7 +536,9 @@ namespace NGUInjector.Managers
             }
 
             if (_character.adventure.zone == -1 && !HasFullHP() && recoverHealth)
+            {
                 return;
+            }
 
             //Check if we're in not in the right zone and not in safe zone, if not move to safe zone first
             if (_character.adventure.zone != zone && _character.adventure.zone != -1)
@@ -551,7 +555,33 @@ namespace NGUInjector.Managers
 
             //Wait for an enemy to spawn
             if (_character.adventureController.currentEnemy == null)
+            {
+                if (_isFighting)
+                {
+                    _isFighting = false;
+                    if (_fightTimer > 1)
+                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
+
+                    _fightTimer = 0;
+                    if (LoadoutManager.CurrentLock == LockType.Gold)
+                    {
+                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
+                        Settings.DoGoldSwap = false;
+                        LoadoutManager.RestoreGear();
+                        LoadoutManager.ReleaseLock();
+                        MoveToZone(-1);
+                        return;
+                    }
+
+                    if (recoverHealth && !HasFullHP())
+                    {
+                        MoveToZone(-1);
+                        return;
+                    }
+                }
+                _fightTimer = 0;
                 return;
+            }
 
             if (zone < 1000 && Settings.BlacklistedBosses.Contains(_character.adventureController.currentEnemy.spriteID))
             {
@@ -560,32 +590,32 @@ namespace NGUInjector.Managers
                 return;
             }
 
-            //If we only want boss enemies
-            if (bossOnly)
+            //We have an enemy. Lets check if we're in bossOnly mode
+            if (bossOnly && zone < 1000)
             {
-                //Check the type of the enemy
                 var ec = _character.adventureController.currentEnemy.enemyType;
-                //If its not a boss, move back to safe zone. Next loop will put us back in the right zone.
                 if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))
                 {
                     MoveToZone(-1);
-                }
-            }
-        }
-
-        internal void ManualZone(int zone, bool bossOnly, bool recoverHealth, bool precastBuffs, bool fastCombat, bool beastMode)
-        {
-            if (zone == -1)
-            {
-                if (_character.adventure.zone != -1)
-                {
-                    MoveToZone(-1);
+                    MoveToZone(zone);
                     return;
                 }
             }
 
+            _isFighting = true;
+            _enemyName = _character.adventureController.currentEnemy.name;
+        }
+
+        internal void ManualZone(int zone, bool bossOnly, bool recoverHealth, bool precastBuffs, bool fastCombat, bool beastMode)
+        {
+            if (zone == -1 && _character.adventure.zone != -1)
+            {
+                MoveToZone(-1);
+                return;
+            }
+
             //If we havent unlocked any attacks yet, use the Idle loop, otherwise turn off idle mode
-            if(_character.training.attackTraining[1] == 0)
+            if (_character.training.attackTraining[1] == 0)
             {
                 IdleZone(zone, bossOnly, recoverHealth, beastMode);
                 return;
@@ -668,7 +698,6 @@ namespace NGUInjector.Managers
             //Move to the zone
             if (_character.adventure.zone != zone)
             {
-                _isFighting = false;
                 MoveToZone(zone);
                 return;
             }
