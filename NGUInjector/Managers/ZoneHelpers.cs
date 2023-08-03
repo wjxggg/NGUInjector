@@ -30,6 +30,11 @@ namespace NGUInjector.Managers
             return zone == 16;
         }
 
+        internal static bool ZoneIsGodmother(int zone)
+        {
+            return zone == 26;
+        }
+
         internal static bool TitanSpawningSoon(int titanIndex)
         {
             return Main.Character.buttons.adventure.IsInteractable() && IsTitanSpawningSoon(titanIndex);

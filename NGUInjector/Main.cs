@@ -1300,7 +1300,7 @@ namespace NGUInjector
                 return;
             }
 
-            if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone))
+            if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone))
             {
                 _combManager.ManualZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.PrecastBuffs, Settings.FastCombat, Settings.BeastMode);
             }
