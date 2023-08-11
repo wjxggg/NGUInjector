@@ -149,10 +149,15 @@ namespace NGUInjector.Managers
 
                 _holdBlock = numAttacksTillGodmotherExplode < blockThreshold;
 
-                //Godmother explodes on growCount % 9 == 3
+                //Godmother explodes on growCount % 9 == 3 but we can't use it immediately as the block will run out during the explosion
+                //Wait about 1 second before using
                 if (attackNumber == 3)
                 {
-                    if (!_usedBlock)
+                    var type = eai.GetType().GetField("enemyAttackTimer",
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    var enemyAttackTimer = (float)type?.GetValue(eai);
+                    
+                    if (!_usedBlock && enemyAttackTimer > 1.0f)
                     {
                         if (ac.blockMove.button.IsInteractable())
                         {
