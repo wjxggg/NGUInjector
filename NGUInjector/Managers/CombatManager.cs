@@ -157,15 +157,19 @@ namespace NGUInjector.Managers
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     var enemyAttackTimer = (float)type?.GetValue(eai);
 
-                    if (!_usedBlock && enemyAttackTimer > 0.5f)
+                    if (!_usedBlock && enemyAttackTimer > 0.8f)
                     {
-                        if (ac.blockMove.button.IsInteractable() && enemyAttackTimer > 1.5f)
+                        if (ac.blockMove.button.IsInteractable() && enemyAttackTimer > 1.8f)
                         {
                             ac.blockMove.doMove();
                             _usedBlock = true;
                         }
 
                         return;
+                    }
+                    else
+                    {
+                        _holdBlock = true;
                     }
                 }
                 else
