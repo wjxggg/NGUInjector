@@ -84,11 +84,11 @@ namespace NGUInjector.Managers
                         oldSnapshot.ShouldUseTitanLoadout = currentSnapshot.ShouldUseTitanLoadout;
 
                         //The titan is active, if it has been active for over 5 minutes, stats are probably not be high enough to kill
-                        //Disable the titan to prevent sitting with suboptimal gear forever unless combat is currently occurring in that titan zone
+                        //Disable the titan to prevent sitting with suboptimal gear forever
                         if (oldSnapshot.SpawnSoonTimestamp.HasValue && currentSnapshot.SpawnSoonTimestamp.HasValue && (currentSnapshot.ShouldUseGoldLoadout || currentSnapshot.ShouldUseTitanLoadout))
                         {
                             //Waiting for kill...
-                            if ((currentSnapshot.SpawnSoonTimestamp.Value - oldSnapshot.SpawnSoonTimestamp.Value).TotalMinutes >= 5 && CombatHelpers.CurrentCombatZone != TitanZones[titanIndex])
+                            if ((currentSnapshot.SpawnSoonTimestamp.Value - oldSnapshot.SpawnSoonTimestamp.Value).TotalMinutes >= 5)
                             {
                                 Log($"Titan {titanIndex} still available after 300 seconds");
                                 if (currentSnapshot.ShouldUseGoldLoadout)
