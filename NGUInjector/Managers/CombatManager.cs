@@ -149,17 +149,27 @@ namespace NGUInjector.Managers
 
                 _holdBlock = numAttacksTillGodmotherExplode < blockThreshold;
 
-                //Godmother explodes on growCount % 9 == 3
+                //Godmother explodes on growCount % 9 == 3 but we can't use it immediately as the block will run out during the explosion
+                //Godmother attacks every 2.2 seconds so wait about 1.5 seconds before using
                 if (attackNumber == 3)
                 {
-                    if (!_usedBlock)
+                    var type = eai.GetType().GetField("enemyAttackTimer",
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    var enemyAttackTimer = (float)type?.GetValue(eai);
+
+                    if (!_usedBlock && enemyAttackTimer > 0.8f)
                     {
-                        if (ac.blockMove.button.IsInteractable())
+                        if (ac.blockMove.button.IsInteractable() && enemyAttackTimer > 1.8f)
                         {
                             ac.blockMove.doMove();
                             _usedBlock = true;
                         }
+
                         return;
+                    }
+                    else
+                    {
+                        _holdBlock = true;
                     }
                 }
                 else
@@ -718,7 +728,7 @@ namespace NGUInjector.Managers
             }
 
             //We have an enemy. Lets check if we're in bossOnly mode
-            if (bossOnly && zone < 1000)
+            if (bossOnly && zone < 1000 && !ZoneHelpers.ZoneIsTitan(zone))
             {
                 var ec = _character.adventureController.currentEnemy.enemyType;
                 if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))

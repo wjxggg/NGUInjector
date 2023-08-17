@@ -157,7 +157,7 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - The gear to equip when autokilling titans.
 - **Titans to Swap For** - Mark titans you wish to swap gear for
 
-![Adventure](https://i.imgur.com/aX9eXeL.png)
+![Adventure](https://i.imgur.com/b16UC6K.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 - **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
@@ -171,6 +171,7 @@ An in game menu can be opened using the F1 button.
 - **Target Zone** - The target zone to snipe/do combat in. ITOPOD is at the bottom of the list.
 - **Allow Fallthrough** - If set to true, combat will use the highest unlocked zone you have until the target zone is unlocked.
 - **ITOPOD** - Equivalent to setting target zone to ITOPOD, just a quicker option
+- **Titans** - Will move you to each Titan Zone enabled in the Titans and Gold tabs when the Titan is about to spawn. Higher level titans will be fought first. Uses the non-ITOPOD combat settings.
 
 - **ITOPOD Settings** - Settings below this apply only to ITOPOD combat
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone.

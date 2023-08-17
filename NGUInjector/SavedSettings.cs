@@ -93,6 +93,7 @@ namespace NGUInjector
         [SerializeField] private bool _itopodRecoverHp;
         [SerializeField] private bool _itopodPrecastBuffs;
         [SerializeField] private bool _adventureTargetItopod;
+        [SerializeField] private bool _adventureTargetTitans;
         [SerializeField] private bool _disableOverlay;
         [SerializeField] private int _yggSwapThreshold;
         [SerializeField] private bool _moreBlockParry;
@@ -275,6 +276,7 @@ namespace NGUInjector
             _debugAllocation = other.DebugAllocation;
             _optimizeItopodFloor = other.OptimizeITOPODFloor;
             _adventureTargetItopod = other.AdventureTargetITOPOD;
+            _adventureTargetTitans = other.AdventureTargetTitans;
             _itopodBeastMode = other.ITOPODBeastMode;
             _itopodCombatMode = other.ITOPODCombatMode;
             _itopodFastCombat = other.ITOPODFastCombat;
@@ -1104,6 +1106,17 @@ namespace NGUInjector
             {
                 if (value == _adventureTargetItopod) return;
                 _adventureTargetItopod = value;
+                SaveSettings();
+            }
+        }
+
+        public bool AdventureTargetTitans
+        {
+            get => _adventureTargetTitans;
+            set
+            {
+                if (value == _adventureTargetTitans) return;
+                _adventureTargetTitans = value;
                 SaveSettings();
             }
         }

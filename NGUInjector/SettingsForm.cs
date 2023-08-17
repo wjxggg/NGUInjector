@@ -250,7 +250,7 @@ namespace NGUInjector
             _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
             _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
             _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
-            _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 1, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
+            _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
             _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
 
             TryItemBoxTextChanged(_yggControls, out _);
@@ -375,6 +375,7 @@ namespace NGUInjector
             ResnipeInput.Value = newSettings.ResnipeTime;
             OptimizeITOPOD.Checked = newSettings.OptimizeITOPODFloor;
             TargetITOPOD.Checked = newSettings.AdventureTargetITOPOD;
+            TargetTitans.Checked = newSettings.AdventureTargetTitans;
 
             ITOPODCombatMode.SelectedIndex = newSettings.ITOPODCombatMode;
             ITOPODRecoverHP.Checked = newSettings.ITOPODRecoverHP;
@@ -1209,6 +1210,12 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.AdventureTargetITOPOD = TargetITOPOD.Checked;
+        }
+
+        private void TargetTitans_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AdventureTargetTitans = TargetTitans.Checked;
         }
 
         private void TitanSwapTargets_ItemChecked(object sender, ItemCheckedEventArgs e)

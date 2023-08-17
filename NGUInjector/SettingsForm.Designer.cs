@@ -41,6 +41,7 @@
             this.moneyPitErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.OpenSettingsFolder = new System.Windows.Forms.Button();
             this.DisableOverlay = new System.Windows.Forms.CheckBox();
             this.UnloadSafety = new System.Windows.Forms.CheckBox();
             this.UnloadButton = new System.Windows.Forms.Button();
@@ -50,6 +51,7 @@
             this.AutoFightBosses = new System.Windows.Forms.CheckBox();
             this.AutoITOPOD = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.OpenProfileFolder = new System.Windows.Forms.Button();
             this.GuffBOnRebirth = new System.Windows.Forms.CheckBox();
             this.GuffAOnRebirth = new System.Windows.Forms.CheckBox();
             this.IronPillOnRebirth = new System.Windows.Forms.CheckBox();
@@ -237,8 +239,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.OpenSettingsFolder = new System.Windows.Forms.Button();
-            this.OpenProfileFolder = new System.Windows.Forms.Button();
+            this.TargetTitans = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -348,6 +349,13 @@
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // OpenSettingsFolder
+            // 
+            resources.ApplyResources(this.OpenSettingsFolder, "OpenSettingsFolder");
+            this.OpenSettingsFolder.Name = "OpenSettingsFolder";
+            this.OpenSettingsFolder.UseVisualStyleBackColor = true;
+            this.OpenSettingsFolder.Click += new System.EventHandler(this.OpenSettingsFolder_Click);
+            // 
             // DisableOverlay
             // 
             resources.ApplyResources(this.DisableOverlay, "DisableOverlay");
@@ -441,6 +449,13 @@
             resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // OpenProfileFolder
+            // 
+            resources.ApplyResources(this.OpenProfileFolder, "OpenProfileFolder");
+            this.OpenProfileFolder.Name = "OpenProfileFolder";
+            this.OpenProfileFolder.UseVisualStyleBackColor = true;
+            this.OpenProfileFolder.Click += new System.EventHandler(this.OpenProfileFolder_Click);
             // 
             // GuffBOnRebirth
             // 
@@ -1062,6 +1077,7 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.TargetTitans);
             this.tabPage6.Controls.Add(this.label32);
             this.tabPage6.Controls.Add(this.BlacklistAddEnemyButton);
             this.tabPage6.Controls.Add(this.label31);
@@ -1923,19 +1939,12 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
-            // OpenSettingsFolder
+            // TargetTitans
             // 
-            resources.ApplyResources(this.OpenSettingsFolder, "OpenSettingsFolder");
-            this.OpenSettingsFolder.Name = "OpenSettingsFolder";
-            this.OpenSettingsFolder.UseVisualStyleBackColor = true;
-            this.OpenSettingsFolder.Click += new System.EventHandler(this.OpenSettingsFolder_Click);
-            // 
-            // OpenProfileFolder
-            // 
-            resources.ApplyResources(this.OpenProfileFolder, "OpenProfileFolder");
-            this.OpenProfileFolder.Name = "OpenProfileFolder";
-            this.OpenProfileFolder.UseVisualStyleBackColor = true;
-            this.OpenProfileFolder.Click += new System.EventHandler(this.OpenProfileFolder_Click);
+            resources.ApplyResources(this.TargetTitans, "TargetTitans");
+            this.TargetTitans.Name = "TargetTitans";
+            this.TargetTitans.UseVisualStyleBackColor = true;
+            this.TargetTitans.CheckedChanged += new System.EventHandler(this.TargetTitans_CheckedChanged);
             // 
             // SettingsForm
             // 
@@ -2211,5 +2220,6 @@
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Button OpenSettingsFolder;
         private System.Windows.Forms.Button OpenProfileFolder;
+        private System.Windows.Forms.CheckBox TargetTitans;
     }
 }
