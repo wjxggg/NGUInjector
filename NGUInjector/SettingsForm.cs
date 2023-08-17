@@ -375,6 +375,7 @@ namespace NGUInjector
             ResnipeInput.Value = newSettings.ResnipeTime;
             OptimizeITOPOD.Checked = newSettings.OptimizeITOPODFloor;
             TargetITOPOD.Checked = newSettings.AdventureTargetITOPOD;
+            TargetTitans.Checked = newSettings.AdventureTargetTitans;
 
             ITOPODCombatMode.SelectedIndex = newSettings.ITOPODCombatMode;
             ITOPODRecoverHP.Checked = newSettings.ITOPODRecoverHP;
@@ -1209,6 +1210,12 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.AdventureTargetITOPOD = TargetITOPOD.Checked;
+        }
+
+        private void TargetTitans_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AdventureTargetTitans = TargetTitans.Checked;
         }
 
         private void TitanSwapTargets_ItemChecked(object sender, ItemCheckedEventArgs e)

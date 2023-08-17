@@ -40,9 +40,16 @@ namespace NGUInjector.Managers
             return Main.Character.buttons.adventure.IsInteractable() && IsTitanSpawningSoon(titanIndex);
         }
 
+        internal static int? GetHighestSpawningTitanZone()
+        {
+            var spawningTitans = _titanSnapshotSummary.TitansSpawningSoon.OrderByDescending(x => x.TitanIndex);
+
+            return spawningTitans.Any() ? (int?)TitanZones[spawningTitans.First().TitanIndex] : null;
+        }
+
         internal static bool AnyTitansSpawningSoon()
         {
-            return _titanSnapshotSummary.SpawningSoon;
+            return _titanSnapshotSummary.AnySpawningSoon;
         }
 
         internal static bool ShouldRunGoldLoadout()
@@ -70,11 +77,9 @@ namespace NGUInjector.Managers
                 if (TitanZones[titanIndex] <= maxZone)
                 {
                     TitanSnapshot currentSnapshot = GetTitanSnapshot(titanIndex);
-                    //LogDebug($"Current Titan {titanIndex}: [{currentSnapshot.SpawnSoonTimestamp}], GoldSwap[{currentSnapshot.ShouldUseGoldLoadout}], TitanSwap[{currentSnapshot.ShouldUseTitanLoadout}]");
                     if (_titanDetails.ContainsKey(titanIndex))
                     {
                         TitanSnapshot oldSnapshot = _titanDetails[titanIndex];
-                        //LogDebug($"Old Titan {titanIndex}: [{oldSnapshot.SpawnSoonTimestamp}], GoldSwap[{oldSnapshot.ShouldUseGoldLoadout}], TitanSwap[{oldSnapshot.ShouldUseTitanLoadout}]");
                         oldSnapshot.ShouldUseGoldLoadout = currentSnapshot.ShouldUseGoldLoadout;
                         oldSnapshot.ShouldUseTitanLoadout = currentSnapshot.ShouldUseTitanLoadout;
 
@@ -82,7 +87,7 @@ namespace NGUInjector.Managers
                         //Disable the titan to prevent sitting with suboptimal gear forever unless combat is currently occurring in that titan zone
                         if (oldSnapshot.SpawnSoonTimestamp.HasValue && currentSnapshot.SpawnSoonTimestamp.HasValue && (currentSnapshot.ShouldUseGoldLoadout || currentSnapshot.ShouldUseTitanLoadout))
                         {
-                            //LogDebug("Waiting for kill...");
+                            //Waiting for kill...
                             if ((currentSnapshot.SpawnSoonTimestamp.Value - oldSnapshot.SpawnSoonTimestamp.Value).TotalMinutes >= 5 && CombatHelpers.CurrentCombatZone != TitanZones[titanIndex])
                             {
                                 Log($"Titan {titanIndex} still available after 300 seconds");
@@ -117,7 +122,7 @@ namespace NGUInjector.Managers
                         //If the timestamp is now null, the titan has been killed, flag the kill as done if the titan was set to use a gold loadout
                         else if (oldSnapshot.SpawnSoonTimestamp.HasValue && !currentSnapshot.SpawnSoonTimestamp.HasValue && currentSnapshot.ShouldUseGoldLoadout)
                         {
-                            //LogDebug($"Marking titan gold swap as complete");
+                            //Marking titan gold swap as complete
                             var tempDone = Settings.TitanMoneyDone.ToArray();
                             tempDone[titanIndex] = true;
                             Settings.TitanMoneyDone = tempDone;
@@ -137,11 +142,7 @@ namespace NGUInjector.Managers
                 }
             }
 
-            _titanSnapshotSummary.SpawningSoon = _titanDetails.Any(x => x.Value.SpawnSoonTimestamp.HasValue && (x.Value.ShouldUseGoldLoadout || x.Value.ShouldUseTitanLoadout));
-            _titanSnapshotSummary.RunGoldLoadout = _titanDetails.Any(x => x.Value.SpawnSoonTimestamp.HasValue && x.Value.ShouldUseGoldLoadout);
-            _titanSnapshotSummary.RunTitanLoadout = _titanDetails.Any(x => x.Value.SpawnSoonTimestamp.HasValue && x.Value.ShouldUseTitanLoadout);
-
-            //LogDebug($"Final Summary: SpawnSoon[{_titanSnapshotSummary.SpawningSoon}], GoldSwap[{_titanSnapshotSummary.RunGoldLoadout}], TitanSwap[{_titanSnapshotSummary.RunTitanLoadout}]");
+            _titanSnapshotSummary.TitansSpawningSoon = _titanDetails.Select(x => x.Value).Where(x => x.SpawnSoonTimestamp.HasValue && (x.ShouldUseGoldLoadout || x.ShouldUseTitanLoadout));
         }
 
         private static TitanSnapshot GetTitanSnapshot(int titanIndex)
@@ -154,48 +155,6 @@ namespace NGUInjector.Managers
 
             return titanSnapshot;
         }
-
-        //internal static TitanSpawn TitansSpawningSoon()
-        //{
-        //    var result = new TitanSpawn();
-
-        //    if (!Main.Character.buttons.adventure.IsInteractable())
-        //        return result;
-        //    for (var i = 0; i < TitanZones.Length; i++)
-        //    {
-        //        result.Merge(GetTitanSpawn(i));
-        //    }
-        //    return result;
-        //}
-
-        //private static TitanSpawn GetTitanSpawn(int bossId)
-        //{
-        //    var result = new TitanSpawn();
-
-        //    if (TitanZones[bossId] > GetMaxReachableZone(true))
-        //        return result;
-
-        //    if (!CheckTitanSpawnTime(bossId)) return result;
-
-        //    // Run money once for each boss
-        //    result.RunMoneyLoadout = Main.Settings.ManageGoldLoadouts && Main.Settings.TitanGoldTargets[bossId] && !Main.Settings.TitanMoneyDone[bossId];
-
-        //    result.SpawningSoon = result.RunMoneyLoadout || (Main.Settings.SwapTitanLoadouts && Main.Settings.TitanSwapTargets[bossId]);
-
-        //    if (result.SpawningSoon)
-        //    {
-        //        LogDebug($"Adding {bossId} to TitanTargetList");
-        //        result.TitanTargetList.Add(bossId);
-        //    }
-
-        //    if (!result.RunMoneyLoadout) return result;
-        //    Main.Log($"Running money loadout for {bossId}");
-        //    var temp = Main.Settings.TitanMoneyDone.ToArray();
-        //    temp[bossId] = true;
-        //    Main.Settings.TitanMoneyDone = temp;
-
-        //    return result;
-        //}
 
         private static bool IsTitanSpawningSoon(int bossId)
         {
@@ -276,9 +235,10 @@ namespace NGUInjector.Managers
 
     public class TitanSnapshotSummary
     {
-        internal bool SpawningSoon { get; set; } = false;
-        internal bool RunTitanLoadout { get; set; } = false;
-        internal bool RunGoldLoadout { get; set; } = false;
+        internal IEnumerable<TitanSnapshot> TitansSpawningSoon { get; set; } = new List<TitanSnapshot>();
+        internal bool AnySpawningSoon { get { return TitansSpawningSoon.Any(); } }
+        internal bool RunTitanLoadout { get { return TitansSpawningSoon.Any(x => x.ShouldUseTitanLoadout); } }
+        internal bool RunGoldLoadout { get { return TitansSpawningSoon.Any(x => x.ShouldUseGoldLoadout); } }
     }
 
     internal class TitanSnapshot

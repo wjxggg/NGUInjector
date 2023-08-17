@@ -728,7 +728,7 @@ namespace NGUInjector.Managers
             }
 
             //We have an enemy. Lets check if we're in bossOnly mode
-            if (bossOnly && zone < 1000)
+            if (bossOnly && zone < 1000 && !ZoneHelpers.ZoneIsTitan(zone))
             {
                 var ec = _character.adventureController.currentEnemy.enemyType;
                 if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))

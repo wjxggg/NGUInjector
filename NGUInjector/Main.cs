@@ -287,6 +287,7 @@ namespace NGUInjector
                         GoldCBlockMode = false,
                         DebugAllocation = false,
                         AdventureTargetITOPOD = false,
+                        AdventureTargetTitans = false,
                         ITOPODRecoverHP = false,
                         ITOPODCombatMode = 0,
                         ITOPODBeastMode = true,
@@ -1247,11 +1248,16 @@ namespace NGUInjector
             }
 
             var questZone = _questManager.IsQuesting();
-            if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone) || !ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) ||
-                (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && !ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
+
+            if (questZone > 0)
             {
-                if (questZone > 0)
+                if((Settings.AdventureTargetTitans && ZoneHelpers.AnyTitansSpawningSoon()) || (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
                 {
+                    // DONT quest IF we have a titan spawning soon
+                }
+                else if(!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
+                {
+                    // DO quest if there is no titan spawning and Combat is disabled, the ITOPOD override is set, or the target zone is locked
                     if (Settings.QuestCombatMode == 0)
                     {
                         _combManager.ManualZone(questZone, false, false, false, Settings.QuestFastCombat, Settings.BeastMode);
@@ -1283,6 +1289,12 @@ namespace NGUInjector
                         tempZone = 1000;
                     }
                 }
+            }
+
+            int? titanZone = ZoneHelpers.GetHighestSpawningTitanZone();
+            if (Settings.AdventureTargetTitans && titanZone.HasValue)
+            {
+                tempZone = titanZone.Value;
             }
 
             if (tempZone >= 1000)
