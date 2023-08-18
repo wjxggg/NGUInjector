@@ -962,7 +962,6 @@ namespace NGUInjector
 
                 if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
                 {
-                    ZoneHelpers.RefreshTitanSnapshots();
                     LoadoutManager.TryTitanSwap();
                     DiggerManager.TryTitanSwap();
                 }
@@ -1222,6 +1221,8 @@ namespace NGUInjector
                 Settings.DoGoldSwap = true;
                 Settings.TitanMoneyDone = new bool[ZoneHelpers.TitanZones.Length];
             }
+
+            ZoneHelpers.RefreshTitanSnapshots();
 
             //This logic should trigger only if Time Machine is ready
             if (Character.buttons.brokenTimeMachine.interactable && !Character.challenges.timeMachineChallenge.inChallenge)
