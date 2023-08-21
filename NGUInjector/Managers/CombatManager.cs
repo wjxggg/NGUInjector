@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
+using UnityEngine.Experimental.Rendering;
 using static NGUInjector.Main;
 using static NGUInjector.Managers.CombatHelpers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskBand;
@@ -17,6 +18,7 @@ namespace NGUInjector.Managers
         private readonly Character _character;
         private readonly PlayerController _pc;
         private bool _isFighting = false;
+        private bool _firstAttackUsed = false;
         private float _fightTimer = 0;
         private string _enemyName;
         private DateTime move69Cooldown = DateTime.MinValue;
@@ -56,7 +58,7 @@ namespace NGUInjector.Managers
             return _character.adventure.curHP / _character.totalAdvHP();
         }
 
-        private void DoCombat(bool fastCombat)
+        private void DoCombat(bool fastCombat, bool smartBeastMode)
         {
             if (!_pc.moveCheck())
                 return;
@@ -111,24 +113,28 @@ namespace NGUInjector.Managers
                             if (ac.regularAttackMove.button.IsInteractable())
                             {
                                 ac.regularAttackMove.doMove();
+                                _firstAttackUsed = true;
                             }
                             break;
                         case WalderpCombatMove.Strong:
                             if (ac.strongAttackMove.button.IsInteractable())
                             {
                                 ac.strongAttackMove.doMove();
+                                _firstAttackUsed = true;
                             }
                             break;
                         case WalderpCombatMove.Piercing:
                             if (ac.pierceMove.button.IsInteractable())
                             {
                                 ac.pierceMove.doMove();
+                                _firstAttackUsed = true;
                             }
                             break;
                         case WalderpCombatMove.Ultimate:
                             if (ac.ultimateAttackMove.button.IsInteractable())
                             {
                                 ac.ultimateAttackMove.doMove();
+                                _firstAttackUsed = true;
                             }
                             break;
                         default:
@@ -181,7 +187,39 @@ namespace NGUInjector.Managers
             if (!fastCombat)
             {
                 if (CombatBuffs())
+                {
                     return;
+                }
+
+                if (smartBeastMode && BeastModeUnlocked())
+                {
+                    LogDebug("Smart BM check...");
+                    float? defBuffTimeRemaining = DefenseBuffActive() ? (float?)(Main.Character.defenseBuffDuration() - Main.PlayerController.defenseBuffTime) : null;
+                    float? ultBuffTimeRemaining = UltimateBuffActive() ? (float?)(Main.Character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
+                    if (defBuffTimeRemaining.HasValue || ultBuffTimeRemaining.HasValue)
+                    {
+                        LogDebug("Def or Ult buff active!");
+                        if (!BeastModeActive() && BeastModeReady())
+                        {
+                            LogDebug("Beast mode off and clickable!");
+                            float BMcd = _character.beastModeCooldown();
+                            LogDebug($"BMcd: {BMcd}, DefTime: {defBuffTimeRemaining}, UltTime: {ultBuffTimeRemaining}");
+                            if ((defBuffTimeRemaining.HasValue && BMcd <= defBuffTimeRemaining.Value) || (ultBuffTimeRemaining.HasValue && BMcd <= ultBuffTimeRemaining.Value))
+                            {
+                                LogDebug("Cooldown is within threshold!");
+                                _character.adventureController.beastModeMove.doMove();
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (BeastModeActive())
+                        {
+                            if (CastBeastMode()) return;
+                        }
+                    }
+                }
             }
 
             if (ZoneHelpers.ZoneIsWalderp(zone))
@@ -391,18 +429,21 @@ namespace NGUInjector.Managers
                 if (ac.pierceMove.button.IsInteractable() && numAttacksTillWalderpCommand >= pierceThreshold)
                 {
                     ac.pierceMove.doMove();
+                    _firstAttackUsed = true;
                     return;
                 }
-                
+
                 if (ac.strongAttackMove.button.IsInteractable())
                 {
                     ac.strongAttackMove.doMove();
+                    _firstAttackUsed = true;
                     return;
                 }
-                
+
                 if (ac.regularAttackMove.button.IsInteractable())
                 {
                     ac.regularAttackMove.doMove();
+                    _firstAttackUsed = true;
                     return;
                 }
             }
@@ -417,6 +458,7 @@ namespace NGUInjector.Managers
                 if (fastCombat || ChargeActive() || GetChargeCooldown() > .45)
                 {
                     ac.ultimateAttackMove.doMove();
+                    _firstAttackUsed = true;
                     return;
                 }
             }
@@ -424,6 +466,7 @@ namespace NGUInjector.Managers
             if (ac.pierceMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Piercing)
             {
                 ac.pierceMove.doMove();
+                _firstAttackUsed = true;
                 return;
             }
 
@@ -436,12 +479,14 @@ namespace NGUInjector.Managers
             if (ac.strongAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Strong)
             {
                 ac.strongAttackMove.doMove();
+                _firstAttackUsed = true;
                 return;
             }
 
             if (ac.regularAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Regular)
             {
                 ac.regularAttackMove.doMove();
+                _firstAttackUsed = true;
                 return;
             }
         }
@@ -608,6 +653,7 @@ namespace NGUInjector.Managers
             if (_character.adventure.zone != zone)
             {
                 _isFighting = false;
+                _firstAttackUsed = false;
                 _fightTimer = 0;
             }
             CurrentCombatZone = zone;
@@ -618,21 +664,14 @@ namespace NGUInjector.Managers
         {
             beastModeWasToggled = false;
             //Beast mode checks
-            if (_character.adventureController.hasBeastMode())
+            if (BeastModeUnlocked())
             {
-                bool canToggleBeastMode = _character.adventureController.beastModeMove.button.interactable;
-                bool isBeastModeActive = _character.adventure.beastModeOn;
-
-                bool needToToggle = isBeastModeActive != beastMode;
+                bool needToToggle = BeastModeActive() != beastMode;
 
                 //If the button is inaccessible, we need to stay in manual mode until we can press it
                 if (needToToggle)
                 {
-                    if (canToggleBeastMode)
-                    {
-                        _character.adventureController.beastModeMove.doMove();
-                        beastModeWasToggled = true;
-                    }
+                    beastModeWasToggled = CastBeastMode();
                     return true;
                 }
             }
@@ -696,6 +735,7 @@ namespace NGUInjector.Managers
                 if (_isFighting)
                 {
                     _isFighting = false;
+                    _firstAttackUsed = false;
                     if (_fightTimer > 1)
                         LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
 
@@ -743,7 +783,7 @@ namespace NGUInjector.Managers
             _enemyName = _character.adventureController.currentEnemy.name;
         }
 
-        internal void ManualZone(int zone, bool bossOnly, bool recoverHealth, bool precastBuffs, bool fastCombat, bool beastMode)
+        internal void ManualZone(int zone, bool bossOnly, bool recoverHealth, bool precastBuffs, bool fastCombat, bool beastMode, bool smartBeastMode)
         {
             if (zone == -1 && _character.adventure.zone != -1)
             {
@@ -762,11 +802,16 @@ namespace NGUInjector.Managers
                 _character.adventureController.idleAttackMove.setToggle();
             }
 
+            bool beastModeNeedsToPrecast = precastBuffs && smartBeastMode && !_firstAttackUsed;
+
             //If we need to toggle beast mode, just do the normal combat loop until the cooldown is ready
-            CheckBeastModeToggle(beastMode, out bool beastModeWasToggled);
-            if (beastModeWasToggled)
+            if (!beastModeNeedsToPrecast)
             {
-                return;
+                CheckBeastModeToggle(beastMode, out bool beastModeWasToggled);
+                if (beastModeWasToggled)
+                {
+                    return;
+                }
             }
 
             //if (_character.adventure.beastModeOn && !beastMode && _character.adventureController.beastModeMove.button.interactable)
@@ -809,9 +854,15 @@ namespace NGUInjector.Managers
                         if (CastParry()) return;
                     }
 
+                    if (smartBeastMode && BeastModeUnlocked() && !BeastModeActive())
+                    {
+                        if (CastBeastMode()) return;
+                    }
+
                     //Wait for Charge to be ready again, as well as other buffs
                     if (ChargeUnlocked() && !ChargeReady()) return;
                     if (ParryUnlocked() && !ParryReady()) return;
+                    if (smartBeastMode && BeastModeUnlocked() && !BeastModeReady()) return;
                     if (MegaBuffUnlocked() && !MegaBuffReady()) return;
                     if (UltimateBuffUnlocked() && !UltimateBuffReady()) return;
                     if (DefensiveBuffUnlocked() && !DefensiveBuffReady()) return;
@@ -845,6 +896,7 @@ namespace NGUInjector.Managers
                 if (_isFighting)
                 {
                     _isFighting = false;
+                    _firstAttackUsed = false;
                     if (_fightTimer > 1)
                         LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
 
@@ -918,7 +970,7 @@ namespace NGUInjector.Managers
             }
 
             //We have an enemy. Lets check if we're in bossOnly mode
-            if (bossOnly && zone < 1000)
+            if (bossOnly && zone < 1000 && !ZoneHelpers.ZoneIsTitan(zone))
             {
                 var ec = _character.adventureController.currentEnemy.enemyType;
                 if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))
@@ -933,7 +985,7 @@ namespace NGUInjector.Managers
             _enemyName = _character.adventureController.currentEnemy.name;
             //We have an enemy and we're ready to fight. Run through our combat routine
             if (_character.training.attackTraining[1] > 0)
-                DoCombat(fastCombat);
+                DoCombat(fastCombat, !beastModeNeedsToPrecast && smartBeastMode);
         }
     }
 }

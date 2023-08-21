@@ -46,7 +46,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.7.1-beta2";
+        internal const string Version = "3.7.1-beta3";
         private static int _furthestZone;
 
         private static string _dir;
@@ -248,6 +248,8 @@ namespace NGUInjector
                         SnipeBossOnly = true,
                         AllowZoneFallback = false,
                         QuestFastCombat = true,
+                        QuestBeastMode = false,
+                        QuestSmartBeastMode = true,
                         AbandonMinors = false,
                         MinorAbandonThreshold = 30,
                         QuestCombatMode = 0,
@@ -276,7 +278,8 @@ namespace NGUInjector
                         ManageR3 = true,
                         WishPriorities = new int[] { },
                         WishBlacklist = new int[] { },
-                        BeastMode = true,
+                        BeastMode = false,
+                        SmartBeastMode = true,
                         ManageNGUDiff = true,
                         AllocationFile = "default",
                         TitanGoldTargets = new bool[ZoneHelpers.TitanZones.Length],
@@ -288,9 +291,18 @@ namespace NGUInjector
                         DebugAllocation = false,
                         AdventureTargetITOPOD = false,
                         AdventureTargetTitans = false,
+                        UseTitanCombat = false,
+                        TitanCombatMode = 0,
+                        TitanPrecastBuffs = true,
+                        TitanRecoverHealth = true,
+                        TitanFastCombat = false,
+                        TitanBeastMode = false,
+                        TitanSmartBeastMode = true,
+                        TitanMoreBlockParry = true,
                         ITOPODRecoverHP = false,
                         ITOPODCombatMode = 0,
-                        ITOPODBeastMode = true,
+                        ITOPODBeastMode = false,
+                        ITOPODSmartBeastMode = true,
                         ITOPODFastCombat = true,
                         ITOPODPrecastBuffs = false,
                         DisableOverlay = false,
@@ -892,6 +904,19 @@ namespace NGUInjector
                 Character.bloodSpells.updateLootToggleState();
                 Character.bloodSpells.updateRebirthToggleState();
             }
+
+            if (Character.wishesController.curValidUpgradesList.Any() && !Character.wishesController.curValidUpgradesList.Contains(Character.wishesController.curSelectedWish)
+                && Character.wishes.wishes[Character.wishesController.curSelectedWish].energy == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].magic == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].res3 == 0)
+            {
+                if (Character.wishesController.curValidUpgradesList.Any(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0))
+                {
+                    Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0));
+                }
+                else
+                {
+                    Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First());
+                }
+            }
         }
 
         // Runs every 10 seconds, our main loop
@@ -1229,7 +1254,7 @@ namespace NGUInjector
             {
                 if (Character.machine.realBaseGold == 0.0)
                 {
-                    _combManager.ManualZone(0, false, false, false, true, false);
+                    _combManager.ManualZone(0, false, false, false, true, false, false);
                     CombatHelpers.IsCurrentlyGoldSniping = true;
                     return;
                 }
@@ -1241,7 +1266,7 @@ namespace NGUInjector
                         var bestZone = ZoneStatHelper.GetBestZone();
                         _furthestZone = ZoneHelpers.GetMaxReachableZone(false);
 
-                        _combManager.ManualZone(bestZone.Zone, true, bestZone.FightType == 1, false, bestZone.FightType == 2, false);
+                        _combManager.ManualZone(bestZone.Zone, true, bestZone.FightType == 1, false, bestZone.FightType == 2, false, false);
                         CombatHelpers.IsCurrentlyGoldSniping = true;
                         return;
                     }
@@ -1252,20 +1277,20 @@ namespace NGUInjector
 
             if (questZone > 0)
             {
-                if((Settings.AdventureTargetTitans && ZoneHelpers.AnyTitansSpawningSoon()) || (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
+                if ((Settings.AdventureTargetTitans && ZoneHelpers.AnyTitansSpawningSoon()) || (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
                 {
                     // DONT quest IF we have a titan spawning soon
                 }
-                else if(!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
+                else if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
                 {
                     // DO quest if there is no titan spawning and Combat is disabled, the ITOPOD override is set, or the target zone is locked
                     if (Settings.QuestCombatMode == 0)
                     {
-                        _combManager.ManualZone(questZone, false, false, false, Settings.QuestFastCombat, Settings.BeastMode);
+                        _combManager.ManualZone(questZone, false, false, false, Settings.QuestFastCombat, Settings.QuestBeastMode, Settings.QuestSmartBeastMode);
                     }
                     else
                     {
-                        _combManager.IdleZone(questZone, false, false, Settings.BeastMode);
+                        _combManager.IdleZone(questZone, false, false, Settings.QuestBeastMode);
                     }
 
                     CombatHelpers.IsCurrentlyQuesting = true;
@@ -1302,7 +1327,7 @@ namespace NGUInjector
             {
                 if (Settings.ITOPODCombatMode == 0)
                 {
-                    _combManager.ManualZone(tempZone, false, Settings.ITOPODRecoverHP, Settings.ITOPODPrecastBuffs, Settings.ITOPODFastCombat, Settings.ITOPODBeastMode);
+                    _combManager.ManualZone(tempZone, false, Settings.ITOPODRecoverHP, Settings.ITOPODPrecastBuffs, Settings.ITOPODFastCombat, Settings.ITOPODBeastMode, Settings.ITOPODSmartBeastMode);
                 }
                 else
                 {
@@ -1312,10 +1337,25 @@ namespace NGUInjector
                 CombatHelpers.IsCurrentlyAdventuring = true;
                 return;
             }
+            
+            if (Settings.UseTitanCombat && ZoneHelpers.ZoneIsTitan(tempZone))
+            {
+                if (Settings.TitanCombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone))
+                {
+                    _combManager.ManualZone(tempZone, false, Settings.TitanRecoverHealth, Settings.TitanPrecastBuffs, Settings.TitanFastCombat, Settings.TitanBeastMode, Settings.TitanSmartBeastMode);
+                }
+                else
+                {
+                    _combManager.IdleZone(tempZone, false, Settings.TitanRecoverHealth, Settings.TitanBeastMode);
+                }
+
+                CombatHelpers.IsCurrentlyAdventuring = true;
+                return;
+            }
 
             if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone))
             {
-                _combManager.ManualZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.PrecastBuffs, Settings.FastCombat, Settings.BeastMode);
+                _combManager.ManualZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.PrecastBuffs, Settings.FastCombat, Settings.BeastMode, Settings.SmartBeastMode);
             }
             else
             {

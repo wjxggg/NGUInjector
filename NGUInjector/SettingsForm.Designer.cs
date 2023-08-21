@@ -131,6 +131,8 @@
             this.titanLoadout = new System.Windows.Forms.ListBox();
             this.SwapTitanLoadout = new System.Windows.Forms.CheckBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.SmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.TargetTitans = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.BlacklistAddEnemyButton = new System.Windows.Forms.Button();
             this.label31 = new System.Windows.Forms.Label();
@@ -239,7 +241,18 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.TargetTitans = new System.Windows.Forms.CheckBox();
+            this.ITOPODSmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.QuestSmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.QuestBeastMode = new System.Windows.Forms.CheckBox();
+            this.TitanSmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.TitanMoreBlockParry = new System.Windows.Forms.CheckBox();
+            this.TitanBeastMode = new System.Windows.Forms.CheckBox();
+            this.TitanRecoverHealth = new System.Windows.Forms.CheckBox();
+            this.TitanFastCombat = new System.Windows.Forms.CheckBox();
+            this.TitanPrecastBuffs = new System.Windows.Forms.CheckBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.TitanCombatMode = new System.Windows.Forms.ComboBox();
+            this.UseTitanCombat = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -985,6 +998,15 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.UseTitanCombat);
+            this.tabPage5.Controls.Add(this.TitanSmartBeastMode);
+            this.tabPage5.Controls.Add(this.TitanMoreBlockParry);
+            this.tabPage5.Controls.Add(this.TitanBeastMode);
+            this.tabPage5.Controls.Add(this.TitanRecoverHealth);
+            this.tabPage5.Controls.Add(this.TitanFastCombat);
+            this.tabPage5.Controls.Add(this.TitanPrecastBuffs);
+            this.tabPage5.Controls.Add(this.label36);
+            this.tabPage5.Controls.Add(this.TitanCombatMode);
             this.tabPage5.Controls.Add(this.label9);
             this.tabPage5.Controls.Add(this.TitanSwapTargets);
             this.tabPage5.Controls.Add(this.label8);
@@ -1077,6 +1099,8 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.ITOPODSmartBeastMode);
+            this.tabPage6.Controls.Add(this.SmartBeastMode);
             this.tabPage6.Controls.Add(this.TargetTitans);
             this.tabPage6.Controls.Add(this.label32);
             this.tabPage6.Controls.Add(this.BlacklistAddEnemyButton);
@@ -1110,6 +1134,20 @@
             resources.ApplyResources(this.tabPage6, "tabPage6");
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // SmartBeastMode
+            // 
+            resources.ApplyResources(this.SmartBeastMode, "SmartBeastMode");
+            this.SmartBeastMode.Name = "SmartBeastMode";
+            this.SmartBeastMode.UseVisualStyleBackColor = true;
+            this.SmartBeastMode.CheckedChanged += new System.EventHandler(this.SmartBeastMode_CheckedChanged);
+            // 
+            // TargetTitans
+            // 
+            resources.ApplyResources(this.TargetTitans, "TargetTitans");
+            this.TargetTitans.Name = "TargetTitans";
+            this.TargetTitans.UseVisualStyleBackColor = true;
+            this.TargetTitans.CheckedChanged += new System.EventHandler(this.TargetTitans_CheckedChanged);
             // 
             // label32
             // 
@@ -1452,6 +1490,8 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.QuestSmartBeastMode);
+            this.tabPage8.Controls.Add(this.QuestBeastMode);
             this.tabPage8.Controls.Add(this.ManageQuestLoadout);
             this.tabPage8.Controls.Add(this.label30);
             this.tabPage8.Controls.Add(this.questRemoveButton);
@@ -1563,7 +1603,7 @@
             resources.ApplyResources(this.AbandonMinors, "AbandonMinors");
             this.AbandonMinors.Name = "AbandonMinors";
             this.AbandonMinors.UseVisualStyleBackColor = true;
-            this.AbandonMinors.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.AbandonMinors.CheckedChanged += new System.EventHandler(this.AbandonMinors_CheckedChanged);
             // 
             // AbandonMinorThreshold
             // 
@@ -1939,12 +1979,90 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
-            // TargetTitans
+            // ITOPODSmartBeastMode
             // 
-            resources.ApplyResources(this.TargetTitans, "TargetTitans");
-            this.TargetTitans.Name = "TargetTitans";
-            this.TargetTitans.UseVisualStyleBackColor = true;
-            this.TargetTitans.CheckedChanged += new System.EventHandler(this.TargetTitans_CheckedChanged);
+            resources.ApplyResources(this.ITOPODSmartBeastMode, "ITOPODSmartBeastMode");
+            this.ITOPODSmartBeastMode.Name = "ITOPODSmartBeastMode";
+            this.ITOPODSmartBeastMode.UseVisualStyleBackColor = true;
+            this.ITOPODSmartBeastMode.CheckedChanged += new System.EventHandler(this.ITOPODSmartBeastMode_CheckedChanged);
+            // 
+            // QuestSmartBeastMode
+            // 
+            resources.ApplyResources(this.QuestSmartBeastMode, "QuestSmartBeastMode");
+            this.QuestSmartBeastMode.Name = "QuestSmartBeastMode";
+            this.QuestSmartBeastMode.UseVisualStyleBackColor = true;
+            this.QuestSmartBeastMode.CheckedChanged += new System.EventHandler(this.QuestSmartBeastMode_CheckedChanged);
+            // 
+            // QuestBeastMode
+            // 
+            resources.ApplyResources(this.QuestBeastMode, "QuestBeastMode");
+            this.QuestBeastMode.Name = "QuestBeastMode";
+            this.QuestBeastMode.UseVisualStyleBackColor = true;
+            this.QuestBeastMode.CheckedChanged += new System.EventHandler(this.QuestBeastMode_CheckedChanged);
+            // 
+            // TitanSmartBeastMode
+            // 
+            resources.ApplyResources(this.TitanSmartBeastMode, "TitanSmartBeastMode");
+            this.TitanSmartBeastMode.Name = "TitanSmartBeastMode";
+            this.TitanSmartBeastMode.UseVisualStyleBackColor = true;
+            this.TitanSmartBeastMode.CheckedChanged += new System.EventHandler(this.TitanSmartBeastMode_CheckedChanged);
+            // 
+            // TitanMoreBlockParry
+            // 
+            resources.ApplyResources(this.TitanMoreBlockParry, "TitanMoreBlockParry");
+            this.TitanMoreBlockParry.Name = "TitanMoreBlockParry";
+            this.TitanMoreBlockParry.UseVisualStyleBackColor = true;
+            this.TitanMoreBlockParry.CheckedChanged += new System.EventHandler(this.TitanMoreBlockParry_CheckedChanged);
+            // 
+            // TitanBeastMode
+            // 
+            resources.ApplyResources(this.TitanBeastMode, "TitanBeastMode");
+            this.TitanBeastMode.Name = "TitanBeastMode";
+            this.TitanBeastMode.UseVisualStyleBackColor = true;
+            this.TitanBeastMode.CheckedChanged += new System.EventHandler(this.TitanBeastMode_CheckedChanged);
+            // 
+            // TitanRecoverHealth
+            // 
+            resources.ApplyResources(this.TitanRecoverHealth, "TitanRecoverHealth");
+            this.TitanRecoverHealth.Name = "TitanRecoverHealth";
+            this.TitanRecoverHealth.UseVisualStyleBackColor = true;
+            this.TitanRecoverHealth.CheckedChanged += new System.EventHandler(this.TitanRecoverHealth_CheckedChanged);
+            // 
+            // TitanFastCombat
+            // 
+            resources.ApplyResources(this.TitanFastCombat, "TitanFastCombat");
+            this.TitanFastCombat.Name = "TitanFastCombat";
+            this.TitanFastCombat.UseVisualStyleBackColor = true;
+            this.TitanFastCombat.CheckedChanged += new System.EventHandler(this.TitanFastCombat_CheckedChanged);
+            // 
+            // TitanPrecastBuffs
+            // 
+            resources.ApplyResources(this.TitanPrecastBuffs, "TitanPrecastBuffs");
+            this.TitanPrecastBuffs.Name = "TitanPrecastBuffs";
+            this.TitanPrecastBuffs.UseVisualStyleBackColor = true;
+            this.TitanPrecastBuffs.CheckedChanged += new System.EventHandler(this.TitanPrecastBuffs_CheckedChanged);
+            // 
+            // label36
+            // 
+            resources.ApplyResources(this.label36, "label36");
+            this.label36.Name = "label36";
+            // 
+            // TitanCombatMode
+            // 
+            this.TitanCombatMode.FormattingEnabled = true;
+            this.TitanCombatMode.Items.AddRange(new object[] {
+            resources.GetString("TitanCombatMode.Items"),
+            resources.GetString("TitanCombatMode.Items1")});
+            resources.ApplyResources(this.TitanCombatMode, "TitanCombatMode");
+            this.TitanCombatMode.Name = "TitanCombatMode";
+            this.TitanCombatMode.SelectedIndexChanged += new System.EventHandler(this.TitanCombatMode_SelectedIndexChanged);
+            // 
+            // UseTitanCombat
+            // 
+            resources.ApplyResources(this.UseTitanCombat, "UseTitanCombat");
+            this.UseTitanCombat.Name = "UseTitanCombat";
+            this.UseTitanCombat.UseVisualStyleBackColor = true;
+            this.UseTitanCombat.CheckedChanged += new System.EventHandler(this.UseTitanCombat_CheckedChanged);
             // 
             // SettingsForm
             // 
@@ -2221,5 +2339,18 @@
         private System.Windows.Forms.Button OpenSettingsFolder;
         private System.Windows.Forms.Button OpenProfileFolder;
         private System.Windows.Forms.CheckBox TargetTitans;
+        private System.Windows.Forms.CheckBox SmartBeastMode;
+        private System.Windows.Forms.CheckBox ITOPODSmartBeastMode;
+        private System.Windows.Forms.CheckBox QuestSmartBeastMode;
+        private System.Windows.Forms.CheckBox QuestBeastMode;
+        private System.Windows.Forms.CheckBox TitanSmartBeastMode;
+        private System.Windows.Forms.CheckBox TitanMoreBlockParry;
+        private System.Windows.Forms.CheckBox TitanBeastMode;
+        private System.Windows.Forms.CheckBox TitanRecoverHealth;
+        private System.Windows.Forms.CheckBox TitanFastCombat;
+        private System.Windows.Forms.CheckBox TitanPrecastBuffs;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.ComboBox TitanCombatMode;
+        private System.Windows.Forms.CheckBox UseTitanCombat;
     }
 }

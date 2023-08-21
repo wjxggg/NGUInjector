@@ -42,6 +42,17 @@ namespace NGUInjector.Managers
             return false;
         }
 
+        internal static bool CastBeastMode()
+        {
+            if (Main.Character.adventureController.beastModeMove.button.IsInteractable())
+            {
+                Main.Character.adventureController.beastModeMove.doMove();
+                return true;
+            }
+
+            return false;
+        }
+
         internal static bool ChargeReady()
         {
             return Main.Character.adventureController.chargeMove.button.IsInteractable();
@@ -252,6 +263,21 @@ namespace NGUInjector.Managers
         internal static bool DefensiveBuffReady()
         {
             return Main.Character.adventureController.defenseBuffMove.button.IsInteractable();
+        }
+
+        internal static bool BeastModeUnlocked()
+        {
+            return Main.Character.adventureController.hasBeastMode();
+        }
+
+        internal static bool BeastModeReady()
+        {
+            return Main.Character.adventureController.beastModeMove.button.IsInteractable();
+        }
+
+        internal static bool BeastModeActive()
+        {
+            return Main.Character.adventure.beastModeOn;
         }
 
         internal static bool MegaBuffUnlocked()

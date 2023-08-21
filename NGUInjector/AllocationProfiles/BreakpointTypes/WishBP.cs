@@ -27,12 +27,6 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
             SetInput(MaxAllocation);
             var c = Character.wishesController;
 
-            if (!c.curValidUpgradesList.Contains(c.curSelectedWish) && c.curValidUpgradesList.Contains(id)
-                && Character.wishes.wishes[c.curSelectedWish].energy == 0 && Character.wishes.wishes[c.curSelectedWish].magic == 0 && Character.wishes.wishes[c.curSelectedWish].res3 == 0)
-            {
-                c.selectNewWish(id);
-            }
-
             switch (Type)
             {
                 case ResourceType.Energy:

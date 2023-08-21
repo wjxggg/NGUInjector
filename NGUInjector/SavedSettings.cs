@@ -49,6 +49,8 @@ namespace NGUInjector
         [SerializeField] private int _minorAbandonThreshold;
         [SerializeField] private int _questCombatMode;
         [SerializeField] private bool _questFastCombat;
+        [SerializeField] private bool _questBeastMode;
+        [SerializeField] private bool _questSmartBeastMode;
         [SerializeField] private bool _autoSpellSwap;
         [SerializeField] private int _spaghettiThreshold;
         [SerializeField] private int _counterfeitThreshold;
@@ -76,6 +78,7 @@ namespace NGUInjector
         [SerializeField] private bool _wishSortPriorities;
         [SerializeField] private bool _wishSortOrder;
         [SerializeField] private bool _beastMode;
+        [SerializeField] private bool _smartBeastMode;
         [SerializeField] private int _cubePriority;
         [SerializeField] private bool _manageNguDiff;
         [SerializeField] private string _allocationFile;
@@ -89,11 +92,20 @@ namespace NGUInjector
         [SerializeField] private bool _optimizeItopodFloor;
         [SerializeField] private int _itopodCombatMode;
         [SerializeField] private bool _itopodBeastMode;
+        [SerializeField] private bool _itopodSmartBeastMode;
         [SerializeField] private bool _itopodFastCombat;
         [SerializeField] private bool _itopodRecoverHp;
         [SerializeField] private bool _itopodPrecastBuffs;
         [SerializeField] private bool _adventureTargetItopod;
         [SerializeField] private bool _adventureTargetTitans;
+        [SerializeField] private bool _useTitanCombat;
+        [SerializeField] private int _titanCombatMode;
+        [SerializeField] private bool _titanPrecastBuffs;
+        [SerializeField] private bool _titanRecoverHealth;
+        [SerializeField] private bool _titanFastCombat;
+        [SerializeField] private bool _titanBeastMode;
+        [SerializeField] private bool _titanSmartBeastMode;
+        [SerializeField] private bool _titanMoreBlockParry;
         [SerializeField] private bool _disableOverlay;
         [SerializeField] private int _yggSwapThreshold;
         [SerializeField] private bool _moreBlockParry;
@@ -223,6 +235,8 @@ namespace NGUInjector
             _minorAbandonThreshold = other.MinorAbandonThreshold;
             _questCombatMode = other.QuestCombatMode;
             _questFastCombat = other.QuestFastCombat;
+            _questBeastMode = other.QuestBeastMode;
+            _questSmartBeastMode = other.QuestSmartBeastMode;
             _autoSpellSwap = other.AutoSpellSwap;
             _counterfeitThreshold = other.CounterfeitThreshold;
             _spaghettiThreshold = other.SpaghettiThreshold;
@@ -250,6 +264,7 @@ namespace NGUInjector
             _wishSortPriorities = other.WishSortPriorities;
             _wishSortOrder = other.WishSortOrder;
             _beastMode = other.BeastMode;
+            _smartBeastMode = other.SmartBeastMode;
             _cubePriority = other.CubePriority;
             _manageNguDiff = other.ManageNGUDiff;
             _allocationFile = other.AllocationFile;
@@ -277,7 +292,16 @@ namespace NGUInjector
             _optimizeItopodFloor = other.OptimizeITOPODFloor;
             _adventureTargetItopod = other.AdventureTargetITOPOD;
             _adventureTargetTitans = other.AdventureTargetTitans;
+            _useTitanCombat = other.UseTitanCombat;
+            _titanCombatMode = other.TitanCombatMode;
+            _titanPrecastBuffs = other.TitanPrecastBuffs;
+            _titanRecoverHealth = other.TitanRecoverHealth;
+            _titanFastCombat = other.TitanFastCombat;
+            _titanBeastMode = other.TitanBeastMode;
+            _titanSmartBeastMode = other.TitanSmartBeastMode;
+            _titanMoreBlockParry = other.TitanMoreBlockParry;
             _itopodBeastMode = other.ITOPODBeastMode;
+            _itopodSmartBeastMode = other.ITOPODSmartBeastMode;
             _itopodCombatMode = other.ITOPODCombatMode;
             _itopodFastCombat = other.ITOPODFastCombat;
             _itopodPrecastBuffs = other.ITOPODPrecastBuffs;
@@ -698,6 +722,28 @@ namespace NGUInjector
             }
         }
 
+        public bool QuestBeastMode
+        {
+            get => _questBeastMode;
+            set
+            {
+                if (value == _questBeastMode) return;
+                _questBeastMode = value;
+                SaveSettings();
+            }
+        }
+
+        public bool QuestSmartBeastMode
+        {
+            get => _questSmartBeastMode;
+            set
+            {
+                if (value == _questSmartBeastMode) return;
+                _questSmartBeastMode = value;
+                SaveSettings();
+            }
+        }
+
         public bool AutoSpellSwap
         {
             get => _autoSpellSwap;
@@ -983,6 +1029,17 @@ namespace NGUInjector
             }
         }
 
+        public bool SmartBeastMode
+        {
+            get => _smartBeastMode;
+            set
+            {
+                if (value == _smartBeastMode) return;
+                _smartBeastMode = value;
+                SaveSettings();
+            }
+        }
+
         public int CubePriority
         {
             get => _cubePriority;
@@ -1121,6 +1178,94 @@ namespace NGUInjector
             }
         }
 
+        public bool UseTitanCombat
+        {
+            get => _useTitanCombat;
+            set
+            {
+                if (value == _useTitanCombat) return;
+                _useTitanCombat = value;
+                SaveSettings();
+            }
+        }
+
+        public int TitanCombatMode
+        {
+            get => _titanCombatMode;
+            set
+            {
+                if (value == _titanCombatMode) return;
+                _titanCombatMode = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanPrecastBuffs
+        {
+            get => _titanPrecastBuffs;
+            set
+            {
+                if (value == _titanPrecastBuffs) return;
+                _titanPrecastBuffs = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanRecoverHealth
+        {
+            get => _titanRecoverHealth;
+            set
+            {
+                if (value == _titanRecoverHealth) return;
+                _titanRecoverHealth = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanFastCombat
+        {
+            get => _titanFastCombat;
+            set
+            {
+                if (value == _titanFastCombat) return;
+                _titanFastCombat = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanBeastMode
+        {
+            get => _titanBeastMode;
+            set
+            {
+                if (value == _titanBeastMode) return;
+                _titanBeastMode = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanSmartBeastMode
+        {
+            get => _titanSmartBeastMode;
+            set
+            {
+                if (value == _titanSmartBeastMode) return;
+                _titanSmartBeastMode = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TitanMoreBlockParry
+        {
+            get => _titanMoreBlockParry;
+            set
+            {
+                if (value == _titanMoreBlockParry) return;
+                _titanMoreBlockParry = value;
+                SaveSettings();
+            }
+        }
+
         public int ITOPODCombatMode
         {
             get => _itopodCombatMode;
@@ -1139,6 +1284,17 @@ namespace NGUInjector
             {
                 if (value == _itopodBeastMode) return;
                 _itopodBeastMode = value;
+                SaveSettings();
+            }
+        }
+
+        public bool ITOPODSmartBeastMode
+        {
+            get => _itopodSmartBeastMode;
+            set
+            {
+                if (value == _itopodSmartBeastMode) return;
+                _itopodSmartBeastMode = value;
                 SaveSettings();
             }
         }

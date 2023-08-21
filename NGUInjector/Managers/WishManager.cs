@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,54 +29,92 @@ namespace NGUInjector.Managers
 
         public void BuildWishList()
         {
-            var dictDouble = new Dictionary<int, double>();
+            var wishList = new List<Tuple<int, bool, double, int>>();
 
             _curValidUpgradesList.Clear();
-            for (var i = 0; i < Settings.WishPriorities.Length; i++)
-            {
-                if (isValidWish(Settings.WishPriorities[i]))
-                {
-                    if (Settings.WishSortPriorities)
-                    {
-                        dictDouble.Add(Settings.WishPriorities[i], sortValue(Settings.WishPriorities[i]) + i);
-                    } else
-                    {
-                        _curValidUpgradesList.Add(Settings.WishPriorities[i]);
-                    }
-                }
-            }
-            if (Settings.WishSortPriorities)
-            {
-                dictDouble = (from x in dictDouble
-                              orderby x.Value
-                              select x).ToDictionary(x => x.Key, x => x.Value);
-                for (var j = 0; j < dictDouble.Count; j++)
-                {
-                    _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
-                }
-                dictDouble = new Dictionary<int, double>();
-            }
+
             for (var i = 0; i < _character.wishes.wishes.Count; i++)
             {
-                if (_curValidUpgradesList.Contains(i))
+                if (!IsValidWish(i))
                 {
                     continue;
                 }
-                if (isValidWish(i))
+
+                bool isOnPriorityList = Settings.WishPriorities.Contains(i);
+                double sortValue = -1;
+                if (!isOnPriorityList || Settings.WishSortPriorities)
                 {
-                    dictDouble.Add(i, this.sortValue(i) + i);
+                    sortValue = GetSortValue(i);
                 }
-            }            
-            dictDouble = (from x in dictDouble
-                               orderby x.Value
-                               select x).ToDictionary(x => x.Key, x => x.Value);
-            for (var j = 0; j < dictDouble.Count; j++)
-            {
-                _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
+                int tieBreaker = isOnPriorityList ? Array.IndexOf(Settings.WishPriorities, i) : i;
+
+                wishList.Add(new Tuple<int, bool, double, int>(i, isOnPriorityList, sortValue, tieBreaker));
             }
+
+            //foreach (var wish in wishList.OrderByDescending(x => x.Item2).ThenBy(x => x.Item3).ThenBy(x => x.Item4))
+            //{
+            //    LogDebug($"Wish {wish.Item1}: Prioritized:{wish.Item2} | SortValue:{wish.Item3} | TieBreaker:{wish.Item4}");
+            //}
+
+            _curValidUpgradesList.AddRange(wishList.OrderByDescending(x => x.Item2).ThenBy(x => x.Item3).ThenBy(x => x.Item4).Select(x => x.Item1));
+
+
+
+
+
+            //var dictDouble = new Dictionary<int, double>();
+
+            //_curValidUpgradesList.Clear();
+
+            //for (var i = 0; i < Settings.WishPriorities.Length; i++)
+            //{
+            //    if (IsValidWish(Settings.WishPriorities[i]))
+            //    {
+            //        if (Settings.WishSortPriorities)
+            //        {
+            //            dictDouble.Add(Settings.WishPriorities[i], GetSortValue(Settings.WishPriorities[i]) + i);
+            //        }
+            //        else
+            //        {
+            //            //LogDebug($"Wish {Settings.WishPriorities[i]}: Prioritized:{true} | SortValue:{-1}");
+            //            _curValidUpgradesList.Add(Settings.WishPriorities[i]);
+            //        }
+            //    }
+            //}
+            //if (Settings.WishSortPriorities)
+            //{
+            //    dictDouble = (from x in dictDouble
+            //                  orderby x.Value
+            //                  select x).ToDictionary(x => x.Key, x => x.Value);
+            //    for (var j = 0; j < dictDouble.Count; j++)
+            //    {
+            //        //LogDebug($"Wish {dictDouble.ElementAt(j).Key}: Prioritized:{true} | SortValue:{dictDouble.ElementAt(j).Value}");
+            //        _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
+            //    }
+            //    dictDouble = new Dictionary<int, double>();
+            //}
+            //for (var i = 0; i < _character.wishes.wishes.Count; i++)
+            //{
+            //    if (_curValidUpgradesList.Contains(i))
+            //    {
+            //        continue;
+            //    }
+            //    if (IsValidWish(i))
+            //    {
+            //        dictDouble.Add(i, this.GetSortValue(i) + i);
+            //    }
+            //}
+            //dictDouble = (from x in dictDouble
+            //              orderby x.Value
+            //              select x).ToDictionary(x => x.Key, x => x.Value);
+            //for (var j = 0; j < dictDouble.Count; j++)
+            //{
+            //    //LogDebug($"Wish {dictDouble.ElementAt(j).Key}: Prioritized:{false} | SortValue:{dictDouble.ElementAt(j).Value}");
+            //    _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
+            //}
         }
 
-        public bool isValidWish(int wishId)
+        public bool IsValidWish(int wishId)
         {
             if (wishId < 0 || wishId > _character.wishes.wishSize())
             {
@@ -93,14 +132,14 @@ namespace NGUInjector.Managers
             {
                 return false;
             }
-            if(Settings.WishBlacklist.Length > 0 && Settings.WishBlacklist.Contains(wishId))
+            if (Settings.WishBlacklist.Length > 0 && Settings.WishBlacklist.Contains(wishId))
             {
                 return false;
             }
-            return true;          
+            return true;
         }
 
-        public double sortValue(int wishId)
+        public double GetSortValue(int wishId)
         {
             if (Settings.WishSortOrder)
             {
