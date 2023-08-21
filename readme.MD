@@ -151,23 +151,32 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/UTMl0zt.png)
+![Titans](https://i.imgur.com/xmxIBEA.png)
 
 - **Swap Loadout for Titans** - Equip the gear in TitanLoadout right before any titan marked for swapping
+- **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
 - **Loadout** - The gear to equip when autokilling titans.
 - **Titans to Swap For** - Mark titans you wish to swap gear for
+- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP and THE GODMOTHER will ALWAYS use manual combat regardless of this setting*
+- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each titan attempt and wait for the cooldowns to recharge. Ignored during Idle combat mode.
+- **Recover HP** - If enabled, will recover HP in safe zone between titan kills attempts.
+- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Ignored during Idle combat mode.
+- **Beast Mode** - Whether to use beast mode or not while in combat. Will disable Smart Beast Mode if selected.
+- **Smart Beast Mode** - If enabled will enable beast mode only if a Defensive or Ultimate buff is active AND can be toggled off again before that buff expires. Will disable Beast Mode if selected. Ignored during Idle combat mode.
+- **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
 
-![Adventure](https://i.imgur.com/b16UC6K.png)
+![Adventure](https://i.imgur.com/1kx0jnb.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 - **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
 
-- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge.
+- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between kills
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether
-- **Beast Mode** - Whether to use beast mode or not while in combat
-- **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs.
-- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone.
+- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Ignored during Idle combat mode.
+- **Beast Mode** - Whether to use beast mode or not while in combat. Will disable Smart Beast Mode if selected.
+- **Smart Beast Mode** - If enabled will enable beast mode only if a Defensive or Ultimate buff is active AND can be toggled off again before that buff expires. Will disable Beast Mode if selected. Ignored during Idle combat mode.
+- **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
+- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP and THE GODMOTHER will ALWAYS use manual combat regardless of this setting*
 - **Target Zone** - The target zone to snipe/do combat in. ITOPOD is at the bottom of the list.
 - **Allow Fallthrough** - If set to true, combat will use the highest unlocked zone you have until the target zone is unlocked.
 - **ITOPOD** - Equivalent to setting target zone to ITOPOD, just a quicker option
@@ -178,7 +187,8 @@ An in game menu can be opened using the F1 button.
 - **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge.
 - **Recover HP** - If enabled, will recover HP in safe zone between kills
 - **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether
-- **Beast Mode** - Whether to use beast mode or not while in combat
+- **Beast Mode** - Whether to use beast mode or not while in combat. Will disable Smart Beast Mode if selected.
+- **Smart Beast Mode** - If enabled will enable beast mode only if a Defensive or Ultimate buff is active AND can be toggled off again before that buff expires. Will disable Beast Mode if selected. Ignored during Idle combat mode.
 - **Optimize ITOPOD Floor** - Will optimize your ITOPOD floor every 10 seconds. Does nothing if Lazy Floor Shifter is on
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
@@ -193,7 +203,7 @@ An in game menu can be opened using the F1 button.
 - **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/H1wceYl.png)
+![Quests](https://i.imgur.com/UEXIve0.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
 - **Allow Major Quests**
@@ -208,13 +218,15 @@ An in game menu can be opened using the F1 button.
 - **Swap Loadout for Quests** - Equip the gear in Quest Loadout when engaged in Manual questing
 - **Loadout** - The gear to equip when in a manual quest.
 - **Combat Mode** - If engaged in manual questing and this option is set to manual, will perform a combat routine in the quest zone. Otherwise will idle the zone.
-- **Fast Combat** - If enabled will skip all buffs during combat.
+- **Fast Combat** - If enabled will skip all buffs during combat. Ignored during Idle combat mode.
+- **Beast Mode** - Whether to use beast mode or not while in combat. Will disable Smart Beast Mode if selected.
+- **Smart Beast Mode** - If enabled will enable beast mode only if a Defensive or Ultimate buff is active AND can be toggled off again before that buff expires. Will disable Beast Mode if selected. Ignored during Idle combat mode.
 
 ![Wishes](https://i.imgur.com/h4eNEsr.png)
 
-- **Sort Wishes by Completion Time** - If checked, will sort wishes by completion time instead of cost
-- **Priority Wishes** - The wishes to prioritize doing. Will switch to cheapest wish when all wish priorities are complete.
-- **Sort Priority Wishes** - If checked, will also sort your priority wish list by cost
+- **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
+- **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
+- **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
 
 ![The Pit](https://i.imgur.com/5jnhsQ7.png)
 

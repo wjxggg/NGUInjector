@@ -214,7 +214,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadSafety.Location" type="System.Drawing.Point, System.Drawing">
-    <value>454, 305</value>
+    <value>520, 305</value>
   </data>
   <data name="UnloadSafety.Size" type="System.Drawing.Size, System.Drawing">
     <value>15, 14</value>
@@ -241,7 +241,7 @@
     <value>NoControl</value>
   </data>
   <data name="UnloadButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>475, 300</value>
+    <value>541, 300</value>
   </data>
   <data name="UnloadButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -271,7 +271,7 @@
     <value>NoControl</value>
   </data>
   <data name="VersionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>556, 305</value>
+    <value>538, 284</value>
   </data>
   <data name="VersionLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>72, 13</value>
@@ -2343,6 +2343,273 @@
   <data name="&gt;&gt;tabPage4.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="UseTitanCombat.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="UseTitanCombat.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="UseTitanCombat.Location" type="System.Drawing.Point, System.Drawing">
+    <value>155, 7</value>
+  </data>
+  <data name="UseTitanCombat.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 17</value>
+  </data>
+  <data name="UseTitanCombat.TabIndex" type="System.Int32, mscorlib">
+    <value>44</value>
+  </data>
+  <data name="UseTitanCombat.Text" xml:space="preserve">
+    <value>Use Titan Combat Settings</value>
+  </data>
+  <data name="&gt;&gt;UseTitanCombat.Name" xml:space="preserve">
+    <value>UseTitanCombat</value>
+  </data>
+  <data name="&gt;&gt;UseTitanCombat.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;UseTitanCombat.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;UseTitanCombat.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="TitanSmartBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanSmartBeastMode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanSmartBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>289, 277</value>
+  </data>
+  <data name="TitanSmartBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 17</value>
+  </data>
+  <data name="TitanSmartBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="TitanSmartBeastMode.Text" xml:space="preserve">
+    <value>Smart Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;TitanSmartBeastMode.Name" xml:space="preserve">
+    <value>TitanSmartBeastMode</value>
+  </data>
+  <data name="&gt;&gt;TitanSmartBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanSmartBeastMode.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanSmartBeastMode.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="TitanMoreBlockParry.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanMoreBlockParry.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanMoreBlockParry.Location" type="System.Drawing.Point, System.Drawing">
+    <value>378, 300</value>
+  </data>
+  <data name="TitanMoreBlockParry.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 17</value>
+  </data>
+  <data name="TitanMoreBlockParry.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="TitanMoreBlockParry.Text" xml:space="preserve">
+    <value>Block/Parry with Buffs</value>
+  </data>
+  <data name="&gt;&gt;TitanMoreBlockParry.Name" xml:space="preserve">
+    <value>TitanMoreBlockParry</value>
+  </data>
+  <data name="&gt;&gt;TitanMoreBlockParry.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanMoreBlockParry.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanMoreBlockParry.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="TitanBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanBeastMode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>289, 300</value>
+  </data>
+  <data name="TitanBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 17</value>
+  </data>
+  <data name="TitanBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="TitanBeastMode.Text" xml:space="preserve">
+    <value>Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;TitanBeastMode.Name" xml:space="preserve">
+    <value>TitanBeastMode</value>
+  </data>
+  <data name="&gt;&gt;TitanBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanBeastMode.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanBeastMode.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="TitanRecoverHealth.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanRecoverHealth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanRecoverHealth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>107, 300</value>
+  </data>
+  <data name="TitanRecoverHealth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>85, 17</value>
+  </data>
+  <data name="TitanRecoverHealth.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="TitanRecoverHealth.Text" xml:space="preserve">
+    <value>Recover HP</value>
+  </data>
+  <data name="&gt;&gt;TitanRecoverHealth.Name" xml:space="preserve">
+    <value>TitanRecoverHealth</value>
+  </data>
+  <data name="&gt;&gt;TitanRecoverHealth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanRecoverHealth.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanRecoverHealth.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="TitanFastCombat.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanFastCombat.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanFastCombat.Location" type="System.Drawing.Point, System.Drawing">
+    <value>198, 300</value>
+  </data>
+  <data name="TitanFastCombat.Size" type="System.Drawing.Size, System.Drawing">
+    <value>85, 17</value>
+  </data>
+  <data name="TitanFastCombat.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="TitanFastCombat.Text" xml:space="preserve">
+    <value>Fast Combat</value>
+  </data>
+  <data name="&gt;&gt;TitanFastCombat.Name" xml:space="preserve">
+    <value>TitanFastCombat</value>
+  </data>
+  <data name="&gt;&gt;TitanFastCombat.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanFastCombat.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanFastCombat.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="TitanPrecastBuffs.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TitanPrecastBuffs.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TitanPrecastBuffs.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 300</value>
+  </data>
+  <data name="TitanPrecastBuffs.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 17</value>
+  </data>
+  <data name="TitanPrecastBuffs.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="TitanPrecastBuffs.Text" xml:space="preserve">
+    <value>Precast Buffs</value>
+  </data>
+  <data name="&gt;&gt;TitanPrecastBuffs.Name" xml:space="preserve">
+    <value>TitanPrecastBuffs</value>
+  </data>
+  <data name="&gt;&gt;TitanPrecastBuffs.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanPrecastBuffs.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanPrecastBuffs.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="label36.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label36.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label36.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 276</value>
+  </data>
+  <data name="label36.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 13</value>
+  </data>
+  <data name="label36.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="label36.Text" xml:space="preserve">
+    <value>Combat Mode</value>
+  </data>
+  <data name="&gt;&gt;label36.Name" xml:space="preserve">
+    <value>label36</value>
+  </data>
+  <data name="&gt;&gt;label36.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label36.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;label36.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="TitanCombatMode.Items" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="TitanCombatMode.Items1" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="TitanCombatMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>86, 273</value>
+  </data>
+  <data name="TitanCombatMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 21</value>
+  </data>
+  <data name="TitanCombatMode.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="&gt;&gt;TitanCombatMode.Name" xml:space="preserve">
+    <value>TitanCombatMode</value>
+  </data>
+  <data name="&gt;&gt;TitanCombatMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TitanCombatMode.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;TitanCombatMode.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
   <data name="label9.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2353,7 +2620,7 @@
     <value>NoControl</value>
   </data>
   <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>362, 36</value>
+    <value>362, 27</value>
   </data>
   <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
     <value>118, 16</value>
@@ -2374,7 +2641,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>9</value>
   </data>
   <data name="columnHeader2.Text" xml:space="preserve">
     <value />
@@ -2383,7 +2650,7 @@
     <value>203</value>
   </data>
   <data name="TitanSwapTargets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>365, 64</value>
+    <value>365, 55</value>
   </data>
   <data name="TitanSwapTargets.Size" type="System.Drawing.Size, System.Drawing">
     <value>208, 186</value>
@@ -2401,7 +2668,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanSwapTargets.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>10</value>
   </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2413,7 +2680,7 @@
     <value>NoControl</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 36</value>
+    <value>6, 27</value>
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
     <value>56, 16</value>
@@ -2434,7 +2701,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>11</value>
   </data>
   <data name="titanRemove.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2443,7 +2710,7 @@
     <value>NoControl</value>
   </data>
   <data name="titanRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 127</value>
+    <value>267, 118</value>
   </data>
   <data name="titanRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -2464,10 +2731,10 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanRemove.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>12</value>
   </data>
   <data name="titanAddItem.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 231</value>
+    <value>10, 222</value>
   </data>
   <data name="titanAddItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>251, 20</value>
@@ -2485,7 +2752,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanAddItem.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>13</value>
   </data>
   <data name="titanLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2494,7 +2761,7 @@
     <value>NoControl</value>
   </data>
   <data name="titanLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 254</value>
+    <value>9, 245</value>
   </data>
   <data name="titanLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
@@ -2515,13 +2782,13 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanLabel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>14</value>
   </data>
   <data name="titanAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="titanAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 230</value>
+    <value>267, 221</value>
   </data>
   <data name="titanAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -2542,7 +2809,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanAdd.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>15</value>
   </data>
   <data name="titanLoadout.Items" xml:space="preserve">
     <value>test</value>
@@ -2551,7 +2818,7 @@
     <value>test2</value>
   </data>
   <data name="titanLoadout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 64</value>
+    <value>9, 55</value>
   </data>
   <data name="titanLoadout.Size" type="System.Drawing.Size, System.Drawing">
     <value>252, 160</value>
@@ -2569,7 +2836,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanLoadout.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>16</value>
   </data>
   <data name="SwapTitanLoadout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2599,7 +2866,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;SwapTitanLoadout.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>17</value>
   </data>
   <data name="tabPage5.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -2628,6 +2895,63 @@
   <data name="&gt;&gt;tabPage5.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="ITOPODSmartBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ITOPODSmartBeastMode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ITOPODSmartBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>291, 144</value>
+  </data>
+  <data name="ITOPODSmartBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 17</value>
+  </data>
+  <data name="ITOPODSmartBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="ITOPODSmartBeastMode.Text" xml:space="preserve">
+    <value>Smart Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;ITOPODSmartBeastMode.Name" xml:space="preserve">
+    <value>ITOPODSmartBeastMode</value>
+  </data>
+  <data name="&gt;&gt;ITOPODSmartBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ITOPODSmartBeastMode.Parent" xml:space="preserve">
+    <value>tabPage6</value>
+  </data>
+  <data name="&gt;&gt;ITOPODSmartBeastMode.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="SmartBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SmartBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>291, 54</value>
+  </data>
+  <data name="SmartBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 17</value>
+  </data>
+  <data name="SmartBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="SmartBeastMode.Text" xml:space="preserve">
+    <value>Smart Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;SmartBeastMode.Name" xml:space="preserve">
+    <value>SmartBeastMode</value>
+  </data>
+  <data name="&gt;&gt;SmartBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SmartBeastMode.Parent" xml:space="preserve">
+    <value>tabPage6</value>
+  </data>
+  <data name="&gt;&gt;SmartBeastMode.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="TargetTitans.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2653,7 +2977,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;TargetTitans.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="label32.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -2677,7 +3001,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label32.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="BlacklistAddEnemyButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2707,7 +3031,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;BlacklistAddEnemyButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="label31.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2737,7 +3061,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label31.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="EnemyBlacklistNames.Location" type="System.Drawing.Point, System.Drawing">
     <value>265, 244</value>
@@ -2758,7 +3082,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;EnemyBlacklistNames.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="BlacklistRemoveEnemyButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2788,7 +3112,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;BlacklistRemoveEnemyButton.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="EnemyBlacklistZone.Location" type="System.Drawing.Point, System.Drawing">
     <value>265, 217</value>
@@ -2809,7 +3133,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;EnemyBlacklistZone.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="BlacklistedBosses.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 220</value>
@@ -2830,7 +3154,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;BlacklistedBosses.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="MoreBlockParry.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2857,7 +3181,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;MoreBlockParry.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <data name="ITOPODBeastMode.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2887,7 +3211,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;ITOPODBeastMode.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="ITOPODRecoverHP.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2917,7 +3241,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;ITOPODRecoverHP.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="ITOPODFastCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2947,7 +3271,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;ITOPODFastCombat.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>13</value>
   </data>
   <data name="ITOPODPrecastBuffs.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2977,7 +3301,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;ITOPODPrecastBuffs.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>14</value>
   </data>
   <data name="label24.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3007,7 +3331,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label24.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>15</value>
   </data>
   <data name="ITOPODCombatMode.Items" xml:space="preserve">
     <value>Idle</value>
@@ -3034,7 +3358,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;ITOPODCombatMode.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>16</value>
   </data>
   <data name="label22.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -3058,7 +3382,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label22.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>17</value>
   </data>
   <data name="label23.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3088,7 +3412,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label23.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>18</value>
   </data>
   <data name="TargetITOPOD.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3118,7 +3442,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;TargetITOPOD.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>19</value>
   </data>
   <data name="OptimizeITOPOD.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3148,7 +3472,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;OptimizeITOPOD.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>20</value>
   </data>
   <data name="BeastMode.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3178,7 +3502,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;BeastMode.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>21</value>
   </data>
   <data name="AllowFallthrough.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3208,7 +3532,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;AllowFallthrough.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>22</value>
   </data>
   <data name="RecoverHealth.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3238,7 +3562,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;RecoverHealth.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>23</value>
   </data>
   <data name="FastCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3268,7 +3592,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;FastCombat.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>24</value>
   </data>
   <data name="PrecastBuffs.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3298,7 +3622,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;PrecastBuffs.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>25</value>
   </data>
   <data name="label6.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3328,7 +3652,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>24</value>
+    <value>26</value>
   </data>
   <data name="CombatTargetZone.Items" xml:space="preserve">
     <value>Idle</value>
@@ -3355,7 +3679,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;CombatTargetZone.ZOrder" xml:space="preserve">
-    <value>25</value>
+    <value>27</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3385,7 +3709,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>26</value>
+    <value>28</value>
   </data>
   <data name="CombatMode.Items" xml:space="preserve">
     <value>Idle</value>
@@ -3412,7 +3736,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;CombatMode.ZOrder" xml:space="preserve">
-    <value>27</value>
+    <value>29</value>
   </data>
   <data name="BossesOnly.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3442,7 +3766,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;BossesOnly.ZOrder" xml:space="preserve">
-    <value>28</value>
+    <value>30</value>
   </data>
   <data name="CombatActive.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3472,7 +3796,7 @@
     <value>tabPage6</value>
   </data>
   <data name="&gt;&gt;CombatActive.ZOrder" xml:space="preserve">
-    <value>29</value>
+    <value>31</value>
   </data>
   <data name="tabPage6.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -3951,6 +4275,66 @@
   <data name="&gt;&gt;tabPage7.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <data name="QuestSmartBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="QuestSmartBeastMode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="QuestSmartBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>430, 164</value>
+  </data>
+  <data name="QuestSmartBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 17</value>
+  </data>
+  <data name="QuestSmartBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="QuestSmartBeastMode.Text" xml:space="preserve">
+    <value>Smart Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;QuestSmartBeastMode.Name" xml:space="preserve">
+    <value>QuestSmartBeastMode</value>
+  </data>
+  <data name="&gt;&gt;QuestSmartBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;QuestSmartBeastMode.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;QuestSmartBeastMode.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="QuestBeastMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="QuestBeastMode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="QuestBeastMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>430, 140</value>
+  </data>
+  <data name="QuestBeastMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 17</value>
+  </data>
+  <data name="QuestBeastMode.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="QuestBeastMode.Text" xml:space="preserve">
+    <value>Beast Mode</value>
+  </data>
+  <data name="&gt;&gt;QuestBeastMode.Name" xml:space="preserve">
+    <value>QuestBeastMode</value>
+  </data>
+  <data name="&gt;&gt;QuestBeastMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;QuestBeastMode.Parent" xml:space="preserve">
+    <value>tabPage8</value>
+  </data>
+  <data name="&gt;&gt;QuestBeastMode.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="ManageQuestLoadout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -3979,7 +4363,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ManageQuestLoadout.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="label30.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4012,7 +4396,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;label30.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="questRemoveButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4042,7 +4426,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;questRemoveButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="QuestLoadoutItem.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 274</value>
@@ -4063,7 +4447,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;QuestLoadoutItem.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="questItemLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4093,7 +4477,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;questItemLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="questAddButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -4120,7 +4504,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;questAddButton.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="questLoadoutBox.Items" xml:space="preserve">
     <value>test</value>
@@ -4147,7 +4531,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;questLoadoutBox.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="ButterMinors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4177,7 +4561,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ButterMinors.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="ButterMajors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4207,7 +4591,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ButterMajors.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <data name="ManualMinor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4237,7 +4621,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ManualMinor.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="QuestFastCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4267,7 +4651,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;QuestFastCombat.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="AbandonMinors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4297,7 +4681,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AbandonMinors.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>13</value>
   </data>
   <data name="AbandonMinorThreshold.Location" type="System.Drawing.Point, System.Drawing">
     <value>475, 80</value>
@@ -4318,7 +4702,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AbandonMinorThreshold.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>14</value>
   </data>
   <data name="label13.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4348,7 +4732,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>15</value>
   </data>
   <data name="label12.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4378,7 +4762,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>16</value>
   </data>
   <data name="QuestCombatMode.Items" xml:space="preserve">
     <value>Idle</value>
@@ -4405,7 +4789,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;QuestCombatMode.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>17</value>
   </data>
   <data name="AllowMajor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4435,7 +4819,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;AllowMajor.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>18</value>
   </data>
   <data name="ManageQuests.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4465,7 +4849,7 @@
     <value>tabPage8</value>
   </data>
   <data name="&gt;&gt;ManageQuests.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>19</value>
   </data>
   <data name="tabPage8.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>

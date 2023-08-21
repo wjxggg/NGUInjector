@@ -205,6 +205,10 @@ namespace NGUInjector
             CombatMode.ValueMember = "Key";
             CombatMode.DisplayMember = "Value";
 
+            TitanCombatMode.DataSource = new BindingSource(CombatModeList, null);
+            TitanCombatMode.ValueMember = "Key";
+            TitanCombatMode.DisplayMember = "Value";
+
             ITOPODCombatMode.DataSource = new BindingSource(CombatModeList, null);
             ITOPODCombatMode.ValueMember = "Key";
             ITOPODCombatMode.DisplayMember = "Value";
@@ -261,6 +265,8 @@ namespace NGUInjector
             TryItemBoxTextChanged(_questControls, out _);
             TryItemBoxTextChanged(_wishControls, out _);
             TryItemBoxTextChanged(_pitControls, out _);
+
+            UseTitanCombat_CheckedChanged(this, null);
 
             prioUpButton.Text = char.ConvertFromUtf32(8593);
             prioDownButton.Text = char.ConvertFromUtf32(8595);
@@ -354,6 +360,8 @@ namespace NGUInjector
             AbandonMinors.Checked = newSettings.AbandonMinors;
             AbandonMinorThreshold.Value = newSettings.MinorAbandonThreshold;
             QuestFastCombat.Checked = newSettings.QuestFastCombat;
+            QuestBeastMode.Checked = newSettings.QuestBeastMode;
+            QuestSmartBeastMode.Checked = newSettings.QuestSmartBeastMode;
             UseGoldLoadout.Checked = newSettings.DoGoldSwap;
             AutoSpellSwap.Checked = newSettings.AutoSpellSwap;
             SpaghettiCap.Value = newSettings.SpaghettiThreshold;
@@ -367,6 +375,7 @@ namespace NGUInjector
             ButterMinors.Checked = newSettings.UseButterMinor;
             ActivateFruits.Checked = newSettings.ActivateFruits;
             BeastMode.Checked = newSettings.BeastMode;
+            SmartBeastMode.Checked = newSettings.SmartBeastMode;
             CubePriority.SelectedIndex = newSettings.CubePriority;
             BloodNumberThreshold.Text = $"{newSettings.BloodNumberThreshold:#.##E+00}";
             ManageNGUDiff.Checked = newSettings.ManageNGUDiff;
@@ -377,9 +386,19 @@ namespace NGUInjector
             TargetITOPOD.Checked = newSettings.AdventureTargetITOPOD;
             TargetTitans.Checked = newSettings.AdventureTargetTitans;
 
+            UseTitanCombat.Checked = newSettings.UseTitanCombat;
+            TitanCombatMode.SelectedIndex = newSettings.TitanCombatMode;
+            TitanPrecastBuffs.Checked = newSettings.TitanPrecastBuffs;
+            TitanRecoverHealth.Checked = newSettings.TitanRecoverHealth;
+            TitanFastCombat.Checked = newSettings.TitanFastCombat;
+            TitanBeastMode.Checked = newSettings.TitanBeastMode;
+            TitanSmartBeastMode.Checked = newSettings.TitanSmartBeastMode;
+            TitanMoreBlockParry.Checked = newSettings.TitanMoreBlockParry;
+
             ITOPODCombatMode.SelectedIndex = newSettings.ITOPODCombatMode;
             ITOPODRecoverHP.Checked = newSettings.ITOPODRecoverHP;
             ITOPODBeastMode.Checked = newSettings.ITOPODBeastMode;
+            ITOPODSmartBeastMode.Checked = newSettings.ITOPODSmartBeastMode;
             ITOPODFastCombat.Checked = newSettings.ITOPODFastCombat;
             ITOPODPrecastBuffs.Checked = newSettings.ITOPODPrecastBuffs;
 
@@ -916,8 +935,15 @@ namespace NGUInjector
 
         private void CombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_initializing) return;
             var selected = CombatMode.SelectedIndex;
+
+            bool isManualMode = selected == 0;
+            PrecastBuffs.Enabled = isManualMode;
+            FastCombat.Enabled = isManualMode;
+            MoreBlockParry.Enabled = isManualMode;
+            SmartBeastMode.Enabled = isManualMode;
+
+            if (_initializing) return;
             Main.Settings.CombatMode = selected;
         }
 
@@ -979,7 +1005,7 @@ namespace NGUInjector
             Main.Settings.AllowMajorQuests = AllowMajor.Checked;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void AbandonMinors_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
             Main.Settings.AbandonMinors = AbandonMinors.Checked;
@@ -995,6 +1021,26 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
+        }
+
+        private void QuestBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.QuestBeastMode = QuestBeastMode.Checked;
+            if (QuestBeastMode.Checked)
+            {
+                Main.Settings.QuestSmartBeastMode = QuestSmartBeastMode.Checked = false;
+            }
+        }
+
+        private void QuestSmartBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.QuestSmartBeastMode = QuestSmartBeastMode.Checked;
+            if (QuestSmartBeastMode.Checked)
+            {
+                Main.Settings.QuestBeastMode = QuestBeastMode.Checked = false;
+            }
         }
 
         private void QuestLoadoutBox_TextChanged(object sender, EventArgs e)
@@ -1128,6 +1174,20 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.BeastMode = BeastMode.Checked;
+            if (BeastMode.Checked)
+            {
+                Main.Settings.SmartBeastMode = SmartBeastMode.Checked = false;
+            }
+        }
+
+        private void SmartBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.SmartBeastMode = SmartBeastMode.Checked;
+            if (SmartBeastMode.Checked)
+            {
+                Main.Settings.BeastMode = BeastMode.Checked = false;
+            }
         }
 
         private void CubePriority_SelectedIndexChanged(object sender, EventArgs e)
@@ -1238,8 +1298,15 @@ namespace NGUInjector
 
         private void ITOPODCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var selected = ITOPODCombatMode.SelectedIndex;
+
+            bool isManualMode = selected == 0;
+            ITOPODPrecastBuffs.Enabled = isManualMode;
+            ITOPODFastCombat.Enabled = isManualMode;
+            ITOPODSmartBeastMode.Enabled = isManualMode;
+
             if (_initializing) return;
-            Main.Settings.ITOPODCombatMode = ITOPODCombatMode.SelectedIndex;
+            Main.Settings.ITOPODCombatMode = selected;
         }
 
         private void ITOPODPrecastBuffs_CheckedChanged(object sender, EventArgs e)
@@ -1264,6 +1331,20 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.ITOPODBeastMode = ITOPODBeastMode.Checked;
+            if (ITOPODBeastMode.Checked)
+            {
+                Main.Settings.ITOPODSmartBeastMode = ITOPODSmartBeastMode.Checked = false;
+            }
+        }
+
+        private void ITOPODSmartBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ITOPODSmartBeastMode = ITOPODSmartBeastMode.Checked;
+            if (ITOPODSmartBeastMode.Checked)
+            {
+                Main.Settings.ITOPODBeastMode = ITOPODBeastMode.Checked = false;
+            }
         }
 
         private void DisableOverlay_CheckedChanged(object sender, EventArgs e)
@@ -1324,8 +1405,14 @@ namespace NGUInjector
 
         private void QuestCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var selected = QuestCombatMode.SelectedIndex;
+
+            bool isManualMode = selected == 0;
+            QuestFastCombat.Enabled = isManualMode;
+            QuestSmartBeastMode.Enabled = isManualMode;
+
             if (_initializing) return;
-            Main.Settings.QuestCombatMode = QuestCombatMode.SelectedIndex;
+            Main.Settings.QuestCombatMode = selected;
         }
 
         private void YggSwapThreshold_ValueChanged(object sender, EventArgs e)
@@ -1461,6 +1548,83 @@ namespace NGUInjector
         private void TrashChunkers_CheckedChanged(object sender, EventArgs e)
         {
             Main.Settings.TrashChunkers = TrashChunkers.Checked;
+        }
+
+        private void UseTitanCombat_CheckedChanged(object sender, EventArgs e)
+        {
+            bool useTitanCombat = UseTitanCombat.Checked;
+            var selected = TitanCombatMode.SelectedIndex;
+            bool isManualMode = selected == 0;
+
+            TitanCombatMode.Enabled = useTitanCombat;
+            TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
+            TitanRecoverHealth.Enabled = useTitanCombat;
+            TitanFastCombat.Enabled = useTitanCombat && isManualMode;
+            TitanBeastMode.Enabled = useTitanCombat;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
+
+            if (_initializing) return;
+            Main.Settings.UseTitanCombat = useTitanCombat;
+        }
+
+        private void TitanCombatMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bool useTitanCombat = UseTitanCombat.Checked;
+            var selected = TitanCombatMode.SelectedIndex;
+            bool isManualMode = selected == 0;
+
+            TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
+            TitanFastCombat.Enabled = useTitanCombat && isManualMode;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
+
+            if (_initializing) return;
+            Main.Settings.TitanCombatMode = selected;
+        }
+
+        private void TitanPrecastBuffs_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanPrecastBuffs = TitanPrecastBuffs.Checked;
+        }
+
+        private void TitanRecoverHealth_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanRecoverHealth = TitanRecoverHealth.Checked;
+        }
+
+        private void TitanFastCombat_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanFastCombat = TitanFastCombat.Checked;
+        }
+
+        private void TitanBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanBeastMode = TitanBeastMode.Checked;
+            if (TitanBeastMode.Checked)
+            {
+                Main.Settings.TitanSmartBeastMode = TitanSmartBeastMode.Checked = false;
+            }
+        }
+
+        private void TitanSmartBeastMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanSmartBeastMode = TitanSmartBeastMode.Checked;
+            if (TitanSmartBeastMode.Checked)
+            {
+                Main.Settings.TitanBeastMode = TitanBeastMode.Checked = false;
+            }
+        }
+
+        private void TitanMoreBlockParry_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TitanMoreBlockParry = TitanMoreBlockParry.Checked;
         }
     }
 }
