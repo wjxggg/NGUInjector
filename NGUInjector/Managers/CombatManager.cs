@@ -193,20 +193,16 @@ namespace NGUInjector.Managers
 
                 if (smartBeastMode && BeastModeUnlocked())
                 {
-                    LogDebug("Smart BM check...");
+                    LogDebug($"Trying SmartBeastMode");
                     float? defBuffTimeRemaining = DefenseBuffActive() ? (float?)(Main.Character.defenseBuffDuration() - Main.PlayerController.defenseBuffTime) : null;
                     float? ultBuffTimeRemaining = UltimateBuffActive() ? (float?)(Main.Character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
                     if (defBuffTimeRemaining.HasValue || ultBuffTimeRemaining.HasValue)
                     {
-                        LogDebug("Def or Ult buff active!");
                         if (!BeastModeActive() && BeastModeReady())
                         {
-                            LogDebug("Beast mode off and clickable!");
                             float BMcd = _character.beastModeCooldown();
-                            LogDebug($"BMcd: {BMcd}, DefTime: {defBuffTimeRemaining}, UltTime: {ultBuffTimeRemaining}");
                             if ((defBuffTimeRemaining.HasValue && BMcd <= defBuffTimeRemaining.Value) || (ultBuffTimeRemaining.HasValue && BMcd <= ultBuffTimeRemaining.Value))
                             {
-                                LogDebug("Cooldown is within threshold!");
                                 _character.adventureController.beastModeMove.doMove();
                                 return;
                             }
@@ -671,6 +667,7 @@ namespace NGUInjector.Managers
                 //If the button is inaccessible, we need to stay in manual mode until we can press it
                 if (needToToggle)
                 {
+                    LogDebug($"Trying Regular BeastMode");
                     beastModeWasToggled = CastBeastMode();
                     return true;
                 }
@@ -685,6 +682,43 @@ namespace NGUInjector.Managers
             {
                 MoveToZone(-1);
                 return;
+            }
+
+            //If we have no enemy the fight has ended, update combat flags and release any gear locks
+            if (_character.adventureController.currentEnemy == null)
+            {
+                if (_isFighting)
+                {
+                    if (_fightTimer > 1)
+                    {
+                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
+                    }
+
+                    _isFighting = false;
+                    _firstAttackUsed = false;
+                    _fightTimer = 0;
+
+                    if (LoadoutManager.CurrentLock == LockType.Gold)
+                    {
+                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
+                        Settings.DoGoldSwap = false;
+                        LoadoutManager.RestoreGear();
+                        LoadoutManager.ReleaseLock();
+                        MoveToZone(-1);
+                        return;
+                    }
+                }
+                else
+                {
+                    _firstAttackUsed = false;
+                    _fightTimer = 0;
+                }
+
+                if (_character.adventure.zone != -1 && recoverHealth && !HasFullHP())
+                {
+                    MoveToZone(-1);
+                    return;
+                }
             }
 
             //If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is enabled
@@ -732,31 +766,6 @@ namespace NGUInjector.Managers
             //Wait for an enemy to spawn
             if (_character.adventureController.currentEnemy == null)
             {
-                if (_isFighting)
-                {
-                    _isFighting = false;
-                    _firstAttackUsed = false;
-                    if (_fightTimer > 1)
-                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
-
-                    _fightTimer = 0;
-                    if (LoadoutManager.CurrentLock == LockType.Gold)
-                    {
-                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
-                        Settings.DoGoldSwap = false;
-                        LoadoutManager.RestoreGear();
-                        LoadoutManager.ReleaseLock();
-                        MoveToZone(-1);
-                        return;
-                    }
-
-                    if (recoverHealth && !HasFullHP())
-                    {
-                        MoveToZone(-1);
-                        return;
-                    }
-                }
-                _fightTimer = 0;
                 return;
             }
 
@@ -802,10 +811,48 @@ namespace NGUInjector.Managers
                 _character.adventureController.idleAttackMove.setToggle();
             }
 
+            //If we have no enemy the fight has ended, update combat flags and release any gear locks
+            if (_character.adventureController.currentEnemy == null)
+            {
+                if (_isFighting)
+                {
+                    if (_fightTimer > 1)
+                    {
+                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
+                    }
+
+                    _isFighting = false;
+                    _firstAttackUsed = false;
+                    _fightTimer = 0;
+
+                    if (LoadoutManager.CurrentLock == LockType.Gold)
+                    {
+                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
+                        Settings.DoGoldSwap = false;
+                        LoadoutManager.RestoreGear();
+                        LoadoutManager.ReleaseLock();
+                        MoveToZone(-1);
+                        return;
+                    }
+                }
+                else
+                {
+                    _firstAttackUsed = false;
+                    _fightTimer = 0;
+                }
+
+                if (_character.adventure.zone != -1 && (precastBuffs || recoverHealth && !HasFullHP()))
+                {
+                    MoveToZone(-1);
+                    return;
+                }
+            }
+
             bool beastModeNeedsToPrecast = precastBuffs && smartBeastMode && !_firstAttackUsed;
+            //LogDebug($"BeastMode Precast?: {beastModeNeedsToPrecast} | FirstAttackUsed: {_firstAttackUsed}");
 
             //If we need to toggle beast mode, just do the normal combat loop until the cooldown is ready
-            if (!beastModeNeedsToPrecast)
+            if (!beastModeNeedsToPrecast && !smartBeastMode)
             {
                 CheckBeastModeToggle(beastMode, out bool beastModeWasToggled);
                 if (beastModeWasToggled)
@@ -856,6 +903,7 @@ namespace NGUInjector.Managers
 
                     if (smartBeastMode && BeastModeUnlocked() && !BeastModeActive())
                     {
+                        LogDebug($"Trying precast BeastMode");
                         if (CastBeastMode()) return;
                     }
 
@@ -893,31 +941,6 @@ namespace NGUInjector.Managers
             //Wait for an enemy to spawn
             if (_character.adventureController.currentEnemy == null)
             {
-                if (_isFighting)
-                {
-                    _isFighting = false;
-                    _firstAttackUsed = false;
-                    if (_fightTimer > 1)
-                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
-
-                    _fightTimer = 0;
-                    if (LoadoutManager.CurrentLock == LockType.Gold)
-                    {
-                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
-                        Settings.DoGoldSwap = false;
-                        LoadoutManager.RestoreGear();
-                        LoadoutManager.ReleaseLock();
-                        MoveToZone(-1);
-                        return;
-                    }
-
-                    if (precastBuffs || recoverHealth && !HasFullHP())
-                    {
-                        MoveToZone(-1);
-                        return;
-                    }
-                }
-                _fightTimer = 0;
                 if (!precastBuffs && bossOnly)
                 {
                     if (!ChargeActive())
@@ -957,7 +980,6 @@ namespace NGUInjector.Managers
                             return;
                     }
                 }
-
 
                 return;
             }
