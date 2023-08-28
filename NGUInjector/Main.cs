@@ -46,7 +46,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.7.1-beta3";
+        internal const string Version = "3.7.1";
         private static int _furthestZone;
 
         private static string _dir;
@@ -905,18 +905,18 @@ namespace NGUInjector
                 Character.bloodSpells.updateRebirthToggleState();
             }
 
-            if (Character.wishesController.curValidUpgradesList.Any() && !Character.wishesController.curValidUpgradesList.Contains(Character.wishesController.curSelectedWish)
-                && Character.wishes.wishes[Character.wishesController.curSelectedWish].energy == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].magic == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].res3 == 0)
-            {
-                if (Character.wishesController.curValidUpgradesList.Any(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0))
-                {
-                    Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0));
-                }
-                else
-                {
-                    Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First());
-                }
-            }
+            //if (Character.wishesController.curValidUpgradesList.Any() && !Character.wishesController.curValidUpgradesList.Contains(Character.wishesController.curSelectedWish)
+            //    && Character.wishes.wishes[Character.wishesController.curSelectedWish].energy == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].magic == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].res3 == 0)
+            //{
+            //    if (Character.wishesController.curValidUpgradesList.Any(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0))
+            //    {
+            //        Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0));
+            //    }
+            //    else
+            //    {
+            //        Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First());
+            //    }
+            //}
         }
 
         // Runs every 10 seconds, our main loop

@@ -74,7 +74,6 @@ namespace NGUInjector
             }
         }
 
-        internal readonly Dictionary<int, string> TitanList;
         internal readonly Dictionary<int, string> ZoneList;
         internal readonly Dictionary<int, string> CombatModeList;
         internal readonly Dictionary<int, string> CubePriorityList;
@@ -100,75 +99,8 @@ namespace NGUInjector
                 {0, "None"}, {1, "Balanced"}, {2, "Power"}, {3, "Toughness"}
             };
             CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
-            TitanList = new Dictionary<int, string>
-            {
-                {0, "None"},
-                {1, "GRB"},
-                {2, "GCT"},
-                {3, "Jake"},
-                {4, "UUG"},
-                {5, "Walderp"},
-                {6, "Beast"},
-                {7, "Greasy Nerd"},
-                {8, "Godmother"},
-                {9, "Exile"},
-                {10, "IT HUNGERS"},
-                {11, "Rock Lobster"},
-                {12, "Amalgamate"},
-                {13, "Tippi"},
-                {14, "Traitor"},
-            };
 
-            ZoneList = new Dictionary<int, string>
-            {
-                {-1, "Safe Zone: Awakening Site"},
-                {0, "Tutorial Zone"},
-                {1, "Sewers"},
-                {2, "Forest"},
-                {3, "Cave of Many Things"},
-                {4, "The Sky"},
-                {5, "High Security Base"},
-                {6, "Gordon Ramsay Bolton"},
-                {7, "Clock Dimension"},
-                {8, "Grand Corrupted Tree"},
-                {9, "The 2D Universe"},
-                {10, "Ancient Battlefield"},
-                {11, "Jake From Accounting"},
-                {12, "A Very Strange Place"},
-                {13, "Mega Lands"},
-                {14, "UUG THE UNMENTIONABLE"},
-                {15, "The Beardverse"},
-                {16, "WALDERP"},
-                {17, "Badly Drawn World"},
-                {18, "Boring-Ass Earth"},
-                {19, "THE BEAST"},
-                {20, "Chocolate World"},
-                {21, "The Evilverse"},
-                {22, "Pretty Pink Princess Land"},
-                {23, "GREASY NERD"},
-                {24, "Meta Land"},
-                {25, "Interdimensional Party"},
-                {26, "THE GODMOTHER"},
-                {27, "Typo Zonw"},
-                {28, "The Fad-Lands"},
-                {29, "JRPGVille"},
-                {30, "THE EXILE"},
-                {31, "The Rad-lands"},
-                {32, "Back To School"},
-                {33, "The West World"},
-                {34, "IT HUNGERS"},
-                {35, "The Breadverse"},
-                {36, "That 70's Zone"},
-                {37, "The Halloweenies"},
-                {38, "ROCK LOBSTER"},
-                {39, "Construction Zone"},
-                {40, "DUCK DUCK ZONE"},
-                {41, "The Nether Regions"},
-                {42, "AMALGAMATE"},
-                {43, "7 Aethereal Seas"},
-                {44, "TIPPI THE TUTORIAL MOUSE"},
-                {45, "THE TRAITOR"}
-            };
+            ZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
 
             SpriteEnemyList = new Dictionary<int, string>();
             foreach (var x in Main.Character.adventureController.enemyList)
@@ -929,6 +861,7 @@ namespace NGUInjector
 
         private void FastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            SmartBeastMode.Enabled = CombatMode.SelectedIndex == 0 && !FastCombat.Checked;
             if (_initializing) return;
             Main.Settings.FastCombat = FastCombat.Checked;
         }
@@ -941,7 +874,7 @@ namespace NGUInjector
             PrecastBuffs.Enabled = isManualMode;
             FastCombat.Enabled = isManualMode;
             MoreBlockParry.Enabled = isManualMode;
-            SmartBeastMode.Enabled = isManualMode;
+            SmartBeastMode.Enabled = isManualMode && !FastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.CombatMode = selected;
@@ -1019,6 +952,7 @@ namespace NGUInjector
 
         private void QuestFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            QuestSmartBeastMode.Enabled = QuestCombatMode.SelectedIndex == 0 && !QuestFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
         }
@@ -1303,7 +1237,7 @@ namespace NGUInjector
             bool isManualMode = selected == 0;
             ITOPODPrecastBuffs.Enabled = isManualMode;
             ITOPODFastCombat.Enabled = isManualMode;
-            ITOPODSmartBeastMode.Enabled = isManualMode;
+            ITOPODSmartBeastMode.Enabled = isManualMode && !ITOPODFastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.ITOPODCombatMode = selected;
@@ -1323,6 +1257,7 @@ namespace NGUInjector
 
         private void ITOPODFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            ITOPODSmartBeastMode.Enabled = ITOPODCombatMode.SelectedIndex == 0 && !ITOPODFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.ITOPODFastCombat = ITOPODFastCombat.Checked;
         }
@@ -1409,7 +1344,7 @@ namespace NGUInjector
 
             bool isManualMode = selected == 0;
             QuestFastCombat.Enabled = isManualMode;
-            QuestSmartBeastMode.Enabled = isManualMode;
+            QuestSmartBeastMode.Enabled = isManualMode && !QuestFastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.QuestCombatMode = selected;
@@ -1561,7 +1496,7 @@ namespace NGUInjector
             TitanRecoverHealth.Enabled = useTitanCombat;
             TitanFastCombat.Enabled = useTitanCombat && isManualMode;
             TitanBeastMode.Enabled = useTitanCombat;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
             TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
 
             if (_initializing) return;
@@ -1576,7 +1511,7 @@ namespace NGUInjector
 
             TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
             TitanFastCombat.Enabled = useTitanCombat && isManualMode;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
             TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
 
             if (_initializing) return;
@@ -1597,6 +1532,7 @@ namespace NGUInjector
 
         private void TitanFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            TitanSmartBeastMode.Enabled = TitanCombatMode.SelectedIndex == 0 && !TitanFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.TitanFastCombat = TitanFastCombat.Checked;
         }
