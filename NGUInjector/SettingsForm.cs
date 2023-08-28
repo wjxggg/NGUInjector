@@ -861,6 +861,7 @@ namespace NGUInjector
 
         private void FastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            SmartBeastMode.Enabled = CombatMode.SelectedIndex == 0 && !FastCombat.Checked;
             if (_initializing) return;
             Main.Settings.FastCombat = FastCombat.Checked;
         }
@@ -873,7 +874,7 @@ namespace NGUInjector
             PrecastBuffs.Enabled = isManualMode;
             FastCombat.Enabled = isManualMode;
             MoreBlockParry.Enabled = isManualMode;
-            SmartBeastMode.Enabled = isManualMode;
+            SmartBeastMode.Enabled = isManualMode && !FastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.CombatMode = selected;
@@ -951,6 +952,7 @@ namespace NGUInjector
 
         private void QuestFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            QuestSmartBeastMode.Enabled = QuestCombatMode.SelectedIndex == 0 && !QuestFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
         }
@@ -1235,7 +1237,7 @@ namespace NGUInjector
             bool isManualMode = selected == 0;
             ITOPODPrecastBuffs.Enabled = isManualMode;
             ITOPODFastCombat.Enabled = isManualMode;
-            ITOPODSmartBeastMode.Enabled = isManualMode;
+            ITOPODSmartBeastMode.Enabled = isManualMode && !ITOPODFastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.ITOPODCombatMode = selected;
@@ -1255,6 +1257,7 @@ namespace NGUInjector
 
         private void ITOPODFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            ITOPODSmartBeastMode.Enabled = ITOPODCombatMode.SelectedIndex == 0 && !ITOPODFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.ITOPODFastCombat = ITOPODFastCombat.Checked;
         }
@@ -1341,7 +1344,7 @@ namespace NGUInjector
 
             bool isManualMode = selected == 0;
             QuestFastCombat.Enabled = isManualMode;
-            QuestSmartBeastMode.Enabled = isManualMode;
+            QuestSmartBeastMode.Enabled = isManualMode && !QuestFastCombat.Checked;
 
             if (_initializing) return;
             Main.Settings.QuestCombatMode = selected;
@@ -1493,7 +1496,7 @@ namespace NGUInjector
             TitanRecoverHealth.Enabled = useTitanCombat;
             TitanFastCombat.Enabled = useTitanCombat && isManualMode;
             TitanBeastMode.Enabled = useTitanCombat;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
             TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
 
             if (_initializing) return;
@@ -1508,7 +1511,7 @@ namespace NGUInjector
 
             TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
             TitanFastCombat.Enabled = useTitanCombat && isManualMode;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode;
+            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
             TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
 
             if (_initializing) return;
@@ -1529,6 +1532,7 @@ namespace NGUInjector
 
         private void TitanFastCombat_CheckedChanged(object sender, EventArgs e)
         {
+            TitanSmartBeastMode.Enabled = TitanCombatMode.SelectedIndex == 0 && !TitanFastCombat.Checked;
             if (_initializing) return;
             Main.Settings.TitanFastCombat = TitanFastCombat.Checked;
         }
