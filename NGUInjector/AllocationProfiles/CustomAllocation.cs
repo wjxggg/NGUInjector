@@ -523,7 +523,7 @@ namespace NGUInjector.AllocationProfiles
             _character.timeMachineController.updateMenu();
             _character.allOffenseController.refresh();
             _character.allDefenseController.refresh();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
             _character.augmentsController.updateMenu();
         }
 
@@ -585,7 +585,7 @@ namespace NGUInjector.AllocationProfiles
             _character.bloodMagicController.updateMenu();
             _character.NGUController.refreshMenu();
             _character.wandoos98Controller.refreshMenu();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
         }
 
         public override void AllocateR3()
@@ -637,7 +637,7 @@ namespace NGUInjector.AllocationProfiles
             }
 
             _character.hacksController.refreshMenu();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
         }
 
         public override void EquipGear()

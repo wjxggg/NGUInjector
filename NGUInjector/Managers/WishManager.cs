@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
@@ -15,6 +16,39 @@ namespace NGUInjector.Managers
         public WishManager()
         {
             _character = Main.Character;
+        }
+
+        public void UpdateWishMenu()
+        {
+            int wishToSelect = _character.wishesController.curSelectedWish;
+
+            int firstWishOnCurrentPage = _character.wishesController.pods[0].id;
+            int wishPageIndex = 0;
+
+            if (_character.wishesController.curValidUpgradesList.Contains(firstWishOnCurrentPage))
+            {
+                wishPageIndex = _character.wishesController.curValidUpgradesList.IndexOf(firstWishOnCurrentPage);
+            }
+
+            int pageNumber = Mathf.FloorToInt((float)wishPageIndex / (float)_character.wishesController.pods.Count);
+
+            if (!_character.wishesController.curValidUpgradesList.Contains(wishToSelect) && _character.wishes.wishes[wishToSelect].energy == 0 && _character.wishes.wishes[wishToSelect].magic == 0 && _character.wishes.wishes[wishToSelect].res3 == 0)
+            {
+                wishToSelect = _character.wishesController.curValidUpgradesList.Cast<int?>().FirstOrDefault(x => _character.wishes.wishes[x.Value].energy > 0 || _character.wishes.wishes[x.Value].magic > 0 || _character.wishes.wishes[x.Value].res3 > 0) 
+                    ?? _character.wishesController.curValidUpgradesList.First();
+            }
+
+            _character.wishesController.updateMenu();
+
+            if (pageNumber > 0)
+            {
+                _character.wishesController.changePage(pageNumber);
+            }
+
+            if(wishToSelect != _character.wishesController.curSelectedWish)
+            {
+                _character.wishesController.selectNewWish(wishToSelect);
+            }
         }
 
         public int GetSlot(int slotId)
