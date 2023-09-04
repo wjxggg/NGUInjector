@@ -490,11 +490,16 @@ namespace NGUInjector
             _initializing = false;
         }
 
+        private bool TryGetValueFromNumericUpDown(NumericUpDown upDown, out int val)
+        {
+            return int.TryParse(upDown.Controls[0].Text, out val);
+        }
+
         private bool TryItemBoxTextChanged(ItemControlGroup controls, out int val)
         {
             controls.ClearError();
 
-            if (!int.TryParse(controls.ItemBox.Controls[0].Text, out val) || val < controls.MinVal || val > controls.MaxVal)
+            if (!TryGetValueFromNumericUpDown(controls.ItemBox, out val) || val < controls.MinVal || val > controls.MaxVal)
             {
                 controls.ItemLabel.Text = "";
                 return false;
@@ -947,7 +952,10 @@ namespace NGUInjector
         private void AbandonMinorThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.MinorAbandonThreshold = decimal.ToInt32(AbandonMinorThreshold.Value);
+            if (TryGetValueFromNumericUpDown(AbandonMinorThreshold, out int val))
+            {
+                Main.Settings.MinorAbandonThreshold = val;
+            }
         }
 
         private void QuestFastCombat_CheckedChanged(object sender, EventArgs e)
@@ -1006,8 +1014,28 @@ namespace NGUInjector
         private void SaveSpellCapButton_Click(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.SpaghettiThreshold = decimal.ToInt32(SpaghettiCap.Value);
-            Main.Settings.CounterfeitThreshold = decimal.ToInt32(CounterfeitCap.Value);
+
+            int val;
+            if (TryGetValueFromNumericUpDown(SpaghettiCap, out val))
+            {
+                Main.Settings.SpaghettiThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(CounterfeitCap, out val))
+            {
+                Main.Settings.CounterfeitThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(IronPillThreshold, out val))
+            {
+                Main.Settings.IronPillThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(GuffAThreshold, out val))
+            {
+                Main.Settings.BloodMacGuffinAThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(GuffBThreshold, out val))
+            {
+                Main.Settings.BloodMacGuffinBThreshold = val;
+            }
 
             var newVal = BloodNumberThreshold.Text;
             if (double.TryParse(newVal, out var saved))
@@ -1023,10 +1051,6 @@ namespace NGUInjector
             {
                 numberErrProvider.SetError(BloodNumberThreshold, "Not a valid value");
             }
-
-            Main.Settings.IronPillThreshold = decimal.ToInt32(IronPillThreshold.Value);
-            Main.Settings.BloodMacGuffinAThreshold = decimal.ToInt32(GuffAThreshold.Value);
-            Main.Settings.BloodMacGuffinBThreshold = decimal.ToInt32(GuffBThreshold.Value);
         }
 
         private void TestButton_Click(object sender, EventArgs e)
@@ -1166,7 +1190,10 @@ namespace NGUInjector
 
         private void SaveResnipeButton_Click(object sender, EventArgs e)
         {
-            Main.Settings.ResnipeTime = decimal.ToInt32(ResnipeInput.Value);
+            if (TryGetValueFromNumericUpDown(ResnipeInput, out int val))
+            {
+                Main.Settings.ResnipeTime = val;
+            }
         }
 
         private void CBlockMode_CheckedChanged(object sender, EventArgs e)
@@ -1353,7 +1380,10 @@ namespace NGUInjector
         private void YggSwapThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.YggSwapThreshold = decimal.ToInt32(YggSwapThreshold.Value);
+            if (TryGetValueFromNumericUpDown(YggSwapThreshold, out int val))
+            {
+                Main.Settings.YggSwapThreshold = val;
+            }
         }
 
         private void MoreBlockParry_CheckedChanged(object sender, EventArgs e)
