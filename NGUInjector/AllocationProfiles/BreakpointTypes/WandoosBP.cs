@@ -34,7 +34,6 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
         private void AllocateEnergy()
         {
             var cap = Character.wandoos98Controller.capAmountEnergy();
-            Main.LogDebug($"EWan Cap:{cap} | Max:{MaxAllocation} => {Math.Min(cap, MaxAllocation)}");
             SetInput(cap > 0 ? Math.Min(cap, MaxAllocation) : MaxAllocation);
             Character.wandoos98Controller.addEnergy();
         }
@@ -42,7 +41,6 @@ namespace NGUInjector.AllocationProfiles.BreakpointTypes
         private void AllocateMagic()
         {
             var cap = Character.wandoos98Controller.capAmountMagic();
-            Main.LogDebug($"MWan Cap:{cap} | Max:{MaxAllocation} => {Math.Min(cap, MaxAllocation)}");
             SetInput(cap > 0 ? Math.Min(cap, MaxAllocation) : MaxAllocation);
             Character.wandoos98Controller.addMagic();
         }
