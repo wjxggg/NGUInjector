@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NGUInjector.AllocationProfiles;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,12 +28,12 @@ namespace NGUInjector.Managers
         private WalderpCombatMove? _forcedMove = null;
         private WalderpCombatMove? _bannedMove = null;
 
+        private bool _nextAttackNoDamage = false;
+        private bool _nextAttackSpecial = false;
         private bool _holdBlock = false;
-        private bool _usedBlock = false;
 
         private void SetWalderpCombatMove(WalderpCombatMove? combatMove, bool walderpSays)
         {
-            //_walderpAttacksTillCommand = 5;
             _forcedMove = walderpSays ? combatMove : null;
             _bannedMove = walderpSays ? null : combatMove;
         }
@@ -66,6 +67,12 @@ namespace NGUInjector.Managers
             var ac = _character.adventureController;
             var eai = ac.enemyAI;
             var zone = _character.adventure.zone;
+
+            var eaifi = eai.GetType().GetField("enemyAttackTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var enemyAttackTimer = (float)eaifi?.GetValue(eai);
+            bool enemyIsParalyzed = EnemyIsParalyzed(eai, out float? paralyzeTimeLeft);
+            var timeTillAttack = (ac.currentEnemy.attackRate - enemyAttackTimer) + (paralyzeTimeLeft ?? 0f);
 
             int? numAttacksTillWalderpCommand = null;
             if (ZoneHelpers.ZoneIsWalderp(zone))
@@ -137,43 +144,111 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (ZoneHelpers.ZoneIsGodmother(zone))
+            if (ZoneHelpers.ZoneIsGodmother(zone) || ZoneHelpers.ZoneIsExile(zone))
             {
-                int attackNumber = eai.growCount % 9;
-                int numAttacksTillGodmotherExplode = ((2 - attackNumber) + 9) % 9;
+                int loopSize = 9;
+                int specialMoveNumber = 4;
 
-                float blockCooldown = _character.blockCooldown();
-                //Dont use block if the cooldown would run through the explosion
-                int blockThreshold = (int)Math.Floor(blockCooldown / ac.currentEnemy.attackRate);
-
-                _holdBlock = numAttacksTillGodmotherExplode < blockThreshold;
-
-                //Godmother explodes on growCount % 9 == 3 but we can't use it immediately as the block will run out during the explosion
-                //Godmother attacks every 2.2 seconds so wait about 1.5 seconds before using
-                if (attackNumber == 3)
+                switch (ac.currentEnemy.enemyType)
                 {
-                    var type = eai.GetType().GetField("enemyAttackTimer",
-                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    var enemyAttackTimer = (float)type?.GetValue(eai);
+                    case enemyType.bigBoss8V1:
+                    case enemyType.bigBoss8V2:
+                    case enemyType.bigBoss8V3:
+                    case enemyType.bigBoss8V4:
+                        loopSize = 9;
+                        break;
+                    case enemyType.bigBoss9V1:
+                        loopSize = 10;
+                        break;
+                    case enemyType.bigBoss9V2:
+                        loopSize = 9;
+                        break;
+                    case enemyType.bigBoss9V3:
+                        loopSize = 8;
+                        break;
+                    case enemyType.bigBoss9V4:
+                        loopSize = 7;
+                        break;
+                }
 
-                    if (!_usedBlock && enemyAttackTimer > 0.8f)
+                int attackNumber = eai.growCount % loopSize;
+                int numAttacksTillSpecialMove = ((((specialMoveNumber - 1) - attackNumber) + loopSize) % loopSize) + 1;
+                float timeTillSpecialMove = ((numAttacksTillSpecialMove - 1) * ac.currentEnemy.attackRate) + timeTillAttack;
+
+                var bm = _character.adventureController.blockMove;
+                var bmfi = bm.GetType().GetField("blockTimer",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                float blockRemainingCooldown = _character.blockCooldown() - Mathf.Min(_character.blockCooldown(), (float)bmfi?.GetValue(bm));
+
+                var pm = _character.adventureController.parryMove;
+                var pmfi = pm.GetType().GetField("parryTimer",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                float parryRemainingCooldown = _character.parryCooldown() - Mathf.Min(_character.parryCooldown(), (float)pmfi?.GetValue(pm));
+
+                var parm = _character.adventureController.paralyzeMove;
+                var parfi = parm.GetType().GetField("attackTimer",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                float paralyzeRemainingCooldown = _character.paralyzeCooldown() - Mathf.Min(_character.paralyzeCooldown(), (float)parfi?.GetValue(parm));
+
+                int attacksToBlock = (int)Math.Ceiling(2.9f / ac.currentEnemy.attackRate);
+                float optimalTimeToBlock = 2.9f - (ac.currentEnemy.attackRate * (attacksToBlock - 1));
+
+                _nextAttackSpecial = numAttacksTillSpecialMove == 1;
+                _nextAttackNoDamage = numAttacksTillSpecialMove == 2;
+                bool attackAfterNextNoDamage = numAttacksTillSpecialMove == 3;
+
+                //LogDebug($"");
+                //LogDebug($"SpecialIn:{numAttacksTillSpecialMove} | TimeToSpecial:{timeTillSpecialMove} | TimeToAttack:{timeTillAttack}");
+                //LogDebug($"BlockCD:{blockRemainingCooldown} | ParalyzeCD:{paralyzeRemainingCooldown} | ParryCD:{parryRemainingCooldown}");
+
+                bool canBlockBeforeHold = false;
+                if (Settings.TitanMoreBlockParry && ParalyzeUnlocked() && numAttacksTillSpecialMove > 3 && (blockRemainingCooldown + 0.1f) < timeTillAttack)
+                {
+                    float projectedTimeLeftOnBlockCooldown = _character.blockCooldown();
+                    //Amount of time before the first attack
+                    projectedTimeLeftOnBlockCooldown -= Mathf.Min(timeTillAttack, Mathf.Max(optimalTimeToBlock, blockRemainingCooldown));
+                    //Amount of time for the blocked attacks
+                    projectedTimeLeftOnBlockCooldown -= ac.currentEnemy.attackRate * (attacksToBlock - 1);
+                    //Amount of time due to paralyze
+                    if ((paralyzeRemainingCooldown + 0.1f) < timeTillSpecialMove && (projectedTimeLeftOnBlockCooldown - paralyzeRemainingCooldown) > 2.0f)
                     {
-                        if (ac.blockMove.button.IsInteractable() && enemyAttackTimer > 1.8f)
-                        {
-                            ac.blockMove.doMove();
-                            _usedBlock = true;
-                        }
+                        projectedTimeLeftOnBlockCooldown -= 3.0f;
+                    }
+                    //Amount of time for the warning "attack" and give a 0.2 second buffer for the combat loops
+                    projectedTimeLeftOnBlockCooldown -= (ac.currentEnemy.attackRate * 2.0f) - 0.2f;
 
-                        return;
+                    //LogDebug($"Projected BlockCD:{projectedTimeLeftOnBlockCooldown}");
+
+                    canBlockBeforeHold = projectedTimeLeftOnBlockCooldown < 0.0f;
+                }
+
+                _holdBlock = (!canBlockBeforeHold && timeTillSpecialMove < _character.blockCooldown() + 0.5f) || _nextAttackNoDamage || attackAfterNextNoDamage;
+
+                if (numAttacksTillSpecialMove == 1)
+                {
+                    //Exile only does the big attack some of the time
+                    if (ZoneHelpers.ZoneIsExile(zone) && eai.auraID != 1000)
+                    {
+                        _holdBlock = false;
                     }
                     else
                     {
-                        _holdBlock = true;
+                        //Bypass all other combat logic to wait until the right time to block
+                        if (blockRemainingCooldown < timeTillAttack && timeTillAttack < (optimalTimeToBlock + 1.0f))
+                        {
+                            if (ac.blockMove.button.IsInteractable() && timeTillAttack < optimalTimeToBlock)
+                            {
+                                //LogDebug($"\tSPECIAL BLOCK");
+                                ac.blockMove.doMove();
+                            }
+
+                            return;
+                        }
+                        else
+                        {
+                            _holdBlock = true;
+                        }
                     }
-                }
-                else
-                {
-                    _usedBlock = false;
                 }
             }
 
@@ -187,26 +262,24 @@ namespace NGUInjector.Managers
                 //SmartBeastMode routine, turn on Beast Mode when a defensive buff is active and only if it can be turned off before the buff expires
                 if (smartBeastMode && BeastModeUnlocked() && BeastModeReady())
                 {
-                    float? defBuffTimeRemaining = DefenseBuffActive() ? (float?)(_character.defenseBuffDuration() - Main.PlayerController.defenseBuffTime) : null;
-                    float? ultBuffTimeRemaining = UltimateBuffActive() ? (float?)(_character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
+                    DefenseBuffActive(out float? defBuffTimeRemaining);
+                    UltimateBuffActive(out float? ultBuffTimeRemaining);
 
                     if (defBuffTimeRemaining.HasValue || ultBuffTimeRemaining.HasValue)
                     {
-                        //Add a buffer of a few seconds to the move cooldowns to allow for a few loops to execute
+                        //Add a buffer of a few seconds to the move cooldowns to allow for a few other actions to execute
                         var pa = _character.adventureController.pierceMove;
                         var pafi = pa.GetType().GetField("attackTimer",
                             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        float pierceRemainingCooldown = (_character.pierceAttackCooldown() + 4f) - Mathf.Max(_character.pierceAttackCooldown(), (float)pafi?.GetValue(pa));
+                        float pierceRemainingCooldown = (_character.pierceAttackCooldown() + 3f) - Mathf.Min(_character.pierceAttackCooldown(), (float)pafi?.GetValue(pa));
 
                         var ua = _character.adventureController.ultimateAttackMove;
                         var uafi = ua.GetType().GetField("ultimateAttackTimer",
                             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        float ultRemainingCooldown = (_character.ultimateAttackCooldown() + 4f) - Mathf.Max(_character.ultimateAttackCooldown(), (float)uafi?.GetValue(ua));
+                        float ultRemainingCooldown = (_character.ultimateAttackCooldown() + 3f) - Mathf.Min(_character.ultimateAttackCooldown(), (float)uafi?.GetValue(ua));
 
                         bool canCastPierce = (defBuffTimeRemaining.HasValue && pierceRemainingCooldown < defBuffTimeRemaining) || (ultBuffTimeRemaining.HasValue && pierceRemainingCooldown < ultBuffTimeRemaining);
                         bool canCastUltimate = (defBuffTimeRemaining.HasValue && ultRemainingCooldown < defBuffTimeRemaining) || (ultBuffTimeRemaining.HasValue && ultRemainingCooldown < ultBuffTimeRemaining);
-
-                        //LogDebug($"DefBuff:{defBuffTimeRemaining} | UltBuff:{ultBuffTimeRemaining} | PierceCD:{pierceRemainingCooldown} | UltCD:{ultRemainingCooldown} | CanPierce:{canCastPierce} | CanUlt:{canCastUltimate}");
 
                         //Turn on Beast Mode if a defensive buff is active and BeastMode's cooldown is lower than the remaining time on the buff
                         if (!BeastModeActive() && (canCastPierce || canCastUltimate))
@@ -251,6 +324,7 @@ namespace NGUInjector.Managers
             var ai = ac.currentEnemy.AI;
             var eai = ac.enemyAI;
 
+            //Generic AI block/parry logic
             if (ai == AI.charger && eai.GetPV<int>("chargeCooldown") >= 3)
             {
                 if (ac.blockMove.button.IsInteractable() && !_pc.isParrying)
@@ -289,6 +363,39 @@ namespace NGUInjector.Managers
                 return false;
             }
 
+            if (DoDefensiveCooldowns())
+            {
+                return true;
+            }
+
+            if (CastMegaBuff())
+            {
+                return true;
+            }
+
+            if (!MegaBuffUnlocked())
+            {
+                if (!DefenseBuffActive(out _))
+                {
+                    if (CastUltimateBuff())
+                    {
+                        return true;
+                    }
+                }
+
+                if (UltimateBuffActive(out _))
+                {
+                    if (CastOffensiveBuff())
+                        return true;
+                }
+
+                if (GetHPPercentage() < .75 && !UltimateBuffActive(out _) && !BlockActive(out _) && !EnemyIsParalyzed(eai, out _))
+                {
+                    if (CastDefensiveBuff())
+                        return true;
+                }
+            }
+
             if (OhShitUnlocked() && GetHPPercentage() < .5 && OhShitReady())
             {
                 if (CastOhShit())
@@ -305,67 +412,13 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (GetHPPercentage() < .6 && !HealReady())
+            if (GetHPPercentage() < .65 && !HealReady())
             {
                 if (CastHyperRegen())
                 {
                     return true;
                 }
             }
-
-            if (CastMegaBuff())
-            {
-                return true;
-            }
-
-            if (!MegaBuffUnlocked())
-            {
-                if (!DefenseBuffActive())
-                {
-                    if (CastUltimateBuff())
-                    {
-                        return true;
-                    }
-                }
-
-                if (UltimateBuffActive())
-                {
-                    if (CastOffensiveBuff())
-                        return true;
-                }
-
-                if (GetHPPercentage() < .75 && !UltimateBuffActive() && !BlockActive())
-                {
-                    if (CastDefensiveBuff())
-                        return true;
-                }
-            }
-
-            if (ai != AI.charger && ai != AI.rapid && ai != AI.exploder && (Settings.MoreBlockParry || !UltimateBuffActive() && !DefenseBuffActive()))
-            {
-                if (!ParryActive() && !BlockActive() && !_holdBlock)
-                {
-                    if (CastBlock())
-                    {
-                        return true;
-                    }
-                }
-
-                if (!BlockActive() && !ParryActive())
-                {
-                    if (CastParry())
-                        return true;
-                }
-            }
-
-            if (_pc.isBlocking || _pc.isParrying)
-            {
-                return false;
-            }
-
-            if (CastParalyze(ai, eai))
-                return true;
-
 
             if (ChargeReady())
             {
@@ -385,41 +438,139 @@ namespace NGUInjector.Managers
             return false;
         }
 
-        //private bool ParalyzeBoss()
-        //{
-        //    var ac = _character.adventureController;
-        //    var ai = ac.currentEnemy.AI;
-        //    var eai = ac.enemyAI;
+        private bool DoDefensiveCooldowns()
+        {
+            var ac = _character.adventureController;
+            var ai = ac.currentEnemy.AI;
+            var eai = ac.enemyAI;
 
-        //    if (!ac.paralyzeMove.button.IsInteractable())
-        //        return false;
+            var bm = _character.adventureController.blockMove;
+            var bmfi = bm.GetType().GetField("blockTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            float blockRemainingCooldown = _character.blockCooldown() - Mathf.Min(_character.blockCooldown(), (float)bmfi?.GetValue(bm));
 
-        //    if (GetHPPercentage() < .2)
-        //        return false;
+            var pm = _character.adventureController.parryMove;
+            var pmfi = pm.GetType().GetField("parryTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            float parryRemainingCooldown = _character.parryCooldown() - Mathf.Min(_character.parryCooldown(), (float)pmfi?.GetValue(pm));
 
-        //    if (UltimateBuffActive())
-        //        return false;
+            var parm = _character.adventureController.paralyzeMove;
+            var parfi = parm.GetType().GetField("attackTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            float paralyzeRemainingCooldown = _character.paralyzeCooldown() - Mathf.Min(_character.paralyzeCooldown(), (float)parfi?.GetValue(parm));
 
-        //    if (ai == AI.charger && eai.GetPV<int>("chargeCooldown") == 0)
-        //    {
-        //        ac.paralyzeMove.doMove();
-        //        return true;
-        //    }
+            var eaifi = eai.GetType().GetField("enemyAttackTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var enemyAttackTimer = (float)eaifi?.GetValue(eai);
 
-        //    if (ai == AI.rapid && eai.GetPV<int>("rapidEffect") < 5)
-        //    {
-        //        ac.paralyzeMove.doMove();
-        //        return true;
-        //    }
+            bool blockIsActive = BlockActive(out float? blockTimeLeft);
+            bool enemyIsParalyzed = EnemyIsParalyzed(eai, out float? paralyzeTimeLeft);
 
-        //    if (ai != AI.rapid && ai != AI.charger)
-        //    {
-        //        ac.paralyzeMove.doMove();
-        //        return true;
-        //    }
+            float timeTillAttack = (ac.currentEnemy.attackRate - enemyAttackTimer) + (paralyzeTimeLeft ?? 0f);
+            float timeTillDamagingAttack = timeTillAttack + (_nextAttackNoDamage ? ac.currentEnemy.attackRate : 0f);
+            float timeTillUnparriedAttack = timeTillDamagingAttack + (ParryActive() ? ac.currentEnemy.attackRate : 0f);
 
-        //    return false;
-        //}
+            bool willBlockNextAttack = blockIsActive && (blockTimeLeft ?? 0) > timeTillDamagingAttack;
+            bool willBlockNextTwoAttacks = blockIsActive && (blockTimeLeft ?? 0) > (timeTillDamagingAttack + ac.currentEnemy.attackRate);
+
+            //Use Block so that it covers multiple attacks if possible
+            int attacksToBlock = (int)Math.Ceiling(2.9f / ac.currentEnemy.attackRate);
+            float optimalTimeToBlock = 2.9f - (ac.currentEnemy.attackRate * (attacksToBlock - 1));
+
+            //Prioritize Block unless its being held for a special attack
+            bool shouldBlock = !_holdBlock;
+            //Delay Block if its above the optimal time or if we can squeeze in a block before the next attack
+            bool delayBlock = timeTillDamagingAttack > optimalTimeToBlock;
+            delayBlock |= (blockRemainingCooldown > 0 && (blockRemainingCooldown + 0.1f) < timeTillDamagingAttack);
+
+            //Use Paralyze the next attack will not be blocked and if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
+            bool shouldParalyze = ParalyzeUnlocked() && !willBlockNextAttack && blockRemainingCooldown > 2.0f;
+            //Delay Paralyze if we're only blocking one more attack and Block's cooldown will have at least two seconds left after the next attack
+            bool delayParalyze = willBlockNextAttack && !willBlockNextTwoAttacks && (blockRemainingCooldown - timeTillDamagingAttack) > 2.0f;
+
+            //Use Parry if the next attack will not be blocked, the next attacks are not special titan cases, and Block/Paralyze will not be available
+            bool shouldParry = ParryUnlocked() && !willBlockNextAttack && !_nextAttackNoDamage && !_nextAttackSpecial && (_holdBlock || ((blockRemainingCooldown + 0.1f) > timeTillDamagingAttack && (paralyzeRemainingCooldown + 0.1f) > timeTillDamagingAttack));
+            //Delay Parry if we're only blocking one more attack and Paralyze will not fire before the next attack
+            bool delayParry = willBlockNextAttack && !willBlockNextTwoAttacks && (_holdBlock || !delayParalyze);
+
+            bool moreBlockParry = ZoneHelpers.ZoneIsTitan(_character.adventure.zone) ? Settings.TitanMoreBlockParry : Settings.MoreBlockParry;
+            bool shouldBlockAndParry = moreBlockParry || (!UltimateBuffActive(out _) && !DefenseBuffActive(out _));
+
+            //TODO: Tested with ExileV1 who has an attack rate of 2.0, need to test with ExileV2-4 with attack rates of 2.0-1.8
+            //Optimal cycle to spread out Defensive cooldowns: Block > Paralyze > Block > Parry
+            if (ai != AI.charger && ai != AI.rapid && ai != AI.exploder && shouldBlockAndParry)
+            {
+                //LogDebug($"WillBlock:{willBlockNextAttack} | WillParry:{ParryActive()} | HoldBlock:{_holdBlock} | TimeToDamagingAttack:{timeTillDamagingAttack} | TimeToUnparriedAttack:{timeTillUnparriedAttack}");
+                //LogDebug($"ShouldBlock:{shouldBlock} | ShouldParalyze:{shouldParalyze} | ShouldParry:{shouldParry}");
+                //LogDebug($"DelayBlock:{delayBlock} | DelayParalyze:{delayParalyze} | DelayParry:{delayParry}");
+
+                //Block is the most critical defensive cooldown. Try to use as much as possible and as close to the optimal time as possible to block multiple attacks.
+                if (shouldBlock && !delayBlock)
+                {
+                    if (CastBlock())
+                    {
+                        //LogDebug("\tBLOCK!");
+                        return true;
+                    }
+                }
+
+                //Paralyze pauses the attack timer, cast ASAP if Block will not cover the next damaging attack and Block is on cooldown to maximize Block uptime
+                if (shouldParalyze && !delayParalyze)
+                {
+                    if (CastParalyze(ai, eai))
+                    {
+                        //LogDebug("\tPARALYZE!");
+                        return true;
+                    }
+                }
+
+                //Parry works best when staggered with Block and cast when Block will not be able to cover the next attack
+                //Parry does next to nothing when active during a blocked attack, but it halves incoming damage from an unblocked attack
+                //While not as impactful as Block, weaving with Block will stretch out the coverage of defensive buffs as much as possible
+                if (shouldParry && !delayParry)
+                {
+                    if (CastParry())
+                    {
+                        //LogDebug("\tPARRY!");
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                //Paralyze pauses the attack timer, if we're not blocking just use it when ready
+                if (!willBlockNextAttack)
+                {
+                    if (CastParalyze(ai, eai))
+                    {
+                        return true;
+                    }
+                }
+
+                delayBlock = false;
+                delayParalyze = false;
+                delayParry = false;
+            }
+
+            //If we paused Block usage to cover multiple attacks and Block will be ready before the next player attack, delay further action until Block is cast
+            bool waitForBlock = shouldBlock && delayBlock && (blockRemainingCooldown + 0.1f) < timeTillAttack && timeTillAttack < (optimalTimeToBlock + 1.0f);
+
+            //If Block is running and Paralyze will be ready before the next player attack, delay further action until Paralyze is cast
+            bool waitForParalyze = shouldParalyze && delayParalyze && paralyzeRemainingCooldown < 1.0f && timeTillAttack < 1.0f;
+
+            //If Block is running and Paralyze will NOT be ready before the next player attack, delay further action until Parry is cast
+            bool waitForParry = shouldParry && delayParry && parryRemainingCooldown < 1.0f && timeTillDamagingAttack < 1.0f;
+
+            //LogDebug($"WaitBlock:{waitForBlock} | WaitParalyze:{waitForParalyze} | WaitParry:{waitForParry}");
+
+            //Defensive cooldowns are critical to staying alive, its worth delaying combat for fractions of a second to optimize uptime
+            if (waitForBlock || waitForParalyze || waitForParry)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         private void WalderpCombatAttacks(bool fastCombat, int numAttacksTillWalderpCommand)
         {
@@ -497,93 +648,6 @@ namespace NGUInjector.Managers
             }
         }
 
-        //private List<string> GetLog()
-        //{
-        //    List<string> log = new List<string>();
-
-        //    var bLog = _character.adventureController.log;
-        //    var type = bLog.GetType().GetField("Eventlog",
-        //        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        //    var val = type?.GetValue(bLog);
-
-        //    if (val != null)
-        //    {
-        //        log = (List<string>)val;
-        //    }
-
-        //    return log;
-        //}
-
-        //private void ParseLogForWalderp()
-        //{
-        //    var log = GetLog();
-        //    for (var i = log.Count - 1; i >= 0; i--)
-        //    {
-        //        var line = log[i];
-
-        //        if (!line.StartsWith("<color=red>")) continue;
-        //        if (line.EndsWith("<b></b>")) continue;
-
-        //        //LogDebug(line);
-
-        //        if (line.StartsWith("<color=red>HIT ME"))
-        //        {
-        //            //LogDebug($"Banning {GetWalderpCombatMove(line)}");
-        //            SetWalderpBannedMove(GetWalderpCombatMove(line));
-
-        //            log[i] = $"{line}<b></b>";
-
-        //            break;
-        //        }
-        //        else if (line.StartsWith("<color=red>WALDERP SAYS"))
-        //        {
-        //            //LogDebug($"Forcing {GetWalderpCombatMove(line)}");
-        //            SetWalderpForcedMove(GetWalderpCombatMove(line));
-
-        //            log[i] = $"{line}<b></b>";
-
-        //            break;
-        //        }
-        //        else if (line.StartsWith("<color=red>WALDERP "))
-        //        {
-        //            _walderpAttacksTillCommand--;
-        //            //LogDebug($"Walderp Attacks Left: {_walderpAttacksTillCommand}");
-
-        //            log[i] = $"{line}<b></b>";
-
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            log[i] = $"{line}<b></b>";
-        //        }
-        //    }
-        //}
-
-        //private WalderpCombatMove? GetWalderpCombatMove(string line)
-        //{
-        //    WalderpCombatMove? move = null;
-
-        //    if (line.Contains("REGULAR ATTACK"))
-        //    {
-        //        move = WalderpCombatMove.Regular;
-        //    }
-        //    else if (line.Contains("STRONG ATTACK"))
-        //    {
-        //        move = WalderpCombatMove.Strong;
-        //    }
-        //    else if (line.Contains("PIERCING ATTACK"))
-        //    {
-        //        move = WalderpCombatMove.Piercing;
-        //    }
-        //    else if (line.Contains("ULTIMATE ATTACK"))
-        //    {
-        //        move = WalderpCombatMove.Ultimate;
-        //    }
-
-        //    return move;
-        //}
-
         internal bool Move69CooldownReady()
         {
             TimeSpan ts = (DateTime.Now - move69Cooldown);
@@ -604,8 +668,9 @@ namespace NGUInjector.Managers
             _forcedMove = null;
             _bannedMove = null;
 
+            _nextAttackNoDamage = false;
+            _nextAttackSpecial = false;
             _holdBlock = false;
-            _usedBlock = false;
 
             if (_character.adventure.zone != zone)
             {
@@ -958,7 +1023,7 @@ namespace NGUInjector.Managers
             _isFighting = true;
             _enemyName = _character.adventureController.currentEnemy.name;
 
-            DoCombat(fastCombat, smartBeastMode);//!beastModeNeedsToPrecast &&
+            DoCombat(fastCombat, smartBeastMode);
         }
     }
 }

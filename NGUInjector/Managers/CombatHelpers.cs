@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 
 namespace NGUInjector.Managers
 {
@@ -114,14 +116,22 @@ namespace NGUInjector.Managers
             return Main.PlayerController.chargeFactor > 1.05;
         }
 
-        internal static bool UltimateBuffActive()
+        internal static bool UltimateBuffActive(out float? timeLeft)
         {
-            return Main.PlayerController.ultimateBuffTime > 0 && Main.PlayerController.ultimateBuffTime < Main.Character.ultimateBuffDuration();
+            bool isActive = Main.PlayerController.ultimateBuffTime > 0 && Main.PlayerController.ultimateBuffTime < Main.Character.ultimateBuffDuration();
+
+            timeLeft = isActive ? (float?)(Main.Character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
+
+            return isActive;
         }
 
-        internal static bool DefenseBuffActive()
+        internal static bool DefenseBuffActive(out float? timeLeft)
         {
-            return Main.PlayerController.defenseBuffTime > 0 && Main.PlayerController.defenseBuffTime < Main.Character.defenseBuffDuration();
+            bool isActive = Main.PlayerController.defenseBuffTime > 0 && Main.PlayerController.defenseBuffTime < Main.Character.defenseBuffDuration();
+
+            timeLeft = isActive ? (float?)(Main.Character.defenseBuffDuration() - Main.PlayerController.defenseBuffTime) : null;
+
+            return isActive;
         }
 
         internal static float GetUltimateAttackCooldown()
@@ -171,9 +181,13 @@ namespace NGUInjector.Managers
             return false;
         }
 
-        internal static bool BlockActive()
+        internal static bool BlockActive(out float? timeLeft)
         {
-            return Main.PlayerController.isBlocking;
+            bool isActive = Main.PlayerController.isBlocking;
+
+            timeLeft = isActive ? (float?)(3.0f - Main.PlayerController.blockTime) : null;
+
+            return isActive;
         }
 
         internal static bool CastBlock()
@@ -196,6 +210,19 @@ namespace NGUInjector.Managers
             }
 
             return false;
+        }
+
+        internal static bool EnemyIsParalyzed(EnemyAI eai, out float? timeLeft)
+        {
+            var type = eai.GetType().GetField("paralyzeTime",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var paralyzeTime = (float)type?.GetValue(eai);
+
+            bool isActive = paralyzeTime > 0;
+
+            timeLeft = isActive ? (float?)(paralyzeTime) : null;
+
+            return isActive;
         }
 
         internal static bool CastParalyze(AI ai, EnemyAI eai)
@@ -263,6 +290,11 @@ namespace NGUInjector.Managers
         internal static bool DefensiveBuffReady()
         {
             return Main.Character.adventureController.defenseBuffMove.button.IsInteractable();
+        }
+
+        internal static bool ParalyzeUnlocked()
+        {
+            return Main.Character.allChallenges.hasParalyze();
         }
 
         internal static bool BeastModeUnlocked()
