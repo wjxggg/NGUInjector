@@ -89,6 +89,13 @@ namespace NGUInjector
         private ItemControlGroup _wishControls;
         private ItemControlGroup _pitControls;
 
+        //TODO: Implement missing manual features:
+        //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
+        //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
+        //      Inventory Tab: BoostPriority listbox with arrows to sort
+        //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
+        //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
+        //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
         public SettingsForm()
         {
             InitializeComponent();

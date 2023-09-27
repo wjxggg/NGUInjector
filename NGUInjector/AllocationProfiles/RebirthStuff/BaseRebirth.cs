@@ -33,6 +33,10 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
         }
     }
 
+    //TOD: Implement a MuffinRebirth cycling between 24 and 23 hours (24h -> Activate Muffin if available -> Rebirth -> 23h -> Rebirth )
+    //     If Beast Fertilizer Quirk and 5 O'Clock Shadow Perk isnt maxed do a 24h TIME rebirth instead (maybe inherit from TimeRebirth?)
+    //     Do Muffin management in PreRebirth
+    //     Add an explicit option to purchase muffins if you have none, maybe Target<=0 for no and Target>0 for yes?
     internal abstract class BaseRebirth
     {
         internal static BaseRebirth CreateRebirth(double target, string type, string[] challenges)

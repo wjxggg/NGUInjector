@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NGUInjector.Managers
 {
-
+    //TODO: Fix this so that it works with restarts/reloads?
     class ConsumablesManager
     {
         private static Character _character = Main.Character;

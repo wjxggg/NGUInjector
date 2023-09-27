@@ -148,6 +148,7 @@ namespace NGUInjector.Managers
             {
                 int loopSize = 9;
                 int specialMoveNumber = 4;
+                bool hasWarningMove = true;
 
                 switch (ac.currentEnemy.enemyType)
                 {
@@ -165,11 +166,18 @@ namespace NGUInjector.Managers
                         break;
                     case enemyType.bigBoss9V3:
                         loopSize = 8;
+                        specialMoveNumber = 3;
+                        hasWarningMove = false;
                         break;
                     case enemyType.bigBoss9V4:
                         loopSize = 7;
+                        specialMoveNumber = 3;
+                        hasWarningMove = false;
                         break;
                 }
+
+                //TODO: ExileV3 and V4 do problematic attacks on the "warning", maybe a fix as simple as making the special move number 3?
+                //      Also may need to adjust _nextAttackNoDamage to always be false on those versions
 
                 int attackNumber = eai.growCount % loopSize;
                 int numAttacksTillSpecialMove = ((((specialMoveNumber - 1) - attackNumber) + loopSize) % loopSize) + 1;
@@ -194,8 +202,8 @@ namespace NGUInjector.Managers
                 float optimalTimeToBlock = 2.9f - (ac.currentEnemy.attackRate * (attacksToBlock - 1));
 
                 _nextAttackSpecial = numAttacksTillSpecialMove == 1;
-                _nextAttackNoDamage = numAttacksTillSpecialMove == 2;
-                bool attackAfterNextNoDamage = numAttacksTillSpecialMove == 3;
+                _nextAttackNoDamage = hasWarningMove && numAttacksTillSpecialMove == 2;
+                bool attackAfterNextNoDamage = hasWarningMove && numAttacksTillSpecialMove == 3;
 
                 //LogDebug($"");
                 //LogDebug($"SpecialIn:{numAttacksTillSpecialMove} | TimeToSpecial:{timeTillSpecialMove} | TimeToAttack:{timeTillAttack}");

@@ -1043,12 +1043,16 @@ namespace NGUInjector
 
                     if (Settings.AutoBuyAdventure)
                     {
-                        total += power + toughness + health + regen;
-
+                        // UI does NOT allow you to set HP purchase to less than 10 (for 3xp)
                         buyPower = power > 0;
                         buyToughness = toughness > 0;
-                        buyHP = health > 0;
-                        buyRegen = health > 0;
+                        buyHP = health > 3;
+                        buyRegen = regen > 0;
+
+                        total += (buyPower ? power : 0)
+                            + (buyToughness ? toughness : 0)
+                            + (buyHP ? health : 0)
+                            + (buyRegen ? regen : 0);
                     }
 
                     if (total > 0)
