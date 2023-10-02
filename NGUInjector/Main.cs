@@ -22,10 +22,11 @@ namespace NGUInjector
 {
     internal class Main : MonoBehaviour
     {
-        internal static InventoryController Controller;
         internal static Character Character;
+        internal static InventoryController InventoryController;
         internal static PlayerController PlayerController;
         internal static ArbitraryController ArbitraryController;
+        internal static Move69 Move69;
         internal static StreamWriter OutputWriter;
         internal static StreamWriter LootWriter;
         internal static StreamWriter CombatWriter;
@@ -40,8 +41,8 @@ namespace NGUInjector
         private QuestManager _questManager;
         private CardManager _cardManager;
         private CookingManager _cookingManager;
-        private ConsumablesManager _consumablesManager;
-        private BloodMagicManager _bloodManager;
+        //private ConsumablesManager _consumablesManager;
+        //private BloodMagicManager _bloodManager;
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
@@ -195,17 +196,18 @@ namespace NGUInjector
                 LogLoot("Starting Loot Writer");
                 LogCombat("Starting Combat Writer");
                 LogCard("Starting Card Writer");
-                Controller = Character.inventoryController;
+                InventoryController = Character.inventoryController;
                 PlayerController = FindObjectOfType<PlayerController>();
                 ArbitraryController = FindObjectOfType<ArbitraryController>();
+                Move69 = FindObjectOfType<Move69>();
                 _invManager = new InventoryManager();
                 _yggManager = new YggdrasilManager();
                 _questManager = new QuestManager();
                 _combManager = new CombatManager();
                 _cardManager = new CardManager();
                 _cookingManager = new CookingManager();
-                _consumablesManager = new ConsumablesManager();
-                _bloodManager = new BloodMagicManager();
+                //_consumablesManager = new ConsumablesManager();
+                //_bloodManager = new BloodMagicManager();
                 LoadoutManager.ReleaseLock();
                 DiggerManager.ReleaseLock();
 
@@ -232,6 +234,8 @@ namespace NGUInjector
                         PrecastBuffs = true,
                         AutoFight = false,
                         AutoQuest = false,
+                        ManageQuestLoadouts = false,
+                        QuestLoadout = new int[] { },
                         AutoQuestITOPOD = false,
                         AllowMajorQuests = false,
                         GoldDropLoadout = new int[] { },
@@ -326,7 +330,10 @@ namespace NGUInjector
                         DontCastCardType = new string[0],
                         TrashChunkers = false,
                         HackAdvance = false,
-                        MergeBlacklist = new int[] { }
+                        MergeBlacklist = new int[] { },
+                        ManageConsumables = false,
+                        AutoBuyConsumables = false,
+                        ConsumeIfAlreadyRunning = false
                     };
 
                     Settings.MassUpdate(temp);
@@ -921,7 +928,7 @@ namespace NGUInjector
 
                 ZoneHelpers.OptimizeITOPOD();
 
-                if (Settings.ManageInventory && !Controller.midDrag)
+                if (Settings.ManageInventory && !InventoryController.midDrag)
                 {
                     var converted = Character.inventory.GetConvertedInventory().ToArray();
                     var boostSlots = InventoryManager.GetBoostSlots(converted);
@@ -1043,10 +1050,9 @@ namespace NGUInjector
 
                     if (Settings.AutoBuyAdventure)
                     {
-                        // UI does NOT allow you to set HP purchase to less than 10 (for 3xp)
                         buyPower = power > 0;
-                        buyToughness = toughness > 0;
-                        buyHP = health > 3;
+                        buyToughness = toughness > 0;                        
+                        buyHP = health > 3; // UI does NOT allow you to set HP purchase to less than 10 (for 3xp)
                         buyRegen = regen > 0;
 
                         total += (buyPower ? power : 0)
@@ -1330,7 +1336,7 @@ namespace NGUInjector
                 CombatHelpers.IsCurrentlyAdventuring = true;
                 return;
             }
-            
+
             if (Settings.UseTitanCombat && ZoneHelpers.ZoneIsTitan(tempZone))
             {
                 if (Settings.TitanCombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone) || ZoneHelpers.ZoneIsExile(tempZone))

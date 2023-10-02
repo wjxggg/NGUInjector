@@ -18,11 +18,11 @@ namespace NGUInjector.Managers
     internal class CombatManager
     {
         private readonly Character _character;
+        private readonly float _bufferedUseMoveCooldown;
         private readonly PlayerController _pc;
         private bool _isFighting = false;
         private float _fightTimer = 0;
         private string _enemyName;
-        private DateTime move69Cooldown = DateTime.MinValue;
 
         private enum WalderpCombatMove { Regular, Strong, Piercing, Ultimate }
         private WalderpCombatMove? _forcedMove = null;
@@ -41,6 +41,7 @@ namespace NGUInjector.Managers
         public CombatManager()
         {
             _character = Main.Character;
+            _bufferedUseMoveCooldown = (_character.inventory.itemList.redLiquidComplete ? 0.8f : 1.0f) + 0.1f;
             _pc = Main.PlayerController;
         }
 
@@ -242,7 +243,7 @@ namespace NGUInjector.Managers
                     else
                     {
                         //Bypass all other combat logic to wait until the right time to block
-                        if (blockRemainingCooldown < timeTillAttack && timeTillAttack < (optimalTimeToBlock + 1.0f))
+                        if (blockRemainingCooldown < timeTillAttack && timeTillAttack < (optimalTimeToBlock + _bufferedUseMoveCooldown))
                         {
                             if (ac.blockMove.button.IsInteractable() && timeTillAttack < optimalTimeToBlock)
                             {
@@ -491,7 +492,7 @@ namespace NGUInjector.Managers
             bool delayBlock = timeTillDamagingAttack > optimalTimeToBlock;
             delayBlock |= (blockRemainingCooldown > 0 && (blockRemainingCooldown + 0.1f) < timeTillDamagingAttack);
 
-            //Use Paralyze the next attack will not be blocked and if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
+            //Use Paralyze if the next attack will not be blocked and if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
             bool shouldParalyze = ParalyzeUnlocked() && !willBlockNextAttack && blockRemainingCooldown > 2.0f;
             //Delay Paralyze if we're only blocking one more attack and Block's cooldown will have at least two seconds left after the next attack
             bool delayParalyze = willBlockNextAttack && !willBlockNextTwoAttacks && (blockRemainingCooldown - timeTillDamagingAttack) > 2.0f;
@@ -522,7 +523,7 @@ namespace NGUInjector.Managers
                     }
                 }
 
-                //Paralyze pauses the attack timer, cast ASAP if Block will not cover the next damaging attack and Block is on cooldown to maximize Block uptime
+                //Paralyze pauses the enemy attack timer, cast ASAP if Block will not cover the next damaging attack and if Block is on cooldown to maximize Block uptime
                 if (shouldParalyze && !delayParalyze)
                 {
                     if (CastParalyze(ai, eai))
@@ -561,13 +562,13 @@ namespace NGUInjector.Managers
             }
 
             //If we paused Block usage to cover multiple attacks and Block will be ready before the next player attack, delay further action until Block is cast
-            bool waitForBlock = shouldBlock && delayBlock && (blockRemainingCooldown + 0.1f) < timeTillAttack && timeTillAttack < (optimalTimeToBlock + 1.0f);
+            bool waitForBlock = shouldBlock && delayBlock && (blockRemainingCooldown + 0.1f) < timeTillAttack && timeTillAttack < (optimalTimeToBlock + _bufferedUseMoveCooldown);
 
             //If Block is running and Paralyze will be ready before the next player attack, delay further action until Paralyze is cast
-            bool waitForParalyze = shouldParalyze && delayParalyze && paralyzeRemainingCooldown < 1.0f && timeTillAttack < 1.0f;
+            bool waitForParalyze = shouldParalyze && delayParalyze && paralyzeRemainingCooldown < _bufferedUseMoveCooldown && timeTillAttack < _bufferedUseMoveCooldown;
 
             //If Block is running and Paralyze will NOT be ready before the next player attack, delay further action until Parry is cast
-            bool waitForParry = shouldParry && delayParry && parryRemainingCooldown < 1.0f && timeTillDamagingAttack < 1.0f;
+            bool waitForParry = shouldParry && delayParry && parryRemainingCooldown < _bufferedUseMoveCooldown && timeTillDamagingAttack < _bufferedUseMoveCooldown;
 
             //LogDebug($"WaitBlock:{waitForBlock} | WaitParalyze:{waitForParalyze} | WaitParry:{waitForParry}");
 
@@ -637,10 +638,10 @@ namespace NGUInjector.Managers
                 return;
             }
 
-            if (Settings.DoMove69 && Move69Ready() && Move69CooldownReady())
+            if (Move69Ready())
             {
-                Main.PlayerController.move69();
-                move69Cooldown = DateTime.Now;
+                Main.Move69.doMove();
+                return;
             }
 
             if (ac.strongAttackMove.button.IsInteractable() && _bannedMove != WalderpCombatMove.Strong)
@@ -654,16 +655,6 @@ namespace NGUInjector.Managers
                 ac.regularAttackMove.doMove();
                 return;
             }
-        }
-
-        internal bool Move69CooldownReady()
-        {
-            TimeSpan ts = (DateTime.Now - move69Cooldown);
-            if (ts.TotalMilliseconds > (1000 * 60 * 60)) // cooldown: 3600s or 1 hour
-            {
-                return true;
-            }
-            return false;
         }
 
         internal static bool IsZoneUnlocked(int zone)

@@ -91,11 +91,12 @@ namespace NGUInjector
 
         //TODO: Implement missing manual features:
         //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
-        //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
-        //      Inventory Tab: BoostPriority listbox with arrows to sort
         //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
         //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
         //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
+        //DONE:
+        //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
+        //      Inventory Tab: BoostPriority listbox with arrows to sort
         public SettingsForm()
         {
             InitializeComponent();
@@ -207,6 +208,9 @@ namespace NGUInjector
 
             UseTitanCombat_CheckedChanged(this, null);
 
+            boostPrioUpButton.Text = char.ConvertFromUtf32(8593);
+            boostPrioDownButton.Text = char.ConvertFromUtf32(8595);
+
             prioUpButton.Text = char.ConvertFromUtf32(8593);
             prioDownButton.Text = char.ConvertFromUtf32(8595);
 
@@ -280,6 +284,7 @@ namespace NGUInjector
             ManageDiggers.Checked = newSettings.ManageDiggers;
             ManageWandoos.Checked = newSettings.ManageWandoos;
             AutoRebirth.Checked = newSettings.AutoRebirth;
+            ManageConsumables.Checked = newSettings.ManageConsumables;
             ManageYggdrasil.Checked = newSettings.ManageYggdrasil;
             YggdrasilSwap.Checked = newSettings.SwapYggdrasilLoadouts;
             ManageInventory.Checked = newSettings.ManageInventory;
@@ -305,7 +310,10 @@ namespace NGUInjector
             AutoSpellSwap.Checked = newSettings.AutoSpellSwap;
             SpaghettiCap.Value = newSettings.SpaghettiThreshold;
             CounterfeitCap.Value = newSettings.CounterfeitThreshold;
+            AutoBuyAdv.Checked = newSettings.AutoBuyAdventure;
             AutoBuyEM.Checked = newSettings.AutoBuyEM;
+            AutoBuyConsumables.Checked = newSettings.AutoBuyConsumables;
+            ConsumeIfRunning.Checked = newSettings.ConsumeIfAlreadyRunning;
             MasterEnable.Checked = newSettings.GlobalEnabled;
             CombatActive.Checked = newSettings.CombatEnabled;
             ManualMinor.Checked = newSettings.ManualMinors;
@@ -388,6 +396,16 @@ namespace NGUInjector
                 yggdrasilLoadoutBox.Items.Clear();
             }
 
+            boostPriorityList.Items.Clear();
+            if (!newSettings.BoostPriority.Any())
+            {
+                string[] tempBoostPrio = { "Power", "Toughness", "Special" };
+                newSettings.BoostPriority = tempBoostPrio;
+            }
+            foreach (string priority in newSettings.BoostPriority)
+            {
+                boostPriorityList.Items.Add(priority);
+            }
 
             temp = newSettings.PriorityBoosts.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
             if (temp.Count > 0)
@@ -579,32 +597,75 @@ namespace NGUInjector
         {
             controls.ClearError();
 
-            var index = controls.ItemList.SelectedIndex;
+            ItemListUp(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
+
+            //var index = controls.ItemList.SelectedIndex;
+            //if (index == -1 || index == 0)
+            //{
+            //    return;
+            //}
+
+            //var temp = controls.GetSettings().ToList();
+            //var item = temp[index];
+            //temp.RemoveAt(index);
+            //temp.Insert(index - 1, item);
+            //controls.SaveSettings(temp.ToArray());
+
+            //controls.ItemList.SelectedIndex = index - 1;
+        }
+
+        private void ItemListUp<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
+        {
+            var index = itemList.SelectedIndex;
             if (index == -1 || index == 0)
             {
                 return;
             }
 
-            var temp = controls.GetSettings().ToList();
+            var temp = settings.ToList();
             var item = temp[index];
             temp.RemoveAt(index);
             temp.Insert(index - 1, item);
-            controls.SaveSettings(temp.ToArray());
+            saveSettings(temp.ToArray());
 
-            controls.ItemList.SelectedIndex = index - 1;
+            itemList.SelectedIndex = index - 1;
         }
 
         private void ItemListDown(ItemControlGroup controls)
         {
             controls.ClearError();
 
-            var index = controls.ItemList.SelectedIndex;
+            ItemListDown(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
+
+            //var index = controls.ItemList.SelectedIndex;
+            //if (index == -1)
+            //{
+            //    return;
+            //}
+
+            //var temp = controls.GetSettings().ToList();
+            //if (index == temp.Count - 1)
+            //{
+            //    return;
+            //}
+
+            //var item = temp[index];
+            //temp.RemoveAt(index);
+            //temp.Insert(index + 1, item);
+            //controls.SaveSettings(temp.ToArray());
+
+            //controls.ItemList.SelectedIndex = index + 1;
+        }
+
+        private void ItemListDown<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
+        {
+            var index = itemList.SelectedIndex;
             if (index == -1)
             {
                 return;
             }
 
-            var temp = controls.GetSettings().ToList();
+            var temp = settings.ToList();
             if (index == temp.Count - 1)
             {
                 return;
@@ -613,9 +674,9 @@ namespace NGUInjector
             var item = temp[index];
             temp.RemoveAt(index);
             temp.Insert(index + 1, item);
-            controls.SaveSettings(temp.ToArray());
+            saveSettings(temp.ToArray());
 
-            controls.ItemList.SelectedIndex = index + 1;
+            itemList.SelectedIndex = index + 1;
         }
 
         internal void UpdateProfileList(string[] profileList, string selectedProfile)
@@ -763,6 +824,16 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.AutoConvertBoosts = ManageBoostConvert.Checked;
+        }
+
+        private void boostPrioUpButton_Click(object sender, EventArgs e)
+        {
+            ItemListUp(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
+        }
+
+        private void boostPrioDownButton_Click(object sender, EventArgs e)
+        {
+            ItemListDown(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
         }
 
         private void priorityBoostItemAdd_TextChanged(object sender, EventArgs e)
@@ -1598,6 +1669,30 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.TitanMoreBlockParry = TitanMoreBlockParry.Checked;
+        }
+
+        private void ManageConsumables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageConsumables = ManageConsumables.Checked;
+        }
+
+        private void AutoBuyAdv_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AutoBuyAdventure = AutoBuyAdv.Checked;
+        }
+
+        private void AutoBuyConsumables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AutoBuyConsumables = AutoBuyConsumables.Checked;
+        }
+
+        private void ConsumeIfRunning_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ConsumeIfAlreadyRunning = ConsumeIfRunning.Checked;
         }
     }
 }

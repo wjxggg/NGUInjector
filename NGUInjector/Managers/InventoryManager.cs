@@ -96,7 +96,7 @@ namespace NGUInjector.Managers
         public InventoryManager()
         {
             _character = Main.Character;
-            _controller = Controller;
+            _controller = Main.InventoryController;
             var temp = _pendants.Concat(_lootys).ToList();
             //Wanderer's Cane
             temp.Add(154);
@@ -178,7 +178,7 @@ namespace NGUInjector.Managers
                 return inv.weapon.GetInventoryHelper(-5);
             }
 
-            if (Controller.weapon2Unlocked())
+            if (Main.InventoryController.weapon2Unlocked())
             {
                 if (inv.weapon2.id == id)
                 {

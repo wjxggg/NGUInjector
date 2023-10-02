@@ -46,11 +46,7 @@ To access these settings, open the **settings.json** (in your AppData NGUInjecto
 - **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
 - **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
 - **\_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
-- **\_manageConsumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file (see Section on Consumables below for details)
-- **\_autoBuyConsumables** - Set this to true to have the injector auto purchase any consumables you try to use that you do not own. Will only buy consumables if you have the AP to purchase them.
-- **\_autoBuyAdventure** - Set to true to auto purchase adventure stats. Will buy anything in the "Adventure Stats" tab that has a custom value set above 0 in a group, together with the EMR purchases (if enabled) once there is enough EXP to buy everything.
 - **\_wishBlacklist** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities (example: [131, 132, 128, 135,139]
-- **\_boostPriority** - The priority in which items should be boosted. Defaults to **["Power", "Toughness", "Special"]**
 - **\_cardSortEnabled** - Set this to true to have the injector sort cards based on the priorities given in **\_cardSortOrder**. (**false** by default).
 - **\_cardSortOrder** - Give a list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that match will be sorted by the second priority, and so on. The available priority options are:
   - **"RARITY"** - The card rarity ("Good"/"Okay", etc.). (high->low)
@@ -88,7 +84,11 @@ An in game menu can be opened using the F1 button.
 
 - **Auto Move to ITOPOD** - Automatically move to ITOPOD when nothing else is happening in automation.
 - **Auto Fight Bosses** - Automatically nuke/fight bosses.
-- **Auto Buy Energy/Magic/R3** - Automatically spend EXP on energy/magic/R3. Will use the custom caps set by the user in the spend exp page. Will always buy unlocked exp spends in groups.
+- **Auto Buy Energy/Magic/R3** - Automatically spend EXP on Energy/Magic/R3 based on the custom caps set by the user on their respective tabs. Will buy stats all at once after the total of all custom caps are met (including Adventure Stats if enabled).
+- **Auto Buy Adventure Stats** - Automatically spend EXP on Adventure Atats based on the custom caps set by the user in the "Adventure Stats" tab. Will buy stats all at once after the total of all custom caps are met (including Energy/Magic/R3 if enabled).
+
+- **Auto Buy Consumables** - Set this to true to have the injector auto purchase any consumables your profile is configured to use that you do not own. Will only buy consumables if you have the AP to purchase them.
+- **Use Consumables if already running** - If this is false, consumables in the consumable breakpoint will NOT be used if the consumable in question has time remaining. See section on Consumables below for more details.
 
 - **Open Settings Folder** - Opens a folder to the NGUInjector folder which contains the settings, profiles and logs.
 
@@ -109,6 +109,8 @@ An in game menu can be opened using the F1 button.
 - **Auto Upgrade Diggers** - Automatically upgrades your cheapest diggers when you have money available. Respects your money pit threshold and wont buy underneath it.
 
 - **Manage Wandoos OS** - Manage wandoos OS based on breakpoints in your selected allocation file
+
+- **Manage Consumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file. See section on Consumables below for more details.
 
 - **Auto Rebirth** - Automatically rebirth after the time in your selected allocation file is reached.
 
@@ -141,12 +143,13 @@ An in game menu can be opened using the F1 button.
   - **Auto Filtering** - If improved loot filter is purchased, will automatically filter items when they hit level 100
   - **Auto Convertible Management** - Will automatically transform non-locked pendants/lootys and other items
   - **Quest Item Management** - Will try to merge a quest item to level 100 if a locked one is found. Otherwise will automatically turn in quest items
-- **Manage Boost Conversion** - If all normal 100 Level Challenges are completed, will calculate needed boosts for items in boostIds and then switch auto conversion appropriately. If a locked non-level 100 boost is found in your inventory, will lock conversion to that type first to boost it to 100. Will prioritize power > toughness > special. Will also show you the hourly average of boost progress in the inject.log file.
-- **Cube Priority** - How to boost cube.
+- **Manage Boost Conversion** - If all normal 100 Level Challenges are completed, will calculate needed boosts for items in boostIds and then switch auto conversion appropriately. If a locked non-level 100 boost is found in your inventory, will lock conversion to that type first to boost it to 100. Will also show you the hourly average of boost progress in the inject.log file.
+- **Cube Boost Priority** - How to boost cube.
   - **None** - Will turn off boost conversion
   - **Balanced** - Will keep power and toughness on cube balanced
-  - **Power** - Will only put power into cube
+  - **Power** - Will only put power into the cube
   - **Toughness** - Will only put toughness into the cube
+- **Gear Boost Priority** - The priority in which items should be boosted. Defaults to Power > Toughness > Special.
 - **Priority Boosts** - Edit the items you wish to boost before others. Add items using the box in the bottom. Order is respected.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
@@ -480,6 +483,11 @@ The following types are available:
 - **Time** - Rebirths when a certain time passes
 - **Number** - Rebirths when your number will be OldNumber \* _Target_
 - **Bosses** - Rebirths when you can defeat _Target_ additional bosses
+- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply perform 24 hour Time rebirths without Muffin use if any of the following conditions are met:
+  - Currently in a challenge
+  - Has any challenges defined in the Rebirth Breakpoint
+  - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
+  - Do not have any Muffins and cannot buy more (or is configured to not buy more)
 
 The following example will rebirth when your number is 10x your previous number:
 
@@ -497,6 +505,16 @@ The following example will rebirth when you can kill 5 more bosses than your las
 "Rebirth": {
     "Type": "Bosses",
     "Target": 5,
+    "Challenges": []
+},
+```
+
+The following example will perform "Muffin" rebirth cycles, purchasing Muffin consumables if none are available:
+
+```
+"Rebirth": {
+    "Type": "Muffin",
+    "Target": 1,
     "Challenges": []
 },
 ```
@@ -552,24 +570,45 @@ Consumables are indexed as follows:
 - **SLC** - Super Lucky Charm
 - **MAYO** - Mayo Infuser
 
-**IMPORTANT NOTE: BE CAREFUL WHEN USING CONSUMABLE BREAKPOINTS**
+Consumables can be modified with an optional number to use by adding a : and a number. As an example:
 
-The injector cannot remember consumable usage across session. Therefore, if you restart NGU and/or the injector, it **will** run your latest Consumables breakpoint again -- and use any items again (except for beta pots and MacGuffin Muffins, those only activate if not already active).
+```
+EPOT-A:2
+```
+
+This will use two Energy Potion alphas instead of one. Consumables which are active until the next rebirth (beta potions and Muffins) ignore this modification and will only ever consume one.
+
+**IMPORTANT NOTE: BE AWARE OF THE LIMITATIONS OF CONSUMABLE BREAKPOINTS**
+
+The injector cannot remember consumable usage across sessions. Therefore, if you restart NGU, restart the injector, or make any changes to/reload the profile, it **will** run your current Consumables breakpoint again. The injector will try to compensate by estimating the amount of time a consumable is expected to run and only use consumables when appropriate. But it is not perfect and there are limitations.
 
 **_Example_**:
-Let's say you have it set to use a Lucky Charm 4 hours into your run.
+Let's say you have it set to use a two Lucky Charms 1 hour after rebirth.
 
-4 hours into your run, you use a Lucky Charm, all is well and life is good.
+If the profile initializes before 01:00:00 into the current rebirth and lucky charm is not currently running, the breakpoint will execute normally and you'll use the two Lucky Charms at the appropriate time.
 
-But sometime after this, you restart your computer. :(
+However if the profile is inialized AFTER this point (due to restarting the game or reloading the profile in some way) or the consumable is running when the breakpoint executes, there are a few things which can happen:
 
-When firing up NGU and injector, if the 4hour breakpoint is your latest one, it **will** run that one again **once** and use another Lucky Charm.
+- First we determine at what point the Lucky Charms would have expired if activated normally. In this case it would be two 30m charms activated at 01:00:00, so the expected end time is 02:00:00
+- If the current time within 1 minute of the expected end time or later, the consumable will not be used
+  - For example, if the profile is loaded at 01:59:00 or later, no lucky charms will be used
+- If however the current time is between the breakpoint time and the expected end time, we check to see if the boost is currently running and get the expected time left in the consumable by subtracting the current time from the total expected time the boost should run
+  - For example, if the profile is loaded at 01:35:00, the expected time left in the boost would be 25 minutes
+- If the boost is running 
+  - If the "Use Consumables if already running" option is not selected, the consumable will not be used
+  - If the time left on the boost is within 1 minute of the expected end time or later, the consumable will not be used
+    - For example if there are 24 minutes or more left in the boost and the expected amount of time left is 25 minutes, no lucky charms will be used
+- If we make it to this point, check to see how many consumables should be used (if any)
+  - Get the total amount of time we need to add to the consumable timer by subtracting the time left (if any) from the total expected time left that the boost should be running
+    - For example if the profile is loaded at 01:35:00 and there are 0 minutes left in the boost time, the amount of time we'd need to add is 25 minutes (so the lucky charm expires at 02:00:00). If there is 15 minutes left in the boost time we'd need to add 10 minutes.
+  - Get the number of consumables to use by dividing the amount of time to add by the amount of time each consumable adds to the timer and rounding the result to get as close to the expiration as possible
+    - For example if we need to add 25 minutes to the boost time, we'd consume 1 of the 2 lucky charms: 25/30 = .833 => 1. If we need to add 10 minutes to the boost time we'd consume 0 of the 2 lucky charms: 10/30 = .333 => 0
 
-If you had set that breakpoint to use a Lucky Charm AND a Super Lucky Charm, the injector will use **both** Lucky Charm and Super Lucky Charm again **once**.
+Beta potions and MacGuffin Muffins only activate if not already active. MacGuffin Muffin is a special case in that it lasts until the next rebirth AND for 24 hours, whichever is longer. If MacGuffin Muffin has gone through a rebirth, it will no longer be "Active" and will use the same timing logic as other non-beta consumables.
 
-Be mindful of this or your AP will be sad. No one likes sad AP.
+There is **NO** consideration for possibility that two of the same consumable can be added to a single breakpoint, multiple breakpoints overlapping, or the fact that alpha and delta potions share a timer. Injector will evaluate whether to use each consumable independant of any other configured consumables.
 
-Beta potions and Macguffin Muffins are smart enough to only activate if not already active.
+Be mindful of these limitations or your AP will be sad. No one likes sad AP.
 
 # Zone Stat Overrides
 

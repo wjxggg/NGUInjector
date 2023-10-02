@@ -83,6 +83,7 @@
     <Compile Include="AllocationProfiles\CustomAllocation.cs" />
     <Compile Include="AllocationProfiles\AllocationProfile.cs" />
     <Compile Include="AllocationProfiles\BreakpointTypes\NGUBP.cs" />
+    <Compile Include="AllocationProfiles\RebirthStuff\MuffinRebirth.cs" />
     <Compile Include="Managers\BloodMagicManager.cs" />
     <Compile Include="Managers\CardManager.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\BaseRebirth.cs" />

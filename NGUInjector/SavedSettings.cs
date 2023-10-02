@@ -115,7 +115,6 @@ namespace NGUInjector
         [SerializeField] private bool _trashCards;
         [SerializeField] private int _cardsTrashQuality;
         [SerializeField] private bool _autoCastCards;
-        [SerializeField] private int _autoCastCardType;
         [SerializeField] private bool _trashAdventureCards;
         [SerializeField] private string[] _cardSortOrder;
         [SerializeField] private bool _cardSortEnabled;
@@ -130,7 +129,7 @@ namespace NGUInjector
         [SerializeField] private int[] _cookingLoadout;
         [SerializeField] private bool _manageConsumables;
         [SerializeField] private bool _autoBuyConsumables;
-        [SerializeField] private bool _doMove69;
+        [SerializeField] private bool _consumeIfAlreadyRunning;
         [SerializeField] private int[] _mergeBlacklist;
         [SerializeField] private string[] _boostPriority;
 
@@ -316,7 +315,6 @@ namespace NGUInjector
             _trashCards = other._trashCards;
             _cardsTrashQuality = other._cardsTrashQuality;
             _autoCastCards = other._autoCastCards;
-            _autoCastCardType = other._autoCastCardType;
             _trashAdventureCards = other._trashAdventureCards;
             _trashCardCost = other._trashCardCost;
             _dontCastCardType = other._dontCastCardType;
@@ -332,7 +330,7 @@ namespace NGUInjector
             _cookingLoadout = other._cookingLoadout;
             _manageConsumables = other._manageConsumables;
             _autoBuyConsumables = other._autoBuyConsumables;
-            _doMove69 = other._doMove69;
+            _consumeIfAlreadyRunning = other._consumeIfAlreadyRunning;
             _mergeBlacklist = other._mergeBlacklist;
         }
 
@@ -1427,17 +1425,6 @@ namespace NGUInjector
             }
         }
 
-        public int AutoCastCardType
-        {
-            get => _autoCastCardType;
-            set 
-            {
-                if (value == _autoCastCardType) return;
-                _autoCastCardType = value;
-                SaveSettings();
-            }
-        }
-
         public bool TrashAdventureCards
         {
             get => _trashAdventureCards;
@@ -1598,6 +1585,17 @@ namespace NGUInjector
             }
         }
 
+        public bool ConsumeIfAlreadyRunning
+        {
+            get => _consumeIfAlreadyRunning;
+            set
+            {
+                if (value == _consumeIfAlreadyRunning) return;
+                _consumeIfAlreadyRunning = value;
+                SaveSettings();
+            }
+        }
+
         public bool ManageConsumables
         {
             get => _manageConsumables;
@@ -1605,17 +1603,6 @@ namespace NGUInjector
             {
                 if (value == _manageConsumables) return;
                 _manageConsumables = value;
-                SaveSettings();
-            }
-        }
-
-        public bool DoMove69
-        {
-            get => _doMove69;
-            set
-            {
-                if (value == _doMove69) return;
-                _doMove69 = value;
                 SaveSettings();
             }
         }

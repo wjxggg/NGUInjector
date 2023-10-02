@@ -346,7 +346,7 @@ namespace NGUInjector.Managers
 
         internal static bool Move69Ready()
         {
-            return Main.Character.adventure.move69Unlocked && Main.Character.adventure.move69Used < 69;
+            return Main.Character.adventure.move69Unlocked && Main.Move69.button.IsInteractable() && Main.Character.adventure.move69Used < 69;
         }
     }
 }

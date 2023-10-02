@@ -120,6 +120,15 @@
             this.ManageInventory = new System.Windows.Forms.CheckBox();
             this.ManageBoostConvert = new System.Windows.Forms.CheckBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.UseTitanCombat = new System.Windows.Forms.CheckBox();
+            this.TitanSmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.TitanMoreBlockParry = new System.Windows.Forms.CheckBox();
+            this.TitanBeastMode = new System.Windows.Forms.CheckBox();
+            this.TitanRecoverHealth = new System.Windows.Forms.CheckBox();
+            this.TitanFastCombat = new System.Windows.Forms.CheckBox();
+            this.TitanPrecastBuffs = new System.Windows.Forms.CheckBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.TitanCombatMode = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.TitanSwapTargets = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -131,6 +140,7 @@
             this.titanLoadout = new System.Windows.Forms.ListBox();
             this.SwapTitanLoadout = new System.Windows.Forms.CheckBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.ITOPODSmartBeastMode = new System.Windows.Forms.CheckBox();
             this.SmartBeastMode = new System.Windows.Forms.CheckBox();
             this.TargetTitans = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
@@ -180,6 +190,8 @@
             this.GoldLoadoutAdd = new System.Windows.Forms.Button();
             this.GoldLoadout = new System.Windows.Forms.ListBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.QuestSmartBeastMode = new System.Windows.Forms.CheckBox();
+            this.QuestBeastMode = new System.Windows.Forms.CheckBox();
             this.ManageQuestLoadout = new System.Windows.Forms.CheckBox();
             this.label30 = new System.Windows.Forms.Label();
             this.questRemoveButton = new System.Windows.Forms.Button();
@@ -241,18 +253,15 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.ITOPODSmartBeastMode = new System.Windows.Forms.CheckBox();
-            this.QuestSmartBeastMode = new System.Windows.Forms.CheckBox();
-            this.QuestBeastMode = new System.Windows.Forms.CheckBox();
-            this.TitanSmartBeastMode = new System.Windows.Forms.CheckBox();
-            this.TitanMoreBlockParry = new System.Windows.Forms.CheckBox();
-            this.TitanBeastMode = new System.Windows.Forms.CheckBox();
-            this.TitanRecoverHealth = new System.Windows.Forms.CheckBox();
-            this.TitanFastCombat = new System.Windows.Forms.CheckBox();
-            this.TitanPrecastBuffs = new System.Windows.Forms.CheckBox();
-            this.label36 = new System.Windows.Forms.Label();
-            this.TitanCombatMode = new System.Windows.Forms.ComboBox();
-            this.UseTitanCombat = new System.Windows.Forms.CheckBox();
+            this.AutoBuyAdv = new System.Windows.Forms.CheckBox();
+            this.AutoBuyConsumables = new System.Windows.Forms.CheckBox();
+            this.ConsumeIfRunning = new System.Windows.Forms.CheckBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.ManageConsumables = new System.Windows.Forms.CheckBox();
+            this.boostPriorityList = new System.Windows.Forms.ListBox();
+            this.label38 = new System.Windows.Forms.Label();
+            this.boostPrioUpButton = new System.Windows.Forms.Button();
+            this.boostPrioDownButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -349,6 +358,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.ConsumeIfRunning);
+            this.tabPage1.Controls.Add(this.AutoBuyConsumables);
+            this.tabPage1.Controls.Add(this.AutoBuyAdv);
             this.tabPage1.Controls.Add(this.OpenSettingsFolder);
             this.tabPage1.Controls.Add(this.DisableOverlay);
             this.tabPage1.Controls.Add(this.UnloadSafety);
@@ -425,6 +437,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.ManageConsumables);
             this.tabPage2.Controls.Add(this.OpenProfileFolder);
             this.tabPage2.Controls.Add(this.GuffBOnRebirth);
             this.tabPage2.Controls.Add(this.GuffAOnRebirth);
@@ -828,6 +841,10 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.boostPrioDownButton);
+            this.tabPage4.Controls.Add(this.boostPrioUpButton);
+            this.tabPage4.Controls.Add(this.label38);
+            this.tabPage4.Controls.Add(this.boostPriorityList);
             this.tabPage4.Controls.Add(this.BoostAvgReset);
             this.tabPage4.Controls.Add(this.CubePriority);
             this.tabPage4.Controls.Add(this.label20);
@@ -1020,6 +1037,70 @@
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // UseTitanCombat
+            // 
+            resources.ApplyResources(this.UseTitanCombat, "UseTitanCombat");
+            this.UseTitanCombat.Name = "UseTitanCombat";
+            this.UseTitanCombat.UseVisualStyleBackColor = true;
+            this.UseTitanCombat.CheckedChanged += new System.EventHandler(this.UseTitanCombat_CheckedChanged);
+            // 
+            // TitanSmartBeastMode
+            // 
+            resources.ApplyResources(this.TitanSmartBeastMode, "TitanSmartBeastMode");
+            this.TitanSmartBeastMode.Name = "TitanSmartBeastMode";
+            this.TitanSmartBeastMode.UseVisualStyleBackColor = true;
+            this.TitanSmartBeastMode.CheckedChanged += new System.EventHandler(this.TitanSmartBeastMode_CheckedChanged);
+            // 
+            // TitanMoreBlockParry
+            // 
+            resources.ApplyResources(this.TitanMoreBlockParry, "TitanMoreBlockParry");
+            this.TitanMoreBlockParry.Name = "TitanMoreBlockParry";
+            this.TitanMoreBlockParry.UseVisualStyleBackColor = true;
+            this.TitanMoreBlockParry.CheckedChanged += new System.EventHandler(this.TitanMoreBlockParry_CheckedChanged);
+            // 
+            // TitanBeastMode
+            // 
+            resources.ApplyResources(this.TitanBeastMode, "TitanBeastMode");
+            this.TitanBeastMode.Name = "TitanBeastMode";
+            this.TitanBeastMode.UseVisualStyleBackColor = true;
+            this.TitanBeastMode.CheckedChanged += new System.EventHandler(this.TitanBeastMode_CheckedChanged);
+            // 
+            // TitanRecoverHealth
+            // 
+            resources.ApplyResources(this.TitanRecoverHealth, "TitanRecoverHealth");
+            this.TitanRecoverHealth.Name = "TitanRecoverHealth";
+            this.TitanRecoverHealth.UseVisualStyleBackColor = true;
+            this.TitanRecoverHealth.CheckedChanged += new System.EventHandler(this.TitanRecoverHealth_CheckedChanged);
+            // 
+            // TitanFastCombat
+            // 
+            resources.ApplyResources(this.TitanFastCombat, "TitanFastCombat");
+            this.TitanFastCombat.Name = "TitanFastCombat";
+            this.TitanFastCombat.UseVisualStyleBackColor = true;
+            this.TitanFastCombat.CheckedChanged += new System.EventHandler(this.TitanFastCombat_CheckedChanged);
+            // 
+            // TitanPrecastBuffs
+            // 
+            resources.ApplyResources(this.TitanPrecastBuffs, "TitanPrecastBuffs");
+            this.TitanPrecastBuffs.Name = "TitanPrecastBuffs";
+            this.TitanPrecastBuffs.UseVisualStyleBackColor = true;
+            this.TitanPrecastBuffs.CheckedChanged += new System.EventHandler(this.TitanPrecastBuffs_CheckedChanged);
+            // 
+            // label36
+            // 
+            resources.ApplyResources(this.label36, "label36");
+            this.label36.Name = "label36";
+            // 
+            // TitanCombatMode
+            // 
+            this.TitanCombatMode.FormattingEnabled = true;
+            this.TitanCombatMode.Items.AddRange(new object[] {
+            resources.GetString("TitanCombatMode.Items"),
+            resources.GetString("TitanCombatMode.Items1")});
+            resources.ApplyResources(this.TitanCombatMode, "TitanCombatMode");
+            this.TitanCombatMode.Name = "TitanCombatMode";
+            this.TitanCombatMode.SelectedIndexChanged += new System.EventHandler(this.TitanCombatMode_SelectedIndexChanged);
+            // 
             // label9
             // 
             resources.ApplyResources(this.label9, "label9");
@@ -1134,6 +1215,13 @@
             resources.ApplyResources(this.tabPage6, "tabPage6");
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // ITOPODSmartBeastMode
+            // 
+            resources.ApplyResources(this.ITOPODSmartBeastMode, "ITOPODSmartBeastMode");
+            this.ITOPODSmartBeastMode.Name = "ITOPODSmartBeastMode";
+            this.ITOPODSmartBeastMode.UseVisualStyleBackColor = true;
+            this.ITOPODSmartBeastMode.CheckedChanged += new System.EventHandler(this.ITOPODSmartBeastMode_CheckedChanged);
             // 
             // SmartBeastMode
             // 
@@ -1514,6 +1602,20 @@
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.UseVisualStyleBackColor = true;
             // 
+            // QuestSmartBeastMode
+            // 
+            resources.ApplyResources(this.QuestSmartBeastMode, "QuestSmartBeastMode");
+            this.QuestSmartBeastMode.Name = "QuestSmartBeastMode";
+            this.QuestSmartBeastMode.UseVisualStyleBackColor = true;
+            this.QuestSmartBeastMode.CheckedChanged += new System.EventHandler(this.QuestSmartBeastMode_CheckedChanged);
+            // 
+            // QuestBeastMode
+            // 
+            resources.ApplyResources(this.QuestBeastMode, "QuestBeastMode");
+            this.QuestBeastMode.Name = "QuestBeastMode";
+            this.QuestBeastMode.UseVisualStyleBackColor = true;
+            this.QuestBeastMode.CheckedChanged += new System.EventHandler(this.QuestBeastMode_CheckedChanged);
+            // 
             // ManageQuestLoadout
             // 
             resources.ApplyResources(this.ManageQuestLoadout, "ManageQuestLoadout");
@@ -1843,6 +1945,7 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.label37);
             this.tabPage11.Controls.Add(this.TrashChunkers);
             this.tabPage11.Controls.Add(this.DontCastRemove);
             this.tabPage11.Controls.Add(this.DontCastAdd);
@@ -1979,90 +2082,63 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
-            // ITOPODSmartBeastMode
+            // AutoBuyAdv
             // 
-            resources.ApplyResources(this.ITOPODSmartBeastMode, "ITOPODSmartBeastMode");
-            this.ITOPODSmartBeastMode.Name = "ITOPODSmartBeastMode";
-            this.ITOPODSmartBeastMode.UseVisualStyleBackColor = true;
-            this.ITOPODSmartBeastMode.CheckedChanged += new System.EventHandler(this.ITOPODSmartBeastMode_CheckedChanged);
+            resources.ApplyResources(this.AutoBuyAdv, "AutoBuyAdv");
+            this.AutoBuyAdv.Name = "AutoBuyAdv";
+            this.AutoBuyAdv.UseVisualStyleBackColor = true;
+            this.AutoBuyAdv.CheckedChanged += new System.EventHandler(this.AutoBuyAdv_CheckedChanged);
             // 
-            // QuestSmartBeastMode
+            // AutoBuyConsumables
             // 
-            resources.ApplyResources(this.QuestSmartBeastMode, "QuestSmartBeastMode");
-            this.QuestSmartBeastMode.Name = "QuestSmartBeastMode";
-            this.QuestSmartBeastMode.UseVisualStyleBackColor = true;
-            this.QuestSmartBeastMode.CheckedChanged += new System.EventHandler(this.QuestSmartBeastMode_CheckedChanged);
+            resources.ApplyResources(this.AutoBuyConsumables, "AutoBuyConsumables");
+            this.AutoBuyConsumables.Name = "AutoBuyConsumables";
+            this.AutoBuyConsumables.UseVisualStyleBackColor = true;
+            this.AutoBuyConsumables.CheckedChanged += new System.EventHandler(this.AutoBuyConsumables_CheckedChanged);
             // 
-            // QuestBeastMode
+            // ConsumeIfRunning
             // 
-            resources.ApplyResources(this.QuestBeastMode, "QuestBeastMode");
-            this.QuestBeastMode.Name = "QuestBeastMode";
-            this.QuestBeastMode.UseVisualStyleBackColor = true;
-            this.QuestBeastMode.CheckedChanged += new System.EventHandler(this.QuestBeastMode_CheckedChanged);
+            resources.ApplyResources(this.ConsumeIfRunning, "ConsumeIfRunning");
+            this.ConsumeIfRunning.Name = "ConsumeIfRunning";
+            this.ConsumeIfRunning.UseVisualStyleBackColor = true;
+            this.ConsumeIfRunning.CheckedChanged += new System.EventHandler(this.ConsumeIfRunning_CheckedChanged);
             // 
-            // TitanSmartBeastMode
+            // label37
             // 
-            resources.ApplyResources(this.TitanSmartBeastMode, "TitanSmartBeastMode");
-            this.TitanSmartBeastMode.Name = "TitanSmartBeastMode";
-            this.TitanSmartBeastMode.UseVisualStyleBackColor = true;
-            this.TitanSmartBeastMode.CheckedChanged += new System.EventHandler(this.TitanSmartBeastMode_CheckedChanged);
+            resources.ApplyResources(this.label37, "label37");
+            this.label37.Name = "label37";
             // 
-            // TitanMoreBlockParry
+            // ManageConsumables
             // 
-            resources.ApplyResources(this.TitanMoreBlockParry, "TitanMoreBlockParry");
-            this.TitanMoreBlockParry.Name = "TitanMoreBlockParry";
-            this.TitanMoreBlockParry.UseVisualStyleBackColor = true;
-            this.TitanMoreBlockParry.CheckedChanged += new System.EventHandler(this.TitanMoreBlockParry_CheckedChanged);
+            resources.ApplyResources(this.ManageConsumables, "ManageConsumables");
+            this.ManageConsumables.Name = "ManageConsumables";
+            this.ManageConsumables.UseVisualStyleBackColor = true;
+            this.ManageConsumables.CheckedChanged += new System.EventHandler(this.ManageConsumables_CheckedChanged);
             // 
-            // TitanBeastMode
+            // boostPriorityList
             // 
-            resources.ApplyResources(this.TitanBeastMode, "TitanBeastMode");
-            this.TitanBeastMode.Name = "TitanBeastMode";
-            this.TitanBeastMode.UseVisualStyleBackColor = true;
-            this.TitanBeastMode.CheckedChanged += new System.EventHandler(this.TitanBeastMode_CheckedChanged);
+            this.boostPriorityList.FormattingEnabled = true;
+            resources.ApplyResources(this.boostPriorityList, "boostPriorityList");
+            this.boostPriorityList.Name = "boostPriorityList";
             // 
-            // TitanRecoverHealth
+            // label38
             // 
-            resources.ApplyResources(this.TitanRecoverHealth, "TitanRecoverHealth");
-            this.TitanRecoverHealth.Name = "TitanRecoverHealth";
-            this.TitanRecoverHealth.UseVisualStyleBackColor = true;
-            this.TitanRecoverHealth.CheckedChanged += new System.EventHandler(this.TitanRecoverHealth_CheckedChanged);
+            resources.ApplyResources(this.label38, "label38");
+            this.label38.Name = "label38";
             // 
-            // TitanFastCombat
+            // boostPrioUpButton
             // 
-            resources.ApplyResources(this.TitanFastCombat, "TitanFastCombat");
-            this.TitanFastCombat.Name = "TitanFastCombat";
-            this.TitanFastCombat.UseVisualStyleBackColor = true;
-            this.TitanFastCombat.CheckedChanged += new System.EventHandler(this.TitanFastCombat_CheckedChanged);
+            resources.ApplyResources(this.boostPrioUpButton, "boostPrioUpButton");
+            this.boostPrioUpButton.Name = "boostPrioUpButton";
+            this.boostPrioUpButton.UseVisualStyleBackColor = true;
+            this.boostPrioUpButton.Click += new System.EventHandler(this.boostPrioUpButton_Click);
             // 
-            // TitanPrecastBuffs
+            // boostPrioDownButton
             // 
-            resources.ApplyResources(this.TitanPrecastBuffs, "TitanPrecastBuffs");
-            this.TitanPrecastBuffs.Name = "TitanPrecastBuffs";
-            this.TitanPrecastBuffs.UseVisualStyleBackColor = true;
-            this.TitanPrecastBuffs.CheckedChanged += new System.EventHandler(this.TitanPrecastBuffs_CheckedChanged);
-            // 
-            // label36
-            // 
-            resources.ApplyResources(this.label36, "label36");
-            this.label36.Name = "label36";
-            // 
-            // TitanCombatMode
-            // 
-            this.TitanCombatMode.FormattingEnabled = true;
-            this.TitanCombatMode.Items.AddRange(new object[] {
-            resources.GetString("TitanCombatMode.Items"),
-            resources.GetString("TitanCombatMode.Items1")});
-            resources.ApplyResources(this.TitanCombatMode, "TitanCombatMode");
-            this.TitanCombatMode.Name = "TitanCombatMode";
-            this.TitanCombatMode.SelectedIndexChanged += new System.EventHandler(this.TitanCombatMode_SelectedIndexChanged);
-            // 
-            // UseTitanCombat
-            // 
-            resources.ApplyResources(this.UseTitanCombat, "UseTitanCombat");
-            this.UseTitanCombat.Name = "UseTitanCombat";
-            this.UseTitanCombat.UseVisualStyleBackColor = true;
-            this.UseTitanCombat.CheckedChanged += new System.EventHandler(this.UseTitanCombat_CheckedChanged);
+            resources.ApplyResources(this.boostPrioDownButton, "boostPrioDownButton");
+            this.boostPrioDownButton.Name = "boostPrioDownButton";
+            this.boostPrioDownButton.UseVisualStyleBackColor = true;
+            this.boostPrioDownButton.Click += new System.EventHandler(this.boostPrioDownButton_Click);
             // 
             // SettingsForm
             // 
@@ -2352,5 +2428,14 @@
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.ComboBox TitanCombatMode;
         private System.Windows.Forms.CheckBox UseTitanCombat;
+        private System.Windows.Forms.CheckBox ConsumeIfRunning;
+        private System.Windows.Forms.CheckBox AutoBuyConsumables;
+        private System.Windows.Forms.CheckBox AutoBuyAdv;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.CheckBox ManageConsumables;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.ListBox boostPriorityList;
+        private System.Windows.Forms.Button boostPrioDownButton;
+        private System.Windows.Forms.Button boostPrioUpButton;
     }
 }
