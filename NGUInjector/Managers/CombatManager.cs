@@ -18,11 +18,11 @@ namespace NGUInjector.Managers
     internal class CombatManager
     {
         private readonly Character _character;
-        private readonly float _bufferedUseMoveCooldown;
         private readonly PlayerController _pc;
         private bool _isFighting = false;
         private float _fightTimer = 0;
         private string _enemyName;
+        private float _bufferedUseMoveCooldown;
 
         private enum WalderpCombatMove { Regular, Strong, Piercing, Ultimate }
         private WalderpCombatMove? _forcedMove = null;
@@ -41,8 +41,8 @@ namespace NGUInjector.Managers
         public CombatManager()
         {
             _character = Main.Character;
-            _bufferedUseMoveCooldown = (_character.inventory.itemList.redLiquidComplete ? 0.8f : 1.0f) + 0.1f;
             _pc = Main.PlayerController;
+            _bufferedUseMoveCooldown = (_character.inventory.itemList.redLiquidComplete ? 0.8f : 1.0f) + 0.1f;
         }
 
         internal void UpdateFightTimer(float diff)
@@ -66,12 +66,11 @@ namespace NGUInjector.Managers
                 return;
 
             var ac = _character.adventureController;
+            var ai = ac.currentEnemy.AI;
             var eai = ac.enemyAI;
             var zone = _character.adventure.zone;
 
-            var eaifi = eai.GetType().GetField("enemyAttackTimer",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var enemyAttackTimer = (float)eaifi?.GetValue(eai);
+            var enemyAttackTimer = eai.GetPV<float>("enemyAttackTimer");
             bool enemyIsParalyzed = EnemyIsParalyzed(eai, out float? paralyzeTimeLeft);
             var timeTillAttack = (ac.currentEnemy.attackRate - enemyAttackTimer) + (paralyzeTimeLeft ?? 0f);
 
@@ -145,11 +144,11 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (ZoneHelpers.ZoneIsGodmother(zone) || ZoneHelpers.ZoneIsExile(zone))
+            if (ZoneHelpers.ZoneIsGodmother(zone) || ZoneHelpers.ZoneIsExile(zone) || ai == AI.charger || ai == AI.rapid || ai == AI.exploder)
             {
                 int loopSize = 9;
                 int specialMoveNumber = 4;
-                bool hasWarningMove = true;
+                int? warningMoveNumber = 3;
 
                 switch (ac.currentEnemy.enemyType)
                 {
@@ -168,19 +167,44 @@ namespace NGUInjector.Managers
                     case enemyType.bigBoss9V3:
                         loopSize = 8;
                         specialMoveNumber = 3;
-                        hasWarningMove = false;
+                        warningMoveNumber = null;
                         break;
                     case enemyType.bigBoss9V4:
                         loopSize = 7;
                         specialMoveNumber = 3;
-                        hasWarningMove = false;
+                        warningMoveNumber = null;
                         break;
+                }
+
+                int attackNumber = eai.growCount % loopSize;
+
+                if (!ZoneHelpers.ZoneIsTitan(zone))
+                {
+                    if (ai == AI.charger)
+                    {
+                        loopSize = 6;
+                        specialMoveNumber = 5;
+                        warningMoveNumber = 3;
+                        attackNumber = eai.GetPV<int>("chargeCooldown");
+                    }
+                    else if (ai == AI.rapid)
+                    {
+                        loopSize = 15;
+                        specialMoveNumber = 8;
+                        warningMoveNumber = 5;
+                        attackNumber = eai.GetPV<int>("rapidEffect");
+                    }
+                    else if (ai == AI.exploder)
+                    {
+                        loopSize = 1;
+                        specialMoveNumber = 1;
+                        warningMoveNumber = null;
+                        attackNumber = 1;
+                    }
                 }
 
                 //TODO: ExileV3 and V4 do problematic attacks on the "warning", maybe a fix as simple as making the special move number 3?
                 //      Also may need to adjust _nextAttackNoDamage to always be false on those versions
-
-                int attackNumber = eai.growCount % loopSize;
                 int numAttacksTillSpecialMove = ((((specialMoveNumber - 1) - attackNumber) + loopSize) % loopSize) + 1;
                 float timeTillSpecialMove = ((numAttacksTillSpecialMove - 1) * ac.currentEnemy.attackRate) + timeTillAttack;
 
@@ -203,11 +227,13 @@ namespace NGUInjector.Managers
                 float optimalTimeToBlock = 2.9f - (ac.currentEnemy.attackRate * (attacksToBlock - 1));
 
                 _nextAttackSpecial = numAttacksTillSpecialMove == 1;
-                _nextAttackNoDamage = hasWarningMove && numAttacksTillSpecialMove == 2;
-                bool attackAfterNextNoDamage = hasWarningMove && numAttacksTillSpecialMove == 3;
+
+                int attacksBetweenSpecialAndWarning = (!warningMoveNumber.HasValue || warningMoveNumber >= specialMoveNumber) ? 0 : specialMoveNumber - warningMoveNumber.Value;
+                _nextAttackNoDamage = warningMoveNumber.HasValue && numAttacksTillSpecialMove <= attacksBetweenSpecialAndWarning + 1 && numAttacksTillSpecialMove > 1;
+                bool attackAfterNextNoDamage = warningMoveNumber.HasValue && numAttacksTillSpecialMove <= attacksBetweenSpecialAndWarning + 2 && numAttacksTillSpecialMove > 2;
 
                 //LogDebug($"");
-                //LogDebug($"SpecialIn:{numAttacksTillSpecialMove} | TimeToSpecial:{timeTillSpecialMove} | TimeToAttack:{timeTillAttack}");
+                //LogDebug($"AI:{ai} | SpecialIn:{numAttacksTillSpecialMove} | TimeToSpecial:{timeTillSpecialMove} | TimeToAttack:{timeTillAttack}");
                 //LogDebug($"BlockCD:{blockRemainingCooldown} | ParalyzeCD:{paralyzeRemainingCooldown} | ParryCD:{parryRemainingCooldown}");
 
                 bool canBlockBeforeHold = false;
@@ -231,7 +257,7 @@ namespace NGUInjector.Managers
                     canBlockBeforeHold = projectedTimeLeftOnBlockCooldown < 0.0f;
                 }
 
-                _holdBlock = (!canBlockBeforeHold && timeTillSpecialMove < _character.blockCooldown() + 0.5f) || _nextAttackNoDamage || attackAfterNextNoDamage;
+                _holdBlock = (!canBlockBeforeHold && timeTillSpecialMove < _character.blockCooldown() + 0.5f) || _nextAttackSpecial ||  _nextAttackNoDamage || attackAfterNextNoDamage;
 
                 if (numAttacksTillSpecialMove == 1)
                 {
@@ -255,6 +281,7 @@ namespace NGUInjector.Managers
                         }
                         else
                         {
+                            //LogDebug($"Optimal Block:{optimalTimeToBlock} | GlobalMoveCD:{_bufferedUseMoveCooldown}");
                             _holdBlock = true;
                         }
                     }
@@ -323,6 +350,10 @@ namespace NGUInjector.Managers
             }
             else
             {
+                //Simulate an attack for testing defensive CD use
+                //LogDebug($"\t\"Attack\"");
+                //_pc.canUseMove = false;
+                //_pc.moveTimer = 0.8f;
                 CombatAttacks(fastCombat);
             }
         }
@@ -330,42 +361,42 @@ namespace NGUInjector.Managers
         private bool CombatBuffs()
         {
             var ac = _character.adventureController;
-            var ai = ac.currentEnemy.AI;
+            //var ai = ac.currentEnemy.AI;
             var eai = ac.enemyAI;
 
             //Generic AI block/parry logic
-            if (ai == AI.charger && eai.GetPV<int>("chargeCooldown") >= 3)
-            {
-                if (ac.blockMove.button.IsInteractable() && !_pc.isParrying)
-                {
-                    ac.blockMove.doMove();
-                    return true;
-                }
+            //if (ai == AI.charger && eai.GetPV<int>("chargeCooldown") >= 3)
+            //{
+            //    if (ac.blockMove.button.IsInteractable() && !_pc.isParrying)
+            //    {
+            //        ac.blockMove.doMove();
+            //        return true;
+            //    }
 
-                if (ac.parryMove.button.IsInteractable() && !_pc.isBlocking && !_pc.isParrying)
-                {
-                    ac.parryMove.doMove();
-                    return true;
-                }
-            }
+            //    if (ac.parryMove.button.IsInteractable() && !_pc.isBlocking && !_pc.isParrying)
+            //    {
+            //        ac.parryMove.doMove();
+            //        return true;
+            //    }
+            //}
 
-            if (ai == AI.rapid && eai.GetPV<int>("rapidEffect") >= 6)
-            {
-                if (ac.blockMove.button.IsInteractable())
-                {
-                    ac.blockMove.doMove();
-                    return true;
-                }
-            }
+            //if (ai == AI.rapid && eai.GetPV<int>("rapidEffect") >= 6)
+            //{
+            //    if (ac.blockMove.button.IsInteractable())
+            //    {
+            //        ac.blockMove.doMove();
+            //        return true;
+            //    }
+            //}
 
-            if (ai == AI.exploder && ac.currentEnemy.attackRate - eai.GetPV<float>("enemyAttackTimer") < 1)
-            {
-                if (ac.blockMove.button.IsInteractable())
-                {
-                    ac.blockMove.doMove();
-                    return true;
-                }
-            }
+            //if (ai == AI.exploder && ac.currentEnemy.attackRate - eai.GetPV<float>("enemyAttackTimer") < 1)
+            //{
+            //    if (ac.blockMove.button.IsInteractable())
+            //    {
+            //        ac.blockMove.doMove();
+            //        return true;
+            //    }
+            //}
 
             if (!ZoneHelpers.ZoneIsTitan(_character.adventure.zone) && ac.currentEnemy.curHP / ac.currentEnemy.maxHP < .2)
             {
@@ -468,9 +499,7 @@ namespace NGUInjector.Managers
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             float paralyzeRemainingCooldown = _character.paralyzeCooldown() - Mathf.Min(_character.paralyzeCooldown(), (float)parfi?.GetValue(parm));
 
-            var eaifi = eai.GetType().GetField("enemyAttackTimer",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var enemyAttackTimer = (float)eaifi?.GetValue(eai);
+            var enemyAttackTimer = eai.GetPV<float>("enemyAttackTimer");
 
             bool blockIsActive = BlockActive(out float? blockTimeLeft);
             bool enemyIsParalyzed = EnemyIsParalyzed(eai, out float? paralyzeTimeLeft);
@@ -507,7 +536,7 @@ namespace NGUInjector.Managers
 
             //TODO: Tested with ExileV1 who has an attack rate of 2.0, need to test with ExileV2-4 with attack rates of 2.0-1.8
             //Optimal cycle to spread out Defensive cooldowns: Block > Paralyze > Block > Parry
-            if (ai != AI.charger && ai != AI.rapid && ai != AI.exploder && shouldBlockAndParry)
+            if (shouldBlockAndParry)
             {
                 //LogDebug($"WillBlock:{willBlockNextAttack} | WillParry:{ParryActive()} | HoldBlock:{_holdBlock} | TimeToDamagingAttack:{timeTillDamagingAttack} | TimeToUnparriedAttack:{timeTillUnparriedAttack}");
                 //LogDebug($"ShouldBlock:{shouldBlock} | ShouldParalyze:{shouldParalyze} | ShouldParry:{shouldParry}");
@@ -526,7 +555,7 @@ namespace NGUInjector.Managers
                 //Paralyze pauses the enemy attack timer, cast ASAP if Block will not cover the next damaging attack and if Block is on cooldown to maximize Block uptime
                 if (shouldParalyze && !delayParalyze)
                 {
-                    if (CastParalyze(ai, eai))
+                    if (CastParalyze())
                     {
                         //LogDebug("\tPARALYZE!");
                         return true;
@@ -550,7 +579,7 @@ namespace NGUInjector.Managers
                 //Paralyze pauses the attack timer, if we're not blocking just use it when ready
                 if (!willBlockNextAttack)
                 {
-                    if (CastParalyze(ai, eai))
+                    if (CastParalyze())
                     {
                         return true;
                     }
@@ -675,6 +704,7 @@ namespace NGUInjector.Managers
             {
                 _isFighting = false;
                 _fightTimer = 0;
+                _bufferedUseMoveCooldown = (_character.inventory.itemList.redLiquidComplete ? 0.8f : 1.0f) + 0.1f;
             }
             CurrentCombatZone = zone;
             _character.adventureController.zoneSelector.changeZone(zone);

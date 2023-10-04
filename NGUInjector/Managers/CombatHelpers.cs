@@ -225,31 +225,17 @@ namespace NGUInjector.Managers
             return isActive;
         }
 
-        internal static bool CastParalyze(AI ai, EnemyAI eai)
+        internal static bool CastParalyze()
         {
-            if (!Main.Character.adventureController.paralyzeMove.button.IsInteractable())
-            {
-                return false;
-            }
-
-            if (ai == AI.charger && eai.GetPV<int>("chargeCooldown") == 0)
+            if (Main.Character.adventureController.paralyzeMove.button.IsInteractable())
             {
                 Main.Character.adventureController.paralyzeMove.doMove();
                 return true;
             }
 
-            if (ai == AI.rapid && eai.GetPV<int>("rapidEffect") < 5)
-            {
-                Main.Character.adventureController.paralyzeMove.doMove();
-                return true;
-            }
-
-            if (ai != AI.rapid && ai != AI.charger)
-            {
-                Main.Character.adventureController.paralyzeMove.doMove();
-                return true;
-            }
             return false;
+
+
         }
 
         internal static bool UltimateAttackReady()

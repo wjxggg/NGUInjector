@@ -160,10 +160,10 @@ An in game menu can be opened using the F1 button.
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
 - **Loadout** - The gear to equip when autokilling titans.
 - **Titans to Swap For** - Mark titans you wish to swap gear for
-- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP and THE GODMOTHER will ALWAYS use manual combat regardless of this setting*
+- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP, THE GODMOTHER, and THE EXILE will ALWAYS use manual combat regardless of this setting*
 - **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each titan attempt and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between titan kills attempts.
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Ignored during Idle combat mode.
+- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of THE GODMOTHER and THE EXILE. Ignored during Idle combat mode.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
@@ -175,7 +175,7 @@ An in game menu can be opened using the F1 button.
 
 - **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between kills
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Ignored during Idle combat mode.
+- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of Rapid, Charge, or Exploder enemy types if available. Ignored during Idle combat mode.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
@@ -187,9 +187,9 @@ An in game menu can be opened using the F1 button.
 
 - **ITOPOD Settings** - Settings below this apply only to ITOPOD combat
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone.
-- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge.
+- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between kills
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether
+- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of Rapid, Charge, or Exploder enemy types if available. Ignored during Idle combat mode.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Optimize ITOPOD Floor** - Will optimize your ITOPOD floor every 10 seconds. Does nothing if Lazy Floor Shifter is on
