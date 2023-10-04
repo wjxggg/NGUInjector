@@ -89,6 +89,14 @@ namespace NGUInjector
         private ItemControlGroup _wishControls;
         private ItemControlGroup _pitControls;
 
+        //TODO: Implement missing manual features:
+        //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
+        //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
+        //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
+        //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
+        //DONE:
+        //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
+        //      Inventory Tab: BoostPriority listbox with arrows to sort
         public SettingsForm()
         {
             InitializeComponent();
@@ -200,6 +208,9 @@ namespace NGUInjector
 
             UseTitanCombat_CheckedChanged(this, null);
 
+            boostPrioUpButton.Text = char.ConvertFromUtf32(8593);
+            boostPrioDownButton.Text = char.ConvertFromUtf32(8595);
+
             prioUpButton.Text = char.ConvertFromUtf32(8593);
             prioDownButton.Text = char.ConvertFromUtf32(8595);
 
@@ -273,6 +284,7 @@ namespace NGUInjector
             ManageDiggers.Checked = newSettings.ManageDiggers;
             ManageWandoos.Checked = newSettings.ManageWandoos;
             AutoRebirth.Checked = newSettings.AutoRebirth;
+            ManageConsumables.Checked = newSettings.ManageConsumables;
             ManageYggdrasil.Checked = newSettings.ManageYggdrasil;
             YggdrasilSwap.Checked = newSettings.SwapYggdrasilLoadouts;
             ManageInventory.Checked = newSettings.ManageInventory;
@@ -298,7 +310,10 @@ namespace NGUInjector
             AutoSpellSwap.Checked = newSettings.AutoSpellSwap;
             SpaghettiCap.Value = newSettings.SpaghettiThreshold;
             CounterfeitCap.Value = newSettings.CounterfeitThreshold;
+            AutoBuyAdv.Checked = newSettings.AutoBuyAdventure;
             AutoBuyEM.Checked = newSettings.AutoBuyEM;
+            AutoBuyConsumables.Checked = newSettings.AutoBuyConsumables;
+            ConsumeIfRunning.Checked = newSettings.ConsumeIfAlreadyRunning;
             MasterEnable.Checked = newSettings.GlobalEnabled;
             CombatActive.Checked = newSettings.CombatEnabled;
             ManualMinor.Checked = newSettings.ManualMinors;
@@ -381,6 +396,16 @@ namespace NGUInjector
                 yggdrasilLoadoutBox.Items.Clear();
             }
 
+            boostPriorityList.Items.Clear();
+            if (!newSettings.BoostPriority.Any())
+            {
+                string[] tempBoostPrio = { "Power", "Toughness", "Special" };
+                newSettings.BoostPriority = tempBoostPrio;
+            }
+            foreach (string priority in newSettings.BoostPriority)
+            {
+                boostPriorityList.Items.Add(priority);
+            }
 
             temp = newSettings.PriorityBoosts.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
             if (temp.Count > 0)
@@ -490,11 +515,16 @@ namespace NGUInjector
             _initializing = false;
         }
 
+        private bool TryGetValueFromNumericUpDown(NumericUpDown upDown, out int val)
+        {
+            return int.TryParse(upDown.Controls[0].Text, out val);
+        }
+
         private bool TryItemBoxTextChanged(ItemControlGroup controls, out int val)
         {
             controls.ClearError();
 
-            if (!int.TryParse(controls.ItemBox.Controls[0].Text, out val) || val < controls.MinVal || val > controls.MaxVal)
+            if (!TryGetValueFromNumericUpDown(controls.ItemBox, out val) || val < controls.MinVal || val > controls.MaxVal)
             {
                 controls.ItemLabel.Text = "";
                 return false;
@@ -567,32 +597,75 @@ namespace NGUInjector
         {
             controls.ClearError();
 
-            var index = controls.ItemList.SelectedIndex;
+            ItemListUp(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
+
+            //var index = controls.ItemList.SelectedIndex;
+            //if (index == -1 || index == 0)
+            //{
+            //    return;
+            //}
+
+            //var temp = controls.GetSettings().ToList();
+            //var item = temp[index];
+            //temp.RemoveAt(index);
+            //temp.Insert(index - 1, item);
+            //controls.SaveSettings(temp.ToArray());
+
+            //controls.ItemList.SelectedIndex = index - 1;
+        }
+
+        private void ItemListUp<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
+        {
+            var index = itemList.SelectedIndex;
             if (index == -1 || index == 0)
             {
                 return;
             }
 
-            var temp = controls.GetSettings().ToList();
+            var temp = settings.ToList();
             var item = temp[index];
             temp.RemoveAt(index);
             temp.Insert(index - 1, item);
-            controls.SaveSettings(temp.ToArray());
+            saveSettings(temp.ToArray());
 
-            controls.ItemList.SelectedIndex = index - 1;
+            itemList.SelectedIndex = index - 1;
         }
 
         private void ItemListDown(ItemControlGroup controls)
         {
             controls.ClearError();
 
-            var index = controls.ItemList.SelectedIndex;
+            ItemListDown(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
+
+            //var index = controls.ItemList.SelectedIndex;
+            //if (index == -1)
+            //{
+            //    return;
+            //}
+
+            //var temp = controls.GetSettings().ToList();
+            //if (index == temp.Count - 1)
+            //{
+            //    return;
+            //}
+
+            //var item = temp[index];
+            //temp.RemoveAt(index);
+            //temp.Insert(index + 1, item);
+            //controls.SaveSettings(temp.ToArray());
+
+            //controls.ItemList.SelectedIndex = index + 1;
+        }
+
+        private void ItemListDown<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
+        {
+            var index = itemList.SelectedIndex;
             if (index == -1)
             {
                 return;
             }
 
-            var temp = controls.GetSettings().ToList();
+            var temp = settings.ToList();
             if (index == temp.Count - 1)
             {
                 return;
@@ -601,9 +674,9 @@ namespace NGUInjector
             var item = temp[index];
             temp.RemoveAt(index);
             temp.Insert(index + 1, item);
-            controls.SaveSettings(temp.ToArray());
+            saveSettings(temp.ToArray());
 
-            controls.ItemList.SelectedIndex = index + 1;
+            itemList.SelectedIndex = index + 1;
         }
 
         internal void UpdateProfileList(string[] profileList, string selectedProfile)
@@ -751,6 +824,16 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.AutoConvertBoosts = ManageBoostConvert.Checked;
+        }
+
+        private void boostPrioUpButton_Click(object sender, EventArgs e)
+        {
+            ItemListUp(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
+        }
+
+        private void boostPrioDownButton_Click(object sender, EventArgs e)
+        {
+            ItemListDown(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
         }
 
         private void priorityBoostItemAdd_TextChanged(object sender, EventArgs e)
@@ -947,7 +1030,10 @@ namespace NGUInjector
         private void AbandonMinorThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.MinorAbandonThreshold = decimal.ToInt32(AbandonMinorThreshold.Value);
+            if (TryGetValueFromNumericUpDown(AbandonMinorThreshold, out int val))
+            {
+                Main.Settings.MinorAbandonThreshold = val;
+            }
         }
 
         private void QuestFastCombat_CheckedChanged(object sender, EventArgs e)
@@ -1006,8 +1092,28 @@ namespace NGUInjector
         private void SaveSpellCapButton_Click(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.SpaghettiThreshold = decimal.ToInt32(SpaghettiCap.Value);
-            Main.Settings.CounterfeitThreshold = decimal.ToInt32(CounterfeitCap.Value);
+
+            int val;
+            if (TryGetValueFromNumericUpDown(SpaghettiCap, out val))
+            {
+                Main.Settings.SpaghettiThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(CounterfeitCap, out val))
+            {
+                Main.Settings.CounterfeitThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(IronPillThreshold, out val))
+            {
+                Main.Settings.IronPillThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(GuffAThreshold, out val))
+            {
+                Main.Settings.BloodMacGuffinAThreshold = val;
+            }
+            if (TryGetValueFromNumericUpDown(GuffBThreshold, out val))
+            {
+                Main.Settings.BloodMacGuffinBThreshold = val;
+            }
 
             var newVal = BloodNumberThreshold.Text;
             if (double.TryParse(newVal, out var saved))
@@ -1023,10 +1129,6 @@ namespace NGUInjector
             {
                 numberErrProvider.SetError(BloodNumberThreshold, "Not a valid value");
             }
-
-            Main.Settings.IronPillThreshold = decimal.ToInt32(IronPillThreshold.Value);
-            Main.Settings.BloodMacGuffinAThreshold = decimal.ToInt32(GuffAThreshold.Value);
-            Main.Settings.BloodMacGuffinBThreshold = decimal.ToInt32(GuffBThreshold.Value);
         }
 
         private void TestButton_Click(object sender, EventArgs e)
@@ -1166,7 +1268,10 @@ namespace NGUInjector
 
         private void SaveResnipeButton_Click(object sender, EventArgs e)
         {
-            Main.Settings.ResnipeTime = decimal.ToInt32(ResnipeInput.Value);
+            if (TryGetValueFromNumericUpDown(ResnipeInput, out int val))
+            {
+                Main.Settings.ResnipeTime = val;
+            }
         }
 
         private void CBlockMode_CheckedChanged(object sender, EventArgs e)
@@ -1353,7 +1458,10 @@ namespace NGUInjector
         private void YggSwapThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.YggSwapThreshold = decimal.ToInt32(YggSwapThreshold.Value);
+            if (TryGetValueFromNumericUpDown(YggSwapThreshold, out int val))
+            {
+                Main.Settings.YggSwapThreshold = val;
+            }
         }
 
         private void MoreBlockParry_CheckedChanged(object sender, EventArgs e)
@@ -1561,6 +1669,30 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.TitanMoreBlockParry = TitanMoreBlockParry.Checked;
+        }
+
+        private void ManageConsumables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageConsumables = ManageConsumables.Checked;
+        }
+
+        private void AutoBuyAdv_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AutoBuyAdventure = AutoBuyAdv.Checked;
+        }
+
+        private void AutoBuyConsumables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.AutoBuyConsumables = AutoBuyConsumables.Checked;
+        }
+
+        private void ConsumeIfRunning_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ConsumeIfAlreadyRunning = ConsumeIfRunning.Checked;
         }
     }
 }

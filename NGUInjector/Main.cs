@@ -22,10 +22,11 @@ namespace NGUInjector
 {
     internal class Main : MonoBehaviour
     {
-        internal static InventoryController Controller;
         internal static Character Character;
+        internal static InventoryController InventoryController;
         internal static PlayerController PlayerController;
         internal static ArbitraryController ArbitraryController;
+        internal static Move69 Move69;
         internal static StreamWriter OutputWriter;
         internal static StreamWriter LootWriter;
         internal static StreamWriter CombatWriter;
@@ -40,13 +41,13 @@ namespace NGUInjector
         private QuestManager _questManager;
         private CardManager _cardManager;
         private CookingManager _cookingManager;
-        private ConsumablesManager _consumablesManager;
-        private BloodMagicManager _bloodManager;
+        //private ConsumablesManager _consumablesManager;
+        //private BloodMagicManager _bloodManager;
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.7.1";
+        internal const string Version = "3.7.2-beta2";
         private static int _furthestZone;
 
         private static string _dir;
@@ -195,17 +196,18 @@ namespace NGUInjector
                 LogLoot("Starting Loot Writer");
                 LogCombat("Starting Combat Writer");
                 LogCard("Starting Card Writer");
-                Controller = Character.inventoryController;
+                InventoryController = Character.inventoryController;
                 PlayerController = FindObjectOfType<PlayerController>();
                 ArbitraryController = FindObjectOfType<ArbitraryController>();
+                Move69 = FindObjectOfType<Move69>();
                 _invManager = new InventoryManager();
                 _yggManager = new YggdrasilManager();
                 _questManager = new QuestManager();
                 _combManager = new CombatManager();
                 _cardManager = new CardManager();
                 _cookingManager = new CookingManager();
-                _consumablesManager = new ConsumablesManager();
-                _bloodManager = new BloodMagicManager();
+                //_consumablesManager = new ConsumablesManager();
+                //_bloodManager = new BloodMagicManager();
                 LoadoutManager.ReleaseLock();
                 DiggerManager.ReleaseLock();
 
@@ -232,6 +234,8 @@ namespace NGUInjector
                         PrecastBuffs = true,
                         AutoFight = false,
                         AutoQuest = false,
+                        ManageQuestLoadouts = false,
+                        QuestLoadout = new int[] { },
                         AutoQuestITOPOD = false,
                         AllowMajorQuests = false,
                         GoldDropLoadout = new int[] { },
@@ -326,7 +330,10 @@ namespace NGUInjector
                         DontCastCardType = new string[0],
                         TrashChunkers = false,
                         HackAdvance = false,
-                        MergeBlacklist = new int[] { }
+                        MergeBlacklist = new int[] { },
+                        ManageConsumables = false,
+                        AutoBuyConsumables = false,
+                        ConsumeIfAlreadyRunning = false
                     };
 
                     Settings.MassUpdate(temp);
@@ -441,7 +448,7 @@ namespace NGUInjector
                 settingsForm.Show();
 
                 InvokeRepeating("AutomationRoutine", 0.0f, 10.0f);
-                InvokeRepeating("SnipeZone", 0.0f, .1f);
+                InvokeRepeating("SnipeZone", 0.0f, .05f);
                 InvokeRepeating("MonitorLog", 0.0f, 1f);
                 InvokeRepeating("QuickStuff", 0.0f, .5f);
                 InvokeRepeating("ShowBoostProgress", 0.0f, 60.0f);
@@ -905,18 +912,7 @@ namespace NGUInjector
                 Character.bloodSpells.updateRebirthToggleState();
             }
 
-            //if (Character.wishesController.curValidUpgradesList.Any() && !Character.wishesController.curValidUpgradesList.Contains(Character.wishesController.curSelectedWish)
-            //    && Character.wishes.wishes[Character.wishesController.curSelectedWish].energy == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].magic == 0 && Character.wishes.wishes[Character.wishesController.curSelectedWish].res3 == 0)
-            //{
-            //    if (Character.wishesController.curValidUpgradesList.Any(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0))
-            //    {
-            //        Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First(x => Character.wishes.wishes[x].energy > 0 || Character.wishes.wishes[x].magic > 0 || Character.wishes.wishes[x].res3 > 0));
-            //    }
-            //    else
-            //    {
-            //        Character.wishesController.selectNewWish(Character.wishesController.curValidUpgradesList.First());
-            //    }
-            //}
+            WishManager.UpdateWishMenu();
         }
 
         // Runs every 10 seconds, our main loop
@@ -932,7 +928,7 @@ namespace NGUInjector
 
                 ZoneHelpers.OptimizeITOPOD();
 
-                if (Settings.ManageInventory && !Controller.midDrag)
+                if (Settings.ManageInventory && !InventoryController.midDrag)
                 {
                     var converted = Character.inventory.GetConvertedInventory().ToArray();
                     var boostSlots = InventoryManager.GetBoostSlots(converted);
@@ -1054,12 +1050,15 @@ namespace NGUInjector
 
                     if (Settings.AutoBuyAdventure)
                     {
-                        total += power + toughness + health + regen;
-
                         buyPower = power > 0;
-                        buyToughness = toughness > 0;
-                        buyHP = health > 0;
-                        buyRegen = health > 0;
+                        buyToughness = toughness > 0;                        
+                        buyHP = health > 3; // UI does NOT allow you to set HP purchase to less than 10 (for 3xp)
+                        buyRegen = regen > 0;
+
+                        total += (buyPower ? power : 0)
+                            + (buyToughness ? toughness : 0)
+                            + (buyHP ? health : 0)
+                            + (buyRegen ? regen : 0);
                     }
 
                     if (total > 0)
@@ -1337,10 +1336,10 @@ namespace NGUInjector
                 CombatHelpers.IsCurrentlyAdventuring = true;
                 return;
             }
-            
+
             if (Settings.UseTitanCombat && ZoneHelpers.ZoneIsTitan(tempZone))
             {
-                if (Settings.TitanCombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone))
+                if (Settings.TitanCombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone) || ZoneHelpers.ZoneIsExile(tempZone))
                 {
                     _combManager.ManualZone(tempZone, false, Settings.TitanRecoverHealth, Settings.TitanPrecastBuffs, Settings.TitanFastCombat, Settings.TitanBeastMode, Settings.TitanSmartBeastMode);
                 }
@@ -1353,7 +1352,7 @@ namespace NGUInjector
                 return;
             }
 
-            if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone))
+            if (Settings.CombatMode == 0 || ZoneHelpers.ZoneIsWalderp(tempZone) || ZoneHelpers.ZoneIsGodmother(tempZone) || ZoneHelpers.ZoneIsExile(tempZone))
             {
                 _combManager.ManualZone(tempZone, Settings.SnipeBossOnly, Settings.RecoverHealth, Settings.PrecastBuffs, Settings.FastCombat, Settings.BeastMode, Settings.SmartBeastMode);
             }

@@ -523,7 +523,7 @@ namespace NGUInjector.AllocationProfiles
             _character.timeMachineController.updateMenu();
             _character.allOffenseController.refresh();
             _character.allDefenseController.refresh();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
             _character.augmentsController.updateMenu();
         }
 
@@ -585,7 +585,7 @@ namespace NGUInjector.AllocationProfiles
             _character.bloodMagicController.updateMenu();
             _character.NGUController.refreshMenu();
             _character.wandoos98Controller.refreshMenu();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
         }
 
         public override void AllocateR3()
@@ -637,7 +637,7 @@ namespace NGUInjector.AllocationProfiles
             }
 
             _character.hacksController.refreshMenu();
-            _character.wishesController.updateMenu();
+            Main.WishManager.UpdateWishMenu();
         }
 
         public override void EquipGear()
@@ -659,7 +659,7 @@ namespace NGUInjector.AllocationProfiles
             _hasGearSwapped = true;
             _currentGearBreakpoint = bp;
             LoadoutManager.ChangeGear(bp.Gear);
-            Main.Controller.assignCurrentEquipToLoadout(0);
+            Main.InventoryController.assignCurrentEquipToLoadout(0);
         }
 
         public override void EquipDiggers()
@@ -915,19 +915,18 @@ namespace NGUInjector.AllocationProfiles
 
             foreach (string consumable in consumableTypes)
             {
-                int index = 1;
+                int count = 1;
 
                 if (consumable.Contains(":")) // "EPOT-A:5" = 5 energy A potions
                 {
                     string[] split = consumable.Split(':');
-                    if (!int.TryParse(split[1], out index))
+                    if (!int.TryParse(split[1], out count))
                     {
-                        index = 1;
+                        count = 1;
                     }
                 }
 
-                //quantities[i++] = index;
-                quantities[i++] = 1; // default to 1 until things are working better, for now, no quantity support
+                quantities[i++] = count;
             }
 
             return quantities;

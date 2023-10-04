@@ -7,15 +7,9 @@ using System.Threading.Tasks;
 
 namespace NGUInjector.Managers
 {
-    internal class BloodMagicManager
+    internal static class BloodMagicManager
     {
-        private readonly Character _character;
         private enum FailureReason { Disabled, OnCooldown, BelowMinimum, BelowThreshold }
-
-        public BloodMagicManager()
-        {
-            _character = Main.Character;
-        }
 
         private static string GetFailureMessage(FailureReason reason, double minBlood, double calculatedPower, int threshold)
         {

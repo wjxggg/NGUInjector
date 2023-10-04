@@ -261,7 +261,7 @@ namespace NGUInjector.Managers
             Log($"Received New Gear for {getLockTypeName(CurrentLock)}: {string.Join(",", gearIds.Select(x => x.ToString()).ToArray())}");
             var weaponSlot = -5;
             var accSlot = 10000;
-            var controller = Controller;
+            var controller = Main.InventoryController;
 
             Main.Character.removeMostEnergy();
             Main.Character.removeMostMagic();
@@ -279,7 +279,7 @@ namespace NGUInjector.Managers
                     {
                         try
                         {
-                            Log($"Missing item {Controller.itemInfo.itemName[itemId]} with ID {itemId}");
+                            Log($"Missing item {Main.InventoryController.itemInfo.itemName[itemId]} with ID {itemId}");
                         }
                         catch (Exception)
                         {
@@ -377,7 +377,7 @@ namespace NGUInjector.Managers
                 return inv.weapon.GetInventoryHelper(-5);
             }
 
-            if (Controller.weapon2Unlocked())
+            if (Main.InventoryController.weapon2Unlocked())
             {
                 if (inv.weapon2.id == id)
                 {
@@ -421,9 +421,9 @@ namespace NGUInjector.Managers
                 loadout.Add(inv.weapon2.id);
             }
 
-            for (var id = 10000; Controller.accessoryID(id) < Main.Character.inventory.accs.Count; ++id)
+            for (var id = 10000; Main.InventoryController.accessoryID(id) < Main.Character.inventory.accs.Count; ++id)
             {
-                var index = Controller.accessoryID(id);
+                var index = Main.InventoryController.accessoryID(id);
                 loadout.Add(Main.Character.inventory.accs[index].id);
             }
 

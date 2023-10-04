@@ -86,6 +86,11 @@ namespace NGUInjector.Managers
             return zone == 26;
         }
 
+        internal static bool ZoneIsExile(int zone)
+        {
+            return zone == 30;
+        }
+
         internal static bool TitanSpawningSoon(int titanIndex)
         {
             return Main.Character.buttons.adventure.IsInteractable() && IsTitanSpawningSoon(titanIndex);
@@ -134,12 +139,12 @@ namespace NGUInjector.Managers
                         oldSnapshot.ShouldUseGoldLoadout = currentSnapshot.ShouldUseGoldLoadout;
                         oldSnapshot.ShouldUseTitanLoadout = currentSnapshot.ShouldUseTitanLoadout;
 
-                        //The titan is active, if it has been active for over 5 minutes, stats are probably not be high enough to kill
+                        //The titan is active, if it has been active for over 10 minutes, stats are probably not be high enough to kill
                         //Disable the titan to prevent sitting with suboptimal gear forever
                         if (oldSnapshot.SpawnSoonTimestamp.HasValue && currentSnapshot.SpawnSoonTimestamp.HasValue && (currentSnapshot.ShouldUseGoldLoadout || currentSnapshot.ShouldUseTitanLoadout))
                         {
                             //Waiting for kill...
-                            if ((currentSnapshot.SpawnSoonTimestamp.Value - oldSnapshot.SpawnSoonTimestamp.Value).TotalMinutes >= 5)
+                            if ((currentSnapshot.SpawnSoonTimestamp.Value - oldSnapshot.SpawnSoonTimestamp.Value).TotalMinutes >= 10)
                             {
                                 Log($"Titan {titanIndex} still available after 300 seconds");
                                 if (currentSnapshot.ShouldUseGoldLoadout)

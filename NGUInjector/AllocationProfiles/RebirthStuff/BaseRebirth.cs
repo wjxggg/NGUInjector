@@ -49,6 +49,17 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
                 };
             }
 
+            if (type == "MUFFIN")
+            {
+                return new MuffinRebirth
+                {
+                    CharObj = Main.Character,
+                    ChallengeTargets = ParseChallenges(challenges),
+                    RebirthController = Main.Character.rebirth,
+                    ShouldAutoBuyMuffins = target >=1
+                };
+            }
+
             if (type == "NUMBER")
             {
                 return new NumberRebirth
@@ -301,7 +312,7 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             return true;
         }
 
-        protected bool PreRebirth()
+        protected virtual bool PreRebirth()
         {
             if (Main.Settings.ManageYggdrasil && YggdrasilManager.AnyHarvestable())
             {

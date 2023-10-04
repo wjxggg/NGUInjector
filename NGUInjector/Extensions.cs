@@ -50,7 +50,7 @@ namespace NGUInjector
                 equipment = equip,
                 id = equip.id,
                 locked = !equip.removable,
-                name = Controller.itemInfo.itemName[equip.id],
+                name = Main.InventoryController.itemInfo.itemName[equip.id],
                 slot = slot
             };
         }
@@ -77,7 +77,7 @@ namespace NGUInjector
                 inv.boots.GetInventoryHelper(-4), inv.weapon.GetInventoryHelper(-5)
             };
 
-            if (Controller.weapon2Unlocked())
+            if (Main.InventoryController.weapon2Unlocked())
             {
                 list.Add(inv.weapon2.GetInventoryHelper(-6));
             }
