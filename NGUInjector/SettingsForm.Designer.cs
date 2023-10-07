@@ -652,6 +652,7 @@
             // 
             resources.ApplyResources(this.BloodNumberThreshold, "BloodNumberThreshold");
             this.BloodNumberThreshold.Name = "BloodNumberThreshold";
+            this.BloodNumberThreshold.TextChanged += new System.EventHandler(this.BloodNumberThreshold_TextChanged);
             // 
             // label18
             // 

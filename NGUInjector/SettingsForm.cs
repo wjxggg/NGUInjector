@@ -39,6 +39,7 @@ namespace NGUInjector
                 ItemList = itemList;
                 ItemBox = itemBox;
                 ErrorProvider = errorProvider;
+                ErrorProvider.SetIconAlignment(ItemList, ErrorIconAlignment.BottomRight);
                 ItemLabel = itemLabel;
 
                 GetSettings = getSettings;
@@ -69,7 +70,7 @@ namespace NGUInjector
             {
                 if (ErrorProvider != null)
                 {
-                    ErrorProvider.SetError(ItemBox, message);
+                    ErrorProvider.SetError(ItemList, message);
                 }
             }
         }
@@ -184,26 +185,8 @@ namespace NGUInjector
             EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
             EnemyBlacklistZone.SelectedIndex = 0;
 
-            //yggItemLabel.Text = "";
-            //priorityBoostLabel.Text = "";
-            //blacklistLabel.Text = "";
-            //titanLabel.Text = "";
-            //GoldItemLabel.Text = "";
-            //questItemLabel.Text = "";
-            //AddWishLabel.Text = "";
-            //MoneyPitLabel.Text = "";
-
             numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
-            yggErrorProvider.SetIconAlignment(yggdrasilLoadoutBox, ErrorIconAlignment.BottomRight);
-            invPrioErrorProvider.SetIconAlignment(priorityBoostBox, ErrorIconAlignment.BottomRight);
-            invBlacklistErrProvider.SetIconAlignment(blacklistBox, ErrorIconAlignment.BottomRight);
-            titanErrProvider.SetIconAlignment(titanLoadout, ErrorIconAlignment.BottomRight);
-            goldErrorProvider.SetIconAlignment(GoldLoadout, ErrorIconAlignment.BottomRight);
-            questErrorProvider.SetIconAlignment(questLoadoutBox, ErrorIconAlignment.BottomRight);
-            wishErrorProvider.SetIconAlignment(WishPriority, ErrorIconAlignment.BottomRight);
-            wishBlacklistErrorProvider.SetIconAlignment(WishBlacklist, ErrorIconAlignment.BottomRight);
             moneyPitThresholdError.SetIconAlignment(MoneyPitThreshold, ErrorIconAlignment.MiddleRight);
-            moneyPitErrorProvider.SetIconAlignment(MoneyPitLoadout, ErrorIconAlignment.BottomRight);
 
             yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
@@ -535,6 +518,19 @@ namespace NGUInjector
             else
             {
                 WishPriority.Items.Clear();
+            }
+
+            temp = newSettings.WishBlacklist.ToDictionary(x => x, x => Main.Character.wishesController.properties[x].wishName);
+            if (temp.Count > 0)
+            {
+                WishBlacklist.DataSource = null;
+                WishBlacklist.DataSource = new BindingSource(temp, null);
+                WishBlacklist.ValueMember = "Key";
+                WishBlacklist.DisplayMember = "Value";
+            }
+            else
+            {
+                WishBlacklist.Items.Clear();
             }
 
             temp = newSettings.BlacklistedBosses.ToDictionary(x => x, x => SpriteEnemyList[x]);
@@ -1168,6 +1164,11 @@ namespace NGUInjector
             {
                 numberErrProvider.SetError(BloodNumberThreshold, "Not a valid value");
             }
+        }
+
+        private void BloodNumberThreshold_TextChanged(object sender, EventArgs e)
+        {
+            numberErrProvider.SetError(BloodNumberThreshold, "");
         }
 
         private void TestButton_Click(object sender, EventArgs e)
