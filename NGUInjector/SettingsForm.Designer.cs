@@ -41,6 +41,9 @@
             this.moneyPitErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ConsumeIfRunning = new System.Windows.Forms.CheckBox();
+            this.AutoBuyConsumables = new System.Windows.Forms.CheckBox();
+            this.AutoBuyAdv = new System.Windows.Forms.CheckBox();
             this.OpenSettingsFolder = new System.Windows.Forms.Button();
             this.DisableOverlay = new System.Windows.Forms.CheckBox();
             this.UnloadSafety = new System.Windows.Forms.CheckBox();
@@ -51,6 +54,7 @@
             this.AutoFightBosses = new System.Windows.Forms.CheckBox();
             this.AutoITOPOD = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.ManageConsumables = new System.Windows.Forms.CheckBox();
             this.OpenProfileFolder = new System.Windows.Forms.Button();
             this.GuffBOnRebirth = new System.Windows.Forms.CheckBox();
             this.GuffAOnRebirth = new System.Windows.Forms.CheckBox();
@@ -100,6 +104,10 @@
             this.YggdrasilSwap = new System.Windows.Forms.CheckBox();
             this.ManageYggdrasil = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.boostPrioDownButton = new System.Windows.Forms.Button();
+            this.boostPrioUpButton = new System.Windows.Forms.Button();
+            this.label38 = new System.Windows.Forms.Label();
+            this.boostPriorityList = new System.Windows.Forms.ListBox();
             this.BoostAvgReset = new System.Windows.Forms.Button();
             this.CubePriority = new System.Windows.Forms.ComboBox();
             this.label20 = new System.Windows.Forms.Label();
@@ -211,6 +219,12 @@
             this.AllowMajor = new System.Windows.Forms.CheckBox();
             this.ManageQuests = new System.Windows.Forms.CheckBox();
             this.tabPage9 = new System.Windows.Forms.TabPage();
+            this.RemoveWishBlacklistButton = new System.Windows.Forms.Button();
+            this.label39 = new System.Windows.Forms.Label();
+            this.WishBlacklistAddInput = new System.Windows.Forms.NumericUpDown();
+            this.AddWishBlacklistLabel = new System.Windows.Forms.Label();
+            this.AddWishBlacklistButton = new System.Windows.Forms.Button();
+            this.WishBlacklist = new System.Windows.Forms.ListBox();
             this.WishSortOrder = new System.Windows.Forms.CheckBox();
             this.WishSortPriorities = new System.Windows.Forms.CheckBox();
             this.WishDownButton = new System.Windows.Forms.Button();
@@ -234,6 +248,16 @@
             this.AutoMoneyPit = new System.Windows.Forms.CheckBox();
             this.AutoDailySpin = new System.Windows.Forms.CheckBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.CardSortOptions = new System.Windows.Forms.ComboBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.CardSortRemove = new System.Windows.Forms.Button();
+            this.CardSortAdd = new System.Windows.Forms.Button();
+            this.label41 = new System.Windows.Forms.Label();
+            this.CardSortList = new System.Windows.Forms.ListBox();
+            this.CardSortDown = new System.Windows.Forms.Button();
+            this.CardSortUp = new System.Windows.Forms.Button();
+            this.label40 = new System.Windows.Forms.Label();
+            this.SortCards = new System.Windows.Forms.CheckBox();
             this.TrashChunkers = new System.Windows.Forms.CheckBox();
             this.DontCastRemove = new System.Windows.Forms.Button();
             this.DontCastAdd = new System.Windows.Forms.Button();
@@ -253,15 +277,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.AutoBuyAdv = new System.Windows.Forms.CheckBox();
-            this.AutoBuyConsumables = new System.Windows.Forms.CheckBox();
-            this.ConsumeIfRunning = new System.Windows.Forms.CheckBox();
-            this.label37 = new System.Windows.Forms.Label();
-            this.ManageConsumables = new System.Windows.Forms.CheckBox();
-            this.boostPriorityList = new System.Windows.Forms.ListBox();
-            this.label38 = new System.Windows.Forms.Label();
-            this.boostPrioUpButton = new System.Windows.Forms.Button();
-            this.boostPrioDownButton = new System.Windows.Forms.Button();
+            this.wishBlacklistErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.LocateWalderp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -295,12 +312,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.QuestLoadoutItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).BeginInit();
             this.tabPage9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WishBlacklistAddInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishAddInput)).BeginInit();
             this.tabPage10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).BeginInit();
             this.tabPage11.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // moneyPitThresholdError
@@ -373,6 +392,27 @@
             resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // ConsumeIfRunning
+            // 
+            resources.ApplyResources(this.ConsumeIfRunning, "ConsumeIfRunning");
+            this.ConsumeIfRunning.Name = "ConsumeIfRunning";
+            this.ConsumeIfRunning.UseVisualStyleBackColor = true;
+            this.ConsumeIfRunning.CheckedChanged += new System.EventHandler(this.ConsumeIfRunning_CheckedChanged);
+            // 
+            // AutoBuyConsumables
+            // 
+            resources.ApplyResources(this.AutoBuyConsumables, "AutoBuyConsumables");
+            this.AutoBuyConsumables.Name = "AutoBuyConsumables";
+            this.AutoBuyConsumables.UseVisualStyleBackColor = true;
+            this.AutoBuyConsumables.CheckedChanged += new System.EventHandler(this.AutoBuyConsumables_CheckedChanged);
+            // 
+            // AutoBuyAdv
+            // 
+            resources.ApplyResources(this.AutoBuyAdv, "AutoBuyAdv");
+            this.AutoBuyAdv.Name = "AutoBuyAdv";
+            this.AutoBuyAdv.UseVisualStyleBackColor = true;
+            this.AutoBuyAdv.CheckedChanged += new System.EventHandler(this.AutoBuyAdv_CheckedChanged);
             // 
             // OpenSettingsFolder
             // 
@@ -475,6 +515,13 @@
             resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // ManageConsumables
+            // 
+            resources.ApplyResources(this.ManageConsumables, "ManageConsumables");
+            this.ManageConsumables.Name = "ManageConsumables";
+            this.ManageConsumables.UseVisualStyleBackColor = true;
+            this.ManageConsumables.CheckedChanged += new System.EventHandler(this.ManageConsumables_CheckedChanged);
             // 
             // OpenProfileFolder
             // 
@@ -606,6 +653,7 @@
             // 
             resources.ApplyResources(this.BloodNumberThreshold, "BloodNumberThreshold");
             this.BloodNumberThreshold.Name = "BloodNumberThreshold";
+            this.BloodNumberThreshold.TextChanged += new System.EventHandler(this.BloodNumberThreshold_TextChanged);
             // 
             // label18
             // 
@@ -868,6 +916,31 @@
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // boostPrioDownButton
+            // 
+            resources.ApplyResources(this.boostPrioDownButton, "boostPrioDownButton");
+            this.boostPrioDownButton.Name = "boostPrioDownButton";
+            this.boostPrioDownButton.UseVisualStyleBackColor = true;
+            this.boostPrioDownButton.Click += new System.EventHandler(this.boostPrioDownButton_Click);
+            // 
+            // boostPrioUpButton
+            // 
+            resources.ApplyResources(this.boostPrioUpButton, "boostPrioUpButton");
+            this.boostPrioUpButton.Name = "boostPrioUpButton";
+            this.boostPrioUpButton.UseVisualStyleBackColor = true;
+            this.boostPrioUpButton.Click += new System.EventHandler(this.boostPrioUpButton_Click);
+            // 
+            // label38
+            // 
+            resources.ApplyResources(this.label38, "label38");
+            this.label38.Name = "label38";
+            // 
+            // boostPriorityList
+            // 
+            this.boostPriorityList.FormattingEnabled = true;
+            resources.ApplyResources(this.boostPriorityList, "boostPriorityList");
+            this.boostPriorityList.Name = "boostPriorityList";
+            // 
             // BoostAvgReset
             // 
             resources.ApplyResources(this.BoostAvgReset, "BoostAvgReset");
@@ -1015,6 +1088,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.LocateWalderp);
             this.tabPage5.Controls.Add(this.UseTitanCombat);
             this.tabPage5.Controls.Add(this.TitanSmartBeastMode);
             this.tabPage5.Controls.Add(this.TitanMoreBlockParry);
@@ -1754,6 +1828,12 @@
             // 
             // tabPage9
             // 
+            this.tabPage9.Controls.Add(this.RemoveWishBlacklistButton);
+            this.tabPage9.Controls.Add(this.label39);
+            this.tabPage9.Controls.Add(this.WishBlacklistAddInput);
+            this.tabPage9.Controls.Add(this.AddWishBlacklistLabel);
+            this.tabPage9.Controls.Add(this.AddWishBlacklistButton);
+            this.tabPage9.Controls.Add(this.WishBlacklist);
             this.tabPage9.Controls.Add(this.WishSortOrder);
             this.tabPage9.Controls.Add(this.WishSortPriorities);
             this.tabPage9.Controls.Add(this.WishDownButton);
@@ -1767,6 +1847,55 @@
             resources.ApplyResources(this.tabPage9, "tabPage9");
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // RemoveWishBlacklistButton
+            // 
+            resources.ApplyResources(this.RemoveWishBlacklistButton, "RemoveWishBlacklistButton");
+            this.RemoveWishBlacklistButton.Name = "RemoveWishBlacklistButton";
+            this.RemoveWishBlacklistButton.UseVisualStyleBackColor = true;
+            this.RemoveWishBlacklistButton.Click += new System.EventHandler(this.RemoveWishBlacklistButton_Click);
+            // 
+            // label39
+            // 
+            resources.ApplyResources(this.label39, "label39");
+            this.label39.Name = "label39";
+            // 
+            // WishBlacklistAddInput
+            // 
+            resources.ApplyResources(this.WishBlacklistAddInput, "WishBlacklistAddInput");
+            this.WishBlacklistAddInput.Maximum = new decimal(new int[] {
+            1410065407,
+            2,
+            0,
+            0});
+            this.WishBlacklistAddInput.Name = "WishBlacklistAddInput";
+            this.WishBlacklistAddInput.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.WishBlacklistAddInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WishBlacklistAddInput_KeyDown);
+            // 
+            // AddWishBlacklistLabel
+            // 
+            resources.ApplyResources(this.AddWishBlacklistLabel, "AddWishBlacklistLabel");
+            this.AddWishBlacklistLabel.Name = "AddWishBlacklistLabel";
+            // 
+            // AddWishBlacklistButton
+            // 
+            resources.ApplyResources(this.AddWishBlacklistButton, "AddWishBlacklistButton");
+            this.AddWishBlacklistButton.Name = "AddWishBlacklistButton";
+            this.AddWishBlacklistButton.UseVisualStyleBackColor = true;
+            this.AddWishBlacklistButton.Click += new System.EventHandler(this.AddWishBlacklistButton_Click);
+            // 
+            // WishBlacklist
+            // 
+            this.WishBlacklist.FormattingEnabled = true;
+            this.WishBlacklist.Items.AddRange(new object[] {
+            resources.GetString("WishBlacklist.Items"),
+            resources.GetString("WishBlacklist.Items1")});
+            resources.ApplyResources(this.WishBlacklist, "WishBlacklist");
+            this.WishBlacklist.Name = "WishBlacklist";
             // 
             // WishSortOrder
             // 
@@ -1945,7 +2074,16 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.CardSortOptions);
             this.tabPage11.Controls.Add(this.label37);
+            this.tabPage11.Controls.Add(this.CardSortRemove);
+            this.tabPage11.Controls.Add(this.CardSortAdd);
+            this.tabPage11.Controls.Add(this.label41);
+            this.tabPage11.Controls.Add(this.CardSortList);
+            this.tabPage11.Controls.Add(this.CardSortDown);
+            this.tabPage11.Controls.Add(this.CardSortUp);
+            this.tabPage11.Controls.Add(this.label40);
+            this.tabPage11.Controls.Add(this.SortCards);
             this.tabPage11.Controls.Add(this.TrashChunkers);
             this.tabPage11.Controls.Add(this.DontCastRemove);
             this.tabPage11.Controls.Add(this.DontCastAdd);
@@ -1965,6 +2103,71 @@
             resources.ApplyResources(this.tabPage11, "tabPage11");
             this.tabPage11.Name = "tabPage11";
             this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // CardSortOptions
+            // 
+            this.CardSortOptions.FormattingEnabled = true;
+            resources.ApplyResources(this.CardSortOptions, "CardSortOptions");
+            this.CardSortOptions.Name = "CardSortOptions";
+            // 
+            // label37
+            // 
+            resources.ApplyResources(this.label37, "label37");
+            this.label37.Name = "label37";
+            // 
+            // CardSortRemove
+            // 
+            resources.ApplyResources(this.CardSortRemove, "CardSortRemove");
+            this.CardSortRemove.Name = "CardSortRemove";
+            this.CardSortRemove.UseVisualStyleBackColor = true;
+            this.CardSortRemove.Click += new System.EventHandler(this.CardSortRemove_Click);
+            // 
+            // CardSortAdd
+            // 
+            resources.ApplyResources(this.CardSortAdd, "CardSortAdd");
+            this.CardSortAdd.Name = "CardSortAdd";
+            this.CardSortAdd.UseVisualStyleBackColor = true;
+            this.CardSortAdd.Click += new System.EventHandler(this.CardSortAdd_Click);
+            // 
+            // label41
+            // 
+            resources.ApplyResources(this.label41, "label41");
+            this.label41.Name = "label41";
+            // 
+            // CardSortList
+            // 
+            this.CardSortList.FormattingEnabled = true;
+            this.CardSortList.Items.AddRange(new object[] {
+            resources.GetString("CardSortList.Items"),
+            resources.GetString("CardSortList.Items1")});
+            resources.ApplyResources(this.CardSortList, "CardSortList");
+            this.CardSortList.Name = "CardSortList";
+            // 
+            // CardSortDown
+            // 
+            resources.ApplyResources(this.CardSortDown, "CardSortDown");
+            this.CardSortDown.Name = "CardSortDown";
+            this.CardSortDown.UseVisualStyleBackColor = true;
+            this.CardSortDown.Click += new System.EventHandler(this.CardSortDown_Click);
+            // 
+            // CardSortUp
+            // 
+            resources.ApplyResources(this.CardSortUp, "CardSortUp");
+            this.CardSortUp.Name = "CardSortUp";
+            this.CardSortUp.UseVisualStyleBackColor = true;
+            this.CardSortUp.Click += new System.EventHandler(this.CardSortUp_Click);
+            // 
+            // label40
+            // 
+            resources.ApplyResources(this.label40, "label40");
+            this.label40.Name = "label40";
+            // 
+            // SortCards
+            // 
+            resources.ApplyResources(this.SortCards, "SortCards");
+            this.SortCards.Name = "SortCards";
+            this.SortCards.UseVisualStyleBackColor = true;
+            this.SortCards.CheckedChanged += new System.EventHandler(this.SortCards_CheckedChanged);
             // 
             // TrashChunkers
             // 
@@ -2082,63 +2285,16 @@
             // 
             this.questErrorProvider.ContainerControl = this;
             // 
-            // AutoBuyAdv
+            // wishBlacklistErrorProvider
             // 
-            resources.ApplyResources(this.AutoBuyAdv, "AutoBuyAdv");
-            this.AutoBuyAdv.Name = "AutoBuyAdv";
-            this.AutoBuyAdv.UseVisualStyleBackColor = true;
-            this.AutoBuyAdv.CheckedChanged += new System.EventHandler(this.AutoBuyAdv_CheckedChanged);
+            this.wishBlacklistErrorProvider.ContainerControl = this;
             // 
-            // AutoBuyConsumables
+            // LocateWalderp
             // 
-            resources.ApplyResources(this.AutoBuyConsumables, "AutoBuyConsumables");
-            this.AutoBuyConsumables.Name = "AutoBuyConsumables";
-            this.AutoBuyConsumables.UseVisualStyleBackColor = true;
-            this.AutoBuyConsumables.CheckedChanged += new System.EventHandler(this.AutoBuyConsumables_CheckedChanged);
-            // 
-            // ConsumeIfRunning
-            // 
-            resources.ApplyResources(this.ConsumeIfRunning, "ConsumeIfRunning");
-            this.ConsumeIfRunning.Name = "ConsumeIfRunning";
-            this.ConsumeIfRunning.UseVisualStyleBackColor = true;
-            this.ConsumeIfRunning.CheckedChanged += new System.EventHandler(this.ConsumeIfRunning_CheckedChanged);
-            // 
-            // label37
-            // 
-            resources.ApplyResources(this.label37, "label37");
-            this.label37.Name = "label37";
-            // 
-            // ManageConsumables
-            // 
-            resources.ApplyResources(this.ManageConsumables, "ManageConsumables");
-            this.ManageConsumables.Name = "ManageConsumables";
-            this.ManageConsumables.UseVisualStyleBackColor = true;
-            this.ManageConsumables.CheckedChanged += new System.EventHandler(this.ManageConsumables_CheckedChanged);
-            // 
-            // boostPriorityList
-            // 
-            this.boostPriorityList.FormattingEnabled = true;
-            resources.ApplyResources(this.boostPriorityList, "boostPriorityList");
-            this.boostPriorityList.Name = "boostPriorityList";
-            // 
-            // label38
-            // 
-            resources.ApplyResources(this.label38, "label38");
-            this.label38.Name = "label38";
-            // 
-            // boostPrioUpButton
-            // 
-            resources.ApplyResources(this.boostPrioUpButton, "boostPrioUpButton");
-            this.boostPrioUpButton.Name = "boostPrioUpButton";
-            this.boostPrioUpButton.UseVisualStyleBackColor = true;
-            this.boostPrioUpButton.Click += new System.EventHandler(this.boostPrioUpButton_Click);
-            // 
-            // boostPrioDownButton
-            // 
-            resources.ApplyResources(this.boostPrioDownButton, "boostPrioDownButton");
-            this.boostPrioDownButton.Name = "boostPrioDownButton";
-            this.boostPrioDownButton.UseVisualStyleBackColor = true;
-            this.boostPrioDownButton.Click += new System.EventHandler(this.boostPrioDownButton_Click);
+            resources.ApplyResources(this.LocateWalderp, "LocateWalderp");
+            this.LocateWalderp.Name = "LocateWalderp";
+            this.LocateWalderp.UseVisualStyleBackColor = true;
+            this.LocateWalderp.Click += new System.EventHandler(this.LocateWalderp_Click);
             // 
             // SettingsForm
             // 
@@ -2192,6 +2348,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AbandonMinorThreshold)).EndInit();
             this.tabPage9.ResumeLayout(false);
             this.tabPage9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WishBlacklistAddInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishAddInput)).EndInit();
             this.tabPage10.ResumeLayout(false);
             this.tabPage10.PerformLayout();
@@ -2200,6 +2357,7 @@
             this.tabPage11.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2431,11 +2589,28 @@
         private System.Windows.Forms.CheckBox ConsumeIfRunning;
         private System.Windows.Forms.CheckBox AutoBuyConsumables;
         private System.Windows.Forms.CheckBox AutoBuyAdv;
-        private System.Windows.Forms.Label label37;
         private System.Windows.Forms.CheckBox ManageConsumables;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.ListBox boostPriorityList;
         private System.Windows.Forms.Button boostPrioDownButton;
         private System.Windows.Forms.Button boostPrioUpButton;
+        private System.Windows.Forms.Button RemoveWishBlacklistButton;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.NumericUpDown WishBlacklistAddInput;
+        private System.Windows.Forms.Label AddWishBlacklistLabel;
+        private System.Windows.Forms.Button AddWishBlacklistButton;
+        private System.Windows.Forms.ListBox WishBlacklist;
+        private System.Windows.Forms.ErrorProvider wishBlacklistErrorProvider;
+        private System.Windows.Forms.ListBox CardSortList;
+        private System.Windows.Forms.Button CardSortDown;
+        private System.Windows.Forms.Button CardSortUp;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.CheckBox SortCards;
+        private System.Windows.Forms.ComboBox CardSortOptions;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.Button CardSortRemove;
+        private System.Windows.Forms.Button CardSortAdd;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Button LocateWalderp;
     }
 }

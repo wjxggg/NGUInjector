@@ -46,23 +46,6 @@ To access these settings, open the **settings.json** (in your AppData NGUInjecto
 - **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
 - **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
 - **\_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
-- **\_wishBlacklist** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities (example: [131, 132, 128, 135,139]
-- **\_cardSortEnabled** - Set this to true to have the injector sort cards based on the priorities given in **\_cardSortOrder**. (**false** by default).
-- **\_cardSortOrder** - Give a list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that match will be sorted by the second priority, and so on. The available priority options are:
-  - **"RARITY"** - The card rarity ("Good"/"Okay", etc.). (high->low)
-  - **"TIER"** - The card tier. (high->low)
-  - **"COST"** - The total mayo cost. (high->low)
-  - **"PROTECTED"** - Whether the card is protected. (protected, then not protected)
-  - **"CHANGE"** - The actual change in the bonus. (e.g. if you're current total Wish bonus is 200%, and the card bonus is 2%, the change will be 1%). (high->low)
-  - **"VALUE"** - The CHANGE value divided by the card cost. (high->low)
-  - **"NORMALVALUE"** - The VALUE, normalized by the card bonus type. (e.g. Gold always gives higher changes than PP, so this will try to account for that). (high->low)
-  - **"TYPE:xxxx"** - The card bonus type. Replace 'xxxx' with a specific card bonus type, i.e. one of: "energyNGUSpeed", "magicNGUSpeed", "wandoosSpeed", "augSpeed", "TMSpeed", "hackSpeed", "wishSpeed", "atkDefStats", "adventureStat", "dropChance", "goldDrop", "dayCareSpeed", "PP", "QP".
-  - **Example:**
-    ```
-      "_cardSortEnabled": true,
-      "_cardSortOrder": ["PROTECTED", "TYPE:adventureStat", "TYPE:hackSpeed", "VALUE"]
-    ```
-    This will place any protected cards first, then if multiple are protected, it will prioritise adv. stat cards, then hack speed cards, then for any others (as well as adv. and hack cards that are both protected) it will order them by their value.
 
 # Log Parsing
 
@@ -77,7 +60,7 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General Settings](https://i.imgur.com/4cNdlp4.png)
+![General Settings](https://i.imgur.com/636AxqC.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
@@ -94,7 +77,7 @@ An in game menu can be opened using the F1 button.
 
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation Settings](https://i.imgur.com/g7lmHXM.png)
+![Allocation Settings](https://i.imgur.com/vPnH6UW.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
@@ -125,7 +108,7 @@ An in game menu can be opened using the F1 button.
 - **Guff B** - Number of +levels to cast Guff B at
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/2eQsz1X.png)
+![Yggdrasil](https://i.imgur.com/vyLJKFI.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
@@ -134,7 +117,7 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - Edit the loadout used for harvest yggdrasil. Add items using the box in the bottom.
 - **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths
 
-![Inventory](https://i.imgur.com/3fJSt5i.png)
+![Inventory](https://i.imgur.com/Zd7zD9C.png)
 
 - **Manage Inventory** - When enabled, the following features will be enabled
   - **Auto Boost Merging** - If a boost is locked, boosts will automatically be merged until the boost hits 100.
@@ -151,10 +134,10 @@ An in game menu can be opened using the F1 button.
   - **Toughness** - Will only put toughness into the cube
 - **Gear Boost Priority** - The priority in which items should be boosted. Defaults to Power > Toughness > Special.
 - **Priority Boosts** - Edit the items you wish to boost before others. Add items using the box in the bottom. Order is respected.
-- **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom.
+- **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/xmxIBEA.png)
+![Titans](https://i.imgur.com/D4ehZ9b.png)
 
 - **Swap Loadout for Titans** - Equip the gear in TitanLoadout right before any titan marked for swapping
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
@@ -167,8 +150,9 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
+- **Locate Walderp** - If Walderp is hiding, will take you to the menu he's currently in.
 
-![Adventure](https://i.imgur.com/1kx0jnb.png)
+![Adventure](https://i.imgur.com/fRx8Y8v.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 - **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
@@ -196,7 +180,7 @@ An in game menu can be opened using the F1 button.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
-![Gold](https://i.imgur.com/0JdmTh1.png)
+![Gold](https://i.imgur.com/WkQhXXR.png)
 
 - **Enable Gold Management** - If turned off, will disable all gold swap logic
 - **Do Gold Snipe** - If checked, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
@@ -206,7 +190,7 @@ An in game menu can be opened using the F1 button.
 - **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/UEXIve0.png)
+![Quests](https://i.imgur.com/GXqG2It.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
 - **Allow Major Quests**
@@ -225,27 +209,47 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 
-![Wishes](https://i.imgur.com/h4eNEsr.png)
+![Wishes](https://i.imgur.com/SbgX3hk.png)
 
 - **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
 - **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
 - **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
+- **Blacklist Wishes** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities. Supersedes Priority list if the same wish is in both lists.
 
-![The Pit](https://i.imgur.com/5jnhsQ7.png)
+![The Pit](https://i.imgur.com/azmHcTH.png)
 
 - **Auto Daily Spin** - Automatically do daily spin and log the result to the loot.log file
 - **Auto Money Pit** - Automatically throw money into the money pit if the Money Pit Threshold is met. Logs the result to the loot.log file
 - **Money Pit Threshold** - The amount of gold to wait for to throw gold into the money pit. Accepts scientific notation (ex: 1E+28)
 - **Loadout** - Items to equip before throwing money in the pit
 
-![Cards](https://i.imgur.com/0OXulFY.png)
+![Cards](https://i.imgur.com/P1ng5D7.png)
 
-- **Manage Mayo** Will prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
-- **Auto Trash Cards** Will trash cards according to the settings below
-- **Trash Adventure Cards** If checked, adventure cards are trashed according to your settings. If not checked, no adventure cards are deleted, regarless of settings
-- **Auto Cast Cards** Will cast any card that is not trashed according to your settings
-- **Trash All Cards of Type** WIll trash these card types regardless of your other settings
-- **Trash Chunkers** Will trash chunkers of the types in your trash all list.
+- **Manage Mayo** - Prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
+- **Auto Cast Cards** - Cast any card that is not trashed according to your settings.
+- **Sort Cards** - Set this to true to have the injector sort cards based on the priorities given in the card Sort Order.
+- **Card Sort Order** - A list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that share an identical value for the first priority will be sorted by the second priority, and so on. The available priority options are:
+  - **"RARITY"** - The card rarity ("Good"/"Okay", etc.). (high->low)
+  - **"TIER"** - The card tier. (high->low)
+  - **"COST"** - The total mayo cost. (high->low)
+  - **"PROTECTED"** - Whether the card is protected. (protected, then not protected)
+  - **"CHANGE"** - The actual change in the bonus. (e.g. if you're current total Wish bonus is 200%, and the card bonus is 2%, the change will be 1%). (high->low)
+  - **"VALUE"** - The CHANGE value divided by the card cost. (high->low)
+  - **"NORMALVALUE"** - The VALUE, normalized by the card bonus type. (e.g. Gold always gives higher changes than PP, so this will try to account for that). (high->low)
+  - **"TYPE:xxxx"** - The card bonus type. Replace 'xxxx' with a specific card bonus type, i.e. one of: "energyNGUSpeed", "magicNGUSpeed", "wandoosSpeed", "augSpeed", "TMSpeed", "hackSpeed", "wishSpeed", "atkDefStats", "adventureStat", "dropChance", "goldDrop", "dayCareSpeed", "PP", "QP".
+
+The "-ASC" versions of the sort options will sort in the opposite direction.  
+**Example:**
+```
+   ["PROTECTED", "TYPE:adventureStat", "TYPE:hackSpeed", "COST-ASC", "VALUE"]
+```
+This will place any protected cards first. For all the protected cards, it will prioritise advStat, then hackSpeed above other types. All the protected advStat cards are then ordered by the lowest cost, then highest value. Same for protected hackSpeed cards. Same for all other protected cards. The unprotected cards are then sorted in the same manner as the protected cards.
+
+- **Auto Trash Cards** - Automatically yeet cards according to the settings below.
+- **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of settings.
+- **Trash Cards of XXX quality/cost and below** - Yeet cards which are at or below the specified quality/cost.
+- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when on the Always Trash List. If not checked, BigChonker will not be yeeted unless settings specify you should Trash ALL BigChonker cards in the quality option.
+- **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
 
 # Allocation
 
@@ -483,9 +487,10 @@ The following types are available:
 - **Time** - Rebirths when a certain time passes
 - **Number** - Rebirths when your number will be OldNumber \* _Target_
 - **Bosses** - Rebirths when you can defeat _Target_ additional bosses
-- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply perform 24 hour Time rebirths without Muffin use if any of the following conditions are met:
+- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
+  - Auto Rebirth is disabled
   - Currently in a challenge
-  - Has any challenges defined in the Rebirth Breakpoint
+  - Able to rebirth into any challenge defined in the Rebirth Breakpoint
   - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
   - Do not have any Muffins and cannot buy more (or is configured to not buy more)
 
@@ -580,19 +585,19 @@ This will use two Energy Potion alphas instead of one. Consumables which are act
 
 **IMPORTANT NOTE: BE AWARE OF THE LIMITATIONS OF CONSUMABLE BREAKPOINTS**
 
-The injector cannot remember consumable usage across sessions. Therefore, if you restart NGU, restart the injector, or make any changes to/reload the profile, it **will** run your current Consumables breakpoint again. The injector will try to compensate by estimating the amount of time a consumable is expected to run and only use consumables when appropriate. But it is not perfect and there are limitations.
+The injector cannot remember consumable usage across sessions or know if consumables were used manually. Therefore, if you restart NGU, restart the injector, or make any changes to/reload the profile, it **will** run your current Consumables breakpoint again. The injector will try to compensate by estimating the amount of time a consumable is expected to run and only use consumables when appropriate. But it is not perfect and there are limitations.
 
 **_Example_**:
 Let's say you have it set to use a two Lucky Charms 1 hour after rebirth.
 
-If the profile initializes before 01:00:00 into the current rebirth and lucky charm is not currently running, the breakpoint will execute normally and you'll use the two Lucky Charms at the appropriate time.
+If the profile initializes before 01:00:00 into the current rebirth, the breakpoint will execute normally at 01:00:00 and if lucky charm is not currently running, you'll use the two Lucky Charms.
 
 However if the profile is inialized AFTER this point (due to restarting the game or reloading the profile in some way) or the consumable is running when the breakpoint executes, there are a few things which can happen:
 
-- First we determine at what point the Lucky Charms would have expired if activated normally. In this case it would be two 30m charms activated at 01:00:00, so the expected end time is 02:00:00
-- If the current time within 1 minute of the expected end time or later, the consumable will not be used
+- First we determine at what point the Lucky Charms *would* have expired if activated normally. In this case it would be two 30m charms activated at 01:00:00, so the expected end time is 02:00:00
+- If the current rebirth time is within 1 minute of the expected end time or later, the consumable will not be used
   - For example, if the profile is loaded at 01:59:00 or later, no lucky charms will be used
-- If however the current time is between the breakpoint time and the expected end time, we check to see if the boost is currently running and get the expected time left in the consumable by subtracting the current time from the total expected time the boost should run
+- If however the current rebirth time is between the breakpoint time and the expected end time, we check to see if the boost is currently running and get the expected time left in the consumable by subtracting the current time from the total expected time the boost should run
   - For example, if the profile is loaded at 01:35:00, the expected time left in the boost would be 25 minutes
 - If the boost is running 
   - If the "Use Consumables if already running" option is not selected, the consumable will not be used
@@ -606,7 +611,7 @@ However if the profile is inialized AFTER this point (due to restarting the game
 
 Beta potions and MacGuffin Muffins only activate if not already active. MacGuffin Muffin is a special case in that it lasts until the next rebirth AND for 24 hours, whichever is longer. If MacGuffin Muffin has gone through a rebirth, it will no longer be "Active" and will use the same timing logic as other non-beta consumables.
 
-There is **NO** consideration for possibility that two of the same consumable can be added to a single breakpoint, multiple breakpoints overlapping, or the fact that alpha and delta potions share a timer. Injector will evaluate whether to use each consumable independant of any other configured consumables.
+There is **NO** consideration for the possibility that a consumable was used manually, two of the same consumable being in the same breakpoint, multiple breakpoints overlapping, or the fact that alpha and delta potions share a timer. Injector will evaluate whether to use each consumable independant of any other configured consumables or external consumable use.
 
 Be mindful of these limitations or your AP will be sad. No one likes sad AP.
 

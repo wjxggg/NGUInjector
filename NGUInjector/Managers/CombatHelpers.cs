@@ -22,61 +22,20 @@ namespace NGUInjector.Managers
         internal static bool IsCurrentlyQuesting { get; set; }
         internal static bool IsCurrentlyAdventuring { get; set; }
 
-        internal static bool CastCharge()
+        #region Healing
+        internal static bool HasFullHP()
         {
-            if (Main.Character.adventureController.chargeMove.button.IsInteractable())
-            {
-                Main.Character.adventureController.chargeMove.doMove();
-                return true;
-            }
-
-            return false;
+            return Math.Abs(Main.Character.totalAdvHP() - Main.Character.adventure.curHP) < 5;
         }
 
-        internal static bool CastParry()
+        internal static float GetHPPercentage()
         {
-            if (Main.Character.adventureController.parryMove.button.IsInteractable())
-            {
-                Main.Character.adventureController.parryMove.doMove();
-                return true;
-            }
-
-            return false;
+            return Main.Character.adventure.curHP / Main.Character.totalAdvHP();
         }
 
-        internal static bool CastBeastMode()
+        internal static bool HealUnlocked()
         {
-            if (Main.Character.adventureController.beastModeMove.button.IsInteractable())
-            {
-                Main.Character.adventureController.beastModeMove.doMove();
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static bool ChargeReady()
-        {
-            return Main.Character.adventureController.chargeMove.button.IsInteractable();
-        }
-
-        internal static bool ParryReady()
-        {
-            return Main.Character.adventureController.parryMove.button.IsInteractable();
-        }
-
-        internal static float GetChargeCooldown()
-        {
-            var ua = Main.Character.adventureController.chargeMove;
-            var type = ua.GetType().GetField("chargeTimer",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var val = type?.GetValue(ua);
-            if (val == null)
-            {
-                return 0;
-            }
-
-            return (float)val / Main.Character.chargeCooldown();
+            return Main.Character.training.defenseTraining[1] >= 10000;
         }
 
         internal static bool HealReady()
@@ -86,7 +45,7 @@ namespace NGUInjector.Managers
 
         internal static bool CastHeal()
         {
-            if (Main.Character.adventureController.healMove.button.IsInteractable())
+            if (HealReady())
             {
                 Main.Character.adventureController.healMove.doMove();
                 return true;
@@ -95,9 +54,19 @@ namespace NGUInjector.Managers
             return false;
         }
 
+        internal static bool HyperRegenUnlocked()
+        {
+            return Main.Character.settings.hasHyperRegen;
+        }
+
+        internal static bool HyperRegenReady()
+        {
+            return Main.Character.adventureController.hyperRegenMove.button.IsInteractable();
+        }
+
         internal static bool CastHyperRegen()
         {
-            if (Main.Character.adventureController.hyperRegenMove.button.IsInteractable())
+            if (HyperRegenReady())
             {
                 Main.Character.adventureController.hyperRegenMove.doMove();
                 return true;
@@ -106,23 +75,37 @@ namespace NGUInjector.Managers
             return false;
         }
 
-        internal static bool ParryActive()
+        internal static bool OhShitUnlocked()
         {
-            return Main.PlayerController.isParrying;
+            return Main.Character.wishes.wishes[58].level >= 1 && ParalyzeUnlocked() && HealUnlocked() && HyperRegenUnlocked();
         }
 
-        internal static bool ChargeActive()
+        internal static bool OhShitReady()
         {
-            return Main.PlayerController.chargeFactor > 1.05;
+            return Main.Character.adventureController.ohShitMove.button.IsInteractable();
         }
 
-        internal static bool UltimateBuffActive(out float? timeLeft)
+        internal static bool CastOhShit()
         {
-            bool isActive = Main.PlayerController.ultimateBuffTime > 0 && Main.PlayerController.ultimateBuffTime < Main.Character.ultimateBuffDuration();
+            if (OhShitReady())
+            {
+                Main.Character.adventureController.ohShitMove.doMove();
+                return true;
+            }
 
-            timeLeft = isActive ? (float?)(Main.Character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
+            return false;
+        }
+        #endregion
 
-            return isActive;
+        #region Regular Buffs
+        internal static bool DefensiveBuffUnlocked()
+        {
+            return Main.Character.training.defenseTraining[0] >= 5000;
+        }
+
+        internal static bool DefensiveBuffReady()
+        {
+            return Main.Character.adventureController.defenseBuffMove.button.IsInteractable();
         }
 
         internal static bool DefenseBuffActive(out float? timeLeft)
@@ -130,6 +113,52 @@ namespace NGUInjector.Managers
             bool isActive = Main.PlayerController.defenseBuffTime > 0 && Main.PlayerController.defenseBuffTime < Main.Character.defenseBuffDuration();
 
             timeLeft = isActive ? (float?)(Main.Character.defenseBuffDuration() - Main.PlayerController.defenseBuffTime) : null;
+
+            return isActive;
+        }
+
+        internal static bool CastDefensiveBuff()
+        {
+            if (DefensiveBuffReady())
+            {
+                Main.Character.adventureController.defenseBuffMove.doMove();
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool OffensiveBuffReady()
+        {
+            return Main.Character.adventureController.offenseBuffMove.button.IsInteractable();
+        }
+
+        internal static bool CastOffensiveBuff()
+        {
+            if (OffensiveBuffReady())
+            {
+                Main.Character.adventureController.offenseBuffMove.doMove();
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool UltimateBuffUnlocked()
+        {
+            return Main.Character.training.defenseTraining[4] >= 25000;
+        }
+
+        internal static bool UltimateBuffReady()
+        {
+            return Main.Character.adventureController.ultimateBuffMove.button.IsInteractable();
+        }
+
+        internal static bool UltimateBuffActive(out float? timeLeft)
+        {
+            bool isActive = Main.PlayerController.ultimateBuffTime > 0 && Main.PlayerController.ultimateBuffTime < Main.Character.ultimateBuffDuration();
+
+            timeLeft = isActive ? (float?)(Main.Character.ultimateBuffDuration() - Main.PlayerController.ultimateBuffTime) : null;
 
             return isActive;
         }
@@ -150,7 +179,7 @@ namespace NGUInjector.Managers
 
         internal static bool CastUltimateBuff()
         {
-            if (Main.Character.adventureController.ultimateBuffMove.button.IsInteractable())
+            if (UltimateBuffReady())
             {
                 Main.Character.adventureController.ultimateBuffMove.doMove();
                 return true;
@@ -159,9 +188,19 @@ namespace NGUInjector.Managers
             return false;
         }
 
+        internal static bool MegaBuffUnlocked()
+        {
+            return Main.Character.wishes.wishes[8].level >= 1 && UltimateBuffUnlocked();
+        }
+
+        internal static bool MegaBuffReady()
+        {
+            return Main.Character.adventureController.megaBuffMove.button.IsInteractable();
+        }
+
         internal static bool CastMegaBuff()
         {
-            if (Main.Character.adventureController.megaBuffMove.button.IsInteractable())
+            if (MegaBuffReady())
             {
                 Main.Character.adventureController.megaBuffMove.doMove();
                 return true;
@@ -169,16 +208,12 @@ namespace NGUInjector.Managers
 
             return false;
         }
+        #endregion
 
-        internal static bool CastOffensiveBuff()
+        #region Defensive Cooldowns
+        internal static bool BlockReady()
         {
-            if (Main.Character.adventureController.offenseBuffMove.button.IsInteractable())
-            {
-                Main.Character.adventureController.offenseBuffMove.doMove();
-                return true;
-            }
-
-            return false;
+            return Main.Character.adventureController.blockMove.button.IsInteractable();
         }
 
         internal static bool BlockActive(out float? timeLeft)
@@ -192,7 +227,7 @@ namespace NGUInjector.Managers
 
         internal static bool CastBlock()
         {
-            if (Main.Character.adventureController.blockMove.button.IsInteractable())
+            if (BlockReady())
             {
                 Main.Character.adventureController.blockMove.doMove();
                 return true;
@@ -201,22 +236,19 @@ namespace NGUInjector.Managers
             return false;
         }
 
-        internal static bool CastDefensiveBuff()
+        internal static bool ParalyzeUnlocked()
         {
-            if (Main.Character.adventureController.defenseBuffMove.button.IsInteractable())
-            {
-                Main.Character.adventureController.defenseBuffMove.doMove();
-                return true;
-            }
+            return Main.Character.allChallenges.hasParalyze();
+        }
 
-            return false;
+        internal static bool ParalyzeReady()
+        {
+            return Main.Character.adventureController.paralyzeMove.button.IsInteractable();
         }
 
         internal static bool EnemyIsParalyzed(EnemyAI eai, out float? timeLeft)
         {
-            var type = eai.GetType().GetField("paralyzeTime",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var paralyzeTime = (float)type?.GetValue(eai);
+            var paralyzeTime = eai.GetPV<float>("paralyzeTime");
 
             bool isActive = paralyzeTime > 0;
 
@@ -225,62 +257,88 @@ namespace NGUInjector.Managers
             return isActive;
         }
 
-        internal static bool CastParalyze()
+        internal static bool CastParalyze(bool useOhShitInstead)
         {
-            if (Main.Character.adventureController.paralyzeMove.button.IsInteractable())
+            if(useOhShitInstead && CastOhShit())
+            {
+                return true;
+            }
+
+            if (ParalyzeReady())
             {
                 Main.Character.adventureController.paralyzeMove.doMove();
                 return true;
             }
 
             return false;
-
-
-        }
-
-        internal static bool UltimateAttackReady()
-        {
-            return Main.Character.adventureController.ultimateAttackMove.button.IsInteractable();
-        }
-
-        internal static bool PierceReady()
-        {
-            return Main.Character.adventureController.pierceMove.button.IsInteractable();
-        }
-
-        internal static bool ChargeUnlocked()
-        {
-            return Main.Character.training.defenseTraining[4] > 0;
         }
 
         internal static bool ParryUnlocked()
         {
-            return Main.Character.training.attackTraining[3] > 0;
+            return Main.Character.training.attackTraining[2] >= 15000;
         }
 
-        internal static bool UltimateBuffUnlocked()
+        internal static bool ParryReady()
         {
-            return Main.Character.training.defenseTraining[5] > 0;
+            return Main.Character.adventureController.parryMove.button.IsInteractable();
         }
 
-        internal static bool UltimateBuffReady()
+        internal static bool ParryActive()
         {
-            return Main.Character.adventureController.ultimateBuffMove.button.IsInteractable();
+            return Main.PlayerController.isParrying;
         }
 
-        internal static bool DefensiveBuffUnlocked()
+        internal static bool CastParry()
         {
-            return Main.Character.training.defenseTraining[1] > 0;
+            if (ParryReady())
+            {
+                Main.Character.adventureController.parryMove.doMove();
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region Other Cooldowns and Secondary Buffs
+        internal static bool ChargeUnlocked()
+        {
+            return Main.Character.training.defenseTraining[3] >= 20000;
         }
 
-        internal static bool DefensiveBuffReady()
+        internal static bool ChargeReady()
         {
-            return Main.Character.adventureController.defenseBuffMove.button.IsInteractable();
+            return Main.Character.adventureController.chargeMove.button.IsInteractable();
         }
 
-        internal static bool ParalyzeUnlocked()
+        internal static bool ChargeActive()
         {
-            return Main.Character.allChallenges.hasParalyze();
+            return Main.PlayerController.chargeFactor > 1.05;
+        }
+
+        internal static float GetChargeCooldown()
+        {
+            var ua = Main.Character.adventureController.chargeMove;
+            var type = ua.GetType().GetField("chargeTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var val = type?.GetValue(ua);
+            if (val == null)
+            {
+                return 0;
+            }
+
+            return (float)val / Main.Character.chargeCooldown();
+        }
+
+        internal static bool CastCharge()
+        {
+            if (ChargeReady() && !ChargeActive())
+            {
+                Main.Character.adventureController.chargeMove.doMove();
+                return true;
+            }
+
+            return false;
         }
 
         internal static bool BeastModeUnlocked()
@@ -298,41 +356,33 @@ namespace NGUInjector.Managers
             return Main.Character.adventure.beastModeOn;
         }
 
-        internal static bool MegaBuffUnlocked()
+        internal static bool CastBeastMode()
         {
-            return Main.Character.training.defenseTraining[4] >= 25000L && Main.Character.wishes.wishes[8].level >= 1;
-        }
-
-        internal static bool MegaBuffReady()
-        {
-            return Main.Character.adventureController.megaBuffMove.button.IsInteractable();
-        }
-
-        internal static bool OhShitUnlocked()
-        {
-            return Main.Character.wishes.wishes[58].level >= 1 && Main.Character.allChallenges.hasParalyze() &&
-                   Main.Character.training.defenseTraining[1] >= 10000L && Main.Character.settings.hasHyperRegen;
-        }
-
-        internal static bool OhShitReady()
-        {
-            return Main.Character.adventureController.ohShitMove.button.IsInteractable();
-        }
-
-        internal static bool CastOhShit()
-        {
-            if (Main.Character.adventureController.ohShitMove.button.IsInteractable())
+            if (BeastModeReady())
             {
-                Main.Character.adventureController.ohShitMove.doMove();
+                Main.Character.adventureController.beastModeMove.doMove();
                 return true;
             }
 
             return false;
+        }
+        #endregion
+
+        #region Attacks
+        internal static bool PierceReady()
+        {
+            return Main.Character.adventureController.pierceMove.button.IsInteractable();
+        }
+
+        internal static bool UltimateAttackReady()
+        {
+            return Main.Character.adventureController.ultimateAttackMove.button.IsInteractable();
         }
 
         internal static bool Move69Ready()
         {
             return Main.Character.adventure.move69Unlocked && Main.Move69.button.IsInteractable() && Main.Character.adventure.move69Used < 69;
         }
+        #endregion
     }
 }

@@ -39,6 +39,7 @@ namespace NGUInjector
                 ItemList = itemList;
                 ItemBox = itemBox;
                 ErrorProvider = errorProvider;
+                ErrorProvider.SetIconAlignment(ItemList, ErrorIconAlignment.BottomRight);
                 ItemLabel = itemLabel;
 
                 GetSettings = getSettings;
@@ -69,7 +70,7 @@ namespace NGUInjector
             {
                 if (ErrorProvider != null)
                 {
-                    ErrorProvider.SetError(ItemBox, message);
+                    ErrorProvider.SetError(ItemList, message);
                 }
             }
         }
@@ -87,16 +88,17 @@ namespace NGUInjector
         private ItemControlGroup _goldControls;
         private ItemControlGroup _questControls;
         private ItemControlGroup _wishControls;
+        private ItemControlGroup _wishBlacklistControls;
         private ItemControlGroup _pitControls;
 
         //TODO: Implement missing manual features:
         //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
-        //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
-        //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
-        //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
         //DONE:
         //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
         //      Inventory Tab: BoostPriority listbox with arrows to sort
+        //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
+        //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
+        //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
         public SettingsForm()
         {
             InitializeComponent();
@@ -125,16 +127,29 @@ namespace NGUInjector
                     }
                 }
             }
-            List<string> rarities = Enum.GetNames(typeof(rarity)).ToList();
-            rarities.Insert(0, "Don't trash");
-            TrashQuality.Items.AddRange(rarities.ToArray());
+
+            List<string> cardRarities = Enum.GetNames(typeof(rarity)).ToList();
+            string[] cardBonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
+            var cardSortOptions = new List<string> { "RARITY", "TIER", "COST", "PROTECTED", "CHANGE", "VALUE", "NORMALVALUE" };
+            foreach (string sortOption in cardSortOptions)
+            {
+                CardSortOptions.Items.Add(sortOption);
+                CardSortOptions.Items.Add($"{sortOption}-ASC");
+            }
+            foreach (string bonus in cardBonusTypes)
+            {
+                CardSortOptions.Items.Add($"TYPE:{bonus}");
+                CardSortOptions.Items.Add($"TYPE-ASC:{bonus}");
+            }
+
+            cardRarities.Insert(0, "Don't trash");
+            TrashQuality.Items.AddRange(cardRarities.ToArray());
 
             object[] arr = new object[31];
             for (int i = 0; i < arr.Length; i++) arr[i] = i;
             TrashTier.Items.AddRange(arr);
 
-            object[] bonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
-            DontCastSelection.Items.AddRange(bonusTypes);
+            DontCastSelection.Items.AddRange(cardBonusTypes);
             DontCastSelection.SelectedIndex = 0;
 
             CubePriority.DataSource = new BindingSource(CubePriorityList, null);
@@ -170,14 +185,8 @@ namespace NGUInjector
             EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
             EnemyBlacklistZone.SelectedIndex = 0;
 
-            //yggItemLabel.Text = "";
-            //priorityBoostLabel.Text = "";
-            //blacklistLabel.Text = "";
-            //titanLabel.Text = "";
-            //GoldItemLabel.Text = "";
-            //questItemLabel.Text = "";
-            //AddWishLabel.Text = "";
-            //MoneyPitLabel.Text = "";
+            numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
+            moneyPitThresholdError.SetIconAlignment(MoneyPitThreshold, ErrorIconAlignment.MiddleRight);
 
             yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
             priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
@@ -186,6 +195,7 @@ namespace NGUInjector
             GoldItemBox.TextChanged += GoldItemBox_TextChanged;
             QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
             WishAddInput.TextChanged += WishAddInput_TextChanged;
+            WishBlacklistAddInput.TextChanged += WishBlacklistAddInput_TextChanged;
             MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
 
             _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
@@ -195,6 +205,7 @@ namespace NGUInjector
             _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
             _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
             _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
+            _wishBlacklistControls = new ItemControlGroup(WishBlacklist, WishBlacklistAddInput, wishBlacklistErrorProvider, AddWishBlacklistLabel, () => Main.Settings.WishBlacklist, (settings) => Main.Settings.WishBlacklist = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
             _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
 
             TryItemBoxTextChanged(_yggControls, out _);
@@ -204,6 +215,7 @@ namespace NGUInjector
             TryItemBoxTextChanged(_goldControls, out _);
             TryItemBoxTextChanged(_questControls, out _);
             TryItemBoxTextChanged(_wishControls, out _);
+            TryItemBoxTextChanged(_wishBlacklistControls, out _);
             TryItemBoxTextChanged(_pitControls, out _);
 
             UseTitanCombat_CheckedChanged(this, null);
@@ -216,6 +228,9 @@ namespace NGUInjector
 
             WishUpButton.Text = char.ConvertFromUtf32(8593);
             WishDownButton.Text = char.ConvertFromUtf32(8595);
+
+            CardSortUp.Text = char.ConvertFromUtf32(8593);
+            CardSortDown.Text = char.ConvertFromUtf32(8595);
 
             VersionLabel.Text = $"Version: {Main.Version}";
         }
@@ -376,11 +391,18 @@ namespace NGUInjector
             TrashAdventureCards.Checked = newSettings.TrashAdventureCards;
             AutoCastCards.Checked = newSettings.AutoCastCards;
             TrashChunkers.Checked = newSettings.TrashChunkers;
+            SortCards.Checked = newSettings.CardSortEnabled;
 
             if (newSettings.DontCastCardType != null)
             {
                 DontCastList.Items.Clear();
                 DontCastList.Items.AddRange(newSettings.DontCastCardType);
+            }
+
+            if (newSettings.CardSortOrder != null)
+            {
+                CardSortList.Items.Clear();
+                CardSortList.Items.AddRange(newSettings.CardSortOrder);
             }
 
             var temp = newSettings.YggdrasilLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
@@ -496,6 +518,19 @@ namespace NGUInjector
             else
             {
                 WishPriority.Items.Clear();
+            }
+
+            temp = newSettings.WishBlacklist.ToDictionary(x => x, x => Main.Character.wishesController.properties[x].wishName);
+            if (temp.Count > 0)
+            {
+                WishBlacklist.DataSource = null;
+                WishBlacklist.DataSource = new BindingSource(temp, null);
+                WishBlacklist.ValueMember = "Key";
+                WishBlacklist.DisplayMember = "Value";
+            }
+            else
+            {
+                WishBlacklist.Items.Clear();
             }
 
             temp = newSettings.BlacklistedBosses.ToDictionary(x => x, x => SpriteEnemyList[x]);
@@ -1131,6 +1166,11 @@ namespace NGUInjector
             }
         }
 
+        private void BloodNumberThreshold_TextChanged(object sender, EventArgs e)
+        {
+            numberErrProvider.SetError(BloodNumberThreshold, "");
+        }
+
         private void TestButton_Click(object sender, EventArgs e)
         {
             //var c = Main.Character;
@@ -1204,6 +1244,26 @@ namespace NGUInjector
         private void WishDownButton_Click(object sender, EventArgs e)
         {
             ItemListDown(_wishControls);
+        }
+
+        private void WishBlacklistAddInput_TextChanged(object sender, EventArgs e)
+        {
+            TryItemBoxTextChanged(_wishBlacklistControls, out _);
+        }
+
+        private void WishBlacklistAddInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _wishBlacklistControls);
+        }
+
+        private void AddWishBlacklistButton_Click(object sender, EventArgs e)
+        {
+            ItemListAdd(_wishBlacklistControls);
+        }
+
+        private void RemoveWishBlacklistButton_Click(object sender, EventArgs e)
+        {
+            ItemListRemove(_wishBlacklistControls);
         }
 
         private void BeastMode_CheckedChanged(object sender, EventArgs e)
@@ -1525,21 +1585,25 @@ namespace NGUInjector
 
         private void manageMayo_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.ManageMayo = balanceMayo.Checked;
         }
 
         private void TrashCards_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.TrashCards = TrashCards.Checked;
         }
 
         private void TrashQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.CardsTrashQuality = TrashQuality.SelectedIndex;
         }
 
         private void AutoCastCards_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.AutoCastCards = AutoCastCards.Checked;
         }
 
@@ -1562,11 +1626,13 @@ namespace NGUInjector
 
         private void trashAdventureCards_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.TrashAdventureCards = TrashAdventureCards.Checked;
         }
 
         private void trashCardCost_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.TrashCardCost = (int)TrashTier.SelectedItem;
         }
 
@@ -1590,6 +1656,7 @@ namespace NGUInjector
 
         private void TrashChunkers_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             Main.Settings.TrashChunkers = TrashChunkers.Checked;
         }
 
@@ -1693,6 +1760,48 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Main.Settings.ConsumeIfAlreadyRunning = ConsumeIfRunning.Checked;
+        }
+
+        private void SortCards_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.CardSortEnabled = SortCards.Checked;
+        }
+
+        private void CardSortAdd_Click(object sender, EventArgs e)
+        {
+            if (CardSortOptions.SelectedItem != null && !CardSortList.Items.Contains(CardSortOptions.SelectedItem))
+            {
+                CardSortList.Items.Add(CardSortOptions.SelectedItem);
+                Main.Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
+            }
+        }
+
+        private void CardSortRemove_Click(object sender, EventArgs e)
+        {
+            if (CardSortList.SelectedItem != null)
+            {
+                CardSortList.Items.RemoveAt(CardSortList.SelectedIndex);
+                Main.Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
+            }
+        }
+
+        private void CardSortUp_Click(object sender, EventArgs e)
+        {
+            ItemListUp(CardSortList, Main.Settings.CardSortOrder, (settings) => Main.Settings.CardSortOrder = settings);
+        }
+
+        private void CardSortDown_Click(object sender, EventArgs e)
+        {
+            ItemListDown(CardSortList, Main.Settings.CardSortOrder, (settings) => Main.Settings.CardSortOrder = settings);
+        }
+
+        private void LocateWalderp_Click(object sender, EventArgs e)
+        {
+            if (Main.Character.waldoUnlocker.currentMenu >= 0)
+            {
+                Main.Character.menuSwapper.swapMenu(Main.Character.waldoUnlocker.currentMenu);
+            }
         }
     }
 }

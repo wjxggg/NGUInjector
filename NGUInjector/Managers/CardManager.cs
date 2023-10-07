@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace NGUInjector.Managers
@@ -16,7 +17,6 @@ namespace NGUInjector.Managers
 
         public CardManager()
         {
-
             try
             {
                 _character = Main.Character;
@@ -124,9 +124,9 @@ namespace NGUInjector.Managers
                         {
                             Card _card = _cards.cards[id];
 
-                            if (_card.bonusType != cardBonus.adventureStat || (_card.bonusType == cardBonus.adventureStat && Main.Settings.TrashAdventureCards))
+                            if (_card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards)
                             {
-                                if(_card.type == cardType.end)
+                                if (_card.type == cardType.end)
                                 {
                                     if (Main.Character.inventory.accessories.Any(c => c.id == 492))
                                     {
@@ -177,6 +177,7 @@ namespace NGUInjector.Managers
                 Main.Log(e.StackTrace);
             }
         }
+
         public void CastCards()
         {
             bool castCard = true;
@@ -240,60 +241,102 @@ namespace NGUInjector.Managers
 
         private int CompareByPriority(string priority, Card c1, Card c2)
         {
-            if (priority.ToUpper() == "RARITY")
+            string[] temp = priority.Split(':');
+            string bonusType = temp.Length > 1 ? temp[1] : "";
+            temp[0] = temp[0].ToUpper();
+            bool sortAsc = temp[0].EndsWith("-ASC");
+            if (sortAsc)
             {
-                return c2.cardRarity.CompareTo(c1.cardRarity);
+                temp[0] = temp[0].Substring(0, temp[0].Length - 4);
+            }
+            priority = temp[0];
+
+            if (priority == "RARITY")
+            {
+                //return c2.cardRarity.CompareTo(c1.cardRarity);
+                return DirectionalCompareTo(c1.cardRarity, c2.cardRarity, sortAsc);
             }
 
-            if (priority.ToUpper() == "TIER")
+            if (priority == "TIER")
             {
-                return c2.tier.CompareTo(c1.tier);
+                //return c2.tier.CompareTo(c1.tier);
+                return DirectionalCompareTo(c1.tier, c2.tier, sortAsc);
             }
 
-            if (priority.ToUpper() == "COST")
+            if (priority == "COST")
             {
-                return c2.manaCosts.Sum().CompareTo(c1.manaCosts.Sum());
+                //return c2.manaCosts.Sum().CompareTo(c1.manaCosts.Sum());
+                return DirectionalCompareTo(c1.manaCosts.Sum(), c2.manaCosts.Sum(), sortAsc);
             }
 
-            if (priority.ToUpper().StartsWith("TYPE:"))
+            if (priority == "TYPE")
             {
-                var bonusType = priority.Substring(5);
+                if (string.IsNullOrWhiteSpace(bonusType))
+                {
+                    return 0;
+                }
+
+                //if (c1.bonusType.ToString() == c2.bonusType.ToString())
+                //    return 0;
+                //else if (c2.bonusType.ToString() == bonusType)
+                //    return 1;
+                //else if (c1.bonusType.ToString() == bonusType)
+                //    return -1;
+                //else
+                //    return 0;
 
                 if (c1.bonusType.ToString() == c2.bonusType.ToString())
                     return 0;
-                else if (c2.bonusType.ToString() == bonusType)
-                    return 1;
                 else if (c1.bonusType.ToString() == bonusType)
-                    return -1;
+                    return sortAsc ? 1 : -1;
+                else if (c2.bonusType.ToString() == bonusType)
+                    return sortAsc ? -1 : 1;
                 else
                     return 0;
             }
 
-            if (priority.ToUpper() == "PROTECTED")
+            if (priority == "PROTECTED")
             {
-                return c2.isProtected.CompareTo(c1.isProtected);
+                //return c2.isProtected.CompareTo(c1.isProtected);
+                return DirectionalCompareTo(c1.isProtected, c2.isProtected, sortAsc);
             }
 
-            if (priority.ToUpper() == "CHANGE")
+            if (priority == "CHANGE")
             {
-                return getCardChange(c2).CompareTo(getCardChange(c1));
+                //return getCardChange(c2).CompareTo(getCardChange(c1));
+                return DirectionalCompareTo(getCardChange(c1), getCardChange(c2), sortAsc);
             }
 
-            if (priority.ToUpper() == "VALUE")
+            if (priority == "VALUE")
             {
-                return getCardValue(c2).CompareTo(getCardValue(c1));
+                //return getCardValue(c2).CompareTo(getCardValue(c1));
+                return DirectionalCompareTo(getCardValue(c1), getCardValue(c2), sortAsc);
             }
 
-            if (priority.ToUpper() == "NORMALVALUE")
+            if (priority == "NORMALVALUE")
             {
-                if(c1.bonusType == c2.bonusType)
+                if (c1.bonusType == c2.bonusType)
                 {
-                    return getCardValue(c2).CompareTo(getCardValue(c1));
+                    //return getCardValue(c2).CompareTo(getCardValue(c1));
+                    return DirectionalCompareTo(getCardValue(c1), getCardValue(c2), sortAsc);
                 }
-                return getCardNormalValue(c2).CompareTo(getCardNormalValue(c1));
+                //return getCardNormalValue(c2).CompareTo(getCardNormalValue(c1));
+                return DirectionalCompareTo(getCardNormalValue(c1), getCardNormalValue(c2), sortAsc);
             }
 
             return 0;
+        }
+
+        private static int DirectionalCompareTo<T>(T value1, T value2, bool sortAsc) where T : IComparable
+        {
+            if (sortAsc)
+            {
+                return value1.CompareTo(value2);
+            }
+            else
+            {
+                return value2.CompareTo(value1);
+            }
         }
 
         private int CompareCards(Card c1, Card c2)
