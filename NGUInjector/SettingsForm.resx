@@ -2568,6 +2568,33 @@
   <data name="&gt;&gt;tabPage4.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="LocateWalderp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="LocateWalderp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>552, 305</value>
+  </data>
+  <data name="LocateWalderp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 23</value>
+  </data>
+  <data name="LocateWalderp.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="LocateWalderp.Text" xml:space="preserve">
+    <value>Locate Walderp</value>
+  </data>
+  <data name="&gt;&gt;LocateWalderp.Name" xml:space="preserve">
+    <value>LocateWalderp</value>
+  </data>
+  <data name="&gt;&gt;LocateWalderp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LocateWalderp.Parent" xml:space="preserve">
+    <value>tabPage5</value>
+  </data>
+  <data name="&gt;&gt;LocateWalderp.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="UseTitanCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2596,7 +2623,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;UseTitanCombat.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="TitanSmartBeastMode.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2626,7 +2653,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanSmartBeastMode.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="TitanMoreBlockParry.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2656,7 +2683,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanMoreBlockParry.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="TitanBeastMode.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2686,7 +2713,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanBeastMode.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="TitanRecoverHealth.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2716,7 +2743,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanRecoverHealth.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="TitanFastCombat.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2746,7 +2773,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanFastCombat.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="TitanPrecastBuffs.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2776,7 +2803,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanPrecastBuffs.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="label36.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2806,7 +2833,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;label36.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="TitanCombatMode.Items" xml:space="preserve">
     <value>Idle</value>
@@ -2833,7 +2860,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanCombatMode.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="label9.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2866,7 +2893,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="columnHeader2.Text" xml:space="preserve">
     <value />
@@ -2893,7 +2920,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;TitanSwapTargets.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2926,7 +2953,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="titanRemove.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2956,7 +2983,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanRemove.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="titanAddItem.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 222</value>
@@ -2977,7 +3004,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanAddItem.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="titanLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3007,7 +3034,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanLabel.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="titanAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -3034,7 +3061,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanAdd.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="titanLoadout.Items" xml:space="preserve">
     <value>test</value>
@@ -3061,7 +3088,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;titanLoadout.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="SwapTitanLoadout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3091,7 +3118,7 @@
     <value>tabPage5</value>
   </data>
   <data name="&gt;&gt;SwapTitanLoadout.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="tabPage5.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>

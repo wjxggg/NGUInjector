@@ -1795,5 +1795,13 @@ namespace NGUInjector
         {
             ItemListDown(CardSortList, Main.Settings.CardSortOrder, (settings) => Main.Settings.CardSortOrder = settings);
         }
+
+        private void LocateWalderp_Click(object sender, EventArgs e)
+        {
+            if (Main.Character.waldoUnlocker.currentMenu >= 0)
+            {
+                Main.Character.menuSwapper.swapMenu(Main.Character.waldoUnlocker.currentMenu);
+            }
+        }
     }
 }

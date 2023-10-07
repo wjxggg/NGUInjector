@@ -60,7 +60,7 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General Settings](https://i.imgur.com/4cNdlp4.png)
+![General Settings](https://i.imgur.com/636AxqC.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
@@ -77,7 +77,7 @@ An in game menu can be opened using the F1 button.
 
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation Settings](https://i.imgur.com/g7lmHXM.png)
+![Allocation Settings](https://i.imgur.com/vPnH6UW.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
@@ -108,7 +108,7 @@ An in game menu can be opened using the F1 button.
 - **Guff B** - Number of +levels to cast Guff B at
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/2eQsz1X.png)
+![Yggdrasil](https://i.imgur.com/vyLJKFI.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
@@ -117,7 +117,7 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - Edit the loadout used for harvest yggdrasil. Add items using the box in the bottom.
 - **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths
 
-![Inventory](https://i.imgur.com/3fJSt5i.png)
+![Inventory](https://i.imgur.com/Zd7zD9C.png)
 
 - **Manage Inventory** - When enabled, the following features will be enabled
   - **Auto Boost Merging** - If a boost is locked, boosts will automatically be merged until the boost hits 100.
@@ -137,7 +137,7 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/xmxIBEA.png)
+![Titans](https://i.imgur.com/D4ehZ9b.png)
 
 - **Swap Loadout for Titans** - Equip the gear in TitanLoadout right before any titan marked for swapping
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
@@ -150,8 +150,9 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
+- **Locate Walderp** - If Walderp is hiding, will take you to the menu he's currently in.
 
-![Adventure](https://i.imgur.com/1kx0jnb.png)
+![Adventure](https://i.imgur.com/fRx8Y8v.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 - **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
@@ -179,7 +180,7 @@ An in game menu can be opened using the F1 button.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
-![Gold](https://i.imgur.com/0JdmTh1.png)
+![Gold](https://i.imgur.com/WkQhXXR.png)
 
 - **Enable Gold Management** - If turned off, will disable all gold swap logic
 - **Do Gold Snipe** - If checked, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
@@ -189,7 +190,7 @@ An in game menu can be opened using the F1 button.
 - **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/UEXIve0.png)
+![Quests](https://i.imgur.com/GXqG2It.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
 - **Allow Major Quests**
@@ -208,21 +209,21 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 
-![Wishes](https://i.imgur.com/h4eNEsr.png)
+![Wishes](https://i.imgur.com/SbgX3hk.png)
 
 - **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
 - **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
 - **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
 - **Blacklist Wishes** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities. Supersedes Priority list if the same wish is in both lists.
 
-![The Pit](https://i.imgur.com/5jnhsQ7.png)
+![The Pit](https://i.imgur.com/azmHcTH.png)
 
 - **Auto Daily Spin** - Automatically do daily spin and log the result to the loot.log file
 - **Auto Money Pit** - Automatically throw money into the money pit if the Money Pit Threshold is met. Logs the result to the loot.log file
 - **Money Pit Threshold** - The amount of gold to wait for to throw gold into the money pit. Accepts scientific notation (ex: 1E+28)
 - **Loadout** - Items to equip before throwing money in the pit
 
-![Cards](https://i.imgur.com/0OXulFY.png)
+![Cards](https://i.imgur.com/P1ng5D7.png)
 
 - **Manage Mayo** - Prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
 - **Auto Cast Cards** - Cast any card that is not trashed according to your settings.
@@ -486,9 +487,10 @@ The following types are available:
 - **Time** - Rebirths when a certain time passes
 - **Number** - Rebirths when your number will be OldNumber \* _Target_
 - **Bosses** - Rebirths when you can defeat _Target_ additional bosses
-- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply perform 24 hour Time rebirths without Muffin use if any of the following conditions are met:
+- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
+  - Auto Rebirth is disabled
   - Currently in a challenge
-  - Has any challenges defined in the Rebirth Breakpoint
+  - Able to rebirth into any challenge defined in the Rebirth Breakpoint
   - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
   - Do not have any Muffins and cannot buy more (or is configured to not buy more)
 

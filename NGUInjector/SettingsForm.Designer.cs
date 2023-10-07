@@ -248,6 +248,11 @@
             this.AutoMoneyPit = new System.Windows.Forms.CheckBox();
             this.AutoDailySpin = new System.Windows.Forms.CheckBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.CardSortOptions = new System.Windows.Forms.ComboBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.CardSortRemove = new System.Windows.Forms.Button();
+            this.CardSortAdd = new System.Windows.Forms.Button();
+            this.label41 = new System.Windows.Forms.Label();
             this.CardSortList = new System.Windows.Forms.ListBox();
             this.CardSortDown = new System.Windows.Forms.Button();
             this.CardSortUp = new System.Windows.Forms.Button();
@@ -273,11 +278,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.wishBlacklistErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label41 = new System.Windows.Forms.Label();
-            this.CardSortRemove = new System.Windows.Forms.Button();
-            this.CardSortAdd = new System.Windows.Forms.Button();
-            this.CardSortOptions = new System.Windows.Forms.ComboBox();
-            this.label37 = new System.Windows.Forms.Label();
+            this.LocateWalderp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -1087,6 +1088,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.LocateWalderp);
             this.tabPage5.Controls.Add(this.UseTitanCombat);
             this.tabPage5.Controls.Add(this.TitanSmartBeastMode);
             this.tabPage5.Controls.Add(this.TitanMoreBlockParry);
@@ -2102,6 +2104,36 @@
             this.tabPage11.Name = "tabPage11";
             this.tabPage11.UseVisualStyleBackColor = true;
             // 
+            // CardSortOptions
+            // 
+            this.CardSortOptions.FormattingEnabled = true;
+            resources.ApplyResources(this.CardSortOptions, "CardSortOptions");
+            this.CardSortOptions.Name = "CardSortOptions";
+            // 
+            // label37
+            // 
+            resources.ApplyResources(this.label37, "label37");
+            this.label37.Name = "label37";
+            // 
+            // CardSortRemove
+            // 
+            resources.ApplyResources(this.CardSortRemove, "CardSortRemove");
+            this.CardSortRemove.Name = "CardSortRemove";
+            this.CardSortRemove.UseVisualStyleBackColor = true;
+            this.CardSortRemove.Click += new System.EventHandler(this.CardSortRemove_Click);
+            // 
+            // CardSortAdd
+            // 
+            resources.ApplyResources(this.CardSortAdd, "CardSortAdd");
+            this.CardSortAdd.Name = "CardSortAdd";
+            this.CardSortAdd.UseVisualStyleBackColor = true;
+            this.CardSortAdd.Click += new System.EventHandler(this.CardSortAdd_Click);
+            // 
+            // label41
+            // 
+            resources.ApplyResources(this.label41, "label41");
+            this.label41.Name = "label41";
+            // 
             // CardSortList
             // 
             this.CardSortList.FormattingEnabled = true;
@@ -2257,35 +2289,12 @@
             // 
             this.wishBlacklistErrorProvider.ContainerControl = this;
             // 
-            // label41
+            // LocateWalderp
             // 
-            resources.ApplyResources(this.label41, "label41");
-            this.label41.Name = "label41";
-            // 
-            // CardSortRemove
-            // 
-            resources.ApplyResources(this.CardSortRemove, "CardSortRemove");
-            this.CardSortRemove.Name = "CardSortRemove";
-            this.CardSortRemove.UseVisualStyleBackColor = true;
-            this.CardSortRemove.Click += new System.EventHandler(this.CardSortRemove_Click);
-            // 
-            // CardSortAdd
-            // 
-            resources.ApplyResources(this.CardSortAdd, "CardSortAdd");
-            this.CardSortAdd.Name = "CardSortAdd";
-            this.CardSortAdd.UseVisualStyleBackColor = true;
-            this.CardSortAdd.Click += new System.EventHandler(this.CardSortAdd_Click);
-            // 
-            // CardSortOptions
-            // 
-            this.CardSortOptions.FormattingEnabled = true;
-            resources.ApplyResources(this.CardSortOptions, "CardSortOptions");
-            this.CardSortOptions.Name = "CardSortOptions";
-            // 
-            // label37
-            // 
-            resources.ApplyResources(this.label37, "label37");
-            this.label37.Name = "label37";
+            resources.ApplyResources(this.LocateWalderp, "LocateWalderp");
+            this.LocateWalderp.Name = "LocateWalderp";
+            this.LocateWalderp.UseVisualStyleBackColor = true;
+            this.LocateWalderp.Click += new System.EventHandler(this.LocateWalderp_Click);
             // 
             // SettingsForm
             // 
@@ -2602,5 +2611,6 @@
         private System.Windows.Forms.Button CardSortRemove;
         private System.Windows.Forms.Button CardSortAdd;
         private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Button LocateWalderp;
     }
 }

@@ -12,9 +12,8 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
     {
         internal bool ShouldAutoBuyMuffins { get; set; }
 
-        //TODO:Test!
-        private double _23h = 60 * 23;//60 * 60 * 3;
-        private double _24h = 60 * 24;//60 * 60 * 5;
+        private double _23h = 60 * 60 * 23;
+        private double _24h = 60 * 60 * 24;
         private bool _shouldMuffin = true;
         private ConsumablesManager.Consumable _muffinConsumable;
 
@@ -26,26 +25,23 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
 
         internal override bool RebirthAvailable()
         {
-            if (!Main.Settings.AutoRebirth)
-                return false;
-
             RebirthTime = _24h;
             _shouldMuffin = true;
 
-            if(_muffinConsumable == null)
+            if(!Main.Settings.AutoRebirth || _muffinConsumable == null)
             {
                 _shouldMuffin = false;
                 return base.RebirthAvailable();
             }
 
             //Do 24 hour Rebirths if we have any challenges, or if the 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
-            if (CharObj.challenges.inChallenge || ChallengeTargets.Length > 0 || Main.Character.adventure.itopod.perkLevel[21] < Main.Character.adventureController.itopod.maxLevel[21] || Main.Character.beastQuest.quirkLevel[13] < Main.Character.beastQuestPerkController.maxLevel[13])
+            if (CharObj.challenges.inChallenge || AnyChallengesValid() || Main.Character.adventure.itopod.perkLevel[21] < Main.Character.adventureController.itopod.maxLevel[21] || Main.Character.beastQuest.quirkLevel[13] < Main.Character.beastQuestPerkController.maxLevel[13])
             {
                 _shouldMuffin = false;
             }
 
             //Do 24 hour Rebirths if we don't have any muffins and aren't configured to purchase more or don't have the AP to purchase more
-            if (_muffinConsumable.GetCount() == 0 && (!ShouldAutoBuyMuffins || !_muffinConsumable.Buy(1, out _)))
+            if (_muffinConsumable.GetCount() == 0 && (!ShouldAutoBuyMuffins || !_muffinConsumable.HasEnoughAP(1, out _)))
             {
                 _shouldMuffin = false;
             }
@@ -55,8 +51,6 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             {
                 bool muffinIsActive = (_muffinConsumable.GetIsActive() ?? false);
                 double muffinTimeLeft = (_muffinConsumable.GetTimeLeft() ?? 0);
-
-                Main.LogDebug($"MuffinActive:{muffinIsActive} | MuffinTimeLeft:{muffinIsActive}");
 
                 if (muffinTimeLeft > 0 && !muffinIsActive)
                 {
@@ -77,7 +71,8 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
                 return false;
             }
 
-            if (_shouldMuffin && _muffinConsumable != null && (_muffinConsumable.GetIsActive() ?? false) && (_muffinConsumable.GetTimeLeft() ?? 0) <= 0)
+            //Try to eat a muffin if it has completely expired
+            if (_shouldMuffin && _muffinConsumable != null && !(_muffinConsumable.GetIsActive() ?? false) && (_muffinConsumable.GetTimeLeft() ?? 0) <= 0)
             {
                 if (_muffinConsumable.GetCount() <= 0)
                 {
@@ -91,7 +86,10 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
                     }
                 }
 
-                _muffinConsumable.Use(1);
+                if (_muffinConsumable.GetCount() > 0)
+                {
+                    _muffinConsumable.Use(1);
+                }
             }
 
             return false;
