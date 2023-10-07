@@ -118,10 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="moneyPitThresholdError.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>1102, 55</value>
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>114</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
@@ -1036,7 +1039,7 @@
     <value>18</value>
   </data>
   <data name="BloodNumberThreshold.Location" type="System.Drawing.Point, System.Drawing">
-    <value>96, 246</value>
+    <value>96, 250</value>
   </data>
   <data name="BloodNumberThreshold.Size" type="System.Drawing.Size, System.Drawing">
     <value>110, 20</value>
@@ -1063,7 +1066,7 @@
     <value>NoControl</value>
   </data>
   <data name="label18.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 249</value>
+    <value>14, 254</value>
   </data>
   <data name="label18.Size" type="System.Drawing.Size, System.Drawing">
     <value>77, 13</value>
@@ -1681,7 +1684,7 @@
     <value>NoControl</value>
   </data>
   <data name="yggRemoveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>233, 149</value>
+    <value>219, 156</value>
   </data>
   <data name="yggRemoveButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -1759,7 +1762,7 @@
     <value>NoControl</value>
   </data>
   <data name="yggAddButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>233, 252</value>
+    <value>219, 250</value>
   </data>
   <data name="yggAddButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -2089,7 +2092,7 @@
     <value>NoControl</value>
   </data>
   <data name="prioDownButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>230, 206</value>
+    <value>192, 206</value>
   </data>
   <data name="prioDownButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -2119,7 +2122,7 @@
     <value>NoControl</value>
   </data>
   <data name="prioUpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>230, 148</value>
+    <value>192, 148</value>
   </data>
   <data name="prioUpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -2182,7 +2185,7 @@
     <value>NoControl</value>
   </data>
   <data name="blacklistRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>496, 177</value>
+    <value>482, 177</value>
   </data>
   <data name="blacklistRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -2260,7 +2263,7 @@
     <value>NoControl</value>
   </data>
   <data name="blacklistAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>496, 280</value>
+    <value>482, 280</value>
   </data>
   <data name="blacklistAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -2350,7 +2353,7 @@
     <value>NoControl</value>
   </data>
   <data name="priorityBoostRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 177</value>
+    <value>192, 177</value>
   </data>
   <data name="priorityBoostRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -2428,7 +2431,7 @@
     <value>NoControl</value>
   </data>
   <data name="priorityBoostAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 280</value>
+    <value>192, 280</value>
   </data>
   <data name="priorityBoostAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -2842,7 +2845,7 @@
     <value>NoControl</value>
   </data>
   <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>362, 27</value>
+    <value>390, 27</value>
   </data>
   <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
     <value>118, 16</value>
@@ -2872,7 +2875,7 @@
     <value>203</value>
   </data>
   <data name="TitanSwapTargets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>365, 55</value>
+    <value>393, 55</value>
   </data>
   <data name="TitanSwapTargets.Size" type="System.Drawing.Size, System.Drawing">
     <value>208, 186</value>
@@ -2932,7 +2935,7 @@
     <value>NoControl</value>
   </data>
   <data name="titanRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 118</value>
+    <value>267, 119</value>
   </data>
   <data name="titanRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -3010,7 +3013,7 @@
     <value>NoControl</value>
   </data>
   <data name="titanAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 221</value>
+    <value>267, 222</value>
   </data>
   <data name="titanAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4342,7 +4345,7 @@
     <value>NoControl</value>
   </data>
   <data name="GoldLoadoutRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>249, 161</value>
+    <value>235, 162</value>
   </data>
   <data name="GoldLoadoutRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -4420,7 +4423,7 @@
     <value>NoControl</value>
   </data>
   <data name="GoldLoadoutAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>249, 264</value>
+    <value>235, 264</value>
   </data>
   <data name="GoldLoadoutAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4504,7 +4507,7 @@
     <value>NoControl</value>
   </data>
   <data name="QuestSmartBeastMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>430, 164</value>
+    <value>399, 210</value>
   </data>
   <data name="QuestSmartBeastMode.Size" type="System.Drawing.Size, System.Drawing">
     <value>113, 17</value>
@@ -4534,7 +4537,7 @@
     <value>NoControl</value>
   </data>
   <data name="QuestBeastMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>430, 140</value>
+    <value>399, 186</value>
   </data>
   <data name="QuestBeastMode.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 17</value>
@@ -4627,7 +4630,7 @@
     <value>NoControl</value>
   </data>
   <data name="questRemoveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>210, 171</value>
+    <value>225, 180</value>
   </data>
   <data name="questRemoveButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -4654,7 +4657,7 @@
     <value>10, 274</value>
   </data>
   <data name="QuestLoadoutItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 20</value>
+    <value>209, 20</value>
   </data>
   <data name="QuestLoadoutItem.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -4705,7 +4708,7 @@
     <value>NoControl</value>
   </data>
   <data name="questAddButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>210, 274</value>
+    <value>225, 274</value>
   </data>
   <data name="questAddButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4738,7 +4741,7 @@
     <value>9, 107</value>
   </data>
   <data name="questLoadoutBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 160</value>
+    <value>210, 160</value>
   </data>
   <data name="questLoadoutBox.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -4852,7 +4855,7 @@
     <value>NoControl</value>
   </data>
   <data name="QuestFastCombat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>430, 117</value>
+    <value>399, 163</value>
   </data>
   <data name="QuestFastCombat.Size" type="System.Drawing.Size, System.Drawing">
     <value>85, 17</value>
@@ -4963,7 +4966,7 @@
     <value>NoControl</value>
   </data>
   <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
-    <value>207, 116</value>
+    <value>396, 120</value>
   </data>
   <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 13</value>
@@ -4993,7 +4996,7 @@
     <value>Manual</value>
   </data>
   <data name="QuestCombatMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>286, 113</value>
+    <value>399, 136</value>
   </data>
   <data name="QuestCombatMode.Size" type="System.Drawing.Size, System.Drawing">
     <value>138, 21</value>
@@ -5100,6 +5103,174 @@
   <data name="&gt;&gt;tabPage8.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
+  <data name="RemoveWishBlacklistButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="RemoveWishBlacklistButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="RemoveWishBlacklistButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>554, 127</value>
+  </data>
+  <data name="RemoveWishBlacklistButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 23</value>
+  </data>
+  <data name="RemoveWishBlacklistButton.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="RemoveWishBlacklistButton.Text" xml:space="preserve">
+    <value>Remove Wish</value>
+  </data>
+  <data name="&gt;&gt;RemoveWishBlacklistButton.Name" xml:space="preserve">
+    <value>RemoveWishBlacklistButton</value>
+  </data>
+  <data name="&gt;&gt;RemoveWishBlacklistButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;RemoveWishBlacklistButton.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;RemoveWishBlacklistButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label39.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label39.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="label39.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label39.Location" type="System.Drawing.Point, System.Drawing">
+    <value>329, 35</value>
+  </data>
+  <data name="label39.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 16</value>
+  </data>
+  <data name="label39.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="label39.Text" xml:space="preserve">
+    <value>Blacklist Wishes</value>
+  </data>
+  <data name="&gt;&gt;label39.Name" xml:space="preserve">
+    <value>label39</value>
+  </data>
+  <data name="&gt;&gt;label39.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label39.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;label39.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="WishBlacklistAddInput.Location" type="System.Drawing.Point, System.Drawing">
+    <value>332, 229</value>
+  </data>
+  <data name="WishBlacklistAddInput.Size" type="System.Drawing.Size, System.Drawing">
+    <value>216, 20</value>
+  </data>
+  <data name="WishBlacklistAddInput.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklistAddInput.Name" xml:space="preserve">
+    <value>WishBlacklistAddInput</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklistAddInput.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklistAddInput.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklistAddInput.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="AddWishBlacklistLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="AddWishBlacklistLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="AddWishBlacklistLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>331, 252</value>
+  </data>
+  <data name="AddWishBlacklistLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="AddWishBlacklistLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="AddWishBlacklistLabel.Text" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistLabel.Name" xml:space="preserve">
+    <value>AddWishBlacklistLabel</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistLabel.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="AddWishBlacklistButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="AddWishBlacklistButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>554, 229</value>
+  </data>
+  <data name="AddWishBlacklistButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 20</value>
+  </data>
+  <data name="AddWishBlacklistButton.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="AddWishBlacklistButton.Text" xml:space="preserve">
+    <value>Add Wish</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistButton.Name" xml:space="preserve">
+    <value>AddWishBlacklistButton</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistButton.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;AddWishBlacklistButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="WishBlacklist.Items" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="WishBlacklist.Items1" xml:space="preserve">
+    <value>test2</value>
+  </data>
+  <data name="WishBlacklist.Location" type="System.Drawing.Point, System.Drawing">
+    <value>331, 63</value>
+  </data>
+  <data name="WishBlacklist.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 160</value>
+  </data>
+  <data name="WishBlacklist.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklist.Name" xml:space="preserve">
+    <value>WishBlacklist</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklist.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklist.Parent" xml:space="preserve">
+    <value>tabPage9</value>
+  </data>
+  <data name="&gt;&gt;WishBlacklist.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
   <data name="WishSortOrder.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -5125,13 +5296,13 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishSortOrder.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>6</value>
   </data>
   <data name="WishSortPriorities.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="WishSortPriorities.Location" type="System.Drawing.Point, System.Drawing">
-    <value>369, 232</value>
+    <value>108, 36</value>
   </data>
   <data name="WishSortPriorities.Size" type="System.Drawing.Size, System.Drawing">
     <value>117, 17</value>
@@ -5152,7 +5323,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishSortPriorities.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>7</value>
   </data>
   <data name="WishDownButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5161,7 +5332,7 @@
     <value>NoControl</value>
   </data>
   <data name="WishDownButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>313, 157</value>
+    <value>231, 156</value>
   </data>
   <data name="WishDownButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -5182,7 +5353,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishDownButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>8</value>
   </data>
   <data name="WishUpButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5191,7 +5362,7 @@
     <value>NoControl</value>
   </data>
   <data name="WishUpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>313, 99</value>
+    <value>231, 98</value>
   </data>
   <data name="WishUpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -5212,7 +5383,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishUpButton.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>9</value>
   </data>
   <data name="RemoveWishButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5221,7 +5392,7 @@
     <value>NoControl</value>
   </data>
   <data name="RemoveWishButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>283, 128</value>
+    <value>231, 127</value>
   </data>
   <data name="RemoveWishButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 23</value>
@@ -5242,7 +5413,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;RemoveWishButton.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>10</value>
   </data>
   <data name="label19.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5275,13 +5446,13 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;label19.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>11</value>
   </data>
   <data name="WishAddInput.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 229</value>
   </data>
   <data name="WishAddInput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>246, 20</value>
+    <value>216, 20</value>
   </data>
   <data name="WishAddInput.TabIndex" type="System.Int32, mscorlib">
     <value>28</value>
@@ -5296,7 +5467,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishAddInput.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>12</value>
   </data>
   <data name="AddWishLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5326,13 +5497,13 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;AddWishLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>13</value>
   </data>
   <data name="AddWishButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="AddWishButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 229</value>
+    <value>231, 229</value>
   </data>
   <data name="AddWishButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -5353,7 +5524,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;AddWishButton.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>14</value>
   </data>
   <data name="WishPriority.Items" xml:space="preserve">
     <value>test</value>
@@ -5365,7 +5536,7 @@
     <value>8, 63</value>
   </data>
   <data name="WishPriority.Size" type="System.Drawing.Size, System.Drawing">
-    <value>247, 160</value>
+    <value>217, 160</value>
   </data>
   <data name="WishPriority.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -5380,7 +5551,7 @@
     <value>tabPage9</value>
   </data>
   <data name="&gt;&gt;WishPriority.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>15</value>
   </data>
   <data name="tabPage9.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -5527,7 +5698,7 @@
     <value>NoControl</value>
   </data>
   <data name="MoneyPitAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>286, 263</value>
+    <value>267, 263</value>
   </data>
   <data name="MoneyPitAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -5608,7 +5779,7 @@
     <value>116, 41</value>
   </data>
   <data name="MoneyPitThreshold.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 20</value>
+    <value>126, 20</value>
   </data>
   <data name="MoneyPitThreshold.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -5739,6 +5910,27 @@
   <data name="&gt;&gt;tabPage10.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
+  <data name="CardSortOptions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 297</value>
+  </data>
+  <data name="CardSortOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>189, 21</value>
+  </data>
+  <data name="CardSortOptions.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="&gt;&gt;CardSortOptions.Name" xml:space="preserve">
+    <value>CardSortOptions</value>
+  </data>
+  <data name="&gt;&gt;CardSortOptions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortOptions.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortOptions.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="label37.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -5746,16 +5938,16 @@
     <value>NoControl</value>
   </data>
   <data name="label37.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 99</value>
+    <value>4, 281</value>
   </data>
   <data name="label37.Size" type="System.Drawing.Size, System.Drawing">
-    <value>89, 13</value>
+    <value>65, 13</value>
   </data>
   <data name="label37.TabIndex" type="System.Int32, mscorlib">
-    <value>21</value>
+    <value>44</value>
   </data>
   <data name="label37.Text" xml:space="preserve">
-    <value>Always Trash List</value>
+    <value>Sort Options</value>
   </data>
   <data name="&gt;&gt;label37.Name" xml:space="preserve">
     <value>label37</value>
@@ -5767,13 +5959,247 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label37.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
+  </data>
+  <data name="CardSortRemove.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CardSortRemove.Location" type="System.Drawing.Point, System.Drawing">
+    <value>202, 186</value>
+  </data>
+  <data name="CardSortRemove.Size" type="System.Drawing.Size, System.Drawing">
+    <value>86, 23</value>
+  </data>
+  <data name="CardSortRemove.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="CardSortRemove.Text" xml:space="preserve">
+    <value>Remove Sort</value>
+  </data>
+  <data name="&gt;&gt;CardSortRemove.Name" xml:space="preserve">
+    <value>CardSortRemove</value>
+  </data>
+  <data name="&gt;&gt;CardSortRemove.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortRemove.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortRemove.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="CardSortAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CardSortAdd.Location" type="System.Drawing.Point, System.Drawing">
+    <value>202, 295</value>
+  </data>
+  <data name="CardSortAdd.Size" type="System.Drawing.Size, System.Drawing">
+    <value>86, 23</value>
+  </data>
+  <data name="CardSortAdd.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="CardSortAdd.Text" xml:space="preserve">
+    <value>Add Sort</value>
+  </data>
+  <data name="&gt;&gt;CardSortAdd.Name" xml:space="preserve">
+    <value>CardSortAdd</value>
+  </data>
+  <data name="&gt;&gt;CardSortAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortAdd.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortAdd.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="label41.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label41.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="label41.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label41.Location" type="System.Drawing.Point, System.Drawing">
+    <value>338, 99</value>
+  </data>
+  <data name="label41.Size" type="System.Drawing.Size, System.Drawing">
+    <value>111, 16</value>
+  </data>
+  <data name="label41.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="label41.Text" xml:space="preserve">
+    <value>Always Trash List</value>
+  </data>
+  <data name="&gt;&gt;label41.Name" xml:space="preserve">
+    <value>label41</value>
+  </data>
+  <data name="&gt;&gt;label41.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label41.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;label41.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="CardSortList.Items" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="CardSortList.Items1" xml:space="preserve">
+    <value>test2</value>
+  </data>
+  <data name="CardSortList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 118</value>
+  </data>
+  <data name="CardSortList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>189, 160</value>
+  </data>
+  <data name="CardSortList.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="&gt;&gt;CardSortList.Name" xml:space="preserve">
+    <value>CardSortList</value>
+  </data>
+  <data name="&gt;&gt;CardSortList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortList.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortList.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="CardSortDown.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CardSortDown.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CardSortDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>202, 215</value>
+  </data>
+  <data name="CardSortDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 23</value>
+  </data>
+  <data name="CardSortDown.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="CardSortDown.Text" xml:space="preserve">
+    <value>v</value>
+  </data>
+  <data name="&gt;&gt;CardSortDown.Name" xml:space="preserve">
+    <value>CardSortDown</value>
+  </data>
+  <data name="&gt;&gt;CardSortDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortDown.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortDown.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="CardSortUp.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CardSortUp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CardSortUp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>202, 157</value>
+  </data>
+  <data name="CardSortUp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 23</value>
+  </data>
+  <data name="CardSortUp.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="CardSortUp.Text" xml:space="preserve">
+    <value>^</value>
+  </data>
+  <data name="&gt;&gt;CardSortUp.Name" xml:space="preserve">
+    <value>CardSortUp</value>
+  </data>
+  <data name="&gt;&gt;CardSortUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CardSortUp.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;CardSortUp.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="label40.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label40.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="label40.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label40.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 99</value>
+  </data>
+  <data name="label40.Size" type="System.Drawing.Size, System.Drawing">
+    <value>68, 16</value>
+  </data>
+  <data name="label40.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="label40.Text" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="&gt;&gt;label40.Name" xml:space="preserve">
+    <value>label40</value>
+  </data>
+  <data name="&gt;&gt;label40.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label40.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;label40.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="SortCards.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SortCards.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 79</value>
+  </data>
+  <data name="SortCards.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 17</value>
+  </data>
+  <data name="SortCards.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="SortCards.Text" xml:space="preserve">
+    <value>Sort Cards</value>
+  </data>
+  <data name="&gt;&gt;SortCards.Name" xml:space="preserve">
+    <value>SortCards</value>
+  </data>
+  <data name="&gt;&gt;SortCards.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SortCards.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;SortCards.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="TrashChunkers.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashChunkers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>231, 115</value>
+    <value>456, 100</value>
   </data>
   <data name="TrashChunkers.Size" type="System.Drawing.Size, System.Drawing">
     <value>101, 17</value>
@@ -5794,19 +6220,19 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashChunkers.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>10</value>
   </data>
   <data name="DontCastRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>231, 182</value>
+    <value>562, 186</value>
   </data>
   <data name="DontCastRemove.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>86, 23</value>
   </data>
   <data name="DontCastRemove.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
   <data name="DontCastRemove.Text" xml:space="preserve">
-    <value>Remove</value>
+    <value>Remove Card</value>
   </data>
   <data name="&gt;&gt;DontCastRemove.Name" xml:space="preserve">
     <value>DontCastRemove</value>
@@ -5818,10 +6244,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastRemove.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>11</value>
   </data>
   <data name="DontCastAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>231, 292</value>
+    <value>562, 295</value>
   </data>
   <data name="DontCastAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>86, 23</value>
@@ -5830,7 +6256,7 @@
     <value>18</value>
   </data>
   <data name="DontCastAdd.Text" xml:space="preserve">
-    <value>Add to Trash</value>
+    <value>Add Card</value>
   </data>
   <data name="&gt;&gt;DontCastAdd.Name" xml:space="preserve">
     <value>DontCastAdd</value>
@@ -5842,10 +6268,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastAdd.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>12</value>
   </data>
   <data name="DontCastSelection.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 294</value>
+    <value>341, 297</value>
   </data>
   <data name="DontCastSelection.Size" type="System.Drawing.Size, System.Drawing">
     <value>215, 21</value>
@@ -5863,10 +6289,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastSelection.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>13</value>
   </data>
   <data name="DontCastList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 115</value>
+    <value>341, 118</value>
   </data>
   <data name="DontCastList.Size" type="System.Drawing.Size, System.Drawing">
     <value>215, 160</value>
@@ -5884,13 +6310,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastList.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>14</value>
   </data>
   <data name="label29.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label29.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 278</value>
+    <value>338, 281</value>
   </data>
   <data name="label29.Size" type="System.Drawing.Size, System.Drawing">
     <value>117, 13</value>
@@ -5911,13 +6337,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label29.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>15</value>
   </data>
   <data name="label28.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label28.Location" type="System.Drawing.Point, System.Drawing">
-    <value>228, 64</value>
+    <value>562, 65</value>
   </data>
   <data name="label28.Size" type="System.Drawing.Size, System.Drawing">
     <value>79, 13</value>
@@ -5938,10 +6364,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label28.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>16</value>
   </data>
   <data name="TrashTier.Location" type="System.Drawing.Point, System.Drawing">
-    <value>88, 61</value>
+    <value>420, 62</value>
   </data>
   <data name="TrashTier.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 21</value>
@@ -5959,13 +6385,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashTier.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>17</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 64</value>
+    <value>338, 65</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -5986,13 +6412,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>18</value>
   </data>
   <data name="TrashAdventureCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashAdventureCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>231, 6</value>
+    <value>455, 7</value>
   </data>
   <data name="TrashAdventureCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>135, 17</value>
@@ -6013,13 +6439,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashAdventureCards.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>19</value>
   </data>
   <data name="AutoCastCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="AutoCastCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>381, 6</value>
+    <value>107, 7</value>
   </data>
   <data name="AutoCastCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>102, 17</value>
@@ -6040,13 +6466,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;AutoCastCards.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>20</value>
   </data>
   <data name="label34.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label34.Location" type="System.Drawing.Point, System.Drawing">
-    <value>228, 37</value>
+    <value>563, 36</value>
   </data>
   <data name="label34.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 13</value>
@@ -6067,7 +6493,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label34.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>21</value>
   </data>
   <data name="label33.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6076,7 +6502,7 @@
     <value>NoControl</value>
   </data>
   <data name="label33.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 40</value>
+    <value>338, 36</value>
   </data>
   <data name="label33.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -6097,10 +6523,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label33.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>22</value>
   </data>
   <data name="TrashQuality.Location" type="System.Drawing.Point, System.Drawing">
-    <value>88, 37</value>
+    <value>420, 33</value>
   </data>
   <data name="TrashQuality.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 21</value>
@@ -6118,13 +6544,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashQuality.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>23</value>
   </data>
   <data name="TrashCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>117, 7</value>
+    <value>341, 7</value>
   </data>
   <data name="TrashCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>108, 17</value>
@@ -6145,7 +6571,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashCards.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>24</value>
   </data>
   <data name="balanceMayo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6172,7 +6598,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;balanceMayo.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>25</value>
   </data>
   <data name="tabPage11.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -6327,6 +6753,12 @@
   <data name="&gt;&gt;questErrorProvider.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;wishBlacklistErrorProvider.Name" xml:space="preserve">
+    <value>wishBlacklistErrorProvider</value>
+  </data>
+  <data name="&gt;&gt;wishBlacklistErrorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SettingsForm</value>
   </data>
@@ -6334,30 +6766,33 @@
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="yggErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>375, 17</value>
+    <value>171, 19</value>
   </metadata>
   <metadata name="invPrioErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>519, 17</value>
+    <value>308, 18</value>
   </metadata>
   <metadata name="invBlacklistErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>680, 17</value>
+    <value>307, 45</value>
   </metadata>
   <metadata name="titanErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>851, 17</value>
+    <value>463, 21</value>
   </metadata>
   <metadata name="goldErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>987, 17</value>
+    <value>591, 19</value>
   </metadata>
   <metadata name="numberErrProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1135, 17</value>
+    <value>21, 21</value>
   </metadata>
   <metadata name="wishErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1289, 17</value>
+    <value>880, 25</value>
   </metadata>
   <metadata name="moneyPitErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1436, 17</value>
+    <value>1097, 27</value>
   </metadata>
   <metadata name="questErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1611, 17</value>
+    <value>736, 21</value>
+  </metadata>
+  <metadata name="wishBlacklistErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>881, 51</value>
   </metadata>
 </root>

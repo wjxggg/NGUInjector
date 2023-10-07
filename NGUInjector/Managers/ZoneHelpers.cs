@@ -81,6 +81,11 @@ namespace NGUInjector.Managers
             return zone == 16;
         }
 
+        internal static bool ZoneIsNerd(int zone)
+        {
+            return zone == 23;
+        }
+
         internal static bool ZoneIsGodmother(int zone)
         {
             return zone == 26;

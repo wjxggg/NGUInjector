@@ -92,6 +92,7 @@
     <Compile Include="AllocationProfiles\RebirthStuff\NumberRebirth.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\TimeRebirth.cs" />
     <Compile Include="Consts.cs" />
+    <Compile Include="Managers\CombatAI.cs" />
     <Compile Include="Managers\ConsumablesManager.cs" />
     <Compile Include="Managers\CookingManager.cs" />
     <Compile Include="Managers\ZoneStatHelper.cs" />
