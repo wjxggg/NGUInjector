@@ -487,12 +487,12 @@ The following types are available:
 - **Time** - Rebirths when a certain time passes
 - **Number** - Rebirths when your number will be OldNumber \* _Target_
 - **Bosses** - Rebirths when you can defeat _Target_ additional bosses
-- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 and 23 hour Time rebirths. Set _Target_ to 1 to auto purchase Muffins. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
-  - Auto Rebirth is disabled
+- **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 hour and (24 hour - _Target_ minutes) Time rebirths. _Target_ must be at least 1 and no more than 60. Enable "Auto Buy Consumables" to auto purchase Muffins if none are available. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
   - Currently in a challenge
   - Able to rebirth into any challenge defined in the Rebirth Breakpoint
   - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
   - Do not have any Muffins and cannot buy more (or is configured to not buy more)
+- **TimeBalancedMuffin** - Same as the Muffin rebirth except will also add the _Target_ minutes to the 24 hour rebirth to try to keep rebirths at the same time each day. _Target_ must be at least 1 and no more than 15.
 
 The following example will rebirth when your number is 10x your previous number:
 
@@ -514,12 +514,22 @@ The following example will rebirth when you can kill 5 more bosses than your las
 },
 ```
 
-The following example will perform "Muffin" rebirth cycles, purchasing Muffin consumables if none are available:
+The following example will perform "Muffin" rebirth cycles. If no muffin is active will activate a muffin and rebirth at 24:00:00, followed by a rebirth at 23:00:00:
 
 ```
 "Rebirth": {
     "Type": "Muffin",
-    "Target": 1,
+    "Target": 60,
+    "Challenges": []
+},
+```
+
+The following example will perform "Muffin" rebirth cycles. If no muffin is active will activate a muffin and rebirth at 24:05:00, followed by a rebirth at 23:55:00:
+
+```
+"Rebirth": {
+    "Type": "TimeBalancedMuffin",
+    "Target": 5,
     "Challenges": []
 },
 ```

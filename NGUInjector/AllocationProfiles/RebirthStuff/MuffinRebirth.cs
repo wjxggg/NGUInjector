@@ -10,12 +10,12 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
 {
     internal class MuffinRebirth : TimeRebirth
     {
-        internal bool ShouldAutoBuyMuffins { get; set; }
-
-        private double _23h = 60 * 60 * 23;
         private double _24h = 60 * 60 * 24;
         private bool _shouldMuffin = true;
         private ConsumablesManager.Consumable _muffinConsumable;
+
+        internal bool BalanceTime = false;
+        internal double MuffinMinuteBuffer = 60;
 
         public MuffinRebirth()
         {
@@ -41,7 +41,7 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             }
 
             //Do 24 hour Rebirths if we don't have any muffins and aren't configured to purchase more or don't have the AP to purchase more
-            if (_muffinConsumable.GetCount() == 0 && (!ShouldAutoBuyMuffins || !_muffinConsumable.HasEnoughAP(1, out _)))
+            if (_muffinConsumable.GetCount() == 0 && (!Main.Settings.AutoBuyConsumables || !_muffinConsumable.HasEnoughAP(1, out _)))
             {
                 _shouldMuffin = false;
             }
@@ -49,12 +49,19 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             //Cycle between 24 and 23 hours  (24h -> Activate Muffin if possible -> Rebirth -> 23h -> Rebirth)
             if (_shouldMuffin)
             {
+                double longTime = _24h + (BalanceTime ? MuffinMinuteBuffer : 0);
+                double shortTime = _24h - MuffinMinuteBuffer;
+
                 bool muffinIsActive = (_muffinConsumable.GetIsActive() ?? false);
                 double muffinTimeLeft = (_muffinConsumable.GetTimeLeft() ?? 0);
 
                 if (muffinTimeLeft > 0 && !muffinIsActive)
                 {
-                    RebirthTime = _23h;
+                    RebirthTime = shortTime;
+                }
+                else
+                {
+                    RebirthTime = longTime;
                 }
             }
 
@@ -76,13 +83,13 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             {
                 if (_muffinConsumable.GetCount() <= 0)
                 {
-                    if (ShouldAutoBuyMuffins)
+                    if (Main.Settings.AutoBuyConsumables)
                     {
                         _muffinConsumable.Buy(1, out _);
                     }
                     else
                     {
-                        Main.Log("No muffins available for rebirth and breakpoint not configured to auto-purchase");
+                        Main.Log("No muffins available for rebirth and auto-purchase consumables disabled");
                     }
                 }
 

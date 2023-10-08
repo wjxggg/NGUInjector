@@ -49,14 +49,22 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
                 };
             }
 
-            if (type == "MUFFIN")
+            if (type.Contains("MUFFIN"))
             {
-                return new MuffinRebirth
+                bool balanceTime = type.StartsWith("TIMEBALANCED");
+
+                double minimum = 1;
+                double maximum = balanceTime ? 15 : 60;
+
+                double minuteBuffer = Math.Min(Math.Max(target, minimum), maximum);
+
+                return new MuffinRebirth()
                 {
                     CharObj = Main.Character,
                     ChallengeTargets = ParseChallenges(challenges),
                     RebirthController = Main.Character.rebirth,
-                    ShouldAutoBuyMuffins = target >=1
+                    BalanceTime = balanceTime,
+                    MuffinMinuteBuffer = minuteBuffer
                 };
             }
 
