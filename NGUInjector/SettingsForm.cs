@@ -39,7 +39,10 @@ namespace NGUInjector
                 ItemList = itemList;
                 ItemBox = itemBox;
                 ErrorProvider = errorProvider;
-                ErrorProvider.SetIconAlignment(ItemList, ErrorIconAlignment.BottomRight);
+                if (ItemList != null)
+                {
+                    ErrorProvider.SetIconAlignment(ItemList, ErrorIconAlignment.BottomRight);
+                }
                 ItemLabel = itemLabel;
 
                 GetSettings = getSettings;
@@ -70,7 +73,14 @@ namespace NGUInjector
             {
                 if (ErrorProvider != null)
                 {
-                    ErrorProvider.SetError(ItemList, message);
+                    if (ItemList != null)
+                    {
+                        ErrorProvider.SetError(ItemList, message);
+                    }
+                    else
+                    {
+                        ErrorProvider.SetError(ItemBox, message);
+                    }
                 }
             }
         }
@@ -101,138 +111,145 @@ namespace NGUInjector
         //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
         public SettingsForm()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            // Populate our data sources
-            CubePriorityList = new Dictionary<int, string>
+                // Populate our data sources
+                CubePriorityList = new Dictionary<int, string>
             {
                 {0, "None"}, {1, "Balanced"}, {2, "Power"}, {3, "Toughness"}
             };
-            CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
+                CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
 
-            ZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
+                ZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
 
-            SpriteEnemyList = new Dictionary<int, string>();
-            foreach (var x in Main.Character.adventureController.enemyList)
-            {
-                foreach (var enemy in x)
+                SpriteEnemyList = new Dictionary<int, string>();
+                foreach (var x in Main.Character.adventureController.enemyList)
                 {
-                    try
+                    foreach (var enemy in x)
                     {
-                        SpriteEnemyList.Add(enemy.spriteID, enemy.name);
-                    }
-                    catch
-                    {
-                        //pass
+                        try
+                        {
+                            SpriteEnemyList.Add(enemy.spriteID, enemy.name);
+                        }
+                        catch
+                        {
+                            //pass
+                        }
                     }
                 }
-            }
 
-            List<string> cardRarities = Enum.GetNames(typeof(rarity)).ToList();
-            string[] cardBonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
-            var cardSortOptions = new List<string> { "RARITY", "TIER", "COST", "PROTECTED", "CHANGE", "VALUE", "NORMALVALUE" };
-            foreach (string sortOption in cardSortOptions)
+                List<string> cardRarities = Enum.GetNames(typeof(rarity)).ToList();
+                string[] cardBonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
+                var cardSortOptions = new List<string> { "RARITY", "TIER", "COST", "PROTECTED", "CHANGE", "VALUE", "NORMALVALUE" };
+                foreach (string sortOption in cardSortOptions)
+                {
+                    CardSortOptions.Items.Add(sortOption);
+                    CardSortOptions.Items.Add($"{sortOption}-ASC");
+                }
+                foreach (string bonus in cardBonusTypes)
+                {
+                    CardSortOptions.Items.Add($"TYPE:{bonus}");
+                    CardSortOptions.Items.Add($"TYPE-ASC:{bonus}");
+                }
+
+                cardRarities.Insert(0, "Don't trash");
+                TrashQuality.Items.AddRange(cardRarities.ToArray());
+
+                object[] arr = new object[31];
+                for (int i = 0; i < arr.Length; i++) arr[i] = i;
+                TrashTier.Items.AddRange(arr);
+
+                DontCastSelection.Items.AddRange(cardBonusTypes);
+                DontCastSelection.SelectedIndex = 0;
+
+                CubePriority.DataSource = new BindingSource(CubePriorityList, null);
+                CubePriority.ValueMember = "Key";
+                CubePriority.DisplayMember = "Value";
+
+                CombatMode.DataSource = new BindingSource(CombatModeList, null);
+                CombatMode.ValueMember = "Key";
+                CombatMode.DisplayMember = "Value";
+
+                TitanCombatMode.DataSource = new BindingSource(CombatModeList, null);
+                TitanCombatMode.ValueMember = "Key";
+                TitanCombatMode.DisplayMember = "Value";
+
+                ITOPODCombatMode.DataSource = new BindingSource(CombatModeList, null);
+                ITOPODCombatMode.ValueMember = "Key";
+                ITOPODCombatMode.DisplayMember = "Value";
+
+                QuestCombatMode.DataSource = new BindingSource(CombatModeList, null);
+                QuestCombatMode.ValueMember = "Key";
+                QuestCombatMode.DisplayMember = "Value";
+
+                CombatTargetZone.DataSource = new BindingSource(ZoneList, null);
+                CombatTargetZone.ValueMember = "Key";
+                CombatTargetZone.DisplayMember = "Value";
+
+                //Remove ITOPOD for non combat zones
+                ZoneList.Remove(1000);
+                ZoneList.Remove(-1);
+
+                EnemyBlacklistZone.ValueMember = "Key";
+                EnemyBlacklistZone.DisplayMember = "Value";
+                EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
+                EnemyBlacklistZone.SelectedIndex = 0;
+
+                numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
+                moneyPitThresholdError.SetIconAlignment(MoneyPitThreshold, ErrorIconAlignment.MiddleRight);
+
+                yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
+                priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
+                blacklistAddItem.TextChanged += blacklistAddItem_TextChanged;
+                titanAddItem.TextChanged += titanAddItem_TextChanged;
+                GoldItemBox.TextChanged += GoldItemBox_TextChanged;
+                QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
+                WishAddInput.TextChanged += WishAddInput_TextChanged;
+                WishBlacklistAddInput.TextChanged += WishBlacklistAddInput_TextChanged;
+                MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
+
+                _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
+                _priorityControls = new ItemControlGroup(priorityBoostBox, priorityBoostItemAdd, invPrioErrorProvider, priorityBoostLabel, () => Main.Settings.PriorityBoosts, (settings) => Main.Settings.PriorityBoosts = settings);
+                _blacklistControls = new ItemControlGroup(blacklistBox, blacklistAddItem, invBlacklistErrProvider, blacklistLabel, () => Main.Settings.BoostBlacklist, (settings) => Main.Settings.BoostBlacklist = settings);
+                _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
+                _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
+                _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
+                _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
+                _wishBlacklistControls = new ItemControlGroup(WishBlacklist, WishBlacklistAddInput, wishBlacklistErrorProvider, AddWishBlacklistLabel, () => Main.Settings.WishBlacklist, (settings) => Main.Settings.WishBlacklist = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
+                _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
+
+                TryItemBoxTextChanged(_yggControls, out _);
+                TryItemBoxTextChanged(_priorityControls, out _);
+                TryItemBoxTextChanged(_blacklistControls, out _);
+                TryItemBoxTextChanged(_titanControls, out _);
+                TryItemBoxTextChanged(_goldControls, out _);
+                TryItemBoxTextChanged(_questControls, out _);
+                TryItemBoxTextChanged(_wishControls, out _);
+                TryItemBoxTextChanged(_wishBlacklistControls, out _);
+                TryItemBoxTextChanged(_pitControls, out _);
+
+                UseTitanCombat_CheckedChanged(this, null);
+
+                boostPrioUpButton.Text = char.ConvertFromUtf32(8593);
+                boostPrioDownButton.Text = char.ConvertFromUtf32(8595);
+
+                prioUpButton.Text = char.ConvertFromUtf32(8593);
+                prioDownButton.Text = char.ConvertFromUtf32(8595);
+
+                WishUpButton.Text = char.ConvertFromUtf32(8593);
+                WishDownButton.Text = char.ConvertFromUtf32(8595);
+
+                CardSortUp.Text = char.ConvertFromUtf32(8593);
+                CardSortDown.Text = char.ConvertFromUtf32(8595);
+
+                VersionLabel.Text = $"Version: {Main.Version}";
+            }
+            catch(Exception ex)
             {
-                CardSortOptions.Items.Add(sortOption);
-                CardSortOptions.Items.Add($"{sortOption}-ASC");
+                Main.LogDebug($"{ex.Message}:\n{ex.StackTrace}");
             }
-            foreach (string bonus in cardBonusTypes)
-            {
-                CardSortOptions.Items.Add($"TYPE:{bonus}");
-                CardSortOptions.Items.Add($"TYPE-ASC:{bonus}");
-            }
-
-            cardRarities.Insert(0, "Don't trash");
-            TrashQuality.Items.AddRange(cardRarities.ToArray());
-
-            object[] arr = new object[31];
-            for (int i = 0; i < arr.Length; i++) arr[i] = i;
-            TrashTier.Items.AddRange(arr);
-
-            DontCastSelection.Items.AddRange(cardBonusTypes);
-            DontCastSelection.SelectedIndex = 0;
-
-            CubePriority.DataSource = new BindingSource(CubePriorityList, null);
-            CubePriority.ValueMember = "Key";
-            CubePriority.DisplayMember = "Value";
-
-            CombatMode.DataSource = new BindingSource(CombatModeList, null);
-            CombatMode.ValueMember = "Key";
-            CombatMode.DisplayMember = "Value";
-
-            TitanCombatMode.DataSource = new BindingSource(CombatModeList, null);
-            TitanCombatMode.ValueMember = "Key";
-            TitanCombatMode.DisplayMember = "Value";
-
-            ITOPODCombatMode.DataSource = new BindingSource(CombatModeList, null);
-            ITOPODCombatMode.ValueMember = "Key";
-            ITOPODCombatMode.DisplayMember = "Value";
-
-            QuestCombatMode.DataSource = new BindingSource(CombatModeList, null);
-            QuestCombatMode.ValueMember = "Key";
-            QuestCombatMode.DisplayMember = "Value";
-
-            CombatTargetZone.DataSource = new BindingSource(ZoneList, null);
-            CombatTargetZone.ValueMember = "Key";
-            CombatTargetZone.DisplayMember = "Value";
-
-            //Remove ITOPOD for non combat zones
-            ZoneList.Remove(1000);
-            ZoneList.Remove(-1);
-
-            EnemyBlacklistZone.ValueMember = "Key";
-            EnemyBlacklistZone.DisplayMember = "Value";
-            EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
-            EnemyBlacklistZone.SelectedIndex = 0;
-
-            numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
-            moneyPitThresholdError.SetIconAlignment(MoneyPitThreshold, ErrorIconAlignment.MiddleRight);
-
-            yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
-            priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
-            blacklistAddItem.TextChanged += blacklistAddItem_TextChanged;
-            titanAddItem.TextChanged += titanAddItem_TextChanged;
-            GoldItemBox.TextChanged += GoldItemBox_TextChanged;
-            QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
-            WishAddInput.TextChanged += WishAddInput_TextChanged;
-            WishBlacklistAddInput.TextChanged += WishBlacklistAddInput_TextChanged;
-            MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
-
-            _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
-            _priorityControls = new ItemControlGroup(priorityBoostBox, priorityBoostItemAdd, invPrioErrorProvider, priorityBoostLabel, () => Main.Settings.PriorityBoosts, (settings) => Main.Settings.PriorityBoosts = settings);
-            _blacklistControls = new ItemControlGroup(blacklistBox, blacklistAddItem, invBlacklistErrProvider, blacklistLabel, () => Main.Settings.BoostBlacklist, (settings) => Main.Settings.BoostBlacklist = settings);
-            _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
-            _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
-            _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
-            _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
-            _wishBlacklistControls = new ItemControlGroup(WishBlacklist, WishBlacklistAddInput, wishBlacklistErrorProvider, AddWishBlacklistLabel, () => Main.Settings.WishBlacklist, (settings) => Main.Settings.WishBlacklist = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
-            _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
-
-            TryItemBoxTextChanged(_yggControls, out _);
-            TryItemBoxTextChanged(_priorityControls, out _);
-            TryItemBoxTextChanged(_blacklistControls, out _);
-            TryItemBoxTextChanged(_titanControls, out _);
-            TryItemBoxTextChanged(_goldControls, out _);
-            TryItemBoxTextChanged(_questControls, out _);
-            TryItemBoxTextChanged(_wishControls, out _);
-            TryItemBoxTextChanged(_wishBlacklistControls, out _);
-            TryItemBoxTextChanged(_pitControls, out _);
-
-            UseTitanCombat_CheckedChanged(this, null);
-
-            boostPrioUpButton.Text = char.ConvertFromUtf32(8593);
-            boostPrioDownButton.Text = char.ConvertFromUtf32(8595);
-
-            prioUpButton.Text = char.ConvertFromUtf32(8593);
-            prioDownButton.Text = char.ConvertFromUtf32(8595);
-
-            WishUpButton.Text = char.ConvertFromUtf32(8593);
-            WishDownButton.Text = char.ConvertFromUtf32(8595);
-
-            CardSortUp.Text = char.ConvertFromUtf32(8593);
-            CardSortDown.Text = char.ConvertFromUtf32(8595);
-
-            VersionLabel.Text = $"Version: {Main.Version}";
         }
 
         internal void SetTitanGoldBox(SavedSettings newSettings)

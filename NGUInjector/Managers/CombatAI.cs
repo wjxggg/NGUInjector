@@ -75,7 +75,7 @@ namespace NGUInjector.Managers
                 TimeTillNextDamagingAttack = timeTillNextAttack;
             }
 
-            public CombatSnapshot(int zone, float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber)
+            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber)
             {
                 _loopSize = loopSize;
                 _attackNumber = attackNumber % loopSize;
@@ -181,17 +181,17 @@ namespace NGUInjector.Managers
             {
                 //Walderp calls out his move on 2 with no damage, and kills you on 3 if the conditions are not met
                 //This works differently to the other "blockable" special moves and should be handled separately
-                _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 6, _eai.growCount, 3, 2);
+                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 6, _eai.growCount, 3, 2);
             }
             else if (ZoneHelpers.ZoneIsNerd(_zone))
             {
                 //Nerd does a damaging warning on 3 and a big attack on 4
-                _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 8, _eai.growCount, 4, null);
+                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 8, _eai.growCount, 4, null);
             }
             else if (ZoneHelpers.ZoneIsGodmother(_zone))
             {
                 //GM does a damaging warning on 3 and a big attack on 4
-                _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 9, _eai.growCount, 4, null);
+                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 9, _eai.growCount, 4, null);
             }
             else if (ZoneHelpers.ZoneIsExile(_zone))
             {
@@ -231,21 +231,21 @@ namespace NGUInjector.Managers
                         return;
                 }
 
-                _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, loopSize, _eai.growCount, specialMoveNumber, warningMoveNumber);
+                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, loopSize, _eai.growCount, specialMoveNumber, warningMoveNumber);
             }
             else if (!ZoneHelpers.ZoneIsTitan(_zone))
             {
                 if (_enemy.AI == AI.charger)
                 {
-                    _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 6, _eai.GetPV<int>("chargeCooldown"), 5, 3);
+                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 6, _eai.GetPV<int>("chargeCooldown"), 5, 3);
                 }
                 else if (_enemy.AI == AI.rapid)
                 {
-                    _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 15, _eai.GetPV<int>("rapidEffect"), 8, 5);
+                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 15, _eai.GetPV<int>("rapidEffect"), 8, 5);
                 }
                 else if (_enemy.AI == AI.exploder)
                 {
-                    _combatSnapshot = new CombatSnapshot(_zone, _enemyAttackRate, _timeTillAttack, 1, 1, 1, null);
+                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 1, 1, 1, null);
                 }
             }
         }
