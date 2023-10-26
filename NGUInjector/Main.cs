@@ -981,7 +981,7 @@ namespace NGUInjector
                 //    watch.Stop();
                 //}
 
-                if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
+                if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap() || LoadoutManager.CurrentLock == LockType.Titan || DiggerManager.CurrentLock == LockType.Titan)
                 {
                     LoadoutManager.TryTitanSwap();
                     DiggerManager.TryTitanSwap();

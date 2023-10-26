@@ -59,20 +59,6 @@ namespace NGUInjector.Managers
 
         internal static void TryTitanSwap()
         {
-            if (Settings.TitanLoadout.Length == 0 && Settings.GoldDropLoadout.Length == 0)
-                return;
-
-            //Skip if we're currently locked for yggdrasil (although this generally shouldn't happen)
-            if (CurrentLock != LockType.Quest && !CanAcquireOrHasLock(LockType.Titan))
-                return;
-
-            if (CurrentLock == LockType.Quest && ZoneHelpers.AnyTitansSpawningSoon())
-            {
-                SaveTempLoadout();
-                ReleaseLock();
-                _swappedQuestToTitan = true;
-            }
-
             //If we're currently holding the lock
             if (CurrentLock == LockType.Titan)
             {
@@ -99,9 +85,29 @@ namespace NGUInjector.Managers
                 return;
             }
 
+            //Skip if we have no defined titan gear sets
+            if (Settings.TitanLoadout.Length == 0 && Settings.GoldDropLoadout.Length == 0)
+            {
+                return;
+            }
+
+            //Skip if we're currently locked for yggdrasil (although this generally shouldn't happen)
+            if (CurrentLock != LockType.Quest && !CanAcquireOrHasLock(LockType.Titan))
+            {
+                return;
+            }
+
             //No lock currently, check if titans are spawning
             if (ZoneHelpers.AnyTitansSpawningSoon())
             {
+                //If we're questing save Quest gear and go back to that gearset after the titan kill
+                if (CurrentLock == LockType.Quest)
+                {
+                    SaveTempLoadout();
+                    ReleaseLock();
+                    _swappedQuestToTitan = true;
+                }
+
                 Log("Equipping Loadout for Titans");
 
                 //Titans are spawning soon, grab a lock and swap
