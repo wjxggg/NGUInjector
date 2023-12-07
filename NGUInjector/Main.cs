@@ -47,7 +47,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.8.0-rc2";
+        internal const string Version = "3.8.0";
         private static int _furthestZone;
 
         private static string _dir;
@@ -981,7 +981,7 @@ namespace NGUInjector
                 //    watch.Stop();
                 //}
 
-                if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
+                if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap() || LoadoutManager.CurrentLock == LockType.Titan || DiggerManager.CurrentLock == LockType.Titan)
                 {
                     LoadoutManager.TryTitanSwap();
                     DiggerManager.TryTitanSwap();

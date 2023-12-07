@@ -490,6 +490,7 @@ The following types are available:
 - **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 hour and (24 hour - _Target_ minutes) Time rebirths. _Target_ must be at least 1 and no more than 60. Enable "Auto Buy Consumables" to auto purchase Muffins if none are available. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
   - Currently in a challenge
   - Able to rebirth into any challenge defined in the Rebirth Breakpoint
+  - Has not yet beaten Sadistic Troll Challenge 2
   - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
   - Do not have any Muffins and cannot buy more (or is configured to not buy more)
 - **TimeBalancedMuffin** - Same as the Muffin rebirth except will also add the _Target_ minutes to the 24 hour rebirth to try to keep rebirths at the same time each day. _Target_ must be at least 1 and no more than 15.

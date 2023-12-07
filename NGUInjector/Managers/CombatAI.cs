@@ -31,7 +31,7 @@ namespace NGUInjector.Managers
         private readonly bool _blockIsActive;
         private readonly float? _blockTimeLeft;
         private readonly bool _willBlockNextAttack;
-        private readonly bool _willBlockNextTwoAttacks;
+        private readonly bool _willOnlyBlockNextAttack;
 
         private readonly float _parryRemainingCooldown;
 
@@ -165,7 +165,7 @@ namespace NGUInjector.Managers
             _blockIsActive = BlockActive(out _blockTimeLeft);
             //LogDebug($"BlockActive:{_blockIsActive} | TimeLeft:{_blockTimeLeft}");
             _willBlockNextAttack = _blockIsActive && (_blockTimeLeft ?? 0) > _timeTillAttack;
-            _willBlockNextTwoAttacks = _blockIsActive && (_blockTimeLeft ?? 0) > (_timeTillAttack + _enemyAttackRate);
+            _willOnlyBlockNextAttack = _willBlockNextAttack && (_blockTimeLeft ?? 0) < (_timeTillAttack + _enemyAttackRate);
 
             SetCombatSnapshot();
 
@@ -219,7 +219,7 @@ namespace NGUInjector.Managers
                         break;
                     case enemyType.bigBoss9V3:
                         loopSize = 8;
-                        specialMoveNumber = 3;
+                        specialMoveNumber = 4;
                         warningMoveNumber = null;
                         break;
                     case enemyType.bigBoss9V4:
@@ -292,7 +292,7 @@ namespace NGUInjector.Managers
             else
             {
                 //Simulate an attack for testing defensive CD use
-                //LogDebug($"\t\"Attack\"");
+                //LogDebug($"\tAttack");
                 //Main.PlayerController.canUseMove = false;
                 //Main.PlayerController.moveTimer = 0.8f;
                 CombatAttacks();
@@ -375,30 +375,38 @@ namespace NGUInjector.Managers
 
         public bool BlockableEnemyPreCombat()
         {
-            //LogDebug($"AI:{_enemy.AI} | SpecialIn:{_combatSnapshot.SpecialMoveInNumAttacks} | TimeToSpecial:{_combatSnapshot.TimeTillSpecialMove} | TimeToAttack:{_timeTillAttack}");
-            //LogDebug($"BlockCD:{_blockRemainingCooldown} | ParalyzeCD:{_paralyzeRemainingCooldown} | ParryCD:{_parryRemainingCooldown}");
+            //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"");
+            //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"SpecialIn:{_combatSnapshot.SpecialMoveInNumAttacks} | TimeToSpecial:{_combatSnapshot.TimeTillSpecialMove} | TimeToAttack:{_timeTillAttack}");
+            //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"BlockCD:{_blockRemainingCooldown} | ParalyzeCD:{_paralyzeRemainingCooldown} | ParryCD:{_parryRemainingCooldown}");
 
             bool canBlockBeforeHold = false;
             if (_moreBlockParry && _combatSnapshot.SpecialMoveInNumAttacks > _attacksToBlock && !_combatSnapshot.NextAttackNoDamage && !_combatSnapshot.AttackAfterNextNoDamage && (_blockRemainingCooldown + 0.1f) < _timeTillAttack)
             {
                 float projectedTimeLeftOnBlockCooldown = _character.blockCooldown();
-                //Amount of time before the first (blocked) attack
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - Initial:{projectedTimeLeftOnBlockCooldown}");
+                //Amount of time between when block is first used and the first attack
                 projectedTimeLeftOnBlockCooldown -= Mathf.Min(_timeTillAttack, Mathf.Max(_optimalTimeToBlock, _blockRemainingCooldown));
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After 1st attack:{projectedTimeLeftOnBlockCooldown}");
                 //Amount of time for any other blocked attacks
                 projectedTimeLeftOnBlockCooldown -= _enemyAttackRate * (_attacksToBlock - 1);
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After other attacks:{projectedTimeLeftOnBlockCooldown}");
                 //Amount of time due to paralyze
                 if (ParalyzeUnlocked() && (_paralyzeRemainingCooldown + 0.1f) < _combatSnapshot.TimeTillSpecialMove && (projectedTimeLeftOnBlockCooldown - _paralyzeRemainingCooldown) > 2.0f)
                 {
                     projectedTimeLeftOnBlockCooldown -= 3.0f;
+                    //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After paralyze:{projectedTimeLeftOnBlockCooldown}");
                 }
                 //Amount of time for the any attacks between the last block and the special attack
                 projectedTimeLeftOnBlockCooldown -= _enemyAttackRate * ((_combatSnapshot.SpecialMoveInNumAttacks.Value - 1) - _attacksToBlock);
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After any additional attacks:{projectedTimeLeftOnBlockCooldown}");
                 //The most time we can wait before the special attack fires, give a bit of wiggle room for combat looping
-                projectedTimeLeftOnBlockCooldown -= (_enemyAttackRate * -0.1f);
+                projectedTimeLeftOnBlockCooldown -= (_enemyAttackRate * 0.9f);
 
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - Final result:{projectedTimeLeftOnBlockCooldown}");
                 canBlockBeforeHold = projectedTimeLeftOnBlockCooldown < 0.0f;
             }
 
+            //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"CanBlockBeforeHold:{canBlockBeforeHold}");
             _combatSnapshot.HoldBlock = (!canBlockBeforeHold && _combatSnapshot.TimeTillSpecialMove < _character.blockCooldown() + 0.3f) || _combatSnapshot.NextAttackSpecialMove || _combatSnapshot.NextAttackNoDamage || _combatSnapshot.AttackAfterNextNoDamage;
 
             if (_combatSnapshot.SpecialMoveInNumAttacks == 1)
@@ -414,6 +422,7 @@ namespace NGUInjector.Managers
                     //Bypass all other combat logic to wait until the right time to block
                     if (_blockRemainingCooldown < _globalMoveCooldown && _blockRemainingCooldown < _timeTillAttack && _timeTillAttack < (_optimalTimeToBlock + _globalMoveCooldown))
                     {
+                        //LogDebug($"Waiting for special.... TimeToAttack:{_combatSnapshot.TimeTillNextDamagingAttack}");
                         if (_ac.blockMove.button.IsInteractable() && _timeTillAttack < _optimalTimeToBlock)
                         {
                             //LogDebug($"\tSPECIAL BLOCK");
@@ -518,31 +527,46 @@ namespace NGUInjector.Managers
 
         private bool UseDefensiveCooldowns()
         {
-            //Prioritize Block unless its being held for a special attack
+            //Each defensive move is broken down into 3 logic checks:
+            //  1) Should - Do we want to use the move?
+            //  2) Delay - Do we want to use the move, but the timing isn't right? If so delay usage.
+            //  3) WaitFor - Do we need to delay, or do we want to use the move and it will come off cooldown before the next enemy attack? If so, is the remaining cooldown less than the global move cooldown?
+            //               If all of those conditions are met and it is not the best time to use the move, then don't allow another action to take place until we can use the move.
+
+            // **Block**
+            //Should - Always Block unless its being held for a special attack
             bool shouldBlock = !_combatSnapshot.HoldBlock;
-            //Delay Block if its above the optimal time or if we can squeeze in a block before the next attack
-            bool delayBlock = _combatSnapshot.TimeTillNextDamagingAttack > _optimalTimeToBlock;
-            delayBlock |= (_blockRemainingCooldown > 0 && (_blockRemainingCooldown + 0.1f) < _combatSnapshot.TimeTillNextDamagingAttack);
+            //Delay - If the time till the next attack is above the optimal time for blocking multiple attacks
+            bool delayBlock = shouldBlock && _combatSnapshot.TimeTillNextDamagingAttack > _optimalTimeToBlock;
+            //WaitFor - The best time to block is immediately after the optimal time to block (..duh)
+            bool waitForBlock = (delayBlock || (shouldBlock && (_blockRemainingCooldown + 0.05f) < _combatSnapshot.TimeTillNextDamagingAttack)) && _blockRemainingCooldown < _globalMoveCooldown && (_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _optimalTimeToBlock;
+            //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"TimeLeftAfterMove:{_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown} | OptimalTime:{_optimalTimeToBlock} | Result:{(_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _optimalTimeToBlock}");
 
-            //Use Paralyze if the next attack will not be blocked and if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
-            bool shouldParalyze = ParalyzeUnlocked() && !_willBlockNextAttack && _blockRemainingCooldown > 2.0f;
-            //Delay Paralyze if we're only blocking one more attack and Block's cooldown will have at least two seconds left after the next attack
-            bool delayParalyze = _willBlockNextAttack && !_willBlockNextTwoAttacks && (_blockRemainingCooldown - _timeTillAttack) > 2.0f;
+            // **Paralyze**
+            //Should - Paralyze if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
+            bool shouldParalyze = ParalyzeUnlocked() && _blockRemainingCooldown > 2.0f;
+            //Delay - If we're blocking the next attack (never Paralyze an attack that can be blocked)
+            bool delayParalyze = shouldParalyze && _willBlockNextAttack;
+            //WaitFor - The best time to paralyze is immediately after the final blocked attack occurs
+            bool waitForParalyze = (delayParalyze || (shouldParalyze && (_paralyzeRemainingCooldown + 0.05f) < _combatSnapshot.TimeTillNextDamagingAttack)) && _paralyzeRemainingCooldown < _globalMoveCooldown && _willOnlyBlockNextAttack && _combatSnapshot.TimeTillNextDamagingAttack < _globalMoveCooldown;
 
-            //Use Parry if the next attack will not be blocked, the next attacks are not special titan cases, and Block/Paralyze will not be available
-            bool shouldParry = ParryUnlocked() && !_willBlockNextAttack && !_combatSnapshot.NextAttackNoDamage && !_combatSnapshot.NextAttackSpecialMove
-                && (_combatSnapshot.HoldBlock || ((_blockRemainingCooldown + 0.1f) > _combatSnapshot.TimeTillNextDamagingAttack && (_paralyzeRemainingCooldown + 0.1f) > _combatSnapshot.TimeTillNextDamagingAttack));
-            //Delay Parry if we're only blocking one more attack and Paralyze will not fire before the next attack
-            bool delayParry = _willBlockNextAttack && !_willBlockNextTwoAttacks && (_combatSnapshot.HoldBlock || !delayParalyze);
+            // **Parry**
+            //Should - Parry if the next attacks are not special moves, and Block/Paralyze is not available
+            bool shouldParry = ParryUnlocked() && !ParryActive() && !_combatSnapshot.NextAttackNoDamage && !_combatSnapshot.NextAttackSpecialMove && (_combatSnapshot.HoldBlock || (_blockRemainingCooldown > _combatSnapshot.TimeTillNextDamagingAttack && _paralyzeRemainingCooldown > _combatSnapshot.TimeTillNextDamagingAttack));
+            //Delay - If we're blocking the next attack (never Parry an attack that can be blocked)
+            bool delayParry = shouldParry && _willBlockNextAttack;
+            //WaitFor - The best time to parry is immediately after the final blocked attack occurs
+            bool waitForParry = (delayParry || (shouldParry && (_parryRemainingCooldown + 0.05f) < _combatSnapshot.TimeTillNextDamagingAttack)) && _parryRemainingCooldown < _globalMoveCooldown && _willOnlyBlockNextAttack && _combatSnapshot.TimeTillNextDamagingAttack < _globalMoveCooldown;
 
             bool shouldBlockAndParry = _moreBlockParry || (!UltimateBuffActive(out _) && !DefenseBuffActive(out _));
 
             //Optimal cycle to spread out Defensive cooldowns: Block > Paralyze > Block > Parry
             if (shouldBlockAndParry)
             {
-                //LogDebug($"WillBlock:{_willBlockNextAttack} | WillParry:{ParryActive()} | HoldBlock:{_combatSnapshot.HoldBlock} | TimeToDamagingAttack:{_combatSnapshot.TimeTillNextDamagingAttack}");
-                //LogDebug($"ShouldBlock:{shouldBlock} | ShouldParalyze:{shouldParalyze} | ShouldParry:{shouldParry}");
-                //LogDebug($"DelayBlock:{delayBlock} | DelayParalyze:{delayParalyze} | DelayParry:{delayParry}");
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"WillBlock:{_willBlockNextAttack} | WillParry:{ParryActive()} | HoldBlock:{_combatSnapshot.HoldBlock} | TimeToDamagingAttack:{_combatSnapshot.TimeTillNextDamagingAttack}");
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ShouldBlock:{shouldBlock} | ShouldParalyze:{shouldParalyze} | ShouldParry:{shouldParry}");
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"DelayBlock:{delayBlock} | DelayParalyze:{delayParalyze} | DelayParry:{delayParry}");
+                //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"WaitBlock:{waitForBlock} | WaitParalyze:{waitForParalyze} | WaitParry:{waitForParry}");
 
                 //Block is the most critical defensive cooldown. Try to use as much as possible and as close to the optimal time as possible to block multiple attacks.
                 if (shouldBlock && !delayBlock)
@@ -587,25 +611,18 @@ namespace NGUInjector.Managers
                     }
                 }
 
-                delayBlock = false;
-                delayParalyze = false;
-                delayParry = false;
+                waitForBlock = false;
+                waitForParalyze = false;
+                waitForParry = false;
             }
-
-            //If we paused Block usage to cover multiple attacks and Block will be ready before the next player attack, delay further action until Block is cast
-            bool waitForBlock = shouldBlock && delayBlock && (_blockRemainingCooldown + 0.1f) < _combatSnapshot.TimeTillNextDamagingAttack && _combatSnapshot.TimeTillNextDamagingAttack < (_optimalTimeToBlock + _globalMoveCooldown);
-
-            //If Block is running and Paralyze will be ready before the next player attack, delay further action until Paralyze is cast
-            bool waitForParalyze = shouldParalyze && delayParalyze && _paralyzeRemainingCooldown < _globalMoveCooldown && _timeTillAttack < _globalMoveCooldown;
-
-            //If Block is running and Paralyze will NOT be ready before the next player attack, delay further action until Parry is cast
-            bool waitForParry = shouldParry && delayParry && _parryRemainingCooldown < _globalMoveCooldown && _combatSnapshot.TimeTillNextDamagingAttack < _globalMoveCooldown;
 
             //LogDebug($"WaitBlock:{waitForBlock} | WaitParalyze:{waitForParalyze} | WaitParry:{waitForParry}");
 
             //Defensive cooldowns are critical to staying alive, its worth delaying combat for fractions of a second to optimize uptime
             if (waitForBlock || waitForParalyze || waitForParry)
             {
+                //LogDebug($"Waiting.... TimeToAttack:{_combatSnapshot.TimeTillNextDamagingAttack} | WaitBlock:{waitForBlock} | WaitParalyze:{waitForParalyze} | WaitParry:{waitForParry}");
+                //LogDebug($"            BlockCD:{_blockRemainingCooldown} | ParalyzeCD:{_paralyzeRemainingCooldown} | ParryCD:{_parryRemainingCooldown}");
                 return true;
             }
 
