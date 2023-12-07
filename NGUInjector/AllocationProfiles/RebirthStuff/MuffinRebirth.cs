@@ -36,7 +36,7 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
 
             //Do 24 hour Rebirths if we have any current challenges, we havent yet unlocked 24hr muffins from TC 2, or if the 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
             if (CharObj.challenges.inChallenge || AnyChallengesValid() ||
-                Main.Character.allChallenges.trollChallenge.sadisticCompletions() >= 2 ||
+                Main.Character.allChallenges.trollChallenge.sadisticCompletions() < 2 ||
                 Main.Character.adventure.itopod.perkLevel[21] < Main.Character.adventureController.itopod.maxLevel[21] || Main.Character.beastQuest.quirkLevel[13] < Main.Character.beastQuestPerkController.maxLevel[13])
             {
                 _shouldMuffin = false;
@@ -51,8 +51,8 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             //Cycle between 24 and 23 hours  (24h -> Activate Muffin if possible -> Rebirth -> 23h -> Rebirth)
             if (_shouldMuffin)
             {
-                double longTime = _24h + (BalanceTime ? MuffinMinuteBuffer : 0);
-                double shortTime = _24h - MuffinMinuteBuffer;
+                double longTime = _24h + (BalanceTime ? (MuffinMinuteBuffer * 60) : 0);
+                double shortTime = _24h - (MuffinMinuteBuffer * 60);
 
                 bool muffinIsActive = (_muffinConsumable.GetIsActive() ?? false);
                 double muffinTimeLeft = (_muffinConsumable.GetTimeLeft() ?? 0);
