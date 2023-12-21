@@ -62,6 +62,7 @@ namespace NGUInjector.Managers
             public bool NextAttackNoDamage { get; } = false;
             public bool AttackAfterNextNoDamage { get; } = false;
             public float TimeTillNextDamagingAttack { get; } = 0f;
+            public bool IsAttackingRapidly { get; } = false;
 
             public bool EnemyHasBlockableSpecialMove { get; } = false;
             public bool HoldBlock { get; set; } = false;
@@ -75,7 +76,7 @@ namespace NGUInjector.Managers
                 TimeTillNextDamagingAttack = timeTillNextAttack;
             }
 
-            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber)
+            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber, bool isAttackingRapidly = false)
             {
                 _loopSize = loopSize;
                 _attackNumber = attackNumber % loopSize;
@@ -91,6 +92,8 @@ namespace NGUInjector.Managers
                 AttackAfterNextNoDamage = _warningMoveNumber.HasValue && SpecialMoveInNumAttacks <= attacksBetweenSpecialAndWarning + 2 && SpecialMoveInNumAttacks > 2;
 
                 TimeTillNextDamagingAttack = NextAttackNoDamage ? TimeTillSpecialMove.Value : timeTillNextAttack;
+
+                IsAttackingRapidly = isAttackingRapidly;
 
                 EnemyHasBlockableSpecialMove = true;
                 HoldBlock = NextAttackNoDamage || AttackAfterNextNoDamage;
@@ -191,7 +194,7 @@ namespace NGUInjector.Managers
             else if (ZoneHelpers.ZoneIsGodmother(_zone))
             {
                 //GM does a damaging warning on 3 and a big attack on 4
-                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 9, _eai.growCount, 4, null);
+                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 9, _eai.growCount, 4, null, _eai.GetPV<bool>("explosionMode"));
             }
             else if (ZoneHelpers.ZoneIsExile(_zone))
             {
@@ -241,7 +244,7 @@ namespace NGUInjector.Managers
                 }
                 else if (_enemy.AI == AI.rapid)
                 {
-                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 15, _eai.GetPV<int>("rapidEffect"), 8, 5);
+                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 15, _eai.GetPV<int>("rapidEffect"), 8, 5, _eai.GetPV<bool>("rapidMode"));
                 }
                 else if (_enemy.AI == AI.exploder)
                 {
@@ -444,7 +447,7 @@ namespace NGUInjector.Managers
 
         private bool ApplyCombatBuffs()
         {
-            if (!ZoneHelpers.ZoneIsTitan(_zone) && _enemy.curHP / _enemy.maxHP < .2)
+            if (!ZoneHelpers.ZoneIsTitan(_zone) && _enemy.curHP / _enemy.maxHP < .1)
             {
                 return false;
             }
@@ -543,8 +546,8 @@ namespace NGUInjector.Managers
             //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"TimeLeftAfterMove:{_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown} | OptimalTime:{_optimalTimeToBlock} | Result:{(_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _optimalTimeToBlock}");
 
             // **Paralyze**
-            //Should - Paralyze if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds)
-            bool shouldParalyze = ParalyzeUnlocked() && _blockRemainingCooldown > 2.0f;
+            //Should - Paralyze if it will take off at least 2 seconds from block's cooldown (optimally it will take off all 3 seconds) and the enemy isnt in a rapid attack mode
+            bool shouldParalyze = ParalyzeUnlocked() && _blockRemainingCooldown > 2.0f && !_combatSnapshot.IsAttackingRapidly;
             //Delay - If we're blocking the next attack (never Paralyze an attack that can be blocked)
             bool delayParalyze = shouldParalyze && _willBlockNextAttack;
             //WaitFor - The best time to paralyze is immediately after the final blocked attack occurs
@@ -603,7 +606,7 @@ namespace NGUInjector.Managers
             else
             {
                 //Paralyze pauses the attack timer, if we're not blocking just use it when ready
-                if (!_willBlockNextAttack)
+                if (!_willBlockNextAttack && !_combatSnapshot.IsAttackingRapidly)
                 {
                     if (CastParalyze(_useOhShitInsteadOfParalyze))
                     {
