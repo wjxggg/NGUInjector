@@ -122,7 +122,7 @@ namespace NGUInjector.Managers
                     Settings.DoGoldSwap = false;
                     //LogDebug("Gold Gear swap");
                 }
-                else
+                else if(ZoneHelpers.ShouldRunTitanLoadout())
                 {
                     Log("Equipping Titan Loadout");
                     ChangeGear(Settings.TitanLoadout);

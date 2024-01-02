@@ -100,6 +100,7 @@ namespace NGUInjector
         private ItemControlGroup _wishControls;
         private ItemControlGroup _wishBlacklistControls;
         private ItemControlGroup _pitControls;
+        private ItemControlGroup _cookingControls;
 
         //TODO: Implement missing manual features:
         //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
@@ -209,6 +210,7 @@ namespace NGUInjector
                 WishAddInput.TextChanged += WishAddInput_TextChanged;
                 WishBlacklistAddInput.TextChanged += WishBlacklistAddInput_TextChanged;
                 MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
+                CookingLoadoutItem.TextChanged += CookingLoadoutBox_TextChanged;
 
                 _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
                 _priorityControls = new ItemControlGroup(priorityBoostBox, priorityBoostItemAdd, invPrioErrorProvider, priorityBoostLabel, () => Main.Settings.PriorityBoosts, (settings) => Main.Settings.PriorityBoosts = settings);
@@ -219,6 +221,7 @@ namespace NGUInjector
                 _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
                 _wishBlacklistControls = new ItemControlGroup(WishBlacklist, WishBlacklistAddInput, wishBlacklistErrorProvider, AddWishBlacklistLabel, () => Main.Settings.WishBlacklist, (settings) => Main.Settings.WishBlacklist = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
                 _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
+                _cookingControls = new ItemControlGroup(cookingLoadoutBox, CookingLoadoutItem, cookingErrorProvider, cookingItemLabel, () => Main.Settings.CookingLoadout, (settings) => Main.Settings.CookingLoadout = settings);
 
                 TryItemBoxTextChanged(_yggControls, out _);
                 TryItemBoxTextChanged(_priorityControls, out _);
@@ -229,6 +232,7 @@ namespace NGUInjector
                 TryItemBoxTextChanged(_wishControls, out _);
                 TryItemBoxTextChanged(_wishBlacklistControls, out _);
                 TryItemBoxTextChanged(_pitControls, out _);
+                TryItemBoxTextChanged(_cookingControls, out _);
 
                 UseTitanCombat_CheckedChanged(this, null);
 
@@ -406,9 +410,13 @@ namespace NGUInjector
             TrashQuality.SelectedIndex = newSettings.CardsTrashQuality;
             TrashTier.SelectedIndex = newSettings.TrashCardCost;
             TrashAdventureCards.Checked = newSettings.TrashAdventureCards;
+            TrashProtectedCards.Checked = newSettings.TrashProtectedCards;
             AutoCastCards.Checked = newSettings.AutoCastCards;
             TrashChunkers.Checked = newSettings.TrashChunkers;
             SortCards.Checked = newSettings.CardSortEnabled;
+
+            ManageCooking.Checked = newSettings.ManageCooking;
+            ManageCookingLoadout.Checked = newSettings.ManageCookingLoadouts;
 
             if (newSettings.DontCastCardType != null)
             {
@@ -561,6 +569,19 @@ namespace NGUInjector
             else
             {
                 BlacklistedBosses.Items.Clear();
+            }
+
+            temp = newSettings.CookingLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
+            if (temp.Count > 0)
+            {
+                cookingLoadoutBox.DataSource = null;
+                cookingLoadoutBox.DataSource = new BindingSource(temp, null);
+                cookingLoadoutBox.ValueMember = "Key";
+                cookingLoadoutBox.DisplayMember = "Value";
+            }
+            else
+            {
+                cookingLoadoutBox.Items.Clear();
             }
 
             Refresh();
@@ -1647,6 +1668,12 @@ namespace NGUInjector
             Main.Settings.TrashAdventureCards = TrashAdventureCards.Checked;
         }
 
+        private void TrashProtectedCards_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.TrashProtectedCards = TrashProtectedCards.Checked;
+        }
+
         private void trashCardCost_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
@@ -1820,5 +1847,40 @@ namespace NGUInjector
                 Main.Character.menuSwapper.swapMenu(Main.Character.waldoUnlocker.currentMenu);
             }
         }
+
+        private void ManageCooking_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageCooking = ManageCooking.Checked;
+        }
+
+        private void ManageCookingLoadout_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Main.Settings.ManageCookingLoadouts = ManageCookingLoadout.Checked;
+        }
+
+        private void CookingLoadoutBox_TextChanged(object sender, EventArgs e)
+        {
+            TryItemBoxTextChanged(_cookingControls, out _);
+        }
+
+        private void CookingLoadoutItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            ItemBoxKeyDown(e, _cookingControls);
+        }
+
+        private void cookingAddButton_Click(object sender, EventArgs e)
+        {
+            ItemListAdd(_cookingControls);
+        }
+
+        private void cookingRemoveButton_Click(object sender, EventArgs e)
+        {
+
+            ItemListRemove(_cookingControls);
+        }
+
+
     }
 }

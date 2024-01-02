@@ -116,6 +116,7 @@ namespace NGUInjector
         [SerializeField] private int _cardsTrashQuality;
         [SerializeField] private bool _autoCastCards;
         [SerializeField] private bool _trashAdventureCards;
+        [SerializeField] private bool _trashProtectedCards;
         [SerializeField] private string[] _cardSortOrder;
         [SerializeField] private bool _cardSortEnabled;
         [SerializeField] private int _trashCardCost;
@@ -1432,6 +1433,17 @@ namespace NGUInjector
             {
                 if (value == _trashAdventureCards) return;
                 _trashAdventureCards = value;
+                SaveSettings();
+            }
+        }
+
+        public bool TrashProtectedCards
+        {
+            get => _trashProtectedCards;
+            set
+            {
+                if (value == _trashProtectedCards) return;
+                _trashProtectedCards = value;
                 SaveSettings();
             }
         }
