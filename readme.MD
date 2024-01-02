@@ -39,13 +39,11 @@ Saving settings.json, zoneOverrides.json, or any profile will automatically relo
 
 # Settings.json Configurations
 
-With the latest fork, many changes have been added that aren't found in the GUI.
+Settings in the GUI can be managed directly in the underlying settings file if desired. This can be helpful when pasting in loadouts from the Gear Optimizer. To access these settings, open the **settings.json** file in your AppData NGUInjector folder mentioned above.
 
-To access these settings, open the **settings.json** (in your AppData NGUInjector folder, mentioned above) and scroll down to find the following configuration options:
+There should be only one setting not found in the GUI and *must* be managed directly:
 
-- **\_manageCooking** - Set this to true to have the injector optimize your cooking efficiency
-- **\_manageCookingLoadouts** - Set this to true to have the injector swap to a Cooking loadout when eating meals
-- **\_cookingLoadout** - Assign your cooking loadout here. Follow similar pattern as other loadout fields (example: [448, 447, 444, 170, 263, 169, 128, 243, 136, 91, 446, 137, 256, 265, 266, 267, 268, 269])
+- **_debugAllocation** - Will enable debug logging to a separate file of various allocation decisions made by the injector
 
 # Log Parsing
 
@@ -60,7 +58,7 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General Settings](https://i.imgur.com/636AxqC.png)
+![General](https://i.imgur.com/5k0KmJm.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
@@ -77,7 +75,7 @@ An in game menu can be opened using the F1 button.
 
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation Settings](https://i.imgur.com/vPnH6UW.png)
+![Allocation](https://i.imgur.com/FvoQLZF.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
@@ -108,7 +106,7 @@ An in game menu can be opened using the F1 button.
 - **Guff B** - Number of +levels to cast Guff B at
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/vyLJKFI.png)
+![Yggdrasil](https://i.imgur.com/EksfVj0.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
@@ -117,7 +115,7 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - Edit the loadout used for harvest yggdrasil. Add items using the box in the bottom.
 - **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths
 
-![Inventory](https://i.imgur.com/Zd7zD9C.png)
+![Inventory](https://i.imgur.com/4smaL33.png)
 
 - **Manage Inventory** - When enabled, the following features will be enabled
   - **Auto Boost Merging** - If a boost is locked, boosts will automatically be merged until the boost hits 100.
@@ -137,12 +135,12 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/D4ehZ9b.png)
+![Titans](https://i.imgur.com/a7CNoqN.png)
 
-- **Swap Loadout for Titans** - Equip the gear in TitanLoadout right before any titan marked for swapping
+- **Manage Titans** - Turns on combat and gear swapping for titans.
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
-- **Loadout** - The gear to equip when autokilling titans.
-- **Titans to Swap For** - Mark titans you wish to swap gear for
+- **Loadout** - The gear to equip when autokilling or fighting titans.
+- **Titans to Manage** - Mark titans you wish to fight and swap gear for
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP, THE GODMOTHER, and THE EXILE will ALWAYS use manual combat regardless of this setting*
 - **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each titan attempt and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between titan kills attempts.
@@ -152,10 +150,9 @@ An in game menu can be opened using the F1 button.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
 - **Locate Walderp** - If Walderp is hiding, will take you to the menu he's currently in.
 
-![Adventure](https://i.imgur.com/fRx8Y8v.png)
+![Adventure](https://i.imgur.com/91ri7DG.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
-- **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
 
 - **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
 - **Recover HP** - If enabled, will recover HP in safe zone between kills
@@ -164,10 +161,12 @@ An in game menu can be opened using the F1 button.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP and THE GODMOTHER will ALWAYS use manual combat regardless of this setting*
-- **Target Zone** - The target zone to snipe/do combat in. ITOPOD is at the bottom of the list.
+
+- **Target Zone** - The target zone to snipe/do combat in. ITOPOD is at the bottom of the list. If the target zone is a titan zone, will idle in ITOPOD until the Titan is about to spawn. Also, will use combat settings/gear defined in the Titans tab even if the Manage Titans flag is disabled.
+- **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
 - **Allow Fallthrough** - If set to true, combat will use the highest unlocked zone you have until the target zone is unlocked.
 - **ITOPOD** - Equivalent to setting target zone to ITOPOD, just a quicker option
-- **Titans** - Will move you to each Titan Zone enabled in the Titans and Gold tabs when the Titan is about to spawn. Higher level titans will be fought first. Uses the non-ITOPOD combat settings.
+- **Titans** - Will move you to each Titan enabled in the Titans and/or Gold tabs when the Titan is about to spawn. Higher level titans will be fought first, Gold loadouts take priority. Uses the non-ITOPOD combat settings unless Titan Combat Settings are enabled in the Titans tab.
 
 - **ITOPOD Settings** - Settings below this apply only to ITOPOD combat
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone.
@@ -180,23 +179,25 @@ An in game menu can be opened using the F1 button.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
-![Gold](https://i.imgur.com/WkQhXXR.png)
+![Gold](https://i.imgur.com/CAZvwq9.png)
 
 - **Enable Gold Management** - If turned off, will disable all gold swap logic
 - **Do Gold Snipe** - If checked, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
 - **Resnipe Time** - Set this value to re-enable gold snipe at a certain time during your rebirth. Best set to after AT is completed in order to get a higher zone.
 - **CBlock Mode** - If checked, will automatically gold snipe every new zone that is unlocked. Useful for challenge blocks where zones sporadically become available.
 - **Loadout** - Items to use when swapping for gold loadout.
-- **Titans to Swap For** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
+- **Titans to Gold Snipe** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/GXqG2It.png)
+![Quests](https://i.imgur.com/URjSuL1.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
 - **Allow Major Quests**
   - If this option is enabled, when major quests are available they will be accepted and automation will manually farm the items from the appropriate zone
   - If this option is disabled, major quests will not be accepted.
   - When no major quests are available, minor quests will be accepted and idled.
+  - Manual questing will pause while titan combat is occurring
+  - Manual questing will NOT occur if a zone is currently being sniped in the Adventure tab.
 - **Use Butter on Majors** - If enabled will attempt to butter major quests
 - **Manual Minors** - If enabled will manual minor quests as well as majors
 - **Use Butter on Minors** - If enabled will attempt to butter minor quests
@@ -209,21 +210,21 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 
-![Wishes](https://i.imgur.com/SbgX3hk.png)
+![Wishes](https://i.imgur.com/g8nsInJ.png)
 
 - **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
 - **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
 - **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
 - **Blacklist Wishes** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities. Supersedes Priority list if the same wish is in both lists.
 
-![The Pit](https://i.imgur.com/azmHcTH.png)
+![The Pit](https://i.imgur.com/vXvkQPT.png)
 
 - **Auto Daily Spin** - Automatically do daily spin and log the result to the loot.log file
 - **Auto Money Pit** - Automatically throw money into the money pit if the Money Pit Threshold is met. Logs the result to the loot.log file
 - **Money Pit Threshold** - The amount of gold to wait for to throw gold into the money pit. Accepts scientific notation (ex: 1E+28)
 - **Loadout** - Items to equip before throwing money in the pit
 
-![Cards](https://i.imgur.com/P1ng5D7.png)
+![Cards](https://i.imgur.com/b5G9O1Z.png)
 
 - **Manage Mayo** - Prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
 - **Auto Cast Cards** - Cast any card that is not trashed according to your settings.
@@ -247,9 +248,16 @@ This will place any protected cards first. For all the protected cards, it will 
 
 - **Auto Trash Cards** - Automatically yeet cards according to the settings below.
 - **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of settings.
+- **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of settings.
 - **Trash Cards of XXX quality/cost and below** - Yeet cards which are at or below the specified quality/cost.
 - **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when on the Always Trash List. If not checked, BigChonker will not be yeeted unless settings specify you should Trash ALL BigChonker cards in the quality option.
 - **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
+
+![Cooking](https://i.imgur.com/2pgJoUZ.png)
+
+- **Manage Cooking** - Set this to true to have the injector optimize your cooking efficiency
+- **Swap Loadout for Cooking** - Set this to true to have the injector swap to a Cooking loadout when eating meals
+- **Loadout** - Items to equip before eating
 
 # Allocation
 

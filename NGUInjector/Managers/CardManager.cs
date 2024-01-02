@@ -11,7 +11,6 @@ namespace NGUInjector.Managers
     {
         private readonly Character _character;
         private readonly int _maxManas;
-        private Cards _cards;
         private CardsController _cardsController;
         private readonly IDictionary<cardBonus, float> _cardValues = new Dictionary<cardBonus, float>();
 
@@ -20,7 +19,6 @@ namespace NGUInjector.Managers
             try
             {
                 _character = Main.Character;
-                _cards = _character.cards;
                 _cardsController = _character.cardsController;
                 _maxManas = _character.cardsController.maxManaGenSize();
                 foreach (cardBonus bonus in Enum.GetValues(typeof(cardBonus)))
@@ -45,12 +43,12 @@ namespace NGUInjector.Managers
                 int lowestCount = int.MaxValue;
                 Mana lowestProgress = manas[0];
                 bool balanceMayo = true;
-                if (_cards.cards.Count > 0)
+                if (_character.cards.cards.Count > 0)
                 {
-                    Card _card = _cards.cards[0];
+                    Card card = _character.cards.cards[0];
                     for (int i = 0; i < manas.Count; i++)
                     {
-                        if (manas[i].amount < _card.manaCosts[i])
+                        if (manas[i].amount < card.manaCosts[i])
                         {
                             balanceMayo = false;
                             break;
@@ -58,12 +56,12 @@ namespace NGUInjector.Managers
                     }
                     for (int i = 0; i < manas.Count && !balanceMayo; i++)
                     {
-                        if (manas[i].amount >= _card.manaCosts[i] && manas[i].running)
+                        if (manas[i].amount >= card.manaCosts[i] && manas[i].running)
                         {
                             _cardsController.toggleManaGen(i);
                             i = 0;
                         }
-                        if (manas[i].amount < _card.manaCosts[i] && !manas[i].running && CurTogg() < _maxManas) _cardsController.toggleManaGen(i);
+                        if (manas[i].amount < card.manaCosts[i] && !manas[i].running && CurTogg() < _maxManas) _cardsController.toggleManaGen(i);
                     }
                 }
 
@@ -110,63 +108,65 @@ namespace NGUInjector.Managers
             }
         }
 
+        public void TrashCard(int index)
+        {
+            if (_character.cards.cards[index].isProtected)
+            {
+                _character.cards.cards[index].isProtected = false;
+            }
+            _cardsController.trashCard(index);
+        }
+
         public void TrashCards()
         {
             try
             {
                 if (Main.Settings.TrashCards)
                 {
-                    _cards = Main.Character.cards;
-                    if (_cards.cards.Count > 0)
+                    var cards = _character.cards.cards;
+                    if (cards.Count > 0)
                     {
-                        int id = 0;
-                        while (id < _cards.cards.Count)
+                        int index = (cards.Count - 1);
+                        while (index >= 0)
                         {
-                            Card _card = _cards.cards[id];
+                            Card card = cards[index];
 
-                            if (_card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards)
+                            if ((card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards) && (!card.isProtected || Main.Settings.TrashProtectedCards))
                             {
-                                if (_card.type == cardType.end)
+                                if (card.type == cardType.end)
                                 {
-                                    if (Main.Character.inventory.accessories.Any(c => c.id == 492))
+                                    if (_character.inventory.inventory.Any(c => c.id == 492))
                                     {
-                                        _cardsController.trashCard(id);
                                         Main.LogCard($"Trashed Card: Bonus Type: END, due to already having the END piece");
-                                        continue;
+                                        TrashCard(index);
                                     }
-                                    else if (_cards.cards.Count(c => c.type == cardType.end) > 1)
+                                    else if (cards.Count(c => c.type == cardType.end) > 1)
                                     {
-                                        _cardsController.trashCard(id);
                                         Main.LogCard($"Trashed Card: Bonus Type: END, due to already having one in the cards list");
-                                        continue;
+                                        TrashCard(index);
                                     }
                                 }
-                                else if ((int)_cards.cards[id].cardRarity <= Main.Settings.CardsTrashQuality - 1)
+                                else if ((int)cards[index].cardRarity <= Main.Settings.CardsTrashQuality - 1)
                                 {
-                                    Main.LogCard($"Trashed Card: Cost: {_card.manaCosts.Sum()} Rarity: {_card.cardRarity} Bonus Type: {_card.bonusType}, due to Quality settings");
-                                    if (_card.isProtected) _card.isProtected = false;
-                                    _cardsController.trashCard(id);
-                                    continue;
+                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Quality settings");
+                                    TrashCard(index);
                                 }
-                                else if (_cards.cards[id].manaCosts.Sum() <= Main.Settings.TrashCardCost)
+                                else if (cards[index].manaCosts.Sum() <= Main.Settings.TrashCardCost)
                                 {
-                                    Main.LogCard($"Trashed Card: Cost: {_card.manaCosts.Sum()} Rarity: {_card.cardRarity} Bonus Type: {_card.bonusType}, due to Cost settings");
-                                    if (_card.isProtected) _card.isProtected = false;
-                                    _cardsController.trashCard(id);
-                                    continue;
+                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Cost settings");
+                                    TrashCard(index);
                                 }
-                                else if (Main.Settings.DontCastCardType.Contains(_card.bonusType.ToString()))
+                                else if (Main.Settings.DontCastCardType.Contains(card.bonusType.ToString()))
                                 {
-                                    if (_card.cardRarity != rarity.BigChonker || _card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)
+                                    if (card.cardRarity != rarity.BigChonker || card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)
                                     {
-                                        if (_card.isProtected) _card.isProtected = false;
-                                        Main.LogCard($"Trashed Card: Cost: {_card.manaCosts.Sum()} Rarity: {_card.cardRarity} Bonus Type: {_card.bonusType}, due to trash all settings");
-                                        _cardsController.trashCard(id);
-                                        continue;
+                                        Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to trash all settings");
+                                        TrashCard(index);
                                     }
                                 }
                             }
-                            id++;
+
+                            index--;
                         }
                     }
                 }
@@ -181,9 +181,9 @@ namespace NGUInjector.Managers
         public void CastCards()
         {
             bool castCard = true;
-            while (castCard && _cards.cards.Count > 0)
+            while (castCard && _character.cards.cards.Count > 0)
             {
-                Card card = _cards.cards[0];
+                Card card = _character.cards.cards[0];
                 List<Mana> manas = _character.cards.manas;
                 if (Main.Settings.TrashCards) TrashCards(); //Make sure all cards in inventory are ones that should be cast
                 for (int i = 0; i < card.manaCosts.Count; i++)

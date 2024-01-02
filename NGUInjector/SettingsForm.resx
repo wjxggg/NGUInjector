@@ -131,7 +131,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>665, 387</value>
+    <value>664, 387</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="progressBar1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
@@ -514,7 +514,7 @@
     <value>0</value>
   </data>
   <data name="tabPage1.Text" xml:space="preserve">
-    <value>General Settings</value>
+    <value>General</value>
   </data>
   <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
     <value>tabPage1</value>
@@ -2875,13 +2875,13 @@
     <value>390, 27</value>
   </data>
   <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>118, 16</value>
+    <value>111, 16</value>
   </data>
   <data name="label9.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
   </data>
   <data name="label9.Text" xml:space="preserve">
-    <value>Titans to Swap For</value>
+    <value>Titans to Manage</value>
   </data>
   <data name="&gt;&gt;label9.Name" xml:space="preserve">
     <value>label9</value>
@@ -3100,13 +3100,13 @@
     <value>7, 7</value>
   </data>
   <data name="SwapTitanLoadout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>142, 17</value>
+    <value>97, 17</value>
   </data>
   <data name="SwapTitanLoadout.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="SwapTitanLoadout.Text" xml:space="preserve">
-    <value>Swap Loadout for Titans</value>
+    <value>Manage Titans</value>
   </data>
   <data name="&gt;&gt;SwapTitanLoadout.Name" xml:space="preserve">
     <value>SwapTitanLoadout</value>
@@ -3208,7 +3208,7 @@
     <value>True</value>
   </data>
   <data name="TargetTitans.Location" type="System.Drawing.Point, System.Drawing">
-    <value>431, 86</value>
+    <value>511, 88</value>
   </data>
   <data name="TargetTitans.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 17</value>
@@ -3673,7 +3673,7 @@
     <value>NoControl</value>
   </data>
   <data name="TargetITOPOD.Location" type="System.Drawing.Point, System.Drawing">
-    <value>357, 86</value>
+    <value>437, 88</value>
   </data>
   <data name="TargetITOPOD.Size" type="System.Drawing.Size, System.Drawing">
     <value>67, 17</value>
@@ -3763,7 +3763,7 @@
     <value>NoControl</value>
   </data>
   <data name="AllowFallthrough.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 85</value>
+    <value>325, 87</value>
   </data>
   <data name="AllowFallthrough.Size" type="System.Drawing.Size, System.Drawing">
     <value>106, 17</value>
@@ -3997,7 +3997,7 @@
     <value>NoControl</value>
   </data>
   <data name="BossesOnly.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 7</value>
+    <value>235, 87</value>
   </data>
   <data name="BossesOnly.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 17</value>
@@ -4147,13 +4147,13 @@
     <value>350, 70</value>
   </data>
   <data name="label21.Size" type="System.Drawing.Size, System.Drawing">
-    <value>118, 16</value>
+    <value>128, 16</value>
   </data>
   <data name="label21.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
   </data>
   <data name="label21.Text" xml:space="preserve">
-    <value>Titans to Swap For</value>
+    <value>Titans to Gold Snipe</value>
   </data>
   <data name="&gt;&gt;label21.Name" xml:space="preserve">
     <value>label21</value>
@@ -4657,7 +4657,7 @@
     <value>NoControl</value>
   </data>
   <data name="questRemoveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>225, 180</value>
+    <value>260, 180</value>
   </data>
   <data name="questRemoveButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -4684,7 +4684,7 @@
     <value>10, 274</value>
   </data>
   <data name="QuestLoadoutItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>209, 20</value>
+    <value>244, 20</value>
   </data>
   <data name="QuestLoadoutItem.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -4735,7 +4735,7 @@
     <value>NoControl</value>
   </data>
   <data name="questAddButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>225, 274</value>
+    <value>260, 274</value>
   </data>
   <data name="questAddButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 20</value>
@@ -4768,7 +4768,7 @@
     <value>9, 107</value>
   </data>
   <data name="questLoadoutBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 160</value>
+    <value>245, 160</value>
   </data>
   <data name="questLoadoutBox.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -5937,6 +5937,36 @@
   <data name="&gt;&gt;tabPage10.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
+  <data name="TrashProtectedCards.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TrashProtectedCards.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="TrashProtectedCards.Location" type="System.Drawing.Point, System.Drawing">
+    <value>482, 7</value>
+  </data>
+  <data name="TrashProtectedCards.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 17</value>
+  </data>
+  <data name="TrashProtectedCards.TabIndex" type="System.Int32, mscorlib">
+    <value>46</value>
+  </data>
+  <data name="TrashProtectedCards.Text" xml:space="preserve">
+    <value>Trash Protected Cards</value>
+  </data>
+  <data name="&gt;&gt;TrashProtectedCards.Name" xml:space="preserve">
+    <value>TrashProtectedCards</value>
+  </data>
+  <data name="&gt;&gt;TrashProtectedCards.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TrashProtectedCards.Parent" xml:space="preserve">
+    <value>tabPage11</value>
+  </data>
+  <data name="&gt;&gt;TrashProtectedCards.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="CardSortOptions.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 297</value>
   </data>
@@ -5956,7 +5986,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortOptions.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="label37.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5986,7 +6016,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label37.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="CardSortRemove.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -6013,7 +6043,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortRemove.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="CardSortAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -6040,7 +6070,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortAdd.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="label41.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6073,7 +6103,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label41.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="CardSortList.Items" xml:space="preserve">
     <value>test</value>
@@ -6100,7 +6130,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortList.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="CardSortDown.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6130,7 +6160,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortDown.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="CardSortUp.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6160,7 +6190,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;CardSortUp.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="label40.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6172,7 +6202,7 @@
     <value>NoControl</value>
   </data>
   <data name="label40.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 99</value>
+    <value>6, 99</value>
   </data>
   <data name="label40.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 16</value>
@@ -6193,13 +6223,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label40.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="SortCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="SortCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 79</value>
+    <value>7, 79</value>
   </data>
   <data name="SortCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 17</value>
@@ -6220,13 +6250,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;SortCards.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="TrashChunkers.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashChunkers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>456, 100</value>
+    <value>455, 100</value>
   </data>
   <data name="TrashChunkers.Size" type="System.Drawing.Size, System.Drawing">
     <value>101, 17</value>
@@ -6247,7 +6277,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashChunkers.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="DontCastRemove.Location" type="System.Drawing.Point, System.Drawing">
     <value>562, 186</value>
@@ -6271,7 +6301,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastRemove.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="DontCastAdd.Location" type="System.Drawing.Point, System.Drawing">
     <value>562, 295</value>
@@ -6295,7 +6325,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastAdd.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="DontCastSelection.Location" type="System.Drawing.Point, System.Drawing">
     <value>341, 297</value>
@@ -6316,7 +6346,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastSelection.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="DontCastList.Location" type="System.Drawing.Point, System.Drawing">
     <value>341, 118</value>
@@ -6337,7 +6367,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;DontCastList.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="label29.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6364,13 +6394,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label29.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="label28.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label28.Location" type="System.Drawing.Point, System.Drawing">
-    <value>562, 65</value>
+    <value>562, 58</value>
   </data>
   <data name="label28.Size" type="System.Drawing.Size, System.Drawing">
     <value>79, 13</value>
@@ -6391,10 +6421,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label28.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="TrashTier.Location" type="System.Drawing.Point, System.Drawing">
-    <value>420, 62</value>
+    <value>419, 55</value>
   </data>
   <data name="TrashTier.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 21</value>
@@ -6412,13 +6442,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashTier.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>338, 65</value>
+    <value>338, 58</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -6439,13 +6469,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>19</value>
   </data>
   <data name="TrashAdventureCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashAdventureCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>455, 7</value>
+    <value>341, 7</value>
   </data>
   <data name="TrashAdventureCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>135, 17</value>
@@ -6466,13 +6496,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashAdventureCards.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>20</value>
   </data>
   <data name="AutoCastCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="AutoCastCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>107, 7</value>
+    <value>7, 30</value>
   </data>
   <data name="AutoCastCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>102, 17</value>
@@ -6493,13 +6523,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;AutoCastCards.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>21</value>
   </data>
   <data name="label34.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label34.Location" type="System.Drawing.Point, System.Drawing">
-    <value>563, 36</value>
+    <value>562, 31</value>
   </data>
   <data name="label34.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 13</value>
@@ -6520,7 +6550,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label34.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>22</value>
   </data>
   <data name="label33.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6529,7 +6559,7 @@
     <value>NoControl</value>
   </data>
   <data name="label33.Location" type="System.Drawing.Point, System.Drawing">
-    <value>338, 36</value>
+    <value>338, 31</value>
   </data>
   <data name="label33.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -6550,10 +6580,10 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;label33.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>23</value>
   </data>
   <data name="TrashQuality.Location" type="System.Drawing.Point, System.Drawing">
-    <value>420, 33</value>
+    <value>419, 28</value>
   </data>
   <data name="TrashQuality.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 21</value>
@@ -6571,13 +6601,13 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashQuality.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>24</value>
   </data>
   <data name="TrashCards.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="TrashCards.Location" type="System.Drawing.Point, System.Drawing">
-    <value>341, 7</value>
+    <value>107, 7</value>
   </data>
   <data name="TrashCards.Size" type="System.Drawing.Size, System.Drawing">
     <value>108, 17</value>
@@ -6598,7 +6628,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;TrashCards.ZOrder" xml:space="preserve">
-    <value>24</value>
+    <value>25</value>
   </data>
   <data name="balanceMayo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -6625,7 +6655,7 @@
     <value>tabPage11</value>
   </data>
   <data name="&gt;&gt;balanceMayo.ZOrder" xml:space="preserve">
-    <value>25</value>
+    <value>26</value>
   </data>
   <data name="tabPage11.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -6653,6 +6683,258 @@
   </data>
   <data name="&gt;&gt;tabPage11.ZOrder" xml:space="preserve">
     <value>10</value>
+  </data>
+  <data name="label42.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label42.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="label42.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label42.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 88</value>
+  </data>
+  <data name="label42.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 16</value>
+  </data>
+  <data name="label42.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="label42.Text" xml:space="preserve">
+    <value>Loadout</value>
+  </data>
+  <data name="&gt;&gt;label42.Name" xml:space="preserve">
+    <value>label42</value>
+  </data>
+  <data name="&gt;&gt;label42.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label42.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;label42.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cookingRemoveButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cookingRemoveButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="cookingRemoveButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>268, 170</value>
+  </data>
+  <data name="cookingRemoveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>80, 23</value>
+  </data>
+  <data name="cookingRemoveButton.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="cookingRemoveButton.Text" xml:space="preserve">
+    <value>Remove Item</value>
+  </data>
+  <data name="&gt;&gt;cookingRemoveButton.Name" xml:space="preserve">
+    <value>cookingRemoveButton</value>
+  </data>
+  <data name="&gt;&gt;cookingRemoveButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cookingRemoveButton.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;cookingRemoveButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="CookingLoadoutItem.Location" type="System.Drawing.Point, System.Drawing">
+    <value>11, 274</value>
+  </data>
+  <data name="CookingLoadoutItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 20</value>
+  </data>
+  <data name="CookingLoadoutItem.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="&gt;&gt;CookingLoadoutItem.Name" xml:space="preserve">
+    <value>CookingLoadoutItem</value>
+  </data>
+  <data name="&gt;&gt;CookingLoadoutItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CookingLoadoutItem.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;CookingLoadoutItem.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cookingItemLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cookingItemLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="cookingItemLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 297</value>
+  </data>
+  <data name="cookingItemLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="cookingItemLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="cookingItemLabel.Text" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="&gt;&gt;cookingItemLabel.Name" xml:space="preserve">
+    <value>cookingItemLabel</value>
+  </data>
+  <data name="&gt;&gt;cookingItemLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cookingItemLabel.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;cookingItemLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="cookingAddButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="cookingAddButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>268, 274</value>
+  </data>
+  <data name="cookingAddButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 20</value>
+  </data>
+  <data name="cookingAddButton.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="cookingAddButton.Text" xml:space="preserve">
+    <value>Add Item</value>
+  </data>
+  <data name="&gt;&gt;cookingAddButton.Name" xml:space="preserve">
+    <value>cookingAddButton</value>
+  </data>
+  <data name="&gt;&gt;cookingAddButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cookingAddButton.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;cookingAddButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="cookingLoadoutBox.Items" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="cookingLoadoutBox.Items1" xml:space="preserve">
+    <value>test2</value>
+  </data>
+  <data name="cookingLoadoutBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 107</value>
+  </data>
+  <data name="cookingLoadoutBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 160</value>
+  </data>
+  <data name="cookingLoadoutBox.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
+  </data>
+  <data name="&gt;&gt;cookingLoadoutBox.Name" xml:space="preserve">
+    <value>cookingLoadoutBox</value>
+  </data>
+  <data name="&gt;&gt;cookingLoadoutBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cookingLoadoutBox.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;cookingLoadoutBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="ManageCookingLoadout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ManageCookingLoadout.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ManageCookingLoadout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>120, 6</value>
+  </data>
+  <data name="ManageCookingLoadout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 17</value>
+  </data>
+  <data name="ManageCookingLoadout.TabIndex" type="System.Int32, mscorlib">
+    <value>26</value>
+  </data>
+  <data name="ManageCookingLoadout.Text" xml:space="preserve">
+    <value>Swap Loadout for Cooking</value>
+  </data>
+  <data name="&gt;&gt;ManageCookingLoadout.Name" xml:space="preserve">
+    <value>ManageCookingLoadout</value>
+  </data>
+  <data name="&gt;&gt;ManageCookingLoadout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ManageCookingLoadout.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;ManageCookingLoadout.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="ManageCooking.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ManageCooking.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 6</value>
+  </data>
+  <data name="ManageCooking.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 17</value>
+  </data>
+  <data name="ManageCooking.TabIndex" type="System.Int32, mscorlib">
+    <value>25</value>
+  </data>
+  <data name="ManageCooking.Text" xml:space="preserve">
+    <value>Manage Cooking</value>
+  </data>
+  <data name="&gt;&gt;ManageCooking.Name" xml:space="preserve">
+    <value>ManageCooking</value>
+  </data>
+  <data name="&gt;&gt;ManageCooking.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ManageCooking.Parent" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;ManageCooking.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="tabPage12.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="tabPage12.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage12.Size" type="System.Drawing.Size, System.Drawing">
+    <value>654, 334</value>
+  </data>
+  <data name="tabPage12.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="tabPage12.Text" xml:space="preserve">
+    <value>Cooking</value>
+  </data>
+  <data name="&gt;&gt;tabPage12.Name" xml:space="preserve">
+    <value>tabPage12</value>
+  </data>
+  <data name="&gt;&gt;tabPage12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage12.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabPage12.ZOrder" xml:space="preserve">
+    <value>11</value>
   </data>
   <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 22</value>
@@ -6685,7 +6967,7 @@
     <value>0, 0</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>665, 387</value>
+    <value>664, 387</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -6786,6 +7068,12 @@
   <data name="&gt;&gt;wishBlacklistErrorProvider.Type" xml:space="preserve">
     <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;cookingErrorProvider.Name" xml:space="preserve">
+    <value>cookingErrorProvider</value>
+  </data>
+  <data name="&gt;&gt;cookingErrorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SettingsForm</value>
   </data>
@@ -6821,5 +7109,8 @@
   </metadata>
   <metadata name="wishBlacklistErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>881, 51</value>
+  </metadata>
+  <metadata name="cookingErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1276, 33</value>
   </metadata>
 </root>

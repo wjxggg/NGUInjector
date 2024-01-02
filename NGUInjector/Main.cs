@@ -47,7 +47,7 @@ namespace NGUInjector
         private float _timeLeft = 10.0f;
         internal static SettingsForm settingsForm;
         internal static WishManager WishManager;
-        internal const string Version = "3.8.1";
+        internal const string Version = "3.8.2";
         private static int _furthestZone;
 
         private static string _dir;
@@ -321,6 +321,7 @@ namespace NGUInjector
                         ManageMayo = false,
                         TrashCards = false,
                         TrashAdventureCards = false,
+                        TrashProtectedCards = false,
                         AutoCastCards = false,
                         CardsTrashQuality = 0,
                         CardSortOrder = new string[0],
@@ -333,7 +334,10 @@ namespace NGUInjector
                         MergeBlacklist = new int[] { },
                         ManageConsumables = false,
                         AutoBuyConsumables = false,
-                        ConsumeIfAlreadyRunning = false
+                        ConsumeIfAlreadyRunning = false,
+                        ManageCooking = false,
+                        ManageCookingLoadouts = false,
+                        CookingLoadout = new int[] { }
                     };
 
                     Settings.MassUpdate(temp);
@@ -1276,31 +1280,24 @@ namespace NGUInjector
 
             if (questZone > 0)
             {
-                if ((Settings.AdventureTargetTitans && ZoneHelpers.AnyTitansSpawningSoon()) || (ZoneHelpers.ZoneIsTitan(Settings.SnipeZone) && ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone))))
+                if (Settings.QuestCombatMode == 0)
                 {
-                    // DONT quest IF we have a titan spawning soon
+                    _combManager.ManualZone(questZone, false, false, false, Settings.QuestFastCombat, Settings.QuestBeastMode, Settings.QuestSmartBeastMode);
                 }
-                else if (!Settings.CombatEnabled || Settings.AdventureTargetITOPOD || !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
+                else
                 {
-                    // DO quest if there is no titan spawning and Combat is disabled, the ITOPOD override is set, or the target zone is locked
-                    if (Settings.QuestCombatMode == 0)
-                    {
-                        _combManager.ManualZone(questZone, false, false, false, Settings.QuestFastCombat, Settings.QuestBeastMode, Settings.QuestSmartBeastMode);
-                    }
-                    else
-                    {
-                        _combManager.IdleZone(questZone, false, false, Settings.QuestBeastMode);
-                    }
+                    _combManager.IdleZone(questZone, false, false, Settings.QuestBeastMode);
+                }
 
-                    CombatHelpers.IsCurrentlyQuesting = true;
-                    return;
-                }
+                CombatHelpers.IsCurrentlyQuesting = true;
+                return;
             }
 
             if (!Settings.CombatEnabled)
                 return;
 
             var tempZone = Settings.AdventureTargetITOPOD ? 1000 : Settings.SnipeZone;
+
             if (tempZone < 1000)
             {
                 if (!CombatManager.IsZoneUnlocked(Settings.SnipeZone))

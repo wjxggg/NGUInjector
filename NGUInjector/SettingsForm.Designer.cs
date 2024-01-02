@@ -128,6 +128,7 @@
             this.ManageInventory = new System.Windows.Forms.CheckBox();
             this.ManageBoostConvert = new System.Windows.Forms.CheckBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.LocateWalderp = new System.Windows.Forms.Button();
             this.UseTitanCombat = new System.Windows.Forms.CheckBox();
             this.TitanSmartBeastMode = new System.Windows.Forms.CheckBox();
             this.TitanMoreBlockParry = new System.Windows.Forms.CheckBox();
@@ -248,6 +249,7 @@
             this.AutoMoneyPit = new System.Windows.Forms.CheckBox();
             this.AutoDailySpin = new System.Windows.Forms.CheckBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.TrashProtectedCards = new System.Windows.Forms.CheckBox();
             this.CardSortOptions = new System.Windows.Forms.ComboBox();
             this.label37 = new System.Windows.Forms.Label();
             this.CardSortRemove = new System.Windows.Forms.Button();
@@ -274,11 +276,20 @@
             this.TrashQuality = new System.Windows.Forms.ComboBox();
             this.TrashCards = new System.Windows.Forms.CheckBox();
             this.balanceMayo = new System.Windows.Forms.CheckBox();
+            this.tabPage12 = new System.Windows.Forms.TabPage();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.wishBlacklistErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.LocateWalderp = new System.Windows.Forms.Button();
+            this.label42 = new System.Windows.Forms.Label();
+            this.cookingRemoveButton = new System.Windows.Forms.Button();
+            this.CookingLoadoutItem = new System.Windows.Forms.NumericUpDown();
+            this.cookingItemLabel = new System.Windows.Forms.Label();
+            this.cookingAddButton = new System.Windows.Forms.Button();
+            this.cookingLoadoutBox = new System.Windows.Forms.ListBox();
+            this.ManageCookingLoadout = new System.Windows.Forms.CheckBox();
+            this.ManageCooking = new System.Windows.Forms.CheckBox();
+            this.cookingErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
@@ -317,9 +328,12 @@
             this.tabPage10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).BeginInit();
             this.tabPage11.SuspendLayout();
+            this.tabPage12.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // moneyPitThresholdError
@@ -371,6 +385,7 @@
             this.tabControl1.Controls.Add(this.tabPage9);
             this.tabControl1.Controls.Add(this.tabPage10);
             this.tabControl1.Controls.Add(this.tabPage11);
+            this.tabControl1.Controls.Add(this.tabPage12);
             resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -1110,6 +1125,13 @@
             resources.ApplyResources(this.tabPage5, "tabPage5");
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // LocateWalderp
+            // 
+            resources.ApplyResources(this.LocateWalderp, "LocateWalderp");
+            this.LocateWalderp.Name = "LocateWalderp";
+            this.LocateWalderp.UseVisualStyleBackColor = true;
+            this.LocateWalderp.Click += new System.EventHandler(this.LocateWalderp_Click);
             // 
             // UseTitanCombat
             // 
@@ -2074,6 +2096,7 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.TrashProtectedCards);
             this.tabPage11.Controls.Add(this.CardSortOptions);
             this.tabPage11.Controls.Add(this.label37);
             this.tabPage11.Controls.Add(this.CardSortRemove);
@@ -2103,6 +2126,13 @@
             resources.ApplyResources(this.tabPage11, "tabPage11");
             this.tabPage11.Name = "tabPage11";
             this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // TrashProtectedCards
+            // 
+            resources.ApplyResources(this.TrashProtectedCards, "TrashProtectedCards");
+            this.TrashProtectedCards.Name = "TrashProtectedCards";
+            this.TrashProtectedCards.UseVisualStyleBackColor = true;
+            this.TrashProtectedCards.CheckedChanged += new System.EventHandler(this.TrashProtectedCards_CheckedChanged);
             // 
             // CardSortOptions
             // 
@@ -2269,6 +2299,20 @@
             this.balanceMayo.UseVisualStyleBackColor = true;
             this.balanceMayo.CheckedChanged += new System.EventHandler(this.manageMayo_CheckedChanged);
             // 
+            // tabPage12
+            // 
+            this.tabPage12.Controls.Add(this.label42);
+            this.tabPage12.Controls.Add(this.cookingRemoveButton);
+            this.tabPage12.Controls.Add(this.CookingLoadoutItem);
+            this.tabPage12.Controls.Add(this.cookingItemLabel);
+            this.tabPage12.Controls.Add(this.cookingAddButton);
+            this.tabPage12.Controls.Add(this.cookingLoadoutBox);
+            this.tabPage12.Controls.Add(this.ManageCookingLoadout);
+            this.tabPage12.Controls.Add(this.ManageCooking);
+            resources.ApplyResources(this.tabPage12, "tabPage12");
+            this.tabPage12.Name = "tabPage12";
+            this.tabPage12.UseVisualStyleBackColor = true;
+            // 
             // progressBar1
             // 
             resources.ApplyResources(this.progressBar1, "progressBar1");
@@ -2289,12 +2333,72 @@
             // 
             this.wishBlacklistErrorProvider.ContainerControl = this;
             // 
-            // LocateWalderp
+            // label42
             // 
-            resources.ApplyResources(this.LocateWalderp, "LocateWalderp");
-            this.LocateWalderp.Name = "LocateWalderp";
-            this.LocateWalderp.UseVisualStyleBackColor = true;
-            this.LocateWalderp.Click += new System.EventHandler(this.LocateWalderp_Click);
+            resources.ApplyResources(this.label42, "label42");
+            this.label42.Name = "label42";
+            // 
+            // cookingRemoveButton
+            // 
+            resources.ApplyResources(this.cookingRemoveButton, "cookingRemoveButton");
+            this.cookingRemoveButton.Name = "cookingRemoveButton";
+            this.cookingRemoveButton.UseVisualStyleBackColor = true;
+            this.cookingRemoveButton.Click += new System.EventHandler(this.cookingRemoveButton_Click);
+            // 
+            // CookingLoadoutItem
+            // 
+            resources.ApplyResources(this.CookingLoadoutItem, "CookingLoadoutItem");
+            this.CookingLoadoutItem.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.CookingLoadoutItem.Name = "CookingLoadoutItem";
+            this.CookingLoadoutItem.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.CookingLoadoutItem.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CookingLoadoutItem_KeyDown);
+            // 
+            // cookingItemLabel
+            // 
+            resources.ApplyResources(this.cookingItemLabel, "cookingItemLabel");
+            this.cookingItemLabel.Name = "cookingItemLabel";
+            // 
+            // cookingAddButton
+            // 
+            resources.ApplyResources(this.cookingAddButton, "cookingAddButton");
+            this.cookingAddButton.Name = "cookingAddButton";
+            this.cookingAddButton.UseVisualStyleBackColor = true;
+            this.cookingAddButton.Click += new System.EventHandler(this.cookingAddButton_Click);
+            // 
+            // cookingLoadoutBox
+            // 
+            this.cookingLoadoutBox.FormattingEnabled = true;
+            this.cookingLoadoutBox.Items.AddRange(new object[] {
+            resources.GetString("cookingLoadoutBox.Items"),
+            resources.GetString("cookingLoadoutBox.Items1")});
+            resources.ApplyResources(this.cookingLoadoutBox, "cookingLoadoutBox");
+            this.cookingLoadoutBox.Name = "cookingLoadoutBox";
+            // 
+            // ManageCookingLoadout
+            // 
+            resources.ApplyResources(this.ManageCookingLoadout, "ManageCookingLoadout");
+            this.ManageCookingLoadout.Name = "ManageCookingLoadout";
+            this.ManageCookingLoadout.UseVisualStyleBackColor = true;
+            this.ManageCookingLoadout.CheckedChanged += new System.EventHandler(this.ManageCookingLoadout_CheckedChanged);
+            // 
+            // ManageCooking
+            // 
+            resources.ApplyResources(this.ManageCooking, "ManageCooking");
+            this.ManageCooking.Name = "ManageCooking";
+            this.ManageCooking.UseVisualStyleBackColor = true;
+            this.ManageCooking.CheckedChanged += new System.EventHandler(this.ManageCooking_CheckedChanged);
+            // 
+            // cookingErrorProvider
+            // 
+            this.cookingErrorProvider.ContainerControl = this;
             // 
             // SettingsForm
             // 
@@ -2355,9 +2459,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).EndInit();
             this.tabPage11.ResumeLayout(false);
             this.tabPage11.PerformLayout();
+            this.tabPage12.ResumeLayout(false);
+            this.tabPage12.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2612,5 +2720,16 @@
         private System.Windows.Forms.Button CardSortAdd;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Button LocateWalderp;
+        private System.Windows.Forms.CheckBox TrashProtectedCards;
+        private System.Windows.Forms.TabPage tabPage12;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Button cookingRemoveButton;
+        private System.Windows.Forms.NumericUpDown CookingLoadoutItem;
+        private System.Windows.Forms.Label cookingItemLabel;
+        private System.Windows.Forms.Button cookingAddButton;
+        private System.Windows.Forms.ListBox cookingLoadoutBox;
+        private System.Windows.Forms.CheckBox ManageCookingLoadout;
+        private System.Windows.Forms.CheckBox ManageCooking;
+        private System.Windows.Forms.ErrorProvider cookingErrorProvider;
     }
 }
