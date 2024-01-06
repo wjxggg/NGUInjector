@@ -133,9 +133,12 @@ namespace NGUInjector.Managers
 
         private void SetIdleMode(bool idle)
         {
-            _character.beastQuest.idleMode = idle;
-            _character.beastQuestController.updateButtons();
-            _character.beastQuestController.updateButtonText();
+            if (_character.beastQuest.idleMode != idle)
+            {
+                _character.beastQuest.idleMode = idle;
+                _character.beastQuestController.updateButtons();
+                _character.beastQuestController.updateButtonText();
+            }
         }
 
         internal void ManageQuests()
