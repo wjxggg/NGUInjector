@@ -131,7 +131,7 @@ namespace NGUInjector.Managers
                         {
                             Card card = cards[index];
 
-                            if ((card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards) && (!card.isProtected || Main.Settings.TrashProtectedCards))
+                            if ((card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards) && (!card.isProtected || Main.Settings.TrashProtectedCards || (card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)))
                             {
                                 if (card.type == cardType.end)
                                 {
