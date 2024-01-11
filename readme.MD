@@ -250,7 +250,7 @@ This will place any protected cards first. For all the protected cards, it will 
 - **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of settings.
 - **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of settings.
 - **Trash Cards of XXX quality/cost and below** - Yeet cards which are at or below the specified quality/cost.
-- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when on the Always Trash List. If not checked, BigChonker will not be yeeted unless settings specify you should Trash ALL BigChonker cards in the quality option.
+- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when their type is on the Always Trash List. If not checked, BigChonker cards will not be yeeted unless they are below the configured quality or cost thresholds.
 - **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
 
 ![Cooking](https://i.imgur.com/2pgJoUZ.png)

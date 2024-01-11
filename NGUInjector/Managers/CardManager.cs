@@ -131,38 +131,50 @@ namespace NGUInjector.Managers
                         {
                             Card card = cards[index];
 
-                            if ((card.bonusType != cardBonus.adventureStat || Main.Settings.TrashAdventureCards) && (!card.isProtected || Main.Settings.TrashProtectedCards || (card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)))
+                            //Don't trash adventure cards unless the flag is set
+                            if (card.bonusType == cardBonus.adventureStat && !Main.Settings.TrashAdventureCards)
                             {
-                                if (card.type == cardType.end)
+                                index--;
+                                continue;
+                            }
+
+                            //Don't trash protected cards unless the flag is set
+                            if (card.isProtected && !Main.Settings.TrashProtectedCards)
+                            {
+                                index--;
+                                continue;
+                            }
+
+                            if (card.type == cardType.end)
+                            {
+                                if (_character.inventory.inventory.Any(c => c.id == 492))
                                 {
-                                    if (_character.inventory.inventory.Any(c => c.id == 492))
-                                    {
-                                        Main.LogCard($"Trashed Card: Bonus Type: END, due to already having the END piece");
-                                        TrashCard(index);
-                                    }
-                                    else if (cards.Count(c => c.type == cardType.end) > 1)
-                                    {
-                                        Main.LogCard($"Trashed Card: Bonus Type: END, due to already having one in the cards list");
-                                        TrashCard(index);
-                                    }
-                                }
-                                else if ((int)cards[index].cardRarity <= Main.Settings.CardsTrashQuality - 1)
-                                {
-                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Quality settings");
+                                    Main.LogCard($"Trashed Card: Bonus Type: END, due to already having the END piece");
                                     TrashCard(index);
                                 }
-                                else if (cards[index].manaCosts.Sum() <= Main.Settings.TrashCardCost)
+                                else if (cards.Count(c => c.type == cardType.end) > 1)
                                 {
-                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Cost settings");
+                                    Main.LogCard($"Trashed Card: Bonus Type: END, due to already having one in the cards list");
                                     TrashCard(index);
                                 }
-                                else if (Main.Settings.DontCastCardType.Contains(card.bonusType.ToString()))
+                            }
+                            else if ((int)cards[index].cardRarity <= Main.Settings.CardsTrashQuality - 1)
+                            {
+                                Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Quality settings");
+                                TrashCard(index);
+                            }
+                            else if (cards[index].manaCosts.Sum() <= Main.Settings.TrashCardCost)
+                            {
+                                Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Cost settings");
+                                TrashCard(index);
+                            }
+                            else if (Main.Settings.DontCastCardType.Contains(card.bonusType.ToString()))
+                            {
+                                //Dont trash cards of BigChonker rarity unless the flag is set
+                                if (card.cardRarity != rarity.BigChonker || card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)
                                 {
-                                    if (card.cardRarity != rarity.BigChonker || card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)
-                                    {
-                                        Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to trash all settings");
-                                        TrashCard(index);
-                                    }
+                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to trash all settings");
+                                    TrashCard(index);
                                 }
                             }
 
