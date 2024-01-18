@@ -247,10 +247,10 @@ The "-ASC" versions of the sort options will sort in the opposite direction.
 This will place any protected cards first. For all the protected cards, it will prioritise advStat, then hackSpeed above other types. All the protected advStat cards are then ordered by the lowest cost, then highest value. Same for protected hackSpeed cards. Same for all other protected cards. The unprotected cards are then sorted in the same manner as the protected cards.
 
 - **Auto Trash Cards** - Automatically yeet cards according to the settings below.
-- **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of settings.
-- **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of settings.
+- **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of quality/cost/type settings.
+- **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of quality/cost/type settings. **Note:** Big Chonker cards *always* spawn as protected and ignore this flag if the Trash Chonkers flag is enabled.
 - **Trash Cards of XXX quality/cost and below** - Yeet cards which are at or below the specified quality/cost.
-- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when on the Always Trash List. If not checked, BigChonker will not be yeeted unless settings specify you should Trash ALL BigChonker cards in the quality option.
+- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when their type is on the Always Trash List. If not checked, BigChonker cards will not be yeeted unless they are below the configured quality or cost thresholds.
 - **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
 
 ![Cooking](https://i.imgur.com/2pgJoUZ.png)
