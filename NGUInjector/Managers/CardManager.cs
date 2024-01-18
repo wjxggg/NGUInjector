@@ -131,15 +131,15 @@ namespace NGUInjector.Managers
                         {
                             Card card = cards[index];
 
-                            //Don't trash adventure cards unless the flag is set
+                            //Don't trash adventure cards unless the trash adventure flag is set
                             if (card.bonusType == cardBonus.adventureStat && !Main.Settings.TrashAdventureCards)
                             {
                                 index--;
                                 continue;
                             }
 
-                            //Don't trash protected cards unless the flag is set
-                            if (card.isProtected && !Main.Settings.TrashProtectedCards)
+                            //Don't trash protected cards unless the trash protected flag is set or its chonker card with the trash chonker flag set
+                            if (card.isProtected && !Main.Settings.TrashProtectedCards && (card.cardRarity != rarity.BigChonker || !Main.Settings.TrashChunkers))
                             {
                                 index--;
                                 continue;
@@ -171,7 +171,7 @@ namespace NGUInjector.Managers
                             else if (Main.Settings.DontCastCardType.Contains(card.bonusType.ToString()))
                             {
                                 //Dont trash cards of BigChonker rarity unless the flag is set
-                                if (card.cardRarity != rarity.BigChonker || card.cardRarity == rarity.BigChonker && Main.Settings.TrashChunkers)
+                                if (card.cardRarity != rarity.BigChonker || Main.Settings.TrashChunkers)
                                 {
                                     Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to trash all settings");
                                     TrashCard(index);
