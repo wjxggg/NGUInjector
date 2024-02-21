@@ -20,6 +20,11 @@ namespace NGUInjector.Managers
 
         public void UpdateWishMenu()
         {
+            if (!_character.wishesController.pods.Any() || !_character.wishesController.curValidUpgradesList.Any() || !_character.wishes.wishes.Any())
+            {
+                return;
+            }
+
             int wishToSelect = _character.wishesController.curSelectedWish;
 
             int firstWishOnCurrentPage = _character.wishesController.pods[0].id;
