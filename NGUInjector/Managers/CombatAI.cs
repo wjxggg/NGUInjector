@@ -40,13 +40,6 @@ namespace NGUInjector.Managers
         private readonly float? _paralyzeTimeLeft;
         private readonly bool _useOhShitInsteadOfParalyze;
 
-        private readonly float _enemyAttackRate;
-        private readonly float _enemyAttackTimer;
-        private readonly float _timeTillAttack;
-
-        private readonly int _attacksToBlock;
-        private readonly float _optimalTimeToBlock;
-
         private CombatSnapshot _combatSnapshot = null;
 
         private class CombatSnapshot
@@ -56,11 +49,16 @@ namespace NGUInjector.Managers
             private readonly int _specialMoveNumber;
             private readonly int? _warningMoveNumber;
 
+            public float EnemyAttackRate { get; }
+            public float TimeTillAttack { get; }
+            public int AttacksToBlock { get; }
+            public float OptimalTimeToBlock { get; }
+
             public float? TimeTillSpecialMove { get; } = null;
             public int? SpecialMoveInNumAttacks { get; } = null;
             public bool NextAttackSpecialMove { get; } = false;
             public bool NextAttackNoDamage { get; } = false;
-            public bool AttackAfterNextNoDamage { get; } = false;
+            public bool BlockableAttackNoDamage { get; } = false;
             public float TimeTillNextDamagingAttack { get; } = 0f;
             public bool IsAttackingRapidly { get; } = false;
 
@@ -71,12 +69,17 @@ namespace NGUInjector.Managers
             public WalderpCombatMove? ForcedMove { get; private set; } = null;
             public WalderpCombatMove? BannedMove { get; private set; } = null;
 
-            public CombatSnapshot(float timeTillNextAttack)
+            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack)
             {
+                EnemyAttackRate = enemyAttackRate;
+                TimeTillAttack = timeTillNextAttack;
                 TimeTillNextDamagingAttack = timeTillNextAttack;
+
+                AttacksToBlock = (int)Math.Ceiling(2.9f / enemyAttackRate);
+                OptimalTimeToBlock = 2.9f - (enemyAttackRate * (AttacksToBlock - 1));
             }
 
-            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber, bool isAttackingRapidly = false)
+            public CombatSnapshot(float enemyAttackRate, float timeTillNextAttack, int loopSize, int attackNumber, int specialMoveNumber, int? warningMoveNumber, bool isAttackingRapidly = false) : this(enemyAttackRate, timeTillNextAttack)
             {
                 _loopSize = loopSize;
                 _attackNumber = attackNumber % loopSize;
@@ -89,14 +92,14 @@ namespace NGUInjector.Managers
 
                 int attacksBetweenSpecialAndWarning = (!_warningMoveNumber.HasValue || _warningMoveNumber >= _specialMoveNumber) ? 0 : _specialMoveNumber - _warningMoveNumber.Value;
                 NextAttackNoDamage = _warningMoveNumber.HasValue && SpecialMoveInNumAttacks <= attacksBetweenSpecialAndWarning + 1 && SpecialMoveInNumAttacks > 1;
-                AttackAfterNextNoDamage = _warningMoveNumber.HasValue && SpecialMoveInNumAttacks <= attacksBetweenSpecialAndWarning + 2 && SpecialMoveInNumAttacks > 2;
+                BlockableAttackNoDamage = _warningMoveNumber.HasValue && SpecialMoveInNumAttacks <= attacksBetweenSpecialAndWarning + AttacksToBlock && SpecialMoveInNumAttacks > AttacksToBlock;
 
                 TimeTillNextDamagingAttack = NextAttackNoDamage ? TimeTillSpecialMove.Value : timeTillNextAttack;
 
                 IsAttackingRapidly = isAttackingRapidly;
 
                 EnemyHasBlockableSpecialMove = true;
-                HoldBlock = NextAttackNoDamage || AttackAfterNextNoDamage;
+                HoldBlock = NextAttackNoDamage || BlockableAttackNoDamage;
             }
 
             public void SetWalderpCombatMove(WalderpCombatMove? combatMove, bool walderpSays)
@@ -145,56 +148,53 @@ namespace NGUInjector.Managers
             _enemyIsParalyzed = EnemyIsParalyzed(_eai, out _paralyzeTimeLeft);
             _useOhShitInsteadOfParalyze = OhShitUnlocked() && OhShitReady() && GetHPPercentage() < 0.6f;
 
-            _enemyAttackTimer = _eai.GetPV<float>("enemyAttackTimer");
-            _enemyAttackRate = _enemy.attackRate;
+            float enemyAttackTimer = _eai.GetPV<float>("enemyAttackTimer");
+            float enemyAttackRate = _enemy.attackRate;
 
             //GM is a bit quirky, she resets attack timer at 5x the rate while exploding, but only does so 4 times, so the time to the next "attack" is only 80% of normal
             if (ZoneHelpers.ZoneIsGodmother(_zone) && _eai.explosionMode)
             {
-                _enemyAttackRate = _enemyAttackRate * 0.8f;
+                enemyAttackRate = enemyAttackRate * 0.8f;
             }
 
-            _timeTillAttack = (_enemyAttackRate - _enemyAttackTimer) + (_paralyzeTimeLeft ?? 0f);
+            float timeTillAttack = (enemyAttackRate - enemyAttackTimer) + (_paralyzeTimeLeft ?? 0f);
 
             //Normal zones initial strike is slower than others
             if (!ZoneHelpers.ZoneIsTitan(_zone) && _eai.GetPV<bool>("firstStrike"))
             {
-                _timeTillAttack += _enemyAttackRate * 0.5f;
+                timeTillAttack += enemyAttackRate * 0.5f;
             }
-
-            _attacksToBlock = (int)Math.Ceiling(2.9f / _enemyAttackRate);
-            _optimalTimeToBlock = 2.9f - (_enemyAttackRate * (_attacksToBlock - 1));
 
             _blockIsActive = BlockActive(out _blockTimeLeft);
             //LogDebug($"BlockActive:{_blockIsActive} | TimeLeft:{_blockTimeLeft}");
-            _willBlockNextAttack = _blockIsActive && (_blockTimeLeft ?? 0) > _timeTillAttack;
-            _willOnlyBlockNextAttack = _willBlockNextAttack && (_blockTimeLeft ?? 0) < (_timeTillAttack + _enemyAttackRate);
+            _willBlockNextAttack = _blockIsActive && (_blockTimeLeft ?? 0) > timeTillAttack;
+            _willOnlyBlockNextAttack = _willBlockNextAttack && (_blockTimeLeft ?? 0) < (timeTillAttack + enemyAttackRate);
 
-            SetCombatSnapshot();
+            SetCombatSnapshot(enemyAttackRate, timeTillAttack);
 
             if (_combatSnapshot == null)
             {
-                _combatSnapshot = new CombatSnapshot(_timeTillAttack);
+                _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack);
             }
         }
 
-        private void SetCombatSnapshot()
+        private void SetCombatSnapshot(float enemyAttackRate, float timeTillAttack)
         {
             if (ZoneHelpers.ZoneIsWalderp(_zone))
             {
                 //Walderp calls out his move on 2 with no damage, and kills you on 3 if the conditions are not met
                 //This works differently to the other "blockable" special moves and should be handled separately
-                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 6, _eai.growCount, 3, 2);
+                _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 6, _eai.growCount, 3, 2);
             }
             else if (ZoneHelpers.ZoneIsNerd(_zone))
             {
                 //Nerd does a damaging warning on 3 and a big attack on 4
-                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 8, _eai.growCount, 4, null);
+                _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 8, _eai.growCount, 4, null);
             }
             else if (ZoneHelpers.ZoneIsGodmother(_zone))
             {
                 //GM does a damaging warning on 3 and a big attack on 4
-                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 9, _eai.growCount, 4, null, _eai.GetPV<bool>("explosionMode"));
+                _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 9, _eai.growCount, 4, null, _eai.GetPV<bool>("explosionMode"));
             }
             else if (ZoneHelpers.ZoneIsExile(_zone))
             {
@@ -234,21 +234,23 @@ namespace NGUInjector.Managers
                         return;
                 }
 
-                _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, loopSize, _eai.growCount, specialMoveNumber, warningMoveNumber);
+                _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, loopSize, _eai.growCount, specialMoveNumber, warningMoveNumber);
             }
             else if (!ZoneHelpers.ZoneIsTitan(_zone))
             {
+                //Chargers and Rapid attack numbers are a bit strange, they increment the count immediately upon entering the loop and reset to 0 after the big attack
+                //So the size of the loop and the special/warning move numbers are off by one
                 if (_enemy.AI == AI.charger)
                 {
-                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 6, _eai.GetPV<int>("chargeCooldown"), 5, 3);
+                    _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 5, _eai.GetPV<int>("chargeCooldown") - 1, 4, 2);
                 }
                 else if (_enemy.AI == AI.rapid)
                 {
-                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 15, _eai.GetPV<int>("rapidEffect"), 8, 5, _eai.GetPV<bool>("rapidMode"));
+                    _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 14, _eai.GetPV<int>("rapidEffect") - 1, 7, 4, _eai.GetPV<bool>("rapidMode"));
                 }
                 else if (_enemy.AI == AI.exploder)
                 {
-                    _combatSnapshot = new CombatSnapshot(_enemyAttackRate, _timeTillAttack, 1, 1, 1, null);
+                    _combatSnapshot = new CombatSnapshot(enemyAttackRate, timeTillAttack, 1, 1, 1, null);
                 }
             }
         }
@@ -383,15 +385,15 @@ namespace NGUInjector.Managers
             //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"BlockCD:{_blockRemainingCooldown} | ParalyzeCD:{_paralyzeRemainingCooldown} | ParryCD:{_parryRemainingCooldown}");
 
             bool canBlockBeforeHold = false;
-            if (_moreBlockParry && _combatSnapshot.SpecialMoveInNumAttacks > _attacksToBlock && !_combatSnapshot.NextAttackNoDamage && !_combatSnapshot.AttackAfterNextNoDamage && (_blockRemainingCooldown + 0.1f) < _timeTillAttack)
+            if (_moreBlockParry && _combatSnapshot.SpecialMoveInNumAttacks > _combatSnapshot.AttacksToBlock && !_combatSnapshot.NextAttackNoDamage && !_combatSnapshot.BlockableAttackNoDamage && (_blockRemainingCooldown + 0.1f) < _combatSnapshot.TimeTillAttack)
             {
                 float projectedTimeLeftOnBlockCooldown = _character.blockCooldown();
                 //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - Initial:{projectedTimeLeftOnBlockCooldown}");
                 //Amount of time between when block is first used and the first attack
-                projectedTimeLeftOnBlockCooldown -= Mathf.Min(_timeTillAttack, Mathf.Max(_optimalTimeToBlock, _blockRemainingCooldown));
+                projectedTimeLeftOnBlockCooldown -= Mathf.Min(_combatSnapshot.TimeTillAttack, Mathf.Max(_combatSnapshot.OptimalTimeToBlock, _blockRemainingCooldown));
                 //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After 1st attack:{projectedTimeLeftOnBlockCooldown}");
                 //Amount of time for any other blocked attacks
-                projectedTimeLeftOnBlockCooldown -= _enemyAttackRate * (_attacksToBlock - 1);
+                projectedTimeLeftOnBlockCooldown -= _combatSnapshot.EnemyAttackRate * (_combatSnapshot.AttacksToBlock - 1);
                 //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After other attacks:{projectedTimeLeftOnBlockCooldown}");
                 //Amount of time due to paralyze
                 if (ParalyzeUnlocked() && (_paralyzeRemainingCooldown + 0.1f) < _combatSnapshot.TimeTillSpecialMove && (projectedTimeLeftOnBlockCooldown - _paralyzeRemainingCooldown) > 2.0f)
@@ -400,17 +402,17 @@ namespace NGUInjector.Managers
                     //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After paralyze:{projectedTimeLeftOnBlockCooldown}");
                 }
                 //Amount of time for the any attacks between the last block and the special attack
-                projectedTimeLeftOnBlockCooldown -= _enemyAttackRate * ((_combatSnapshot.SpecialMoveInNumAttacks.Value - 1) - _attacksToBlock);
+                projectedTimeLeftOnBlockCooldown -= _combatSnapshot.EnemyAttackRate * ((_combatSnapshot.SpecialMoveInNumAttacks.Value - 1) - _combatSnapshot.AttacksToBlock);
                 //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - After any additional attacks:{projectedTimeLeftOnBlockCooldown}");
                 //The most time we can wait before the special attack fires, give a bit of wiggle room for combat looping
-                projectedTimeLeftOnBlockCooldown -= (_enemyAttackRate * 0.9f);
+                projectedTimeLeftOnBlockCooldown -= (_combatSnapshot.EnemyAttackRate * 0.9f);
 
                 //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"ProjectedBlockCD - Final result:{projectedTimeLeftOnBlockCooldown}");
                 canBlockBeforeHold = projectedTimeLeftOnBlockCooldown < 0.0f;
             }
 
             //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"CanBlockBeforeHold:{canBlockBeforeHold}");
-            _combatSnapshot.HoldBlock = (!canBlockBeforeHold && _combatSnapshot.TimeTillSpecialMove < _character.blockCooldown() + 0.3f) || _combatSnapshot.NextAttackSpecialMove || _combatSnapshot.NextAttackNoDamage || _combatSnapshot.AttackAfterNextNoDamage;
+            _combatSnapshot.HoldBlock = (!canBlockBeforeHold && _combatSnapshot.TimeTillSpecialMove < _character.blockCooldown() + 0.3f) || _combatSnapshot.NextAttackSpecialMove || _combatSnapshot.NextAttackNoDamage || _combatSnapshot.BlockableAttackNoDamage;
 
             if (_combatSnapshot.SpecialMoveInNumAttacks == 1)
             {
@@ -423,13 +425,13 @@ namespace NGUInjector.Managers
                 {
                     //LogDebug($"BlockCD:{_blockRemainingCooldown} | TimeTillAttack:{_timeTillAttack} | GlobalMove:{_globalMoveCooldown}");
                     //Bypass all other combat logic to wait until the right time to block
-                    if (_blockRemainingCooldown < _globalMoveCooldown && _blockRemainingCooldown < _timeTillAttack && _timeTillAttack < (_optimalTimeToBlock + _globalMoveCooldown))
+                    if (_blockRemainingCooldown < _globalMoveCooldown && _blockRemainingCooldown < _combatSnapshot.TimeTillAttack && _combatSnapshot.TimeTillAttack < (_combatSnapshot.OptimalTimeToBlock + _globalMoveCooldown))
                     {
                         //LogDebug($"Waiting for special.... TimeToAttack:{_combatSnapshot.TimeTillNextDamagingAttack}");
-                        if (_ac.blockMove.button.IsInteractable() && _timeTillAttack < _optimalTimeToBlock)
+                        if (_combatSnapshot.TimeTillAttack < _combatSnapshot.OptimalTimeToBlock)
                         {
                             //LogDebug($"\tSPECIAL BLOCK");
-                            _ac.blockMove.doMove();
+                            CastBlock();
                         }
 
                         return true;
@@ -438,6 +440,67 @@ namespace NGUInjector.Managers
                     {
                         //LogDebug($"Optimal Block:{_optimalTimeToBlock} | GlobalMoveCD:{_globalMoveCooldown}");
                         _combatSnapshot.HoldBlock = true;
+                    }
+
+                    //Special incoming which cannot be blocked, red alert
+                    if (_blockRemainingCooldown >= _combatSnapshot.TimeTillAttack)
+                    {
+                        //Paralyze cant help us either, try ANTHING to keep us alive
+                        if (_paralyzeRemainingCooldown >= _combatSnapshot.TimeTillAttack || _blockRemainingCooldown >= (_combatSnapshot.TimeTillAttack + 3))
+                        {
+                            //Beast mode makes us take 3x damage, that is the first to disable if possible
+                            if (BeastModeActive())
+                            {
+                                if (CastBeastMode()) return true;
+                            }
+
+                            //Parry reduces incoming damage by 50%, this is the next best option
+                            if (!ParryActive() && CastParry())
+                            {
+                                return true;
+                            }
+
+                            //See if we can cast any defensive buffs
+                            if (CastMegaBuff())
+                            {
+                                return true;
+                            }
+
+                            if (!MegaBuffUnlocked())
+                            {
+                                if (CastUltimateBuff())
+                                {
+                                    return true;
+                                }
+
+                                if (CastDefensiveBuff())
+                                {
+                                    return true;
+                                }
+                            }
+
+                            //Otherwise top off health and hope for the best
+                            if (GetHPPercentage() < .90)
+                            {
+                                if (CastHeal())
+                                {
+                                    return true;
+                                }
+
+                                if (CastHyperRegen())
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(_paralyzeRemainingCooldown < _globalMoveCooldown)
+                            {
+                                CastParalyze(true);
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -540,9 +603,9 @@ namespace NGUInjector.Managers
             //Should - Always Block unless its being held for a special attack
             bool shouldBlock = !_combatSnapshot.HoldBlock;
             //Delay - If the time till the next attack is above the optimal time for blocking multiple attacks
-            bool delayBlock = shouldBlock && _combatSnapshot.TimeTillNextDamagingAttack > _optimalTimeToBlock;
+            bool delayBlock = shouldBlock && _combatSnapshot.TimeTillNextDamagingAttack > _combatSnapshot.OptimalTimeToBlock;
             //WaitFor - The best time to block is immediately after the optimal time to block (..duh)
-            bool waitForBlock = (delayBlock || (shouldBlock && (_blockRemainingCooldown + 0.05f) < _combatSnapshot.TimeTillNextDamagingAttack)) && _blockRemainingCooldown < _globalMoveCooldown && (_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _optimalTimeToBlock;
+            bool waitForBlock = (delayBlock || (shouldBlock && (_blockRemainingCooldown + 0.05f) < _combatSnapshot.TimeTillNextDamagingAttack)) && _blockRemainingCooldown < _globalMoveCooldown && (_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _combatSnapshot.OptimalTimeToBlock;
             //if (ZoneHelpers.ZoneIsTitan(_zone)) LogDebug($"TimeLeftAfterMove:{_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown} | OptimalTime:{_optimalTimeToBlock} | Result:{(_combatSnapshot.TimeTillNextDamagingAttack - _globalMoveCooldown) < _optimalTimeToBlock}");
 
             // **Paralyze**
