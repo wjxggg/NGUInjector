@@ -163,20 +163,6 @@ namespace NGUInjector.Managers
             return isActive;
         }
 
-        internal static float GetUltimateAttackCooldown()
-        {
-            var ua = Main.Character.adventureController.ultimateAttackMove;
-            var type = ua.GetType().GetField("ultimateAttackTimer",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var val = type?.GetValue(ua);
-            if (val == null)
-            {
-                return 0;
-            }
-
-            return (float)val / Main.Character.ultimateAttackCooldown();
-        }
-
         internal static bool CastUltimateBuff()
         {
             if (UltimateBuffReady())
@@ -314,20 +300,6 @@ namespace NGUInjector.Managers
         internal static bool ChargeActive()
         {
             return Main.PlayerController.chargeFactor > 1.05;
-        }
-
-        internal static float GetChargeCooldown()
-        {
-            var ua = Main.Character.adventureController.chargeMove;
-            var type = ua.GetType().GetField("chargeTimer",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var val = type?.GetValue(ua);
-            if (val == null)
-            {
-                return 0;
-            }
-
-            return (float)val / Main.Character.chargeCooldown();
         }
 
         internal static bool CastCharge()

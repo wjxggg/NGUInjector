@@ -40,6 +40,8 @@ namespace NGUInjector.Managers
         private readonly float? _paralyzeTimeLeft;
         private readonly bool _useOhShitInsteadOfParalyze;
 
+        private readonly float _chargeRemainingCooldown;
+
         private CombatSnapshot _combatSnapshot = null;
 
         private class CombatSnapshot
@@ -144,6 +146,11 @@ namespace NGUInjector.Managers
             var parfi = parm.GetType().GetField("attackTimer",
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             _paralyzeRemainingCooldown = _character.paralyzeCooldown() - Mathf.Min(_character.paralyzeCooldown(), (float)parfi?.GetValue(parm));
+
+            var chm = _ac.chargeMove;
+            var chfi = chm.GetType().GetField("chargeTimer",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            _chargeRemainingCooldown = _character.chargeCooldown() - Mathf.Min(_character.chargeCooldown(), (float)chfi?.GetValue(chm));
 
             _enemyIsParalyzed = EnemyIsParalyzed(_eai, out _paralyzeTimeLeft);
             _useOhShitInsteadOfParalyze = OhShitUnlocked() && OhShitReady() && GetHPPercentage() < 0.6f;
@@ -495,7 +502,7 @@ namespace NGUInjector.Managers
                         }
                         else
                         {
-                            if(_paralyzeRemainingCooldown < _globalMoveCooldown)
+                            if (_paralyzeRemainingCooldown < _globalMoveCooldown)
                             {
                                 CastParalyze(true);
                                 return true;
@@ -573,18 +580,11 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (ChargeReady())
+            if (ChargeReady() && UltimateAttackReady())
             {
-                if (UltimateAttackReady())
+                if (CastCharge())
                 {
-                    if (CastCharge())
-                        return true;
-                }
-
-                if (GetUltimateAttackCooldown() > .45 && PierceReady())
-                {
-                    if (CastCharge())
-                        return true;
+                    return true;
                 }
             }
 
@@ -777,7 +777,7 @@ namespace NGUInjector.Managers
         {
             if (_ac.ultimateAttackMove.button.IsInteractable() && _combatSnapshot?.BannedMove != CombatSnapshot.WalderpCombatMove.Ultimate)
             {
-                if (_fastCombat || ChargeActive() || GetChargeCooldown() > .45)
+                if (_fastCombat || ChargeActive() || _chargeRemainingCooldown > (_character.ultimateAttackCooldown() / 2.0f))
                 {
                     _ac.ultimateAttackMove.doMove();
                     return;
