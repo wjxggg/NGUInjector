@@ -235,7 +235,7 @@ namespace NGUInjector.Managers
 
             bool needsToPrecast = precastBuffs &&
                 (
-                    (ChargeUnlocked() && (!ChargeReady() || !ChargeActive())) ||
+                    (ChargeUnlocked() && !ChargeReady()) ||
                     (ParryUnlocked() && (!ParryReady() || !ParryActive())) ||
                     (smartBeastMode && BeastModeUnlocked() && (!BeastModeReady() || !BeastModeActive())) ||
                     (MegaBuffUnlocked() && !MegaBuffReady()) ||
@@ -301,11 +301,6 @@ namespace NGUInjector.Managers
             {
                 if (needsToPrecast)
                 {
-                    if (ChargeUnlocked() && !ChargeActive())
-                    {
-                        if (CastCharge()) return;
-                    }
-
                     if (ParryUnlocked() && !ParryActive())
                     {
                         if (CastParry()) return;
@@ -321,11 +316,6 @@ namespace NGUInjector.Managers
 
                 if (needsToHeal)
                 {
-                    if (ChargeUnlocked() && !ChargeActive())
-                    {
-                        if (CastCharge()) return;
-                    }
-
                     if (ParryUnlocked() && !ParryActive())
                     {
                         if (CastParry()) return;
@@ -347,14 +337,6 @@ namespace NGUInjector.Managers
             {
                 if (!precastBuffs && bossOnly)
                 {
-                    if (!ChargeActive())
-                    {
-                        if (CastCharge())
-                        {
-                            return;
-                        }
-                    }
-
                     if (!ParryActive())
                     {
                         if (CastParry())
