@@ -135,10 +135,11 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/a7CNoqN.png)
+![Titans](https://i.imgur.com/VpF8Wwf.png)
 
 - **Manage Titans** - Turns on combat and gear swapping for titans.
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
+- **Set difficulty** - Use this to change the difficulties of titans which have different versions. Disabled until the titan has been killed at least once.
 - **Loadout** - The gear to equip when autokilling or fighting titans.
 - **Titans to Manage** - Mark titans you wish to fight and swap gear for
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP, THE GODMOTHER, and THE EXILE will ALWAYS use manual combat regardless of this setting*

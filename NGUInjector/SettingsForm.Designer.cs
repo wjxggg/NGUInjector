@@ -128,6 +128,9 @@
             this.ManageInventory = new System.Windows.Forms.CheckBox();
             this.ManageBoostConvert = new System.Windows.Forms.CheckBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.label43 = new System.Windows.Forms.Label();
+            this.TitanVersions = new System.Windows.Forms.ComboBox();
+            this.TitansWithVersion = new System.Windows.Forms.ComboBox();
             this.LocateWalderp = new System.Windows.Forms.Button();
             this.UseTitanCombat = new System.Windows.Forms.CheckBox();
             this.TitanSmartBeastMode = new System.Windows.Forms.CheckBox();
@@ -277,10 +280,6 @@
             this.TrashCards = new System.Windows.Forms.CheckBox();
             this.balanceMayo = new System.Windows.Forms.CheckBox();
             this.tabPage12 = new System.Windows.Forms.TabPage();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.wishBlacklistErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.label42 = new System.Windows.Forms.Label();
             this.cookingRemoveButton = new System.Windows.Forms.Button();
             this.CookingLoadoutItem = new System.Windows.Forms.NumericUpDown();
@@ -289,6 +288,10 @@
             this.cookingLoadoutBox = new System.Windows.Forms.ListBox();
             this.ManageCookingLoadout = new System.Windows.Forms.CheckBox();
             this.ManageCooking = new System.Windows.Forms.CheckBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.questErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.wishBlacklistErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.cookingErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.moneyPitThresholdError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
@@ -329,10 +332,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.MoneyPitInput)).BeginInit();
             this.tabPage11.SuspendLayout();
             this.tabPage12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -1103,6 +1106,9 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.label43);
+            this.tabPage5.Controls.Add(this.TitanVersions);
+            this.tabPage5.Controls.Add(this.TitansWithVersion);
             this.tabPage5.Controls.Add(this.LocateWalderp);
             this.tabPage5.Controls.Add(this.UseTitanCombat);
             this.tabPage5.Controls.Add(this.TitanSmartBeastMode);
@@ -1125,6 +1131,31 @@
             resources.ApplyResources(this.tabPage5, "tabPage5");
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // label43
+            // 
+            resources.ApplyResources(this.label43, "label43");
+            this.label43.Name = "label43";
+            // 
+            // TitanVersions
+            // 
+            this.TitanVersions.FormattingEnabled = true;
+            this.TitanVersions.Items.AddRange(new object[] {
+            resources.GetString("TitanVersions.Items"),
+            resources.GetString("TitanVersions.Items1")});
+            resources.ApplyResources(this.TitanVersions, "TitanVersions");
+            this.TitanVersions.Name = "TitanVersions";
+            this.TitanVersions.SelectedIndexChanged += new System.EventHandler(this.TitanVersions_SelectedIndexChanged);
+            // 
+            // TitansWithVersion
+            // 
+            this.TitansWithVersion.FormattingEnabled = true;
+            this.TitansWithVersion.Items.AddRange(new object[] {
+            resources.GetString("TitansWithVersion.Items"),
+            resources.GetString("TitansWithVersion.Items1")});
+            resources.ApplyResources(this.TitansWithVersion, "TitansWithVersion");
+            this.TitansWithVersion.Name = "TitansWithVersion";
+            this.TitansWithVersion.SelectedIndexChanged += new System.EventHandler(this.TitansWithVersion_SelectedIndexChanged);
             // 
             // LocateWalderp
             // 
@@ -1207,6 +1238,7 @@
             this.TitanSwapTargets.CheckBoxes = true;
             this.TitanSwapTargets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
+            this.TitanSwapTargets.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.TitanSwapTargets.HideSelection = false;
             resources.ApplyResources(this.TitanSwapTargets, "TitanSwapTargets");
             this.TitanSwapTargets.Name = "TitanSwapTargets";
@@ -1576,6 +1608,7 @@
             this.TitanGoldTargets.CheckBoxes = true;
             this.TitanGoldTargets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
+            this.TitanGoldTargets.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.TitanGoldTargets.HideSelection = false;
             resources.ApplyResources(this.TitanGoldTargets, "TitanGoldTargets");
             this.TitanGoldTargets.Name = "TitanGoldTargets";
@@ -2313,26 +2346,6 @@
             this.tabPage12.Name = "tabPage12";
             this.tabPage12.UseVisualStyleBackColor = true;
             // 
-            // progressBar1
-            // 
-            resources.ApplyResources(this.progressBar1, "progressBar1");
-            this.progressBar1.Name = "progressBar1";
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Controls.Add(this.progressBar1);
-            this.flowLayoutPanel1.Controls.Add(this.tabControl1);
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            // 
-            // questErrorProvider
-            // 
-            this.questErrorProvider.ContainerControl = this;
-            // 
-            // wishBlacklistErrorProvider
-            // 
-            this.wishBlacklistErrorProvider.ContainerControl = this;
-            // 
             // label42
             // 
             resources.ApplyResources(this.label42, "label42");
@@ -2395,6 +2408,26 @@
             this.ManageCooking.Name = "ManageCooking";
             this.ManageCooking.UseVisualStyleBackColor = true;
             this.ManageCooking.CheckedChanged += new System.EventHandler(this.ManageCooking_CheckedChanged);
+            // 
+            // progressBar1
+            // 
+            resources.ApplyResources(this.progressBar1, "progressBar1");
+            this.progressBar1.Name = "progressBar1";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.progressBar1);
+            this.flowLayoutPanel1.Controls.Add(this.tabControl1);
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            // 
+            // questErrorProvider
+            // 
+            this.questErrorProvider.ContainerControl = this;
+            // 
+            // wishBlacklistErrorProvider
+            // 
+            this.wishBlacklistErrorProvider.ContainerControl = this;
             // 
             // cookingErrorProvider
             // 
@@ -2461,10 +2494,10 @@
             this.tabPage11.PerformLayout();
             this.tabPage12.ResumeLayout(false);
             this.tabPage12.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.questErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.wishBlacklistErrorProvider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CookingLoadoutItem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).EndInit();
             this.ResumeLayout(false);
 
@@ -2731,5 +2764,8 @@
         private System.Windows.Forms.CheckBox ManageCookingLoadout;
         private System.Windows.Forms.CheckBox ManageCooking;
         private System.Windows.Forms.ErrorProvider cookingErrorProvider;
+        private System.Windows.Forms.ComboBox TitanVersions;
+        private System.Windows.Forms.ComboBox TitansWithVersion;
+        private System.Windows.Forms.Label label43;
     }
 }

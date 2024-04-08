@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -85,9 +86,71 @@ namespace NGUInjector
             }
         }
 
-        internal readonly Dictionary<int, string> ZoneList;
-        internal readonly Dictionary<int, string> CombatModeList;
+        internal class VersionedTitan
+        {
+            public int Zone { get; private set; }
+            public string Name { get; private set; }
+            public Func<bool> IsUnlocked { get; private set; }
+            public Func<int> GetKills { get; private set; }
+            public Func<int> GetVersion { get; private set; }
+            public Action<int> SetVersion { get; private set; }
+
+            public VersionedTitan(int zone, string name, int bossId)
+            {
+                Zone = zone;
+                Name = name;
+
+                var adv = Main.Character.adventure;
+
+                var unlockField = adv.GetType().GetField($"titan{bossId}Unlocked",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var killsField = adv.GetType().GetField($"titan{bossId}Kills",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var versionField = adv.GetType().GetField($"titan{bossId}Version",
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                IsUnlocked = () => 
+                {
+                    var unlockObj = unlockField?.GetValue(adv);
+                    if (unlockObj == null)
+                        return false;
+                    return (bool)unlockObj;
+                };
+
+                GetKills = () =>
+                {
+                    var killsObj = killsField?.GetValue(adv);
+                    if (killsObj == null)
+                        return 0;
+                    return (int)killsObj;
+                };
+
+                GetVersion = () =>
+                {
+                    var versionObj = versionField?.GetValue(adv);
+                    if (versionObj == null)
+                        return 0;
+                    return (int)versionObj;
+                };
+                SetVersion = (v) =>
+                {
+                    versionField?.SetValue(adv, v);
+                };
+            }
+
+            public override string ToString()
+            {
+                return $"Zone:{Zone} | Name:{Name} | Unlocked?{IsUnlocked()} | Kills:{GetKills()} | Version:{GetVersion()}";
+            }
+        }
+
         internal readonly Dictionary<int, string> CubePriorityList;
+        internal readonly Dictionary<int, string> CombatModeList;
+
+        internal readonly Dictionary<int, string> TitanVersionList;
+        internal readonly List<VersionedTitan> VersionedTitanList;
+
+        internal readonly Dictionary<int, string> ZoneList;
         internal readonly Dictionary<int, string> SpriteEnemyList;
         private bool _initializing = true;
 
@@ -117,11 +180,22 @@ namespace NGUInjector
                 InitializeComponent();
 
                 // Populate our data sources
-                CubePriorityList = new Dictionary<int, string>
-            {
-                {0, "None"}, {1, "Balanced"}, {2, "Power"}, {3, "Toughness"}
-            };
+                CubePriorityList = new Dictionary<int, string> { { 0, "None" }, { 1, "Balanced" }, { 2, "Power" }, { 3, "Toughness" } };
+
                 CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
+
+                TitanVersionList = new Dictionary<int, string> { { 0, "Easy" }, { 1, "Normal" }, { 2, "Hard" }, { 3, "Brutal" } };
+
+                VersionedTitanList = new List<VersionedTitan>
+                {
+                    { new VersionedTitan(19, ZoneHelpers.ZoneList[19], 6) },
+                    { new VersionedTitan(23, ZoneHelpers.ZoneList[23], 7) },
+                    { new VersionedTitan(26, ZoneHelpers.ZoneList[26], 8) },
+                    { new VersionedTitan(30, ZoneHelpers.ZoneList[30], 9) },
+                    { new VersionedTitan(34, ZoneHelpers.ZoneList[34], 10) },
+                    { new VersionedTitan(38, ZoneHelpers.ZoneList[38], 11) },
+                    { new VersionedTitan(42, ZoneHelpers.ZoneList[42], 12) }
+                };
 
                 ZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
 
@@ -172,6 +246,24 @@ namespace NGUInjector
                 CombatMode.DataSource = new BindingSource(CombatModeList, null);
                 CombatMode.ValueMember = "Key";
                 CombatMode.DisplayMember = "Value";
+
+                TitansWithVersion.DataSource = new BindingSource(VersionedTitanList, null);
+                TitansWithVersion.ValueMember = "Zone";
+                TitansWithVersion.DisplayMember = "Name";
+
+                TitanVersions.DataSource = new BindingSource(TitanVersionList, null);
+                TitanVersions.ValueMember = "Key";
+                TitanVersions.DisplayMember = "Value";
+
+                for (int i = TitansWithVersion.Items.Count - 1; i >= 0; i--)
+                {
+                    var titan = TitansWithVersion.Items[i] as VersionedTitan;
+                    if (titan.IsUnlocked() && titan.GetKills() > 0)
+                    {
+                        TitansWithVersion.SelectedIndex = i;
+                        break;
+                    }
+                }
 
                 TitanCombatMode.DataSource = new BindingSource(CombatModeList, null);
                 TitanCombatMode.ValueMember = "Key";
@@ -250,7 +342,7 @@ namespace NGUInjector
 
                 VersionLabel.Text = $"Version: {Main.Version}";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Main.LogDebug($"{ex.Message}:\n{ex.StackTrace}");
             }
@@ -298,7 +390,7 @@ namespace NGUInjector
                 TitanSwapTargets.Items.Add(item);
             }
 
-            TitanSwapTargets.Columns[0].Width = -1;
+            TitanSwapTargets.Columns[0].Width = TitanSwapTargets.Width - 4 - SystemInformation.VerticalScrollBarWidth;
         }
 
         internal void SetSnipeZone(ComboBox control, int setting)
@@ -1722,6 +1814,41 @@ namespace NGUInjector
             Main.Settings.UseTitanCombat = useTitanCombat;
         }
 
+        private void TitansWithVersion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            VersionedTitan titan = TitansWithVersion.SelectedItem as VersionedTitan;
+            TitanVersions.SelectedIndexChanged -= new System.EventHandler(this.TitanVersions_SelectedIndexChanged);
+
+            if (titan.IsUnlocked())
+            {
+                TitanVersions.Enabled = true;
+                TitanVersions.SelectedValue = titan.GetVersion();
+            }
+            else
+            {
+                TitanVersions.SelectedValue = 0;
+                TitanVersions.Enabled = false;
+            }
+
+            TitanVersions.SelectedIndexChanged += new System.EventHandler(this.TitanVersions_SelectedIndexChanged);
+        }
+
+        private void TitanVersions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+
+            VersionedTitan titan = TitansWithVersion.SelectedItem as VersionedTitan;
+            if (titan.IsUnlocked())
+            {
+                titan.SetVersion((int)TitanVersions.SelectedValue);
+                Main.Character.adventureController.updateTitanDifficultyUI();
+            }
+        }
+
+        private void SetTitanVersion_Click(object sender, EventArgs e)
+        {
+        }
+
         private void TitanCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             bool useTitanCombat = UseTitanCombat.Checked;
@@ -1880,7 +2007,5 @@ namespace NGUInjector
 
             ItemListRemove(_cookingControls);
         }
-
-
     }
 }

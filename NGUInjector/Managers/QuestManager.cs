@@ -146,8 +146,7 @@ namespace NGUInjector.Managers
             if (!Settings.AutoQuest)
                 return;
 
-            if (!ShouldQuest())
-                return;
+            bool shouldQuest = ShouldQuest();
 
             //First logic: not in a quest
             if (!_character.beastQuest.inQuest)
@@ -155,23 +154,25 @@ namespace NGUInjector.Managers
                 bool startedQuest = false;
 
                 //If we're allowing major quests and we have a quest available
-                if (Settings.AllowMajorQuests && _character.beastQuest.curBankedQuests > 0)
+                if (Settings.AllowMajorQuests && _character.beastQuest.curBankedQuests > 0 && shouldQuest)
                 {
                     _character.settings.useMajorQuests = true;
                     SetIdleMode(false);
                     EquipQuestingLoadout();
                     _character.beastQuestController.startQuest();
                     startedQuest = true;
+                    _character.beastQuestController.refreshMenu();
                 }
-                else
+                else if (!Settings.ManualMinors || shouldQuest)
                 {
                     _character.settings.useMajorQuests = false;
                     SetIdleMode(!Settings.ManualMinors);
-                    if (Settings.ManualMinors)
+                    if (Settings.ManualMinors && shouldQuest)
                     {
                         EquipQuestingLoadout();
                     }
                     _character.beastQuestController.startQuest();
+                    _character.beastQuestController.refreshMenu();
                     startedQuest = true;
                 }
 
