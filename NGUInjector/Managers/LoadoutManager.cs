@@ -349,10 +349,44 @@ namespace NGUInjector.Managers
                 Log(e.StackTrace);
             }
 
-
             controller.updateBonuses();
             controller.updateInventory();
+
+            updateEnergy();
+            updateMagic();
+            updateRes3();
+            
             Log("Finished equipping gear");
+        }
+
+        private static void updateEnergy()
+        {
+            if (Main.Character.curEnergy >= Main.Character.hardCap() || Main.Character.curEnergy >= Main.Character.totalCapEnergy())
+            {
+                long num1 = Main.Character.totalCapEnergy() - Main.Character.curEnergy;
+                Main.Character.curEnergy += num1;
+                Main.Character.idleEnergy += num1;
+            }
+        }
+
+        private static void updateMagic()
+        {
+            if (Main.Character.magic.curMagic >= Main.Character.hardCap() || Main.Character.magic.curMagic >= Main.Character.totalCapMagic())
+            {
+                long num2 = Main.Character.totalCapMagic() - Main.Character.magic.curMagic;
+                Main.Character.magic.curMagic += num2;
+                Main.Character.magic.idleMagic += num2;
+            }
+        }
+
+        private static void updateRes3()
+        {
+            if (Main.Character.res3.curRes3 >= Main.Character.hardCap() || Main.Character.res3.curRes3 >= Main.Character.totalCapRes3())
+            {
+                long num3 = Main.Character.totalCapRes3() - Main.Character.res3.curRes3;
+                Main.Character.res3.curRes3 += num3;
+                Main.Character.res3.idleRes3 += num3;
+            }
         }
 
         private static ih FindItemSlot(int id, bool moneyPit = false)
