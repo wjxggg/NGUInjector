@@ -7,7 +7,6 @@ using static System.Resources.ResXFileRef;
 
 namespace NGUInjector.Managers
 {
-
     public class FixedSizedQueue
     {
         private Queue<float> queue = new Queue<float>();
@@ -51,7 +50,22 @@ namespace NGUInjector.Managers
     public class Cube
     {
         internal float Power { get; set; }
+        internal float PowerSoftcap { get; set; }
         internal float Toughness { get; set; }
+        internal float ToughnessSoftcap { get; set; }
+
+        internal float PowerSoftcapRatio { get { return Power / PowerSoftcap; } }
+
+        internal float ToughnessSoftcapRatio { get { return Toughness / ToughnessSoftcap; } }
+
+        public Cube(float power, float powerSoftcap, float toughness, float toughnessSoftcap) 
+        { 
+            Power = power;
+            PowerSoftcap = powerSoftcap;
+            Toughness = toughness;
+            ToughnessSoftcap = toughnessSoftcap;
+        }
+
         protected bool Equals(Cube other)
         {
             return Power.Equals(other.Power) && Toughness.Equals(other.Toughness);
@@ -369,11 +383,12 @@ namespace NGUInjector.Managers
         internal void ShowBoostProgress(ih[] boostSlots)
         {
             var needed = new BoostsNeeded();
-            var cube = new Cube
-            {
-                Power = _character.inventory.cubePower,
-                Toughness = _character.inventory.cubeToughness
-            };
+            var cube = new Cube(
+                _character.inventory.cubePower,
+                _character.inventoryController.cubePowerSoftcap(),
+                _character.inventory.cubeToughness,
+                _character.inventoryController.cubeToughnessSoftcap()
+            );
 
             foreach (var item in boostSlots)
             {
@@ -526,11 +541,12 @@ namespace NGUInjector.Managers
                 }
             }
 
-            var cube = new Cube
-            {
-                Power = _character.inventory.cubePower,
-                Toughness = _character.inventory.cubeToughness
-            };
+            var cube = new Cube(
+                _character.inventory.cubePower,
+                _character.inventoryController.cubePowerSoftcap(),
+                _character.inventory.cubeToughness,
+                _character.inventoryController.cubeToughnessSoftcap()
+            );
 
             if (Settings.CubePriority > 0)
             {
@@ -540,16 +556,23 @@ namespace NGUInjector.Managers
                     {
                         _controller.selectAutoToughTransform();
                     }
-                    else if (cube.Toughness > cube.Power)
-                    {
-                        _controller.selectAutoPowerTransform();
-                    }
                     else
                     {
                         _controller.selectAutoPowerTransform();
                     }
                 }
                 else if (Settings.CubePriority == 2)
+                {
+                    if (cube.PowerSoftcapRatio > cube.ToughnessSoftcapRatio)
+                    {
+                        _controller.selectAutoToughTransform();
+                    }
+                    else
+                    {
+                        _controller.selectAutoPowerTransform();
+                    }
+                }
+                else if (Settings.CubePriority == 3)
                 {
                     _controller.selectAutoPowerTransform();
                 }
