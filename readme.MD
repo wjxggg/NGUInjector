@@ -127,7 +127,8 @@ An in game menu can be opened using the F1 button.
 - **Manage Boost Conversion** - If all normal 100 Level Challenges are completed, will calculate needed boosts for items in boostIds and then switch auto conversion appropriately. If a locked non-level 100 boost is found in your inventory, will lock conversion to that type first to boost it to 100. Will also show you the hourly average of boost progress in the inject.log file.
 - **Cube Boost Priority** - How to boost cube.
   - **None** - Will turn off boost conversion
-  - **Balanced** - Will keep power and toughness on cube balanced
+  - **Balanced** - Will keep raw power and toughness on cube equal
+  - **Softcap** - Will keep percentage of the power and toughness softcaps on cube equal. For instance if the power softcap is 3x the toughness softcap, cube raw power will be 3x cube raw toughness.
   - **Power** - Will only put power into the cube
   - **Toughness** - Will only put toughness into the cube
 - **Gear Boost Priority** - The priority in which items should be boosted. Defaults to Power > Toughness > Special.

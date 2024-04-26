@@ -104,7 +104,7 @@ namespace NGUInjector
 
                 var unlockField = adv.GetType().GetField($"titan{bossId}Unlocked",
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var killsField = adv.GetType().GetField($"titan{bossId}Kills",
+                var bossKillsField = adv.GetType().GetField($"boss{bossId}Kills",
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 var versionField = adv.GetType().GetField($"titan{bossId}Version",
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -119,10 +119,11 @@ namespace NGUInjector
 
                 GetKills = () =>
                 {
-                    var killsObj = killsField?.GetValue(adv);
-                    if (killsObj == null)
+                    var bossKillsObj = bossKillsField?.GetValue(adv);
+                    if (bossKillsObj == null)
                         return 0;
-                    return (int)killsObj;
+
+                    return (int)bossKillsObj;
                 };
 
                 GetVersion = () =>
@@ -180,7 +181,7 @@ namespace NGUInjector
                 InitializeComponent();
 
                 // Populate our data sources
-                CubePriorityList = new Dictionary<int, string> { { 0, "None" }, { 1, "Balanced" }, { 2, "Power" }, { 3, "Toughness" } };
+                CubePriorityList = new Dictionary<int, string> { { 0, "None" }, { 1, "Balanced" }, { 2, "Softcap" }, { 3, "Power" }, { 4, "Toughness" } };
 
                 CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
 
@@ -247,13 +248,13 @@ namespace NGUInjector
                 CombatMode.ValueMember = "Key";
                 CombatMode.DisplayMember = "Value";
 
-                TitansWithVersion.DataSource = new BindingSource(VersionedTitanList, null);
-                TitansWithVersion.ValueMember = "Zone";
-                TitansWithVersion.DisplayMember = "Name";
-
                 TitanVersions.DataSource = new BindingSource(TitanVersionList, null);
                 TitanVersions.ValueMember = "Key";
                 TitanVersions.DisplayMember = "Value";
+
+                TitansWithVersion.DataSource = new BindingSource(VersionedTitanList, null);
+                TitansWithVersion.ValueMember = "Zone";
+                TitansWithVersion.DisplayMember = "Name";
 
                 for (int i = TitansWithVersion.Items.Count - 1; i >= 0; i--)
                 {
@@ -261,6 +262,7 @@ namespace NGUInjector
                     if (titan.IsUnlocked() && titan.GetKills() > 0)
                     {
                         TitansWithVersion.SelectedIndex = i;
+                        TitanVersions.SelectedIndex = titan.GetVersion();
                         break;
                     }
                 }
@@ -1822,11 +1824,11 @@ namespace NGUInjector
             if (titan.IsUnlocked())
             {
                 TitanVersions.Enabled = true;
-                TitanVersions.SelectedValue = titan.GetVersion();
+                TitanVersions.SelectedIndex = titan.GetVersion();
             }
             else
             {
-                TitanVersions.SelectedValue = 0;
+                TitanVersions.SelectedIndex = 0;
                 TitanVersions.Enabled = false;
             }
 
@@ -1840,7 +1842,7 @@ namespace NGUInjector
             VersionedTitan titan = TitansWithVersion.SelectedItem as VersionedTitan;
             if (titan.IsUnlocked())
             {
-                titan.SetVersion((int)TitanVersions.SelectedValue);
+                titan.SetVersion(TitanVersions.SelectedIndex);
                 Main.Character.adventureController.updateTitanDifficultyUI();
             }
         }
