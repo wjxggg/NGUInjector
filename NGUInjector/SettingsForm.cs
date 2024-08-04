@@ -337,7 +337,7 @@ namespace NGUInjector
             if (tableLayoutPanel15.Height < (height + 1) * 14)
                 tableLayoutPanel22.ColumnStyles[2].Width = SystemInformation.VerticalScrollBarWidth - 1;
             else
-                tableLayoutPanel22.ColumnStyles.Remove(tableLayoutPanel22.ColumnStyles[2]);
+                tableLayoutPanel22.ColumnCount = 2;
 
             // Adventure Tab
             BlacklistAddEnemyButton.Size = BlacklistRemoveEnemyButton.Size;
@@ -365,7 +365,7 @@ namespace NGUInjector
             if (tableLayoutPanel13.Height < (CardRarity1.Height + 1) * 14)
                 tableLayoutPanel14.ColumnStyles[3].Width = SystemInformation.VerticalScrollBarWidth - 1;
             else
-                tableLayoutPanel14.ColumnStyles.Remove(tableLayoutPanel14.ColumnStyles[3]);
+                tableLayoutPanel14.ColumnCount = 3;
 
             // Cooking Tab
             CookingAddButton.Size = CookingRemoveButton.Size;
