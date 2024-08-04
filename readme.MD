@@ -432,7 +432,7 @@ A gear breakpoint is structured as follows:
 
 The list of IDs is the IDs of the gear desired.
 
-You can dump your loadouts from Gear Optimizer using the method found on [this wiki page](https://github.com/rvazarkar/NGUInjector/wiki/Dump-Equipment-from-GO).
+You can dump your loadouts from Gear Optimizer using the method found on [this wiki page](https://github.com/rus9384/NGUInjector/wiki/Dump-Equipment-from-GO).
 
 ## Beards
 
