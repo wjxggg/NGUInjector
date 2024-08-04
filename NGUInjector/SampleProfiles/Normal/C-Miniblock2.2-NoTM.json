@@ -43,11 +43,20 @@
         "Comment": "No TM means no diggers"
       }
     ],
-    "Rebirth": {
-	  "Type": "Number",
-	  "Target": 100,
-	  "Challenges": [ "NOTM-1" ],
-      "Comment": "Option: Disable rebirth when close and eat a Fruit of Power to get past the final stretch, maybe also bump up the Target once rebirths last >20 minutes?"
-	}
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 0, 2, 4, 5 ],
+		"Comment": "Stats + Number + Wandoos + Adv"
+	  }
+	],
+    "Rebirth": [
+	  {
+	    "Type": "Number",
+	    "Target": 100,
+        "Comment": "Option: Disable rebirth when close and eat a Fruit of Power to get past the final stretch, maybe also bump up the Target once rebirths last >20 minutes?"
+	  }
+	],
+	"Challenges": [ "NOTM-1" ]
   }
 }
