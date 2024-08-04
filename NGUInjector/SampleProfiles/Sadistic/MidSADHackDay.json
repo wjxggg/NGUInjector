@@ -14,11 +14,10 @@
       {
         "Time": { "h": 1 },
         "Priorities": [ "CAPWAN:10", "CAPNGU-4:50", "NGU-0", "NGU-1", "NGU-3", "NGU-4", "NGU-5", "NGU-6", "NGU-7", "NGU-8" ]
-		"Comment": "All R3 is dedicated to Hacks, no reason to put any into wishes"
       },
       {
         "Time": { "h": 26 },
-        "Priorities": [ "CAPWAN:10", "CAPNGU-4:50", "WISH-0:5", "WISH-1:5", "WISH-2:6", "WISH-3:6", "NGU-0", "NGU-1", "NGU-3", "NGU-4", "NGU-5", "NGU-6", "NGU-7", "NGU-8" ],
+        "Priorities": [ "CAPWAN:10", "CAPNGU-4:50", "NGU-0", "NGU-1", "NGU-3", "NGU-4", "NGU-5", "NGU-6", "NGU-7", "NGU-8" ],
         "Note": "Return to normal RB allocation after R3 pots wear off, swap profiles when able"
       }
     ],
@@ -33,8 +32,7 @@
       },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPWAN:10", "BR:10", "CAPNGU-1:50", "ALLNGU" ],
-		"Comment": "All R3 is dedicated to Hacks, no reason to put any into wishes"
+        "Priorities": [ "CAPWAN:10", "BR:10", "CAPNGU-1:50", "ALLNGU" ]
       },
       {
         "Time": { "h": 26 },
@@ -53,7 +51,7 @@
       },
       {
         "Time": { "h": 26 },
-        "Priorities": [ "WISH-0", "WISH-1", "WISH-2", "WISH-3" ],
+        "Priorities": [ ],
 		"Comment": "Return to normal allocation after R3 pots wear off, swap profiles when able"
       }
     ],
@@ -91,6 +89,12 @@
         "List": [ 0, 1, 2, 3, 4, 5, 8, 9, 10, 11 ]
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 1, 3, 6, 0, 4, 2 ]
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
@@ -103,6 +107,7 @@
         "Items": [ "R3POT-B", "R3POT-C" ]
       }
     ],
-    "RebirthTime": -1
+    "RebirthTime": -1,
+	"Challenges": [ ]
   }
 }
