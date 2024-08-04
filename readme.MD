@@ -56,7 +56,7 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General](https://i.imgur.com/rKcBFVr.png)
+![General](https://i.imgur.com/TTogTHu.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
@@ -738,10 +738,6 @@ The pitspin.log file will contain the results of each automatic money pit, daily
 
 Pressing the F2 button will globally disable all features of the app until re-enabled.
 
-## Turn on Autoattack in ITOPOD
-
-Have you forgotten to turn on auto attack before and left yourself AFK in ITOPOD doing nothing? Me too! Pressing the F4 button will toggle the script to automatically turn auto attack on if you're in ITOPOD and its not on.
-
 ## Auto Merge Boost to 100
 
 Lock a boost in your inventory and the script will automatically merge boosts on to that boost until it hits level 100!
@@ -750,5 +746,4 @@ Lock a boost in your inventory and the script will automatically merge boosts on
 
 SharpMonoInjector can be found [here](https://github.com/warbler/SharpMonoInjector). This wouldn't be possible without the excellent work done there.
 Obviously 4G for making NGU Idle.
-Altizar on discord for WISH logic, cooking logic and some other fixes
-Ingwar on discord for allocation profile logic and some other fixes
+JShepler on discord for GO bookmarklet and help with code.
