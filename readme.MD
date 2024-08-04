@@ -62,7 +62,6 @@ An in game menu can be opened using the F1 button.
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
 
 - **Money Pit Run Mode** - This mode automatically tosses gold into the Money Pit and performs rebirths to maximize the levels gained from the Money Pit.
-- **Auto Move to ITOPOD** - Automatically move to ITOPOD when nothing else is happening in automation.
 - **Auto Fight Bosses** - Automatically nuke/fight bosses.
 - **Auto Buy Energy/Magic/R3** - Automatically spend EXP on Energy/Magic/R3 based on the custom caps set by the user on their respective tabs. Will buy stats all at once after the total of all custom caps are met (including Adventure Stats if enabled).
 - **Auto Buy Adventure Stats** - Automatically spend EXP on Adventure Atats based on the custom caps set by the user in the "Adventure Stats" tab. Will buy stats all at once after the total of all custom caps are met (including Energy/Magic/R3 if enabled).
@@ -74,163 +73,179 @@ An in game menu can be opened using the F1 button.
 
 - **Open Settings Folder** - Opens a folder to the NGUInjector folder which contains the settings, profiles and logs.
 
-- **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
+- **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload.
 
 ![Allocation](https://i.imgur.com/91Gfpq9.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
-- **Manage Energy** - Manage energy based on breakpoints in your selected allocation file
-- **Manage Magic** - Manage magic based on breakpoints in your selected allocation file
-- **Manage R3** - Manage resource 3 based on breakpoints in your selected allocation file
+- **Manage Energy** - Manage energy based on breakpoints in your selected allocation file.
+- **Manage Magic** - Manage magic based on breakpoints in your selected allocation file.
+- **Manage R3** - Manage resource 3 based on breakpoints in your selected allocation file.
 
-- **Manage Gear** - Manage gear based on breakpoints in your selected allocation file
-- **Manage NGU Difficulty** - Manage NGU difficulty based on breakpoints in your selected allocation file
+- **Manage Wandoos OS** - Manage wandoos OS based on breakpoints in your selected allocation file.
+- **Manage NGU Difficulty** - Manage NGU difficulty based on breakpoints in your selected allocation file.
+- **Manage Beards** - Manage beards based on breakpoints in your selected allocation file.
 
-- **Manage Diggers** - Manage diggers based on breakpoints in your selected allocation file
+- **Manage Diggers** - Manage diggers based on breakpoints in your selected allocation file.
 - **Auto Upgrade Diggers** - Automatically upgrades your cheapest diggers when you have money available. Respects your money pit threshold and wont buy underneath it.
+- **Limit Diggers to X % of GPS** - Percent of Gross GPS to use on diggers.
 
-- **Manage Wandoos OS** - Manage wandoos OS based on breakpoints in your selected allocation file
-
+- **Manage Gear** - Manage gear based on breakpoints in your selected allocation file.
 - **Manage Consumables** - Set this to true to have injector manage consumables via breakpoints in your allocation file. See section on Consumables below for more details.
 
 - **Auto Rebirth** - Automatically rebirth after the time in your selected allocation file is reached.
 
-- **Change Auto Spells** - Manage Spoopy Spell casting
-- **Spaghetti %** - Percent to cast Blood Spaghetti until
-- **Number Bonus** - Number to cast Blood NUMBER Boost until
-- **Counterfeit %** - Percent to cast Counterfeit Gold until
+- **Change Auto Spells** - Manage Spoopy Spell casting.
+- **Spaghetti %** - Percent to cast Blood Spaghetti until.
+- **Number Bonus** - Number to cast Blood NUMBER Boost until.
+- **Counterfeit %** - Percent to cast Counterfeit Gold until.
 
-- **Cast Blood Spells** - Cast blood spells automatically. Will try every 10 seconds or at rebirth
+- **Cast Blood Spells** - Cast blood spells automatically. Will try every 10 seconds or at rebirth.
 - **Iron Pill** - Amount of +stats to cast Iron Pill at.
-- **Guff A** - Number of +levels to cast Guff A at
-- **Guff B** - Number of +levels to cast Guff B at
+- **Guff A** - Number of +levels to cast Guff A at.
+- **Guff B** - Number of +levels to cast Guff B at.
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
 ![Yggdrasil](https://i.imgur.com/gvI9qqF.png)
 
-- **Manage Yggdrasil** - Automatically harvest fruits.
-- **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
-- **Swap Loadout for Yggdrasil** - If checked, equip the loadout specified in YggdrasilLoadout before harvesting
+- **Manage Yggdrasil** - Automatically harvest fruits. Can harvest Guff B Fruit and Quirk Fruit at below maximum tier, in case it's optimal.
+- **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for.
+- **Swap Loadout for Yggdrasil** - If checked, equip the loadout specified in Yggdrasil loadout before harvesting
 - **Minimum Fruit Level for Swap** - Don't equip Yggdrasil loadout for fruits below this level.
-- **Loadout** - Edit the loadout used for harvest yggdrasil. Add items using the box in the bottom.
-- **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths
+- **Loadout** - Edit the loadout used for harvest Yggdrasil. Add items using the box in the bottom.
+- **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths.
 
 ![Inventory](https://i.imgur.com/aaXGdyw.png)
 
-- **Manage Inventory** - When enabled, the following features will be enabled
+- **Manage Inventory** - When enabled, the following features will be enabled:
   - **Auto Boost Merging** - If a boost is locked, boosts will automatically be merged until the boost hits 100.
   - **Auto Merging** - Equipped items and items in inventory will automatically be merged, as well as MacGuffins. The highest level item will be selected for merging automatically. A locked item will always be preferred.
-  - **Auto Boosting** - Automatically boost items. Will start with items in the PriorityBoosts setting, followed by equipped items, locked items in inventory and finally infinity cube.
-  - **Auto Filtering** - If improved loot filter is purchased, will automatically filter items when they hit level 100
-  - **Auto Convertible Management** - Will automatically transform non-locked pendants/lootys and other items
-  - **Quest Item Management** - Will try to merge a quest item to level 100 if a locked one is found. Otherwise will automatically turn in quest items
+  - **Auto Boosting** - Automatically boost items. Will start with items in the PriorityBoosts setting, followed by equipped items, locked items in inventory and finally Infinity Cube.
+  - **Auto Filtering** - If Improved Loot Filter is purchased, will automatically filter items when they hit level 100.
+  - **Auto Convertible Management** - Will automatically transform non-locked pendants/lootys and other items.
+  - **Quest Item Management** - Will try to merge a Quest item to level 100 if a locked one is found. Otherwise will automatically turn in Quest items.
 - **Manage Boost Conversion** - If all normal 100 Level Challenges are completed, will calculate needed boosts for items in boostIds and then switch auto conversion appropriately. If a locked non-level 100 boost is found in your inventory, will lock conversion to that type first to boost it to 100. Will also show you the hourly average of boost progress in the inject.log file.
 - **Cube Boost Priority** - How to boost cube.
-  - **None** - Will turn off boost conversion
-  - **Balanced** - Will keep raw power and toughness on cube equal
-  - **Softcap** - Will keep percentage of the power and toughness softcaps on cube equal. For instance if the power softcap is 3x the toughness softcap, cube raw power will be 3x cube raw toughness.
-  - **Power** - Will only put power into the cube
-  - **Toughness** - Will only put toughness into the cube
+  - **None** - Will turn off boost conversion.
+  - **Balanced** - Will keep raw power and toughness on the Cube equal.
+  - **Softcap** - Will keep percentage of the power and toughness softcaps on the Cube equal. For instance if the power softcap is 3x the toughness softcap, Cube raw power will be 3x Cube raw toughness.
+  - **Power** - Will only put power into the Cube.
+  - **Toughness** - Will only put toughness into the Cube.
+- **Favored Macguffin** - When casting Guff B spell or eating Guff A Fruit will equip only the selected MacGuffins leaving all other slots empty, unless the "wasn't so random" wishes are bought, in which case it will just equip the selected MacGuffin in the first slot.
 - **Gear Boost Priority** - The priority in which items should be boosted. Defaults to Power > Toughness > Special.
 - **Priority Boosts** - Edit the items you wish to boost before others. Add items using the box in the bottom. Order is respected.
-- **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
+- **Blacklisted Items** - Edit the items you wish to never be boosted or merged. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
 ![Titans](https://i.imgur.com/SzFuMat.png)
 
 - **Manage Titans** - Turns on combat and gear swapping for titans.
-- **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
-- **Set difficulty** - Use this to change the difficulties of titans which have different versions. Disabled until the titan has been killed at least once.
 - **Loadout** - The gear to equip when autokilling or fighting titans.
-- **Titans to Manage** - Mark titans you wish to fight and swap gear for
-- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP, THE GODMOTHER, and THE EXILE will ALWAYS use manual combat regardless of this setting*
-- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each titan attempt and wait for the cooldowns to recharge. Ignored during Idle combat mode.
-- **Recover HP** - If enabled, will recover HP in safe zone between titan kills attempts.
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of THE GODMOTHER and THE EXILE. Ignored during Idle combat mode.
-- **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
-- **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
-- **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
+- **Titans to Manage**
+  - **Titan** - Mark titans you wish to fight and swap gear for.
+  - **Version** - Allows you to quickly change the titan version.
+- **Combat Mode** - Select one of the following options:
+  - **Idle** - Will just idle the zone. *WALDERP, THE GODMOTHER, and THE EXILE will ALWAYS use Offensive setting instead of Idle.*
+  - **Snipe** - Waits for the full HP before fights. Precasts buffs and waits until all moves are off cooldowns. Will try to block and paralyze a lot, while using Beast Mode cautiously.
+  - **Defensive** - Waits for 80% HP before fights. Does not precast buffs. Uses Beast Mode a bit less cautiously than Snipe mode.
+  - **Offensive** - Waits for 60% HP before fights. Does not precast buffs. Uses block only for special moves or if the next hit is expected to be fatal. Uses Beast Mode a lot.
+  - **Auto-kill** - Equips the loadout before the titan spawns, but does not move to the titan zone. If you can't autokill selected titans, will try to set a lower version.
+- **Beast Mode** - Whether to use Beast Mode or not in *idle combat*.
 - **Locate Walderp** - If Walderp is hiding, will take you to the menu he's currently in.
 
 ![Adventure](https://i.imgur.com/y0vuEc6.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 
-- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
-- **Recover HP** - If enabled, will recover HP in safe zone between kills
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of Rapid, Charge, or Exploder enemy types if available. Ignored during Idle combat mode.
-- **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
-- **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
-- **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
-- **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone. *WALDERP and THE GODMOTHER will ALWAYS use manual combat regardless of this setting*
-
-- **Target Zone** - The target zone to snipe/do combat in. ITOPOD is at the bottom of the list. If the target zone is a titan zone, will idle in ITOPOD until the Titan is about to spawn. Also, will use combat settings/gear defined in the Titans tab even if the Manage Titans flag is disabled.
+- **Combat Mode** - Select one of the following options:
+  - **Idle** - Will just idle the zone.
+  - **Snipe** - Waits for the full HP before fights. Precasts buffs and waits until all moves are off cooldowns. Will try to block and paralyze a lot, while using Beast Mode cautiously.
+  - **Defensive** - Waits for 80% HP before fights. Does not precast buffs. Uses Beast Mode a bit less cautiously than Snipe mode.
+  - **Offensive** - Waits for 60% HP before fights. Does not precast buffs. Uses block only for special moves or if the next hit is expected to be fatal. Uses Beast Mode a lot. Aggressively uses Paralyze against Paralyze type enemies.
+  - **One-shot** - Does not use any buffs. Uses only Regular Attack.
+- **Beast Mode** - Whether to use Beast Mode or not while in *idle combat*.
+- **Target Zone** - The target zone to snipe/do combat in.
 - **Bosses Only** - If enabled, will only fight bosses when doing combat. Good for zone sniping.
 - **Allow Fallthrough** - If set to true, combat will use the highest unlocked zone you have until the target zone is unlocked.
-- **ITOPOD** - Equivalent to setting target zone to ITOPOD, just a quicker option
-- **Titans** - Will move you to each Titan enabled in the Titans and/or Gold tabs when the Titan is about to spawn. Higher level titans will be fought first, Gold loadouts take priority. Uses the non-ITOPOD combat settings unless Titan Combat Settings are enabled in the Titans tab.
 
-- **ITOPOD Settings** - Settings below this apply only to ITOPOD combat
+- **ITOPOD Settings** - Settings below this apply only to ITOPOD combat.
+- **ITOPOD** - If selected, will fight in ITOPOD regardless of chosen target zone. Titan combat takes precedence over this setting.
 - **Combat Mode** - If set to manual, will execute a custom combat routine. If set to idle, will just idle the zone.
-- **Precast Buffs** - If enabled, will cast charge and parry in safe zone before each combat and wait for the cooldowns to recharge. Ignored during Idle combat mode.
-- **Recover HP** - If enabled, will recover HP in safe zone between kills
-- **Fast Combat** - If enabled, will just quickly attack and skip buffs altogether. Block will still be used for the special attacks of Rapid, Charge, or Exploder enemy types if available. Ignored during Idle combat mode.
-- **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
-- **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
-- **Optimize ITOPOD Floor** - Will optimize your ITOPOD floor every 10 seconds. Does nothing if Lazy Floor Shifter is on
+- **Beast Mode** - Whether to use Beast Mode.
+- **Optimization Mode** - Will optimize your ITOPOD floor every 10 seconds. Select one of the following options:
+  - **Disabled** - Does not perform floor optimization. Does not interfere with Lazy ITOPOD Shifter.
+  - **Default** - Behaves almost like Lazy ITOPOD Shifter. If manual combat is enabled, will use regular attack instead of idle attack for the calculation.
+  - **PP** - Uses buffs, strong attack, piercing attack and ultimate attack while shifting floors to maximize PP gain.
+  - **EXP/AP** - Uses buffs, strong attack, piercing attack and ultimate attack while shifting floors to maximize EXP and AP gain.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
 ![Gold](https://i.imgur.com/9LLFh5M.png)
 
-- **Enable Gold Management** - If turned off, will disable all gold swap logic
-- **Do Gold Snipe** - If checked, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
+- **Enable Gold Management** - If turned off, will disable all gold swap logic.
 - **Resnipe Time** - Set this value to re-enable gold snipe at a certain time during your rebirth. Best set to after AT is completed in order to get a higher zone.
 - **CBlock Mode** - If checked, will automatically gold snipe every new zone that is unlocked. Useful for challenge blocks where zones sporadically become available.
+- **Gold Snipe Now** - If pressed, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
 - **Loadout** - Items to use when swapping for gold loadout.
 - **Titans to Gold Snipe** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
-- **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
+- **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete.
 
 ![Quests](https://i.imgur.com/ystBmjC.png)
 
-- **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
-- **Allow Major Quests**
-  - If this option is enabled, when major quests are available they will be accepted and automation will manually farm the items from the appropriate zone
-  - If this option is disabled, major quests will not be accepted.
-  - When no major quests are available, minor quests will be accepted and idled.
-  - Manual questing will pause while titan combat is occurring
-  - Manual questing will NOT occur if a zone is currently being sniped in the Adventure tab.
-- **Use Butter on Majors** - If enabled will attempt to butter major quests
-- **Manual Minors** - If enabled will manual minor quests as well as majors
-- **Use Butter on Minors** - If enabled will attempt to butter minor quests
-- **Abandon Minor Quests** - If enabled and minor quest progress is below the minor quest threshold, the minor quest will be abandoned and a major quest will be picked up.
-- **Abandon Minor Quest Threshold** - Quest progress before which its acceptable to abandon minor quests.
+- **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on Allow Major Quests and Start Major Quests with a full Bank options.
+- **Allow Major Quests** - If this option is enabled, when the Quest Bank has at least one Quest, it will be accepted and automation will manually farm the items from the appropriate zone.
+- **Start Major Quests with a full Bank** - If this option is enabled and the Quest Bank is full, a Major Quest will be accepted and automation will manually farm the items from the appropriate zone.
+  - In other scenarios Minor Quests will be accepted.
+  - Manual questing will pause while titan combat is occurring.
+  - Manual questing takes precedence over Adventure farming.
+- **Use Butter on Majors** - If enabled, will attempt to butter Major Quests.
+- **Manual Minors** - If enabled, will manual Minor Quests as well as Majors.
+- **Use Butter on Minors** - If enabled, will attempt to butter Minor Quests.
+- **Roll Fifty Item Minors** - If enabled, will skip Minor Quests that require more than 50 items. Takes progress into account. For example, if the progress is 3/54, it will skip the Minor Quest. Buf if the progress is 4/54, it will not skip. 
+- **Abandon Minor Quests** - If enabled, and Minor Quest progress is below the Minor Quest threshold, the Minor Quest will be abandoned and a Major Quest will be picked up.
+- **Abandon Minor Quest for Major at a Threshold (%)** - Quest progress until which it's acceptable to abandon Minor Quests.
 - **Swap Loadout for Quests** - Equip the gear in Quest Loadout when engaged in Manual questing
 - **Loadout** - The gear to equip when in a manual quest.
-- **Combat Mode** - If engaged in manual questing and this option is set to manual, will perform a combat routine in the quest zone. Otherwise will idle the zone.
-- **Fast Combat** - If enabled will skip all buffs during combat. Ignored during Idle combat mode.
-- **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
-- **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
+- **Combat Mode** - Select one of the following options:
+  - **Idle** - Will just idle the zone.
+  - **Snipe** - Waits for the full HP before fights. Precasts buffs and waits until all moves are off cooldowns. Will try to block and paralyze a lot, while using Beast Mode cautiously.
+  - **Defensive** - Waits for 80% HP before fights. Does not precast buffs. Uses Beast Mode a bit less cautiously than Snipe mode.
+  - **Offensive** - Waits for 60% HP before fights. Does not precast buffs. Uses block only for special moves or if the next hit is expected to be fatal. Uses Beast Mode a lot. Aggressively uses Paralyze against Paralyze type enemies.
+  - **One-shot** - Does not use any buffs. Uses only Regular Attack.
+- **Beast Mode** - Whether to use Beast Mode or not while in *idle combat*.
 
 ![Wishes](https://i.imgur.com/undefined.png)
 
-- **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
-- **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
-- **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
-- **Blacklist Wishes** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities. Supersedes Priority list if the same wish is in both lists.
+- **Manage Wishes** - If enabled, will allocate resources into Wishes, according to settings.
+- **Limit to X Wishes** - Maximum number of Wishes it will allocate resources into simultaneously. For example, if you have 3 or 4 Wish slots, but want to use only 2, set this option to 2.
+- **Energy %** - percent of Energy to use on Wishes. For example, if set to 30, 30% of total Energy will be distributed between active Wish slots.
+- **Magic %** - percent of Magic to use on Wishes.
+- **Resource 3 %** - percent of Resource 3 to use on Wishes.
+- **Allocation Mode** - select one of the following options:
+  - **Default** - Will prioritize Wishes by their index.
+  - **Cheapest** - Will prioritize Wishes that require the least resources to finish.
+  - **Fastest** - Will prioritize Wishes that can be finishes as soon as possible.
+  - **Balanced** - If multiple Wish slots are available, will use one slot for the cheapest non-blacklisted wish. The remaining slots are used for the cheapest Wishes that can't be speed capped.
+- **Priority Wishes** - The Wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized Wishes are assigned, other available Wishes will be assigned to open slots ordered by the method outlined above.
+  - **Soft Priorities** - If enabled, will prioritize Wishes by the method above, and if there is a tie, prioritize a Wish closer to the top of priorities list. If disabled, will ignore the settings above for Wishes in this list.
+- **Blacklist Wishes** - Assign Wishes you never want to cast here. Any Wish in this list will be ignored when working out the Wish priorities. Supersedes Priority list if the same Wish is in both lists.
 
 ![The Pit](https://i.imgur.com/8HeHy2f.png)
 
-- **Auto Daily Spin** - Automatically do daily spin and log the result to the loot.log file
-- **Auto Money Pit** - Automatically throw money into the money pit if the Money Pit Threshold is met. Logs the result to the loot.log file
-- **Money Pit Threshold** - The amount of gold to wait for to throw gold into the money pit. Accepts scientific notation (ex: 1E+28)
-- **Loadout** - Items to equip before throwing money in the pit
+- **Auto Daily Spin** - Automatically do Daily Ppin and log the result to the loot.log file.
+- **Auto Money Pit** - Automatically throw money into the Money Pit if the Money Pit Threshold is met. Logs the result to the loot.log file.
+- **Predict Money Pit Outcome** - If enabled then right before throwing money into the Money Pit, it will inspect the Money Pit reward and behave accordingly. If the next reward is a Little Iron Pill, it will enable the Blood Digger and invest all Magic into Blood Rituals. If the next reward is a little Pomegranate, it will equip Yggdrasil loadout.
+- **Put Items out of Daycare** - if enabled, it will put items out of Daycare to maximize the number of items in the Items for Shockwave list that will be hit by a Shockwave. Does nothing if Money Pit prediction is disabled.
+- **Money Pit Threshold** - The amount of gold to wait for to throw gold into the Money Pit.
+- **Daycare Threshold** - If the progress bar of an item in Daycare has reached this threshold, the item won't be put out from Daycare. If you want items to always be put out from Daycare, set this to 100%.
+- **Items for Shockwave** - Items to equip before throwing money in the pit. If prediction is enabled, will only equip items if the reward is equipment shockwave.
 
 ![Cards](https://i.imgur.com/fC3FFJj.png)
 
 - **Manage Mayo** - Prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
-- **Auto Cast Cards** - Cast any card that is not trashed according to your settings.
+- **Auto Cast Cards** - Cast any unprotected card that is not trashed according to your settings.
+- **Cast Protected Cards** - Allow casting protected cards.
 - **Sort Cards** - Set this to true to have the injector sort cards based on the priorities given in the card Sort Order.
 - **Card Sort Order** - A list of priorities to sort the cards by. The cards will be sorted by the first priority, then any cards that share an identical value for the first priority will be sorted by the second priority, and so on. The available priority options are:
   - **"RARITY"** - The card rarity ("Good"/"Okay", etc.). (high->low)
@@ -250,21 +265,22 @@ The "-ASC" versions of the sort options will sort in the opposite direction.
 This will place any protected cards first. For all the protected cards, it will prioritise advStat, then hackSpeed above other types. All the protected advStat cards are then ordered by the lowest cost, then highest value. Same for protected hackSpeed cards. Same for all other protected cards. The unprotected cards are then sorted in the same manner as the protected cards.
 
 - **Auto Trash Cards** - Automatically yeet cards according to the settings below.
-- **Trash Adventure Cards** - If checked, adventure cards are yeeted according to your settings. If not checked, no adventure cards are ever yeeted, regarless of quality/cost/type settings.
-- **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of quality/cost/type settings. **Note:** Big Chonker cards *always* spawn as protected and ignore this flag if the Trash Chonkers flag is enabled.
-- **Trash Cards of XXX quality/cost and below** - Yeet cards which are at or below the specified quality/cost.
-- **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when their type is on the Always Trash List. If not checked, BigChonker cards will not be yeeted unless they are below the configured quality or cost thresholds.
-- **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
+- **Trash Protected Cards** - If checked, protected cards are yeeted according to your settings. If not checked, no protected cards are ever yeeted, regarless of quality/cost/type settings.
+- **Trash Settings** - Customize which cards you want to trash in this table
+  - **Rarity** - trash all cards of this type of this rarity or lower.
+  - **Cost** - trash all cards of this type of this cost or lower.
+
+For example, if you set Good-2 on Augment cards, then all unprotected Augment cards of rarity Good or lower will be trashed, as well as all unprotected Augment cards of cost 1 or 2. A Great Augment card of cost 3 won't be trashed.
 
 ![Cooking](https://i.imgur.com/undefined.png)
 
-- **Manage Cooking** - Set this to true to have the injector optimize your cooking efficiency
-- **Swap Loadout for Cooking** - Set this to true to have the injector swap to a Cooking loadout when eating meals
-- **Loadout** - Items to equip before eating
+- **Manage Cooking** - Set this to true to have the injector optimize your cooking efficiency.
+- **Swap Loadout for Cooking** - Set this to true to have the injector swap to a Cooking loadout when eating meals.
+- **Loadout** - Items to equip before eating.
 
 # Allocation
 
-Allocation profiles can be found in the profiles folder and contain time breakpoints for configuring your gear, diggers, energy allocation and magic allocation. Sample allocation files can be found in the sampleprofile folder.
+Allocation profiles can be found in the profiles folder and contain time breakpoints for configuring your gear, beards, diggers, energy allocation, magic allocation and resource 3 allocation. Sample allocation files can be found in the sampleprofile folder.
 
 [Sample 24 Hour Profile](https://github.com/rvazarkar/NGUInjector/blob/master/NGUInjector/SampleProfiles/24hr_with_gear.json).
 
@@ -281,10 +297,10 @@ The time portion of every breakpoint refers to rebirth time in seconds. Time can
 Priorities can be modified with an optional percentage cap by adding a : and a percent. As an example:
 
 ```
-CAPWISH-0:30
+CAPRIT-0:30
 ```
 
-This will cap wish 0 but limit the maximum amount allocated to 30% of your current cap. When applied to non-cap priorities, it will limit to % of idle resource. Priorities will respect targets and not allocate to priorities that are target capped.
+This will try to cap Poke yourself with a Tack Blood Ritual, but limit the maximum amount allocated to 30% of your current cap. When applied to non-cap priorities, it will limit to % of idle resource. Priorities will respect targets and not allocate to priorities that are target capped.
 
 ## Energy
 
@@ -312,30 +328,28 @@ In the above example the following actions will be taken:
 
 Available cap priorities for Energy are as follows:
 
-- CAPNGU-X (0-8) - Calculate a cap for the NGU
-- CAPALLNGU - Calculate a cap for every NGU starting from 0
+- CAPNGU-X (0-8) - Calculate a cap for the NGU.
+- CAPALLNGU - Calculate a cap for every NGU starting from 0.
 - CAPAT-X (0-4) - Calculate a cap for the AT and attempt to BB it.
 - CAPALLAT - Calculate caps for all ATs and BB them.
 - CAPBESTAUG - Attempts to allocate to the best augment possible. Before pairs are unlocked, will allocate to highest augment that is easily doable. After will try to optimize.
-- CAPWAN - Calculate a cap for wandoos energy
+- CAPWAN - Calculate a cap for wandoos energy.
 - CAPTM - Calculate a cap for energy time machine and attempt to BB it.
-- CAPBT-X (0-11) - Calculate a cap for basic training
-- CAPALLBT - Caps all basic trainings
-- CAPAUG-X (0-13) - Calculate a cap for augments and attempt to BB it
-- CAPWISH-X (0-X) - Allocate energy to wishes. X is the wish slot you wish to allocate to. If you only have 1 slot, WISH-0 will be the one you use. Wishes will follow the priority set in the WishPriorities setting and then work through cheapest wishes
+- CAPBT-X (0-11) - Calculate a cap for basic training.
+- CAPALLBT - Caps all basic trainings.
+- CAPAUG-X (0-13) - Calculate a cap for augments and attempt to BB it.
 
 Available non-cap priorities for Energy are as follows:
 
-- ALLNGU - Allocate energy to every NGU
-- NGU-X (0-8) - Allocate energy to NGU
-- AT-X (0-4) - Allocate energy to AT
-- ALLAT - Allocate energy to all AT
-- AUG-X (0-13) - Allocate energy to augment
+- ALLNGU - Allocate energy to every NGU.
+- NGU-X (0-8) - Allocate energy to NGU.
+- AT-X (0-4) - Allocate energy to AT.
+- ALLAT - Allocate energy to all AT.
+- AUG-X (0-13) - Allocate energy to augment.
 - BESTAUG - Attempts to allocate to the best augment possible. Before pairs are unlocked, will allocate to highest augment that is easily doable. After will try to optimize.
-- WAN - Allocate energy to energy wandoos
-- TM - Allocate energy to energy time machine
-- BT-X (0-11) - Allocate energy to basic training
-- WISH-X (0-X) - Allocate energy to wishes. X is the wish slot you wish to allocate to. If you only have 1 slot, WISH-0 will be the one you use. Wishes will follow the priority set in the WishPriorities setting and then work through cheapest wishes
+- WAN - Allocate energy to energy wandoos.
+- TM - Allocate energy to energy time machine.
+- BT-X (0-11) - Allocate energy to basic training.
 
 More information on allocation indexes can be found on the [wiki](https://github.com/rvazarkar/NGUInjector/wiki/Allocation-Indexes)
 
@@ -359,20 +373,19 @@ A cap priority will use as much idle energy as possible and hit the highest BB b
 
 In the above example the following actions will be taken:
 
-- NGU-0 (NGU Yggdrasil) will be capped
-- Wandoos magic will be capped
-- Magic rituals will be capped from highest to lowest, with rituals taking more than 1 hour skipped
-- Remaining magic will be allocated to NGU-1 (NGU Exp)
+- NGU-0 (NGU Yggdrasil) will be capped.
+- Wandoos magic will be capped.
+- Magic rituals will be capped from highest to lowest, with rituals taking more than 1 hour skipped.
+- Remaining magic will be allocated to NGU-1 (NGU Exp).
 
 Available cap priorities for Magic are as follows:
 
-- CAPNGU-X (0-6) - Use the cap button for the NGU
-- CAPALLNGU - Use the cap button for every NGU starting from 0
-- CAPWAN - Use the cap button for wandoos magic
+- CAPNGU-X (0-6) - Use the cap button for the NGU.
+- CAPALLNGU - Use the cap button for every NGU starting from 0.
+- CAPWAN - Use the cap button for wandoos magic.
 - CAPTM - Calculate a cap for magic time machine and attempt to BB it.
-- CAPRIT-X - Calculate a cap for the ritual and allocate
-- CAPWISH-X (0-X) - Allocate magic to wishes. X is the wish slot you wish to allocate to. If you only have 1 slot, WISH-0 will be the one you use. Wishes will follow the priority set in the WishPriorities setting and then work through cheapest wishes
-- BR - Cast rituals from highest to lowest ignoring rituals you cant afford or will take more than an hour
+- CAPRIT-X - Calculate a cap for the ritual and allocate.
+- BR - Cast rituals from highest to lowest ignoring rituals you cant afford or will take more than an hour.
 - BR-X - Cast rituals from highest to lowest that will finish before time specified by X. BR-3600 will cast rituals that will end before the 1 hour mark from your current time.
 
 Available non-cap priorities for Magic are as follows:
@@ -381,7 +394,6 @@ Available non-cap priorities for Magic are as follows:
 - WAN - Allocate energy to magic wandoos
 - TM - Allocate energy to magic time machine
 - RIT-X - Allocate energy to ritual
-- WISH-X (0-X) - Allocate magic to wishes. X is the wish slot you wish to allocate to. If you only have 1 slot, WISH-0 will be the one you use. Wishes will follow the priority set in the WishPriorities setting and then work through cheapest wishes
 
 More information on allocation indexes can be found on the [wiki](https://github.com/rvazarkar/NGUInjector/wiki/Allocation-Indexes)
 
@@ -402,8 +414,7 @@ An R3 breakpoint is structured as follows:
 Available priorities for R3 are as follows:
 
 - (CAP)HACK-X (0-14) - Allocate R3 to hacks. Will only ever allocate to the first hack in your priority list that hasn't met its target.
-- (CAP)ALLHACK - Adds every hack from 0 to 14 as a priority
-- (CAP)WISH-X (0-X) - Allocate R3 to wishes. X is the wish slot you wish to allocate to. If you only have 1 slot, WISH-0 will be the one you use. Wishes will follow the priority set in the WishPriorities setting and then work through cheapest wishes
+- (CAP)ALLHACK - Adds every hack from 0 to 14 as a priority. Prioritizes hacks with target > 0.
 
 ## Gear
 
@@ -421,7 +432,22 @@ A gear breakpoint is structured as follows:
 
 The list of IDs is the IDs of the gear desired.
 
-You can dump your loadouts from Gear Optimizer using the method found on [this wiki page](https://github.com/rvazarkar/NGUInjector/wiki/Dump-Equipment-from-GO)
+You can dump your loadouts from Gear Optimizer using the method found on [this wiki page](https://github.com/rvazarkar/NGUInjector/wiki/Dump-Equipment-from-GO).
+
+## Beards
+
+A beard breakpoint is structured as follows:
+
+```
+"Beards": [
+    {
+        "Time": 0,
+        "List": [5, 1, 6, 3]
+    }
+]
+```
+
+The list of Beards is 0 indexed. Fu Manchu is 0, Golden Beard is 6. More information can be found on the [wiki](https://github.com/rus9384/NGUInjector/wiki/Allocation-Indexes).
 
 ## Diggers
 
@@ -431,13 +457,13 @@ A digger breakpoint is structured as follows:
 "Diggers": [
     {
         "Time": 3650,
-        "List": [3, 4, 5, 8]
+        "List": [8, 3, 4, 5]
     }
 ]
 
 ```
 
-The list of diggers is 0 indexed. Drop chance digger is 0, EXP digger is 11. More information can be found on the [wiki](https://github.com/rvazarkar/NGUInjector/wiki/Allocation-Indexes)
+The list of Diggers is 0 indexed. Drop chance Digger is 0, EXP Digger is 11. More information can be found on the [wiki](https://github.com/rus9384/NGUInjector/wiki/Allocation-Indexes).
 
 ## Wandoos
 
@@ -453,7 +479,7 @@ A wandoos breakpoint is structured as follows:
 
 ```
 
-The OS is 0 indexed. Wandoos 98 is 0, Wandoos MEH is 1, Wandoos XL is 2
+The OS is 0 indexed. Wandoos 98 is 0, Wandoos MEH is 1, Wandoos XL is 2.
 
 ## NGU Difficulty
 
@@ -462,13 +488,13 @@ A NGU Difficulty breakpoint is structured as follows:
 ```
 "NGUDiff": [
     {
-    "Time": 0,
-    "Diff": 0
+        "Time": 0,
+        "Diff": 0
     }
 ]
 ```
 
-The difficulty is 0 indexed. Normal NGUs is 0, Evil NGUs is 1, Sadistic NGUs is 2
+The difficulty is 0 indexed. Normal NGUs is 0, Evil NGUs is 1, Sadistic NGUs is 2.
 
 ## Rebirth
 
@@ -483,68 +509,111 @@ A setting of -1 means no rebirths. Otherwise rebirth will be performed when the 
 More complex rebirth breakpoints can be done as follows:
 
 ```
-"Rebirth": {
-    "Type": "Time",
-    "Target": {
-    "h": 24,
-    "m": 1
+"Rebirth": [
+    {
+        "Type": "Time",
+        "Time": {
+            "h": 1,
+            "m": 1
+        }
     },
-    "Challenges": []
-},
+    {
+        "Type": "Number",
+        "Time": {
+            "m": 15
+        },
+        Target: 10000
+    }
+]
 ```
 
 The following types are available:
 
-- **Time** - Rebirths when a certain time passes
-- **Number** - Rebirths when your number will be OldNumber \* _Target_
-- **Bosses** - Rebirths when you can defeat _Target_ additional bosses
+- **Time** - Rebirths when a certain time passes.
+- **Number** - Rebirths when your number will be OldNumber \* _Target_.
+- **Bosses** - Rebirths when you can defeat _Target_ additional bosses.
 - **Muffin** - Rebirths to optimize Muffin consumable usage. Will cycle between 24 hour and (24 hour - _Target_ minutes) Time rebirths. _Target_ must be at least 1 and no more than 60. Enable "Auto Buy Consumables" to auto purchase Muffins if none are available. Will simply behave as a 24 hour Time rebirth without Muffin use if any of the following conditions are met:
-  - Currently in a challenge
-  - Able to rebirth into any challenge defined in the Rebirth Breakpoint
-  - Has not yet beaten Sadistic Troll Challenge 2
-  - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed
-  - Do not have any Muffins and cannot buy more (or is configured to not buy more)
+  - Currently in a challenge.
+  - Able to rebirth into any challenge defined in the Rebirth Breakpoint.
+  - Has not yet beaten Sadistic Troll Challenge 2.
+  - 5 O'Clock Shadow Perk or Beast Fertilizer Quirk aren't maxed.
+  - Do not have any Muffins and cannot buy more (or is configured to not buy more).
 - **TimeBalancedMuffin** - Same as the Muffin rebirth except will also add the _Target_ minutes to the 24 hour rebirth to try to keep rebirths at the same time each day. _Target_ must be at least 1 and no more than 15.
 
-The following example will rebirth when your number is 10x your previous number:
+The example above will rebirth after 15 minutes if the Number would increase 10000 times, or after 1 hour and 1 minute regardless of Number increase.
+
+The following example will rebirth when your number is 10x your previous number and the rebirth is at least 30 minutes long:
 
 ```
-"Rebirth": {
-    "Type": "Number",
-    "Target": 10,
-    "Challenges": []
-},
+"Rebirth": [
+    {
+        "Type": "Number",
+        "Time": {
+            "m": 30
+        },
+        "Target": 10
+    }
+]
 ```
 
 The following example will rebirth when you can kill 5 more bosses than your last rebirth:
 
 ```
-"Rebirth": {
-    "Type": "Bosses",
-    "Target": 5,
-    "Challenges": []
-},
+"Rebirth": [
+    {
+        "Type": "Bosses",
+        "Target": 5
+    }
+]
 ```
 
 The following example will perform "Muffin" rebirth cycles. If no muffin is active will activate a muffin and rebirth at 24:00:00, followed by a rebirth at 23:00:00:
 
 ```
-"Rebirth": {
-    "Type": "Muffin",
-    "Target": 60,
-    "Challenges": []
-},
+"Rebirth": [
+    {
+        "Type": "Muffin",
+        "Target": 60
+    }
+]
 ```
 
 The following example will perform "Muffin" rebirth cycles. If no muffin is active will activate a muffin and rebirth at 24:05:00, followed by a rebirth at 23:55:00:
 
 ```
-"Rebirth": {
-    "Type": "TimeBalancedMuffin",
-    "Target": 5,
-    "Challenges": []
-},
+"Rebirth": [
+    {
+        "Type": "TimeBalancedMuffin",
+        "Target": 5
+    }
+]
 ```
+
+You can define multiple rebirth points. They are evaluated by time first, and by target later. In the following example if the current rebirth is shorter than 5 minutes, a rebirth will be performed only if you will be able to beat 5 more bosses in next rebirth. But if the current rebirth is longer than 5 minutes, but shorter than 30 minutes, a rebirth will be performed if the number will increase 500 times. And if the current rebirth is longer than 30 minutes, the rebirth will always be performed.
+
+```
+"Rebirth": [
+    {
+        "Type": "Bosses",
+        "Target": 5
+    },
+    {
+        "Type": "Number",
+        "Time": {
+            "m": 5
+        },
+        Target: 500
+    },
+    {
+        "Type": "Time",
+        "Time": {
+            "m": 30
+        }
+    }
+]
+```
+
+## Challenges
 
 Additionally, you may specify challenges to rebirth into. The following string correspond to challenges:
 
@@ -573,8 +642,8 @@ A Consumables breakpoint is structured as follows:
 ```
 "Consumables": [
     {
-    "Time": 0,
-    "Items": ["EPOT-B", "MPOT-B"]
+        "Time": 0,
+        "Items": ["EPOT-B", "MPOT-B"]
     }
 ]
 ```
