@@ -41,12 +41,19 @@
         "Comment": "Wandoos + Stats + Adventure + MBeard + PP + Blood + Exp"
       }
     ],
-    "Rebirth": {
-	  "Type": "Number",
-	  "Target": 1000,
-	  "Challenges": [ 
-		"100LC-1", "100LC-2", "100LC-3", "100LC-4", "100LC-5"
-	  ]
-	}
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ ],
+		"Comment": "No beards",
+	  }
+	],
+    "Rebirth": [
+	  {
+	    "Type": "Number",
+	    "Target": 1000
+	  }
+	],
+	"Challenges": ["100LC-1", "100LC-2", "100LC-3", "100LC-4", "100LC-5"]
   }
 }
