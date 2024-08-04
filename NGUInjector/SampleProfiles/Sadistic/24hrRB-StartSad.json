@@ -21,11 +21,11 @@
     "Energy": [
       {
         "Time": 0,
-	    "Priorities": [ "CAPALLBT", "CAPTM:80", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+	    "Priorities": [ "CAPALLBT", "CAPTM:80" ]
       },
       {
         "Time": { "m": 15 },
-        "Priorities": [ "CAPWAN:10", "CAPAUG-4:20", "CAPAUG-5:20", "CAPTM:10", "CAPALLNGU", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ],
+        "Priorities": [ "CAPWAN:10", "CAPAUG-4:20", "CAPAUG-5:20", "CAPTM:10", "CAPALLNGU" ],
         "Note1": "For now SAD NGUs are better off in dedicated SNUGDays",
 		"Note2": "Around T11 and the sNGU > eNGU quirk, then run SNGUs full time even though Wishes will be slower"
       }
@@ -33,7 +33,7 @@
     "Magic": [
       {
         "Time": 0,
-        "Priorities": [ "CAPTM:80", "BR", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPTM:80", "BR" ]
       },
       {
         "Time": { "m": 15 },
@@ -45,7 +45,7 @@
     "R3": [
       {
         "Time": 0,
-        "Priorities": [ "WISH-0", "WISH-1", "WISH-2", "WISH-3", "CAPHACK-1" ]
+        "Priorities": [ "CAPHACK-1" ]
       }
     ],
     "Gear": [
@@ -97,16 +97,25 @@
 		"Priorities7": "6+7 are useful mid-game (early to mid evil), early on there aren't the diggers to spare and beards provide small bonuses, and later beards can be BB capped without digger support"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 1, 3, 6, 0, 4, 2 ],
+		"Comment": "All beards"
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
         "Diff": 1
       }
     ],
-    "Rebirth": {
-	  "Type": "Time",
-	  "Target": { "h": 24 },
-	  "Challenges": [ ]
-	}
+    "Rebirth": [
+	  {
+	    "Type": "Time",
+	    "Time": { "h": 24 }
+	  }
+	],
+	"Challenges": [ ]
   }
 }
