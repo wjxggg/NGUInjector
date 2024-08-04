@@ -38,10 +38,19 @@
         "Comment": "Wandoos and Stats"
       }
     ],
-    "Rebirth": {
-	  "Type": "Number",
-	  "Target": 100,
-	  "Challenges": [ "BLIND-1", "24HR-2" ]
-	}
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 0, 4 ],
+		"Comment": "Stats and Wandoos"
+	  }  
+	],
+    "Rebirth": [
+	  {
+	    "Type": "Number",
+	    "Target": 100
+	  }
+	],
+	"Challenges": [ "BLIND-1", "24HR-2" ]
   }
 }
