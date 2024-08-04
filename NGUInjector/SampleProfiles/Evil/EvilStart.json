@@ -3,11 +3,11 @@
     "Energy": [
       {
         "Time": 0,
-	    "Priorities": [ "CAPALLBT", "AUG-2", "AUG-3" }
+	    "Priorities": [ "CAPALLBT", "AUG-2", "AUG-3" ]
       },
       {
         "Time": { "m": 12 },
-	    "Priorities": [ "CAPALLBT", "CAPALLAT", "WAN", "TM" }
+	    "Priorities": [ "CAPALLBT", "CAPALLAT", "WAN", "TM" ]
       }
     ],
     "Magic": [
@@ -18,7 +18,7 @@
       },
       {
         "Time": { "m": 12 },
-	    "Priorities": [ "WAN", "RIT-5" }
+	    "Priorities": [ "WAN", "RIT-5" ]
       }
     ],
     "R3": [
@@ -47,16 +47,25 @@
         "Comment": "Wan + Stats + Adv + PP + Daycare + Blood + Exp"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 0, 4, 2, 6, 5 ],
+		"Comment": "Stats + Wandoos + Number + GPS + Adv"
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
         "Diff": 0
       }
     ],
-    "Rebirth": {
-	  "Type": "Number",
-	  "Target": 1000,
-	  "Challenges": [ "BASIC-1" ]
-	}
+    "Rebirth": [
+	  {
+	    "Type": "Number",
+	    "Time": 1000
+	  }
+	],
+	"Challenges": [ "BASIC-1" ]
   }
 }
