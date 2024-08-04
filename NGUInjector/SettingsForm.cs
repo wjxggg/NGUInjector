@@ -1,49 +1,52 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Reflection.Emit;
 using System.Windows.Forms;
-using NGUInjector.AllocationProfiles;
 using NGUInjector.Managers;
+using static NGUInjector.Main;
 
 namespace NGUInjector
 {
     public partial class SettingsForm : Form
     {
+        private enum Direction
+        {
+            Up = 1,
+            Down = -1
+        }
+
         private class ItemControlGroup
         {
             public ListBox ItemList { get; }
+
             public NumericUpDown ItemBox { get; }
+
             public ErrorProvider ErrorProvider { get; }
+
             public Label ItemLabel { get; }
 
             public Func<int[]> GetSettings { get; }
+
             public Action<int[]> SaveSettings { get; }
 
             public int MinVal { get; }
+
             public int MaxVal { get; }
 
             public bool CheckIsEquipment { get; }
+
             public Func<int, string> GetDisplayName { get; }
 
-
-            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, ErrorProvider errorProvider, Label itemLabel, Func<int[]> getSettings, Action<int[]> saveSettings)
+            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, ErrorProvider errorProvider, Label itemLabel,
+                Func<int[]> getSettings, Action<int[]> saveSettings, bool checkIsEquipment = true)
             {
                 ItemList = itemList;
                 ItemBox = itemBox;
                 ErrorProvider = errorProvider;
-                if (ItemList != null)
-                {
-                    ErrorProvider.SetIconAlignment(ItemList, ErrorIconAlignment.BottomRight);
-                }
                 ItemLabel = itemLabel;
 
                 GetSettings = getSettings;
@@ -52,172 +55,103 @@ namespace NGUInjector
                 MinVal = 1;
                 MaxVal = Consts.MAX_GEAR_ID;
 
-                CheckIsEquipment = true;
-                GetDisplayName = (id) => Main.Character.itemInfo.itemName[id];
+                ItemBox.Minimum = MinVal;
+                ItemBox.Maximum = MaxVal;
+
+                CheckIsEquipment = checkIsEquipment;
+                GetDisplayName = (id) => _character.itemInfo.itemName[id];
             }
-            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, ErrorProvider errorProvider, Label itemLabel, Func<int[]> getSettings, Action<int[]> saveSettings, int minVal, int maxVal, bool checkIsEquipment, Func<int, string> getDisplayName)
-                : this(itemList, itemBox, errorProvider, itemLabel, getSettings, saveSettings)
+
+            public ItemControlGroup(ListBox itemList, NumericUpDown itemBox, Label itemLabel,
+                Func<int[]> getSettings, Action<int[]> saveSettings,
+                bool checkIsEquipment, int minVal, int maxVal, Func<int, string> getDisplayName)
+                : this(itemList, itemBox, null, itemLabel, getSettings, saveSettings, checkIsEquipment)
             {
                 MinVal = minVal;
                 MaxVal = maxVal;
 
-                CheckIsEquipment = checkIsEquipment;
+                ItemBox.Minimum = MinVal;
+                ItemBox.Maximum = MaxVal;
+
                 GetDisplayName = getDisplayName;
             }
 
-            public void ClearError()
-            {
-                SetError("");
-            }
+            public void ClearError() => SetError("");
 
-            public void SetError(string message)
-            {
-                if (ErrorProvider != null)
-                {
-                    if (ItemList != null)
-                    {
-                        ErrorProvider.SetError(ItemList, message);
-                    }
-                    else
-                    {
-                        ErrorProvider.SetError(ItemBox, message);
-                    }
-                }
-            }
+            public void SetError(string message) => ErrorProvider?.SetError(ItemLabel, message);
+
+            public void UpdateList(int[] newList) => SettingsForm.UpdateItemList(ItemList, newList, GetDisplayName);
         }
 
-        internal class VersionedTitan
-        {
-            public int Zone { get; private set; }
-            public string Name { get; private set; }
-            public Func<bool> IsUnlocked { get; private set; }
-            public Func<int> GetKills { get; private set; }
-            public Func<int> GetVersion { get; private set; }
-            public Action<int> SetVersion { get; private set; }
+        private static readonly Character _character = Main.Character;
 
-            public VersionedTitan(int zone, string name, int bossId)
-            {
-                Zone = zone;
-                Name = name;
-
-                var adv = Main.Character.adventure;
-
-                var unlockField = adv.GetType().GetField($"titan{bossId}Unlocked",
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var bossKillsField = adv.GetType().GetField($"boss{bossId}Kills",
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var versionField = adv.GetType().GetField($"titan{bossId}Version",
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-                IsUnlocked = () => 
-                {
-                    var unlockObj = unlockField?.GetValue(adv);
-                    if (unlockObj == null)
-                        return false;
-                    return (bool)unlockObj;
-                };
-
-                GetKills = () =>
-                {
-                    var bossKillsObj = bossKillsField?.GetValue(adv);
-                    if (bossKillsObj == null)
-                        return 0;
-
-                    return (int)bossKillsObj;
-                };
-
-                GetVersion = () =>
-                {
-                    var versionObj = versionField?.GetValue(adv);
-                    if (versionObj == null)
-                        return 0;
-                    return (int)versionObj;
-                };
-                SetVersion = (v) =>
-                {
-                    versionField?.SetValue(adv, v);
-                };
-            }
-
-            public override string ToString()
-            {
-                return $"Zone:{Zone} | Name:{Name} | Unlocked?{IsUnlocked()} | Kills:{GetKills()} | Version:{GetVersion()}";
-            }
-        }
-
-        internal readonly Dictionary<int, string> CubePriorityList;
-        internal readonly Dictionary<int, string> CombatModeList;
-
-        internal readonly Dictionary<int, string> TitanVersionList;
-        internal readonly List<VersionedTitan> VersionedTitanList;
-
-        internal readonly Dictionary<int, string> ZoneList;
-        internal readonly Dictionary<int, string> SpriteEnemyList;
         private bool _initializing = true;
 
-        private ItemControlGroup _yggControls;
-        private ItemControlGroup _priorityControls;
-        private ItemControlGroup _blacklistControls;
-        private ItemControlGroup _titanControls;
-        private ItemControlGroup _goldControls;
-        private ItemControlGroup _questControls;
-        private ItemControlGroup _wishControls;
-        private ItemControlGroup _wishBlacklistControls;
-        private ItemControlGroup _pitControls;
-        private ItemControlGroup _cookingControls;
+        private readonly Dictionary<int, string> zoneList;
+        private readonly Dictionary<int, string> titanZoneList;
+        private readonly Dictionary<int, string> spriteEnemyList;
 
-        //TODO: Implement missing manual features:
-        //      NEW Tab: Cooking (ManageCooking flag, ManageCookingLoadout flag Cooking gear loadout)
-        //DONE:
-        //      General Tab: AutoBuyAdv flag, ManageConsumables flag, AutoBuyConsumables flag
-        //      Inventory Tab: BoostPriority listbox with arrows to sort
-        //      Wishes Tab: WishBlacklist listbox, BlacklistWish button, RemoveBlacklistedWish button
-        //      Cards Tab: SortCards flag, CardSortOptions listbox, CardSortOrder listbox with arrows to move items between the listboxes and up/down in the order listbox
-        //                 > Also Add ASC/DESC versions of everything but the Type:xxxx options
+        private readonly List<double> _moneyPitThresholds = new List<double>
+            { 1e5, 1e7, 1e9, 1e11, 1e13, 1e15, 1e18, 1e21, 1e24, 1e27, 1e30, 1e50, 1e55, 1e60, 1e65, 1e70 };
+
+        private readonly ItemControlGroup _yggControls;
+        private readonly ItemControlGroup _priorityControls;
+        private readonly ItemControlGroup _blacklistControls;
+        private readonly ItemControlGroup _titanControls;
+        private readonly ItemControlGroup _goldControls;
+        private readonly ItemControlGroup _questControls;
+        private readonly ItemControlGroup _wishControls;
+        private readonly ItemControlGroup _wishBlacklistControls;
+        private readonly ItemControlGroup _shockwaveControls;
+        private readonly ItemControlGroup _cookingControls;
+
+        private readonly CheckBox[] _killTitan = new CheckBox[14];
+        private readonly ComboBox[] _titanVersion = new ComboBox[7];
+
+        private readonly ComboBox[] _cardRarity = new ComboBox[14];
+        private readonly ComboBox[] _cardCost = new ComboBox[14];
+
         public SettingsForm()
         {
             try
             {
+                _initializing = true;
                 InitializeComponent();
 
-                // Populate our data sources
-                CubePriorityList = new Dictionary<int, string> { { 0, "None" }, { 1, "Balanced" }, { 2, "Softcap" }, { 3, "Power" }, { 4, "Toughness" } };
-
-                CombatModeList = new Dictionary<int, string> { { 0, "Manual" }, { 1, "Idle" } };
-
-                TitanVersionList = new Dictionary<int, string> { { 0, "Easy" }, { 1, "Normal" }, { 2, "Hard" }, { 3, "Brutal" } };
-
-                VersionedTitanList = new List<VersionedTitan>
+                for (int i = 0; i <= 13; i++)
                 {
-                    { new VersionedTitan(19, ZoneHelpers.ZoneList[19], 6) },
-                    { new VersionedTitan(23, ZoneHelpers.ZoneList[23], 7) },
-                    { new VersionedTitan(26, ZoneHelpers.ZoneList[26], 8) },
-                    { new VersionedTitan(30, ZoneHelpers.ZoneList[30], 9) },
-                    { new VersionedTitan(34, ZoneHelpers.ZoneList[34], 10) },
-                    { new VersionedTitan(38, ZoneHelpers.ZoneList[38], 11) },
-                    { new VersionedTitan(42, ZoneHelpers.ZoneList[42], 12) }
-                };
+                    _killTitan[i] = GetElement<CheckBox>($"KillTitan{i + 1}");
+                    _cardRarity[i] = GetElement<ComboBox>($"CardRarity{i + 1}");
+                    _cardCost[i] = GetElement<ComboBox>($"CardCost{i + 1}");
+                }
 
-                ZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
+                for (int i = 0; i <= 6; i++)
+                    _titanVersion[i] = GetElement<ComboBox>($"Titan{i + 6}Version");
 
-                SpriteEnemyList = new Dictionary<int, string>();
-                foreach (var x in Main.Character.adventureController.enemyList)
+                AdjustDimensions();
+
+                // Populate our data sources
+                var allZoneList = new Dictionary<int, string>(ZoneHelpers.ZoneList);
+
+                spriteEnemyList = new Dictionary<int, string>();
+                foreach (var x in _character.adventureController.enemyList)
                 {
                     foreach (var enemy in x)
                     {
                         try
                         {
-                            SpriteEnemyList.Add(enemy.spriteID, enemy.name);
+                            spriteEnemyList.Add(enemy.spriteID, enemy.name);
                         }
                         catch
                         {
-                            //pass
+                            // pass
                         }
                     }
                 }
 
-                List<string> cardRarities = Enum.GetNames(typeof(rarity)).ToList();
-                string[] cardBonusTypes = Enum.GetNames(typeof(cardBonus)).Where(x => x != "none").ToArray();
+                UpdateTitanVersions();
+
+                string[] cardBonusTypes = typeof(cardBonus).GetEnumNames().Where(x => x != "none").ToArray();
                 var cardSortOptions = new List<string> { "RARITY", "TIER", "COST", "PROTECTED", "CHANGE", "VALUE", "NORMALVALUE" };
                 foreach (string sortOption in cardSortOptions)
                 {
@@ -230,92 +164,93 @@ namespace NGUInjector
                     CardSortOptions.Items.Add($"TYPE-ASC:{bonus}");
                 }
 
-                cardRarities.Insert(0, "Don't trash");
-                TrashQuality.Items.AddRange(cardRarities.ToArray());
-
-                object[] arr = new object[31];
-                for (int i = 0; i < arr.Length; i++) arr[i] = i;
-                TrashTier.Items.AddRange(arr);
-
-                DontCastSelection.Items.AddRange(cardBonusTypes);
-                DontCastSelection.SelectedIndex = 0;
-
-                CubePriority.DataSource = new BindingSource(CubePriorityList, null);
-                CubePriority.ValueMember = "Key";
-                CubePriority.DisplayMember = "Value";
-
-                CombatMode.DataSource = new BindingSource(CombatModeList, null);
-                CombatMode.ValueMember = "Key";
-                CombatMode.DisplayMember = "Value";
-
-                TitanVersions.DataSource = new BindingSource(TitanVersionList, null);
-                TitanVersions.ValueMember = "Key";
-                TitanVersions.DisplayMember = "Value";
-
-                TitansWithVersion.DataSource = new BindingSource(VersionedTitanList, null);
-                TitansWithVersion.ValueMember = "Zone";
-                TitansWithVersion.DisplayMember = "Name";
-
-                for (int i = TitansWithVersion.Items.Count - 1; i >= 0; i--)
+                for (int i = 0; i <= 13; i++)
                 {
-                    var titan = TitansWithVersion.Items[i] as VersionedTitan;
-                    if (titan.IsUnlocked() && titan.GetKills() > 0)
-                    {
-                        TitansWithVersion.SelectedIndex = i;
-                        TitanVersions.SelectedIndex = titan.GetVersion();
-                        break;
-                    }
+                    _cardRarity[i].DataSource = new BindingSource(CardManager.rarityList, null);
+                    _cardRarity[i].ValueMember = "Key";
+                    _cardRarity[i].DisplayMember = "Value";
+
+                    _cardCost[i].DataSource = new BindingSource(CardManager.tierList, null);
                 }
 
-                TitanCombatMode.DataSource = new BindingSource(CombatModeList, null);
-                TitanCombatMode.ValueMember = "Key";
-                TitanCombatMode.DisplayMember = "Value";
+                FavoredMacguffin.DataSource = new BindingSource(InventoryManager.macguffinList, null);
+                FavoredMacguffin.ValueMember = "Key";
+                FavoredMacguffin.DisplayMember = "Value";
 
-                ITOPODCombatMode.DataSource = new BindingSource(CombatModeList, null);
-                ITOPODCombatMode.ValueMember = "Key";
-                ITOPODCombatMode.DisplayMember = "Value";
+                // Remove ITOPOD for non combat zones
+                allZoneList.Remove(1000);
+                allZoneList.Remove(-1);
 
-                QuestCombatMode.DataSource = new BindingSource(CombatModeList, null);
-                QuestCombatMode.ValueMember = "Key";
-                QuestCombatMode.DisplayMember = "Value";
+                zoneList = allZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+                titanZoneList = allZoneList.Except(zoneList).ToDictionary(x => x.Key, x => x.Value);
 
-                CombatTargetZone.DataSource = new BindingSource(ZoneList, null);
+                CombatTargetZone.DataSource = new BindingSource(zoneList, null);
                 CombatTargetZone.ValueMember = "Key";
                 CombatTargetZone.DisplayMember = "Value";
 
-                //Remove ITOPOD for non combat zones
-                ZoneList.Remove(1000);
-                ZoneList.Remove(-1);
-
+                EnemyBlacklistZone.DataSource = new BindingSource(zoneList, null);
                 EnemyBlacklistZone.ValueMember = "Key";
                 EnemyBlacklistZone.DisplayMember = "Value";
-                EnemyBlacklistZone.DataSource = new BindingSource(ZoneList.Where(x => !ZoneHelpers.TitanZones.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value), null);
                 EnemyBlacklistZone.SelectedIndex = 0;
 
-                numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
-                moneyPitThresholdError.SetIconAlignment(MoneyPitThreshold, ErrorIconAlignment.MiddleRight);
+                MoneyPitThreshold.DataSource = new BindingSource(_moneyPitThresholds, null);
+                MoneyPitThreshold.ValueMember = "Key";
+                MoneyPitThreshold.DisplayMember = "Value";
 
-                yggLoadoutItem.TextChanged += yggLoadoutItem_TextChanged;
-                priorityBoostItemAdd.TextChanged += priorityBoostItemAdd_TextChanged;
-                blacklistAddItem.TextChanged += blacklistAddItem_TextChanged;
-                titanAddItem.TextChanged += titanAddItem_TextChanged;
+                numberErrProvider.SetIconAlignment(BloodNumberThreshold, ErrorIconAlignment.MiddleRight);
+
+                YggLoadoutItem.TextChanged += YggLoadoutItem_TextChanged;
+                PriorityBoostItemAdd.TextChanged += PriorityBoostItemAdd_TextChanged;
+                BlacklistAddItem.TextChanged += BlacklistAddItem_TextChanged;
+                TitanAddItem.TextChanged += TitanAddItem_TextChanged;
                 GoldItemBox.TextChanged += GoldItemBox_TextChanged;
                 QuestLoadoutItem.TextChanged += QuestLoadoutBox_TextChanged;
                 WishAddInput.TextChanged += WishAddInput_TextChanged;
                 WishBlacklistAddInput.TextChanged += WishBlacklistAddInput_TextChanged;
-                MoneyPitInput.TextChanged += MoneyPitInput_TextChanged;
+                ShockwaveInput.TextChanged += ShockwaveInput_TextChanged;
                 CookingLoadoutItem.TextChanged += CookingLoadoutBox_TextChanged;
 
-                _yggControls = new ItemControlGroup(yggdrasilLoadoutBox, yggLoadoutItem, yggErrorProvider, yggItemLabel, () => Main.Settings.YggdrasilLoadout, (settings) => Main.Settings.YggdrasilLoadout = settings);
-                _priorityControls = new ItemControlGroup(priorityBoostBox, priorityBoostItemAdd, invPrioErrorProvider, priorityBoostLabel, () => Main.Settings.PriorityBoosts, (settings) => Main.Settings.PriorityBoosts = settings);
-                _blacklistControls = new ItemControlGroup(blacklistBox, blacklistAddItem, invBlacklistErrProvider, blacklistLabel, () => Main.Settings.BoostBlacklist, (settings) => Main.Settings.BoostBlacklist = settings);
-                _titanControls = new ItemControlGroup(titanLoadout, titanAddItem, titanErrProvider, titanLabel, () => Main.Settings.TitanLoadout, (settings) => Main.Settings.TitanLoadout = settings);
-                _goldControls = new ItemControlGroup(GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel, () => Main.Settings.GoldDropLoadout, (settings) => Main.Settings.GoldDropLoadout = settings);
-                _questControls = new ItemControlGroup(questLoadoutBox, QuestLoadoutItem, questErrorProvider, questItemLabel, () => Main.Settings.QuestLoadout, (settings) => Main.Settings.QuestLoadout = settings);
-                _wishControls = new ItemControlGroup(WishPriority, WishAddInput, wishErrorProvider, AddWishLabel, () => Main.Settings.WishPriorities, (settings) => Main.Settings.WishPriorities = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
-                _wishBlacklistControls = new ItemControlGroup(WishBlacklist, WishBlacklistAddInput, wishBlacklistErrorProvider, AddWishBlacklistLabel, () => Main.Settings.WishBlacklist, (settings) => Main.Settings.WishBlacklist = settings, 0, Consts.MAX_WISH_ID, false, (id) => Main.Character.wishesController.properties[id].wishName);
-                _pitControls = new ItemControlGroup(MoneyPitLoadout, MoneyPitInput, moneyPitErrorProvider, MoneyPitLabel, () => Main.Settings.MoneyPitLoadout, (settings) => Main.Settings.MoneyPitLoadout = settings);
-                _cookingControls = new ItemControlGroup(cookingLoadoutBox, CookingLoadoutItem, cookingErrorProvider, cookingItemLabel, () => Main.Settings.CookingLoadout, (settings) => Main.Settings.CookingLoadout = settings);
+                _yggControls = new ItemControlGroup(
+                    YggdrasilLoadoutBox, YggLoadoutItem, yggErrorProvider, YggItemLabel,
+                    () => Settings.YggdrasilLoadout, (settings) => Settings.YggdrasilLoadout = settings);
+
+                _priorityControls = new ItemControlGroup(
+                    PriorityBoostBox, PriorityBoostItemAdd, invPrioErrorProvider, PriorityBoostLabel,
+                    () => Settings.PriorityBoosts, (settings) => Settings.PriorityBoosts = settings);
+
+                _blacklistControls = new ItemControlGroup(
+                    BlacklistBox, BlacklistAddItem, null, BlacklistLabel,
+                    () => Settings.BoostBlacklist, (settings) => Settings.BoostBlacklist = settings, false);
+
+                _titanControls = new ItemControlGroup(
+                    TitanLoadout, TitanAddItem, titanErrProvider, TitanLabel,
+                    () => Settings.TitanLoadout, (settings) => Settings.TitanLoadout = settings);
+
+                _goldControls = new ItemControlGroup(
+                    GoldLoadout, GoldItemBox, goldErrorProvider, GoldItemLabel,
+                    () => Settings.GoldDropLoadout, (settings) => Settings.GoldDropLoadout = settings);
+
+                _questControls = new ItemControlGroup(
+                    QuestLoadoutBox, QuestLoadoutItem, questErrorProvider, QuestItemLabel,
+                    () => Settings.QuestLoadout, (settings) => Settings.QuestLoadout = settings);
+
+                _wishControls = new ItemControlGroup(
+                    WishPriority, WishAddInput, AddWishLabel,
+                    () => Settings.WishPriorities, (settings) => Settings.WishPriorities = settings,
+                    false, 0, Consts.MAX_WISH_ID, (id) => _character.wishesController.properties[id].wishName);
+
+                _wishBlacklistControls = new ItemControlGroup(
+                    WishBlacklist, WishBlacklistAddInput, AddWishBlacklistLabel,
+                    () => Settings.WishBlacklist, (settings) => Settings.WishBlacklist = settings,
+                    false, 0, Consts.MAX_WISH_ID, (id) => _character.wishesController.properties[id].wishName);
+
+                _shockwaveControls = new ItemControlGroup(
+                    ShockwaveBox, ShockwaveInput, shockwaveErrorProvider, ShockwaveLabel,
+                    () => Settings.Shockwave, (settings) => Settings.Shockwave = settings, false);
+
+                _cookingControls = new ItemControlGroup(
+                    CookingLoadoutBox, CookingLoadoutItem, cookingErrorProvider, CookingItemLabel,
+                    () => Settings.CookingLoadout, (settings) => Settings.CookingLoadout = settings);
 
                 TryItemBoxTextChanged(_yggControls, out _);
                 TryItemBoxTextChanged(_priorityControls, out _);
@@ -325,42 +260,135 @@ namespace NGUInjector
                 TryItemBoxTextChanged(_questControls, out _);
                 TryItemBoxTextChanged(_wishControls, out _);
                 TryItemBoxTextChanged(_wishBlacklistControls, out _);
-                TryItemBoxTextChanged(_pitControls, out _);
+                TryItemBoxTextChanged(_shockwaveControls, out _);
                 TryItemBoxTextChanged(_cookingControls, out _);
 
-                UseTitanCombat_CheckedChanged(this, null);
-
-                boostPrioUpButton.Text = char.ConvertFromUtf32(8593);
-                boostPrioDownButton.Text = char.ConvertFromUtf32(8595);
-
-                prioUpButton.Text = char.ConvertFromUtf32(8593);
-                prioDownButton.Text = char.ConvertFromUtf32(8595);
-
-                WishUpButton.Text = char.ConvertFromUtf32(8593);
-                WishDownButton.Text = char.ConvertFromUtf32(8595);
-
-                CardSortUp.Text = char.ConvertFromUtf32(8593);
-                CardSortDown.Text = char.ConvertFromUtf32(8595);
-
                 VersionLabel.Text = $"Version: {Main.Version}";
+                _initializing = false;
             }
             catch (Exception ex)
             {
-                Main.LogDebug($"{ex.Message}:\n{ex.StackTrace}");
+                LogDebug($"{ex.Message}:\n{ex.StackTrace}");
             }
         }
 
-        internal void SetTitanGoldBox(SavedSettings newSettings)
+        private T GetElement<T>(string name) => this.GetFieldValue<SettingsForm, T>(name);
+
+        private void AlignWidth(Control target, Control source)
+        {
+            target.Width = source.Width + source.Margin.Left + source.Margin.Right;
+            target.Width -= target.Margin.Left + target.Margin.Right;
+        }
+
+        private void AlignHeight(Control target, Control source)
+        {
+            target.Width = source.Height + source.Margin.Top + source.Margin.Bottom;
+            target.Width -= target.Margin.Top + target.Margin.Bottom;
+        }
+
+        private void AdjustDimensions()
+        {
+            // Adjust separator height in case it has changed due to rescaling
+            Separator1.Height = 1;
+            Separator2.Height = 1;
+            Separator3.Height = 1;
+            Separator4.Height = 1;
+
+            Graphics g = CreateGraphics();
+            tabControl1.ItemSize = new Size(tabControl1.ItemSize.Width, (int)(tabControl1.ItemSize.Height * (g.DpiY / 96f)));
+            g.Dispose();
+
+            // General Tab
+            UnloadButton.Height = OpenSettingsFolder.Height;
+
+            // Allocation Tab
+            ChangeProfileFile.Size = OpenProfileFolder.Size;
+            AlignWidth(SpaghettiCap, AutoSpellSwap);
+            AlignWidth(CounterfeitCap, AutoSpellSwap);
+            AlignWidth(BloodNumberThreshold, AutoSpellSwap);
+            BloodNumberThreshold.Width -= BloodNumberThreshold.Height;
+            AlignWidth(GuffAThreshold, IronPillThreshold);
+            AlignWidth(GuffBThreshold, IronPillThreshold);
+
+            // Yggdrasil Tab
+            YggAddButton.Size = YggRemoveButton.Size;
+
+            // Inventory Tab
+            AlignWidth(CubePriority, ManageBoostConvert);
+            AlignWidth(FavoredMacguffin, ManageBoostConvert);
+            PriorityBoostAdd.Size = PriorityBoostRemove.Size;
+            BlacklistAdd.Size = BlacklistRemove.Size;
+
+            // Titans Tab
+            {
+                TitanAdd.Size = TitanRemove.Size;
+
+                var height = Titan6Version.Height;
+                label64.Height = height;
+                label65.Height = height;
+                Titan1Placeholder.Height = height;
+                Titan2Placeholder.Height = height;
+                Titan3Placeholder.Height = height;
+                Titan4Placeholder.Height = height;
+                Titan5Placeholder.Height = height;
+                Titan13Placeholder.Height = height;
+                Titan14Placeholder.Height = height;
+            }
+
+            // Adventure Tab
+            BlacklistAddEnemyButton.Size = BlacklistRemoveEnemyButton.Size;
+
+            // Gold Tab
+            AlignHeight(label10, ManageGoldLoadouts);
+            GoldLoadoutAdd.Size = GoldLoadoutRemove.Size;
+
+            // Wishes Tab
+            {
+                var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
+                width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
+                width -= WishMode.Margin.Left + WishMode.Margin.Right;
+                WishMode.Width = width;
+
+                AddWishButton.Size = RemoveWishButton.Size;
+            }
+
+            // Pit Tab
+            AlignWidth(MoneyPitThreshold, AutoMoneyPit);
+            ShockwaveAdd.Size = ShockwaveRemove.Size;
+
+            // Cards Tab
+            CardSortAdd.Size = CardSortRemove.Size;
+            label1.Height = CardRarity1.Height;
+
+            // Cooking Tab
+            CookingAddButton.Size = CookingRemoveButton.Size;
+        }
+
+        public static void UpdateItemList(ListBox itemList, int[] newList, Func<int, string> getDisplayName)
+        {
+            var temp = newList.ToDictionary(x => x, x => getDisplayName(x));
+            if (temp.Count > 0)
+            {
+                itemList.DataSource = null;
+                itemList.DataSource = new BindingSource(temp, null);
+                itemList.ValueMember = "Key";
+                itemList.DisplayMember = "Value";
+            }
+            else
+            {
+                itemList.Items.Clear();
+            }
+        }
+
+        public void SetTitanGoldBox(SavedSettings newSettings)
         {
             TitanGoldTargets.Items.Clear();
             for (var i = 0; i < ZoneHelpers.TitanZones.Length; i++)
             {
-                var text =
-                    $"{ZoneList[ZoneHelpers.TitanZones[i]]}";
+                var zone = ZoneHelpers.TitanZones[i];
+                var text = $"{titanZoneList[zone]}";
                 if (newSettings.TitanGoldTargets[i])
-                {
                     text = $"{text} ({(newSettings.TitanMoneyDone[i] ? "Done" : "Waiting")})";
-                }
                 var item = new ListViewItem
                 {
                     Tag = i,
@@ -376,307 +404,200 @@ namespace NGUInjector
             TitanGoldTargets.Columns[0].Width = -1;
         }
 
-        internal void SetTitanSwapBox(SavedSettings newSettings)
+        private void SetSnipeZone(ComboBox control, int setting)
         {
-            TitanSwapTargets.Items.Clear();
-            for (var i = 0; i < ZoneHelpers.TitanZones.Length; i++)
-            {
-                var text =
-                    $"{ZoneList[ZoneHelpers.TitanZones[i]]}";
-                var item = new ListViewItem
-                {
-                    Tag = i,
-                    Checked = newSettings.TitanSwapTargets[i],
-                    Text = text,
-                };
-                TitanSwapTargets.Items.Add(item);
-            }
-
-            TitanSwapTargets.Columns[0].Width = TitanSwapTargets.Width - 4 - SystemInformation.VerticalScrollBarWidth;
+            if (zoneList.ContainsKey(setting))
+                control.SelectedItem = new KeyValuePair<int, string>(setting, zoneList[setting]);
         }
 
-        internal void SetSnipeZone(ComboBox control, int setting)
+        private void SetMoneyPitThreshold(ComboBox control, SavedSettings newSettings)
         {
-            control.SelectedIndex = setting >= 1000 ? 43 : setting + 1;
+            if (newSettings.MoneyPitThreshold == _moneyPitThresholds[MoneyPitThreshold.SelectedIndex])
+                return;
+            var i = _moneyPitThresholds.BinarySearch(newSettings.MoneyPitThreshold);
+            if (i < 0)
+                i = -i - 2;
+            if (i < 0)
+                i = 0;
+            control.SelectedIndex = i;
         }
 
-        internal void UpdateFromSettings(SavedSettings newSettings)
+        private string FormatDoubleNumber(double number)
+        {
+            if (number == 0.0)
+                return "";
+
+            if (number >= 1e6)
+                return number.ToString("#.###E+0");
+
+            return number.ToString("");
+        }
+
+        public void UpdateFromSettings(SavedSettings newSettings)
         {
             _initializing = true;
-            AutoDailySpin.Checked = newSettings.AutoSpin;
-            AutoFightBosses.Checked = newSettings.AutoFight;
+
+            // General Tab
+            MasterEnable.Checked = newSettings.GlobalEnabled;
+            DisableOverlay.Checked = newSettings.DisableOverlay;
+            MoneyPitRunMode.Checked = newSettings.MoneyPitRunMode;
             AutoITOPOD.Checked = newSettings.AutoQuestITOPOD;
-            AutoMoneyPit.Checked = newSettings.AutoMoneyPit;
-            MoneyPitThreshold.Text = $"{newSettings.MoneyPitThreshold:#.##E+00}";
-            ManageEnergy.Checked = newSettings.ManageEnergy;
-            ManageMagic.Checked = newSettings.ManageMagic;
-            ManageGear.Checked = newSettings.ManageGear;
-            ManageDiggers.Checked = newSettings.ManageDiggers;
-            ManageWandoos.Checked = newSettings.ManageWandoos;
-            AutoRebirth.Checked = newSettings.AutoRebirth;
-            ManageConsumables.Checked = newSettings.ManageConsumables;
-            ManageYggdrasil.Checked = newSettings.ManageYggdrasil;
-            YggdrasilSwap.Checked = newSettings.SwapYggdrasilLoadouts;
-            ManageInventory.Checked = newSettings.ManageInventory;
-            ManageBoostConvert.Checked = newSettings.AutoConvertBoosts;
-            SwapTitanLoadout.Checked = newSettings.SwapTitanLoadouts;
-            BossesOnly.Checked = newSettings.SnipeBossOnly;
-            PrecastBuffs.Checked = newSettings.PrecastBuffs;
-            RecoverHealth.Checked = newSettings.RecoverHealth;
-            FastCombat.Checked = newSettings.FastCombat;
-            CombatMode.SelectedIndex = newSettings.CombatMode;
-            SetSnipeZone(CombatTargetZone, newSettings.SnipeZone);
-            AllowFallthrough.Checked = newSettings.AllowZoneFallback;
-            QuestCombatMode.SelectedIndex = newSettings.QuestCombatMode;
-            ManageQuests.Checked = newSettings.AutoQuest;
-            ManageQuestLoadout.Checked = newSettings.ManageQuestLoadouts;
-            AllowMajor.Checked = newSettings.AllowMajorQuests;
-            AbandonMinors.Checked = newSettings.AbandonMinors;
-            AbandonMinorThreshold.Value = newSettings.MinorAbandonThreshold;
-            QuestFastCombat.Checked = newSettings.QuestFastCombat;
-            QuestBeastMode.Checked = newSettings.QuestBeastMode;
-            QuestSmartBeastMode.Checked = newSettings.QuestSmartBeastMode;
-            UseGoldLoadout.Checked = newSettings.DoGoldSwap;
-            AutoSpellSwap.Checked = newSettings.AutoSpellSwap;
-            SpaghettiCap.Value = newSettings.SpaghettiThreshold;
-            CounterfeitCap.Value = newSettings.CounterfeitThreshold;
+            AutoFightBosses.Checked = newSettings.AutoFight;
             AutoBuyAdv.Checked = newSettings.AutoBuyAdventure;
             AutoBuyEM.Checked = newSettings.AutoBuyEM;
             AutoBuyConsumables.Checked = newSettings.AutoBuyConsumables;
             ConsumeIfRunning.Checked = newSettings.ConsumeIfAlreadyRunning;
-            MasterEnable.Checked = newSettings.GlobalEnabled;
-            CombatActive.Checked = newSettings.CombatEnabled;
-            ManualMinor.Checked = newSettings.ManualMinors;
-            ButterMajors.Checked = newSettings.UseButterMajor;
+            Autosave.Checked = newSettings.Autosave;
+
+            // Allocation Tab
+            ManageEnergy.Checked = newSettings.ManageEnergy;
+            ManageMagic.Checked = newSettings.ManageMagic;
             ManageR3.Checked = newSettings.ManageR3;
-            ButterMinors.Checked = newSettings.UseButterMinor;
-            ActivateFruits.Checked = newSettings.ActivateFruits;
-            BeastMode.Checked = newSettings.BeastMode;
-            SmartBeastMode.Checked = newSettings.SmartBeastMode;
-            CubePriority.SelectedIndex = newSettings.CubePriority;
-            BloodNumberThreshold.Text = $"{newSettings.BloodNumberThreshold:#.##E+00}";
+            ManageWandoos.Checked = newSettings.ManageWandoos;
             ManageNGUDiff.Checked = newSettings.ManageNGUDiff;
-            ManageGoldLoadouts.Checked = newSettings.ManageGoldLoadouts;
-            CBlockMode.Checked = newSettings.GoldCBlockMode;
-            ResnipeInput.Value = newSettings.ResnipeTime;
-            OptimizeITOPOD.Checked = newSettings.OptimizeITOPODFloor;
-            TargetITOPOD.Checked = newSettings.AdventureTargetITOPOD;
-            TargetTitans.Checked = newSettings.AdventureTargetTitans;
-
-            UseTitanCombat.Checked = newSettings.UseTitanCombat;
-            TitanCombatMode.SelectedIndex = newSettings.TitanCombatMode;
-            TitanPrecastBuffs.Checked = newSettings.TitanPrecastBuffs;
-            TitanRecoverHealth.Checked = newSettings.TitanRecoverHealth;
-            TitanFastCombat.Checked = newSettings.TitanFastCombat;
-            TitanBeastMode.Checked = newSettings.TitanBeastMode;
-            TitanSmartBeastMode.Checked = newSettings.TitanSmartBeastMode;
-            TitanMoreBlockParry.Checked = newSettings.TitanMoreBlockParry;
-
-            ITOPODCombatMode.SelectedIndex = newSettings.ITOPODCombatMode;
-            ITOPODRecoverHP.Checked = newSettings.ITOPODRecoverHP;
-            ITOPODBeastMode.Checked = newSettings.ITOPODBeastMode;
-            ITOPODSmartBeastMode.Checked = newSettings.ITOPODSmartBeastMode;
-            ITOPODFastCombat.Checked = newSettings.ITOPODFastCombat;
-            ITOPODPrecastBuffs.Checked = newSettings.ITOPODPrecastBuffs;
-
-            DisableOverlay.Checked = newSettings.DisableOverlay;
+            ManageBeards.Checked = newSettings.ManageBeards;
+            ManageDiggers.Checked = newSettings.ManageDiggers;
             UpgradeDiggers.Checked = newSettings.UpgradeDiggers;
-            CastBloodSpells.Checked = newSettings.CastBloodSpells;
+            DiggerCap.Text = $"{newSettings.DiggerCap:F2}";
+            ManageGear.Checked = newSettings.ManageGear;
+            ManageConsumables.Checked = newSettings.ManageConsumables;
+            AutoRebirth.Checked = newSettings.AutoRebirth;
 
-            IronPillThreshold.Value = newSettings.IronPillThreshold;
+            AutoSpellSwap.Checked = newSettings.AutoSpellSwap;
+            SpaghettiCap.Value = newSettings.SpaghettiThreshold;
+            CounterfeitCap.Value = newSettings.CounterfeitThreshold;
+            BloodNumberThreshold.Text = FormatDoubleNumber(newSettings.BloodNumberThreshold);
+            CastBloodSpells.Checked = newSettings.CastBloodSpells;
+            IronPillThreshold.Value = Convert.ToDecimal(newSettings.IronPillThreshold);
             GuffAThreshold.Value = newSettings.BloodMacGuffinAThreshold;
             GuffBThreshold.Value = newSettings.BloodMacGuffinBThreshold;
-            YggSwapThreshold.Value = newSettings.YggSwapThreshold;
-
             IronPillOnRebirth.Checked = newSettings.IronPillOnRebirth;
             GuffAOnRebirth.Checked = newSettings.BloodMacGuffinAOnRebirth;
             GuffBOnRebirth.Checked = newSettings.BloodMacGuffinBOnRebirth;
 
-            MoreBlockParry.Checked = newSettings.MoreBlockParry;
-            WishSortOrder.Checked = newSettings.WishSortOrder;
-            WishSortPriorities.Checked = newSettings.WishSortPriorities;
+            // Yggdrasil Tab
+            ManageYggdrasil.Checked = newSettings.ManageYggdrasil;
+            ActivateFruits.Checked = newSettings.ActivateFruits;
+            YggSwapThreshold.Value = newSettings.YggSwapThreshold;
+            YggdrasilSwap.Checked = newSettings.SwapYggdrasilLoadouts;
+            _yggControls.UpdateList(newSettings.YggdrasilLoadout);
 
+            // Inventory Tab
+            ManageInventory.Checked = newSettings.ManageInventory;
+            ManageBoostConvert.Checked = newSettings.AutoConvertBoosts;
+            CubePriority.SelectedIndex = newSettings.CubePriority;
+            FavoredMacguffin.SelectedIndex = InventoryManager.macguffinList.Keys.ToList().IndexOf(newSettings.FavoredMacguffin);
+
+            BoostPriorityList.Items.Clear();
+            foreach (string priority in newSettings.BoostPriority)
+                BoostPriorityList.Items.Add(priority);
+
+            if (BoostPriorityList.Items.Count != 3)
+                BoostPriorityList.Items.AddRange(new string[] { "Power", "Toughness", "Special" });
+
+            _priorityControls.UpdateList(newSettings.PriorityBoosts);
+            _blacklistControls.UpdateList(newSettings.BoostBlacklist);
+
+            // Titans Tab
+            SwapTitanLoadout.Checked = newSettings.SwapTitanLoadouts;
+            _titanControls.UpdateList(newSettings.TitanLoadout);
+
+            for (int i = 0; i <= 13; i++)
+                _killTitan[i].Checked = newSettings.TitanSwapTargets[i];
+
+            TitanCombatMode.SelectedIndex = newSettings.TitanCombatMode;
+            TitanBeastMode.Checked = newSettings.TitanBeastMode;
+
+            // Adventure Tab
+            CombatActive.Checked = newSettings.CombatEnabled;
+            CombatMode.SelectedIndex = newSettings.CombatMode;
+            SetSnipeZone(CombatTargetZone, newSettings.SnipeZone);
+            BeastMode.Checked = newSettings.BeastMode;
+            BossesOnly.Checked = newSettings.SnipeBossOnly;
+            AllowFallthrough.Checked = newSettings.AllowZoneFallback;
+
+            TargetITOPOD.Checked = newSettings.AdventureTargetITOPOD;
+            ITOPODCombatMode.SelectedIndex = newSettings.ITOPODCombatMode;
+            ITOPODOptimizeMode.SelectedIndex = newSettings.ITOPODOptimizeMode;
+            ITOPODBeastMode.Checked = newSettings.ITOPODBeastMode;
+            ITOPODAutoPush.Checked = newSettings.ITOPODAutoPush;
+
+            UpdateItemList(BlacklistedBosses, newSettings.BlacklistedBosses, x => spriteEnemyList[x]);
+
+            // Gold Tab
+            ManageGoldLoadouts.Enabled = !newSettings.MoneyPitRunMode;
+            ManageGoldLoadouts.Checked = newSettings.ManageGoldLoadouts;
+            ResnipeInput.Value = newSettings.ResnipeTime;
+            CBlockMode.Enabled = !newSettings.MoneyPitRunMode;
+            CBlockMode.Checked = newSettings.GoldCBlockMode;
+            _goldControls.UpdateList(newSettings.GoldDropLoadout);
             SetTitanGoldBox(newSettings);
-            SetTitanSwapBox(newSettings);
 
-            balanceMayo.Checked = newSettings.ManageMayo;
-            TrashCards.Checked = newSettings.TrashCards;
-            TrashQuality.SelectedIndex = newSettings.CardsTrashQuality;
-            TrashTier.SelectedIndex = newSettings.TrashCardCost;
-            TrashAdventureCards.Checked = newSettings.TrashAdventureCards;
-            TrashProtectedCards.Checked = newSettings.TrashProtectedCards;
+            // Quests Tab
+            ManageQuests.Checked = newSettings.AutoQuest;
+            AllowMajor.Checked = newSettings.AllowMajorQuests;
+            ButterMajors.Checked = newSettings.UseButterMajor;
+            QuestsFullBank.Checked = newSettings.QuestsFullBank;
+            ManualMinor.Checked = newSettings.ManualMinors;
+            ButterMinors.Checked = newSettings.UseButterMinor;
+            FiftyItemMinors.Checked = newSettings.FiftyItemMinors;
+            AbandonMinors.Checked = newSettings.AbandonMinors;
+            AbandonMinorThreshold.Value = newSettings.MinorAbandonThreshold;
+            ManageQuestLoadout.Checked = newSettings.ManageQuestLoadouts;
+            _questControls.UpdateList(newSettings.QuestLoadout);
+            QuestCombatMode.SelectedIndex = newSettings.QuestCombatMode;
+            QuestBeastMode.Checked = newSettings.QuestBeastMode;
+
+            // Wishes Tab
+            ManageWishes.Checked = newSettings.ManageWishes;
+            WishLimit.Value = newSettings.WishLimit;
+            WishEnergy.Value = Convert.ToDecimal(newSettings.WishEnergy);
+            WishMagic.Value = Convert.ToDecimal(newSettings.WishMagic);
+            WishR3.Value = Convert.ToDecimal(newSettings.WishR3);
+            WishMode.SelectedIndex = newSettings.WishMode;
+            WeakPriorities.Checked = newSettings.WeakPriorities;
+            _wishControls.UpdateList(newSettings.WishPriorities);
+            _wishBlacklistControls.UpdateList(newSettings.WishBlacklist);
+
+            // Pit Tab
+            AutoDailySpin.Checked = newSettings.AutoSpin;
+            AutoMoneyPit.Enabled = !newSettings.MoneyPitRunMode;
+            AutoMoneyPit.Checked = newSettings.AutoMoneyPit;
+            PredictMoneyPit.Enabled = !newSettings.MoneyPitRunMode;
+            PredictMoneyPit.Checked = newSettings.PredictMoneyPit;
+            MoneyPitDaycare.Checked = newSettings.MoneyPitDaycare;
+            SetMoneyPitThreshold(MoneyPitThreshold, newSettings);
+            DaycareThreshold.Value = newSettings.DaycareThreshold;
+            _shockwaveControls.UpdateList(newSettings.Shockwave);
+
+            // Cards Tab
+            BalanceMayo.Checked = newSettings.ManageMayo;
             AutoCastCards.Checked = newSettings.AutoCastCards;
-            TrashChunkers.Checked = newSettings.TrashChunkers;
+            CastProtectedCards.Checked = newSettings.CastProtectedCards;
+            TrashCards.Checked = newSettings.TrashCards;
+            TrashProtectedCards.Checked = newSettings.TrashProtectedCards;
             SortCards.Checked = newSettings.CardSortEnabled;
 
-            ManageCooking.Checked = newSettings.ManageCooking;
-            ManageCookingLoadout.Checked = newSettings.ManageCookingLoadouts;
-
-            if (newSettings.DontCastCardType != null)
+            if (newSettings.CardSortOrder.Length > 0)
             {
-                DontCastList.Items.Clear();
-                DontCastList.Items.AddRange(newSettings.DontCastCardType);
+                CardSortList.DataSource = null;
+                CardSortList.DataSource = new BindingSource(newSettings.CardSortOrder, null);
             }
-
-            if (newSettings.CardSortOrder != null)
+            else
             {
                 CardSortList.Items.Clear();
-                CardSortList.Items.AddRange(newSettings.CardSortOrder);
             }
 
-            var temp = newSettings.YggdrasilLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
+            for (int i = 0; i <= 13; i++)
             {
-                yggdrasilLoadoutBox.DataSource = null;
-                yggdrasilLoadoutBox.DataSource = new BindingSource(temp, null);
-                yggdrasilLoadoutBox.ValueMember = "Key";
-                yggdrasilLoadoutBox.DisplayMember = "Value";
-            }
-            else
-            {
-                yggdrasilLoadoutBox.Items.Clear();
+                _cardRarity[i].SelectedIndex = CardManager.rarityList.Keys.ToList().IndexOf(newSettings.CardRarities[i]);
+                _cardCost[i].SelectedIndex = Array.IndexOf(CardManager.tierList, newSettings.CardCosts[i]);
             }
 
-            boostPriorityList.Items.Clear();
-            if (!newSettings.BoostPriority.Any())
-            {
-                string[] tempBoostPrio = { "Power", "Toughness", "Special" };
-                newSettings.BoostPriority = tempBoostPrio;
-            }
-            foreach (string priority in newSettings.BoostPriority)
-            {
-                boostPriorityList.Items.Add(priority);
-            }
-
-            temp = newSettings.PriorityBoosts.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                priorityBoostBox.DataSource = null;
-                priorityBoostBox.DataSource = new BindingSource(temp, null);
-                priorityBoostBox.ValueMember = "Key";
-                priorityBoostBox.DisplayMember = "Value";
-            }
-            else
-            {
-                priorityBoostBox.Items.Clear();
-            }
-
-            temp = newSettings.BoostBlacklist.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                blacklistBox.DataSource = null;
-                blacklistBox.DataSource = new BindingSource(temp, null);
-                blacklistBox.ValueMember = "Key";
-                blacklistBox.DisplayMember = "Value";
-            }
-            else
-            {
-                blacklistBox.Items.Clear();
-            }
-
-            temp = newSettings.TitanLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                titanLoadout.DataSource = null;
-                titanLoadout.DataSource = new BindingSource(temp, null);
-                titanLoadout.ValueMember = "Key";
-                titanLoadout.DisplayMember = "Value";
-            }
-            else
-            {
-                titanLoadout.Items.Clear();
-            }
-
-            temp = newSettings.GoldDropLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                GoldLoadout.DataSource = null;
-                GoldLoadout.DataSource = new BindingSource(temp, null);
-                GoldLoadout.ValueMember = "Key";
-                GoldLoadout.DisplayMember = "Value";
-            }
-            else
-            {
-                GoldLoadout.Items.Clear();
-            }
-
-            temp = newSettings.QuestLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                questLoadoutBox.DataSource = null;
-                questLoadoutBox.DataSource = new BindingSource(temp, null);
-                questLoadoutBox.ValueMember = "Key";
-                questLoadoutBox.DisplayMember = "Value";
-            }
-            else
-            {
-                questLoadoutBox.Items.Clear();
-            }
-
-            temp = newSettings.MoneyPitLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                MoneyPitLoadout.DataSource = null;
-                MoneyPitLoadout.DataSource = new BindingSource(temp, null);
-                MoneyPitLoadout.ValueMember = "Key";
-                MoneyPitLoadout.DisplayMember = "Value";
-            }
-            else
-            {
-                MoneyPitLoadout.Items.Clear();
-            }
-
-            temp = newSettings.WishPriorities.ToDictionary(x => x, x => Main.Character.wishesController.properties[x].wishName);
-            if (temp.Count > 0)
-            {
-                WishPriority.DataSource = null;
-                WishPriority.DataSource = new BindingSource(temp, null);
-                WishPriority.ValueMember = "Key";
-                WishPriority.DisplayMember = "Value";
-            }
-            else
-            {
-                WishPriority.Items.Clear();
-            }
-
-            temp = newSettings.WishBlacklist.ToDictionary(x => x, x => Main.Character.wishesController.properties[x].wishName);
-            if (temp.Count > 0)
-            {
-                WishBlacklist.DataSource = null;
-                WishBlacklist.DataSource = new BindingSource(temp, null);
-                WishBlacklist.ValueMember = "Key";
-                WishBlacklist.DisplayMember = "Value";
-            }
-            else
-            {
-                WishBlacklist.Items.Clear();
-            }
-
-            temp = newSettings.BlacklistedBosses.ToDictionary(x => x, x => SpriteEnemyList[x]);
-            if (temp.Count > 0)
-            {
-                BlacklistedBosses.DataSource = null;
-                BlacklistedBosses.DataSource = new BindingSource(temp, null);
-                BlacklistedBosses.ValueMember = "Key";
-                BlacklistedBosses.DisplayMember = "Value";
-            }
-            else
-            {
-                BlacklistedBosses.Items.Clear();
-            }
-
-            temp = newSettings.CookingLoadout.ToDictionary(x => x, x => Main.Character.itemInfo.itemName[x]);
-            if (temp.Count > 0)
-            {
-                cookingLoadoutBox.DataSource = null;
-                cookingLoadoutBox.DataSource = new BindingSource(temp, null);
-                cookingLoadoutBox.ValueMember = "Key";
-                cookingLoadoutBox.DisplayMember = "Value";
-            }
-            else
-            {
-                cookingLoadoutBox.Items.Clear();
-            }
+            // Cooking Tab
+            ManageCooking.Checked = newSettings.ManageCooking;
+            ManageCookingLoadout.Checked = newSettings.ManageCookingLoadouts;
+            _cookingControls.UpdateList(newSettings.CookingLoadout);
 
             Refresh();
             _initializing = false;
@@ -684,14 +605,25 @@ namespace NGUInjector
 
         private bool TryGetValueFromNumericUpDown(NumericUpDown upDown, out int val)
         {
-            return int.TryParse(upDown.Controls[0].Text, out val);
+            try
+            {
+                val = (int)upDown.Value;
+                return true;
+            }
+            catch
+            {
+                val = 0;
+                return false;
+            }
         }
+
+        private bool TryGetTextFromNumericUpDown(NumericUpDown upDown, out int val) => int.TryParse(upDown.Text, out val);
 
         private bool TryItemBoxTextChanged(ItemControlGroup controls, out int val)
         {
             controls.ClearError();
 
-            if (!TryGetValueFromNumericUpDown(controls.ItemBox, out val) || val < controls.MinVal || val > controls.MaxVal)
+            if (!TryGetTextFromNumericUpDown(controls.ItemBox, out val) || val < controls.MinVal || val > controls.MaxVal)
             {
                 controls.ItemLabel.Text = "";
                 return false;
@@ -702,12 +634,10 @@ namespace NGUInjector
 
             if (controls.CheckIsEquipment)
             {
-                var itemType = Main.Character.itemInfo.type[val];
+                var itemType = _character.itemInfo.type[val];
                 isValid = itemType == part.Head || itemType == part.Chest || itemType == part.Legs || itemType == part.Boots || itemType == part.Weapon || itemType == part.Accessory;
                 if (!isValid)
-                {
                     itemName += " (UNEQUIPPABLE)";
-                }
             }
             controls.ItemLabel.Text = itemName;
 
@@ -717,9 +647,7 @@ namespace NGUInjector
         private void ItemBoxKeyDown(KeyEventArgs e, ItemControlGroup controls)
         {
             if (e.KeyCode == Keys.Enter)
-            {
                 ItemListAdd(controls);
-            }
         }
 
         private void ItemListAdd(ItemControlGroup controls)
@@ -732,15 +660,15 @@ namespace NGUInjector
                 return;
             }
 
-            int[] currentSettings = controls.GetSettings();
-            if (currentSettings.Contains(val))
-            {
+            var settings = controls.GetSettings();
+            if (settings.Contains(val))
                 return;
-            }
 
-            var temp = currentSettings.ToList();
-            temp.Add(val);
-            controls.SaveSettings(temp.ToArray());
+            var index = settings.Length;
+
+            Array.Resize(ref settings, index + 1);
+            settings[index] = val;
+            controls.SaveSettings(settings);
         }
 
         private void ItemListRemove(ItemControlGroup controls)
@@ -749,426 +677,277 @@ namespace NGUInjector
 
             var item = controls.ItemList.SelectedItem;
             if (item == null)
-            {
                 return;
-            }
 
-            var id = (KeyValuePair<int, string>)item;
+            var id = ((KeyValuePair<int, string>)item).Key;
 
-            var temp = controls.GetSettings().ToList();
-            temp.RemoveAll(x => x == id.Key);
-            controls.SaveSettings(temp.ToArray());
+            var settings = controls.GetSettings();
+            settings = settings.Where(x => x != id).ToArray();
+            controls.SaveSettings(settings);
         }
 
         private void ItemListUp(ItemControlGroup controls)
         {
             controls.ClearError();
 
-            ItemListUp(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
-
-            //var index = controls.ItemList.SelectedIndex;
-            //if (index == -1 || index == 0)
-            //{
-            //    return;
-            //}
-
-            //var temp = controls.GetSettings().ToList();
-            //var item = temp[index];
-            //temp.RemoveAt(index);
-            //temp.Insert(index - 1, item);
-            //controls.SaveSettings(temp.ToArray());
-
-            //controls.ItemList.SelectedIndex = index - 1;
-        }
-
-        private void ItemListUp<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
-        {
-            var index = itemList.SelectedIndex;
-            if (index == -1 || index == 0)
-            {
-                return;
-            }
-
-            var temp = settings.ToList();
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index - 1, item);
-            saveSettings(temp.ToArray());
-
-            itemList.SelectedIndex = index - 1;
+            ItemListMove(controls.ItemList, controls.GetSettings(), Direction.Up);
         }
 
         private void ItemListDown(ItemControlGroup controls)
         {
             controls.ClearError();
 
-            ItemListDown(controls.ItemList, controls.GetSettings(), controls.SaveSettings);
-
-            //var index = controls.ItemList.SelectedIndex;
-            //if (index == -1)
-            //{
-            //    return;
-            //}
-
-            //var temp = controls.GetSettings().ToList();
-            //if (index == temp.Count - 1)
-            //{
-            //    return;
-            //}
-
-            //var item = temp[index];
-            //temp.RemoveAt(index);
-            //temp.Insert(index + 1, item);
-            //controls.SaveSettings(temp.ToArray());
-
-            //controls.ItemList.SelectedIndex = index + 1;
+            ItemListMove(controls.ItemList, controls.GetSettings(), Direction.Down);
         }
 
-        private void ItemListDown<T>(ListBox itemList, T[] settings, Action<T[]> saveSettings)
+        private void ItemListMove<T>(ListBox itemList, T[] settings, Direction direction)
         {
             var index = itemList.SelectedIndex;
-            if (index == -1)
-            {
+            var newIndex = index - (int)direction;
+            if (newIndex < 0 || newIndex >= settings.Length)
                 return;
-            }
 
-            var temp = settings.ToList();
-            if (index == temp.Count - 1)
-            {
-                return;
-            }
+            (settings[newIndex], settings[index]) = (settings[index], settings[newIndex]);
+            Settings.SaveSettings();
 
-            var item = temp[index];
-            temp.RemoveAt(index);
-            temp.Insert(index + 1, item);
-            saveSettings(temp.ToArray());
-
-            itemList.SelectedIndex = index + 1;
+            itemList.SelectedIndex = index - 1;
         }
 
-        internal void UpdateProfileList(string[] profileList, string selectedProfile)
+        public void UpdateProfileList(string[] profileList, string selectedProfile)
         {
             AllocationProfileFile.DataSource = null;
             AllocationProfileFile.DataSource = new BindingSource(profileList, null);
             AllocationProfileFile.SelectedItem = selectedProfile;
         }
 
-        internal void UpdateProgressBar(int progress)
+        public void UpdateProgressBar(int progress)
         {
             if (progress < 0)
                 return;
             progressBar1.Value = progress;
         }
 
+        public void UpdateTitanVersions()
+        {
+            for (int i = 6; i <= 12; i++)
+                _titanVersion[i - 6].SelectedIndex = ZoneHelpers.TitanVersion(i - 1) - 1;
+        }
+
         private void MasterEnable_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.GlobalEnabled = MasterEnable.Checked;
+            Settings.GlobalEnabled = MasterEnable.Checked;
         }
 
         private void AutoDailySpin_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoSpin = AutoDailySpin.Checked;
+            Settings.AutoSpin = AutoDailySpin.Checked;
         }
 
         private void AutoMoneyPit_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoMoneyPit = AutoMoneyPit.Checked;
+            Settings.AutoMoneyPit = AutoMoneyPit.Checked;
+        }
+
+        private void PredictMoneyPit_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.PredictMoneyPit = PredictMoneyPit.Checked;
+        }
+
+        private void MoneyPitDaycare_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.MoneyPitDaycare = MoneyPitDaycare.Checked;
         }
 
         private void AutoITOPOD_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoQuestITOPOD = AutoITOPOD.Checked;
+            Settings.AutoQuestITOPOD = AutoITOPOD.Checked;
         }
 
         private void AutoFightBosses_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoFight = AutoFightBosses.Checked;
+            Settings.AutoFight = AutoFightBosses.Checked;
         }
 
-        private void MoneyPitThresholdSave_Click(object sender, EventArgs e)
+        private void MoneyPitThreshold_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var newVal = MoneyPitThreshold.Text;
-            if (double.TryParse(newVal, out var saved))
-            {
-                if (saved < 0)
-                {
-                    moneyPitThresholdError.SetError(MoneyPitThreshold, "Not a valid value");
-                    return;
-                }
-                Main.Settings.MoneyPitThreshold = saved;
-            }
-            else
-            {
-                moneyPitThresholdError.SetError(MoneyPitThreshold, "Not a valid value");
-            }
+            if (_initializing) return;
+            Settings.MoneyPitThreshold = (double)MoneyPitThreshold.SelectedItem;
         }
 
-        private void MoneyPitThreshold_TextChanged(object sender, EventArgs e)
+        private void MoneyPitThreshold_Format(object sender, ListControlConvertEventArgs e)
         {
-            moneyPitThresholdError.SetError(MoneyPitThreshold, "");
+            e.Value = FormatDoubleNumber((double)e.ListItem);
+        }
+
+        private void DaycareThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(DaycareThreshold, out int val))
+                Settings.DaycareThreshold = val;
         }
 
         private void ManageEnergy_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageEnergy = ManageEnergy.Checked;
+            Settings.ManageEnergy = ManageEnergy.Checked;
         }
 
         private void ManageMagic_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageMagic = ManageMagic.Checked;
+            Settings.ManageMagic = ManageMagic.Checked;
         }
 
         private void ManageGear_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageGear = ManageGear.Checked;
+            Settings.ManageGear = ManageGear.Checked;
+        }
+
+        private void ManageBeards_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.ManageBeards = ManageBeards.Checked;
         }
 
         private void ManageDiggers_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageDiggers = ManageDiggers.Checked;
+            Settings.ManageDiggers = ManageDiggers.Checked;
         }
 
         private void ManageWandoos_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageWandoos = ManageWandoos.Checked;
+            Settings.ManageWandoos = ManageWandoos.Checked;
         }
 
         private void AutoRebirth_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoRebirth = AutoRebirth.Checked;
+            Settings.AutoRebirth = AutoRebirth.Checked;
         }
 
         private void ManageYggdrasil_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageYggdrasil = ManageYggdrasil.Checked;
+            Settings.ManageYggdrasil = ManageYggdrasil.Checked;
         }
 
         private void YggdrasilSwap_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.SwapYggdrasilLoadouts = YggdrasilSwap.Checked;
+            Settings.SwapYggdrasilLoadouts = YggdrasilSwap.Checked;
         }
 
-        private void yggLoadoutItem_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_yggControls, out _);
-        }
+        private void YggLoadoutItem_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_yggControls, out _);
 
-        private void yggLoadoutItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _yggControls);
-        }
+        private void YggLoadoutItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _yggControls);
 
-        private void yggAddButton_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_yggControls);
-        }
+        private void YggAddButton_Click(object sender, EventArgs e) => ItemListAdd(_yggControls);
 
-        private void yggRemoveButton_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_yggControls);
-        }
+        private void YggRemoveButton_Click(object sender, EventArgs e) => ItemListRemove(_yggControls);
 
         private void ManageInventory_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageInventory = ManageInventory.Checked;
+            Settings.ManageInventory = ManageInventory.Checked;
         }
 
         private void ManageBoostConvert_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoConvertBoosts = ManageBoostConvert.Checked;
+            Settings.AutoConvertBoosts = ManageBoostConvert.Checked;
         }
 
-        private void boostPrioUpButton_Click(object sender, EventArgs e)
-        {
-            ItemListUp(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
-        }
+        private void BoostPrioUpButton_Click(object sender, EventArgs e) => ItemListMove(BoostPriorityList, Settings.BoostPriority, Direction.Up);
 
-        private void boostPrioDownButton_Click(object sender, EventArgs e)
-        {
-            ItemListDown(boostPriorityList, Main.Settings.BoostPriority, (settings) => Main.Settings.BoostPriority = settings);
-        }
+        private void BoostPrioDownButton_Click(object sender, EventArgs e) => ItemListMove(BoostPriorityList, Settings.BoostPriority, Direction.Down);
 
-        private void priorityBoostItemAdd_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_priorityControls, out _);
-        }
+        private void PriorityBoostItemAdd_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_priorityControls, out _);
 
-        private void priorityBoostItemAdd_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _priorityControls);
-        }
+        private void PriorityBoostItemAdd_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _priorityControls);
 
-        private void priorityBoostAdd_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_priorityControls);
-        }
+        private void PriorityBoostAdd_Click(object sender, EventArgs e) => ItemListAdd(_priorityControls);
 
-        private void priorityBoostRemove_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_priorityControls);
-        }
+        private void PriorityBoostRemove_Click(object sender, EventArgs e) => ItemListRemove(_priorityControls);
 
-        private void prioUpButton_Click(object sender, EventArgs e)
-        {
-            ItemListUp(_priorityControls);
-        }
+        private void PrioUpButton_Click(object sender, EventArgs e) => ItemListUp(_priorityControls);
 
-        private void prioDownButton_Click(object sender, EventArgs e)
-        {
-            ItemListDown(_priorityControls);
-        }
+        private void PrioDownButton_Click(object sender, EventArgs e) => ItemListDown(_priorityControls);
 
-        private void blacklistAddItem_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_blacklistControls, out _);
-        }
+        private void BlacklistAddItem_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_blacklistControls, out _);
 
-        private void blacklistAddItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _blacklistControls);
-        }
+        private void BlacklistAddItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _blacklistControls);
 
-        private void blacklistAdd_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_blacklistControls);
-        }
+        private void BlacklistAdd_Click(object sender, EventArgs e) => ItemListAdd(_blacklistControls);
 
-        private void blacklistRemove_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_blacklistControls);
-        }
+        private void BlacklistRemove_Click(object sender, EventArgs e) => ItemListRemove(_blacklistControls);
 
         private void SwapTitanLoadout_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.SwapTitanLoadouts = SwapTitanLoadout.Checked;
+            Settings.SwapTitanLoadouts = SwapTitanLoadout.Checked;
         }
 
         private void ManageQuestLoadout_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageQuestLoadouts = ManageQuestLoadout.Checked;
+            Settings.ManageQuestLoadouts = ManageQuestLoadout.Checked;
         }
 
-        private void titanAddItem_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_titanControls, out _);
-        }
+        private void TitanAddItem_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_titanControls, out _);
 
-        private void titanAddItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _titanControls);
-        }
+        private void TitanAddItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _titanControls);
 
-        private void titanAdd_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_titanControls);
-        }
+        private void TitanAdd_Click(object sender, EventArgs e) => ItemListAdd(_titanControls);
 
-        private void titanRemove_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_titanControls);
-        }
+        private void TitanRemove_Click(object sender, EventArgs e) => ItemListRemove(_titanControls);
 
         private void CombatActive_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.CombatEnabled = CombatActive.Checked;
+            Settings.CombatEnabled = CombatActive.Checked;
         }
 
         private void BossesOnly_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.SnipeBossOnly = BossesOnly.Checked;
-        }
-
-        private void PrecastBuffs_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.PrecastBuffs = PrecastBuffs.Checked;
-        }
-
-        private void RecoverHealth_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.RecoverHealth = RecoverHealth.Checked;
-        }
-
-        private void FastCombat_CheckedChanged(object sender, EventArgs e)
-        {
-            SmartBeastMode.Enabled = CombatMode.SelectedIndex == 0 && !FastCombat.Checked;
-            if (_initializing) return;
-            Main.Settings.FastCombat = FastCombat.Checked;
+            Settings.SnipeBossOnly = BossesOnly.Checked;
         }
 
         private void CombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selected = CombatMode.SelectedIndex;
-
-            bool isManualMode = selected == 0;
-            PrecastBuffs.Enabled = isManualMode;
-            FastCombat.Enabled = isManualMode;
-            MoreBlockParry.Enabled = isManualMode;
-            SmartBeastMode.Enabled = isManualMode && !FastCombat.Checked;
-
             if (_initializing) return;
-            Main.Settings.CombatMode = selected;
+            Settings.CombatMode = CombatMode.SelectedIndex;
         }
 
         private void CombatTargetZone_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            var selected = CombatTargetZone.SelectedItem;
-            var item = (KeyValuePair<int, string>)selected;
-            Main.Settings.SnipeZone = item.Key;
+            Settings.SnipeZone = ((KeyValuePair<int, string>)CombatTargetZone.SelectedItem).Key;
         }
 
         private void AllowFallthrough_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AllowZoneFallback = AllowFallthrough.Checked;
+            Settings.AllowZoneFallback = AllowFallthrough.Checked;
         }
 
-        private void UseGoldLoadout_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.DoGoldSwap = UseGoldLoadout.Checked;
-        }
+        private void GoldItemBox_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_goldControls, out _);
 
-        private void GoldItemBox_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_goldControls, out _);
-        }
+        private void GoldItemBox_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _goldControls);
 
-        private void GoldItemBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _goldControls);
-        }
+        private void GoldLoadoutAdd_Click(object sender, EventArgs e) => ItemListAdd(_goldControls);
 
-        private void GoldLoadoutAdd_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_goldControls);
-        }
-
-        private void GoldLoadoutRemove_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_goldControls);
-        }
+        private void GoldLoadoutRemove_Click(object sender, EventArgs e) => ItemListRemove(_goldControls);
 
         private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -1179,123 +958,66 @@ namespace NGUInjector
         private void ManageQuests_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoQuest = ManageQuests.Checked;
+            Settings.AutoQuest = ManageQuests.Checked;
         }
 
         private void AllowMajor_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AllowMajorQuests = AllowMajor.Checked;
+            Settings.AllowMajorQuests = AllowMajor.Checked;
+        }
+
+        private void QuestsFullBank_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.QuestsFullBank = QuestsFullBank.Checked;
         }
 
         private void AbandonMinors_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AbandonMinors = AbandonMinors.Checked;
+            Settings.AbandonMinors = AbandonMinors.Checked;
         }
 
         private void AbandonMinorThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
             if (TryGetValueFromNumericUpDown(AbandonMinorThreshold, out int val))
-            {
-                Main.Settings.MinorAbandonThreshold = val;
-            }
-        }
-
-        private void QuestFastCombat_CheckedChanged(object sender, EventArgs e)
-        {
-            QuestSmartBeastMode.Enabled = QuestCombatMode.SelectedIndex == 0 && !QuestFastCombat.Checked;
-            if (_initializing) return;
-            Main.Settings.QuestFastCombat = QuestFastCombat.Checked;
+                Settings.MinorAbandonThreshold = val;
         }
 
         private void QuestBeastMode_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.QuestBeastMode = QuestBeastMode.Checked;
-            if (QuestBeastMode.Checked)
-            {
-                Main.Settings.QuestSmartBeastMode = QuestSmartBeastMode.Checked = false;
-            }
+            Settings.QuestBeastMode = QuestBeastMode.Checked;
         }
 
-        private void QuestSmartBeastMode_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.QuestSmartBeastMode = QuestSmartBeastMode.Checked;
-            if (QuestSmartBeastMode.Checked)
-            {
-                Main.Settings.QuestBeastMode = QuestBeastMode.Checked = false;
-            }
-        }
+        private void QuestLoadoutBox_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_questControls, out _);
 
-        private void QuestLoadoutBox_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_questControls, out _);
-        }
+        private void QuestLoadoutItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _questControls);
 
-        private void QuestLoadoutItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _questControls);
-        }
+        private void QuestAddButton_Click(object sender, EventArgs e) => ItemListAdd(_questControls);
 
-        private void questAddButton_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_questControls);
-        }
-
-        private void questRemoveButton_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_questControls);
-        }
+        private void QuestRemoveButton_Click(object sender, EventArgs e) => ItemListRemove(_questControls);
 
         private void AutoSpellSwap_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoSpellSwap = AutoSpellSwap.Checked;
+            Settings.AutoSpellSwap = AutoSpellSwap.Checked;
         }
 
-        private void SaveSpellCapButton_Click(object sender, EventArgs e)
+        private void SpaghettiCap_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(SpaghettiCap, out int val))
+                Settings.SpaghettiThreshold = val;
+        }
 
-            int val;
-            if (TryGetValueFromNumericUpDown(SpaghettiCap, out val))
-            {
-                Main.Settings.SpaghettiThreshold = val;
-            }
-            if (TryGetValueFromNumericUpDown(CounterfeitCap, out val))
-            {
-                Main.Settings.CounterfeitThreshold = val;
-            }
-            if (TryGetValueFromNumericUpDown(IronPillThreshold, out val))
-            {
-                Main.Settings.IronPillThreshold = val;
-            }
-            if (TryGetValueFromNumericUpDown(GuffAThreshold, out val))
-            {
-                Main.Settings.BloodMacGuffinAThreshold = val;
-            }
-            if (TryGetValueFromNumericUpDown(GuffBThreshold, out val))
-            {
-                Main.Settings.BloodMacGuffinBThreshold = val;
-            }
-
-            var newVal = BloodNumberThreshold.Text;
-            if (double.TryParse(newVal, out var saved))
-            {
-                if (saved < 0)
-                {
-                    numberErrProvider.SetError(BloodNumberThreshold, "Not a valid value");
-                    return;
-                }
-                Main.Settings.BloodNumberThreshold = saved;
-            }
-            else
-            {
-                numberErrProvider.SetError(BloodNumberThreshold, "Not a valid value");
-            }
+        private void CounterfeitCap_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(CounterfeitCap, out int val))
+                Settings.CounterfeitThreshold = val;
         }
 
         private void BloodNumberThreshold_TextChanged(object sender, EventArgs e)
@@ -1303,371 +1025,335 @@ namespace NGUInjector
             numberErrProvider.SetError(BloodNumberThreshold, "");
         }
 
-        private void TestButton_Click(object sender, EventArgs e)
+        private void UpdateBloodNumberThreshold()
         {
-            //var c = Main.Character;
-            //for (var i = 0; i <= 13; i++)
-            //{
-            //    CustomAllocation.
-            //}
+            double saved;
+            if (BloodNumberThreshold.Text == "")
+            {
+                saved = 0.0;
+            }
+            else if (!double.TryParse(BloodNumberThreshold.Text, out saved))
+            {
+                numberErrProvider.SetError(BloodNumberThreshold, "Invalid format");
+                return;
+            }
+            if (saved < 0.0)
+                saved = 0.0;
+            var divisor = saved >= 1E6 ? Math.Pow(10.0, (int)Math.Log10(saved) - 3) : 1.0;
+            saved -= saved % divisor;
+            if (Settings.BloodNumberThreshold == saved)
+                BloodNumberThreshold.Text = FormatDoubleNumber(saved);
+            Settings.BloodNumberThreshold = saved;
+        }
+
+        private void BloodNumberThreshold_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                UpdateBloodNumberThreshold();
+        }
+
+        private void BloodNumberThreshold_Leave(object sender, EventArgs e) => UpdateBloodNumberThreshold();
+
+        private void IronPillThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(IronPillThreshold, out int val))
+                Settings.IronPillThreshold = val;
+        }
+
+        private void GuffAThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(GuffAThreshold, out int val))
+                Settings.BloodMacGuffinAThreshold = val;
+        }
+
+        private void GuffBThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(GuffBThreshold, out int val))
+                Settings.BloodMacGuffinBThreshold = val;
         }
 
         private void AutoBuyEM_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoBuyEM = AutoBuyEM.Checked;
+            Settings.AutoBuyEM = AutoBuyEM.Checked;
         }
 
         private void IdleMinor_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManualMinors = ManualMinor.Checked;
+            Settings.ManualMinors = ManualMinor.Checked;
+        }
+
+        private void FiftyItemMinors_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.FiftyItemMinors = FiftyItemMinors.Checked;
         }
 
         private void UseButter_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.UseButterMajor = ButterMajors.Checked;
+            Settings.UseButterMajor = ButterMajors.Checked;
         }
 
         private void ManageR3_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageR3 = ManageR3.Checked;
+            Settings.ManageR3 = ManageR3.Checked;
         }
 
         private void ButterMinors_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.UseButterMinor = ButterMinors.Checked;
+            Settings.UseButterMinor = ButterMinors.Checked;
         }
 
         private void ActivateFruits_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ActivateFruits = ActivateFruits.Checked;
+            Settings.ActivateFruits = ActivateFruits.Checked;
         }
 
-        private void WishAddInput_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_wishControls, out _);
-        }
+        private void WishAddInput_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_wishControls, out _);
 
-        private void WishAddInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _wishControls);
-        }
+        private void WishAddInput_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _wishControls);
 
-        private void AddWishButton_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_wishControls);
-        }
+        private void AddWishButton_Click(object sender, EventArgs e) => ItemListAdd(_wishControls);
 
-        private void RemoveWishButton_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_wishControls);
-        }
+        private void RemoveWishButton_Click(object sender, EventArgs e) => ItemListRemove(_wishControls);
 
-        private void WishUpButton_Click(object sender, EventArgs e)
-        {
-            ItemListUp(_wishControls);
-        }
+        private void WishUpButton_Click(object sender, EventArgs e) => ItemListUp(_wishControls);
 
-        private void WishDownButton_Click(object sender, EventArgs e)
-        {
-            ItemListDown(_wishControls);
-        }
+        private void WishDownButton_Click(object sender, EventArgs e) => ItemListDown(_wishControls);
 
-        private void WishBlacklistAddInput_TextChanged(object sender, EventArgs e)
-        {
-            TryItemBoxTextChanged(_wishBlacklistControls, out _);
-        }
+        private void WishBlacklistAddInput_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_wishBlacklistControls, out _);
 
-        private void WishBlacklistAddInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _wishBlacklistControls);
-        }
+        private void WishBlacklistAddInput_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _wishBlacklistControls);
 
-        private void AddWishBlacklistButton_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_wishBlacklistControls);
-        }
+        private void AddWishBlacklistButton_Click(object sender, EventArgs e) => ItemListAdd(_wishBlacklistControls);
 
-        private void RemoveWishBlacklistButton_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_wishBlacklistControls);
-        }
+        private void RemoveWishBlacklistButton_Click(object sender, EventArgs e) => ItemListRemove(_wishBlacklistControls);
 
         private void BeastMode_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.BeastMode = BeastMode.Checked;
-            if (BeastMode.Checked)
-            {
-                Main.Settings.SmartBeastMode = SmartBeastMode.Checked = false;
-            }
-        }
-
-        private void SmartBeastMode_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.SmartBeastMode = SmartBeastMode.Checked;
-            if (SmartBeastMode.Checked)
-            {
-                Main.Settings.BeastMode = BeastMode.Checked = false;
-            }
+            Settings.BeastMode = BeastMode.Checked;
         }
 
         private void CubePriority_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.CubePriority = CubePriority.SelectedIndex;
+            Settings.CubePriority = CubePriority.SelectedIndex;
+        }
+
+        private void FavoredMacguffin_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.FavoredMacguffin = ((KeyValuePair<int, string>)FavoredMacguffin.SelectedItem).Key;
         }
 
         private void ManageNGUDiff_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageNGUDiff = ManageNGUDiff.Checked;
+            Settings.ManageNGUDiff = ManageNGUDiff.Checked;
         }
 
         private void ChangeProfileFile_Click(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AllocationFile = AllocationProfileFile.SelectedItem.ToString();
-            Main.LoadAllocation();
+            Settings.AllocationFile = AllocationProfileFile.SelectedItem.ToString();
+            LoadAllocation();
         }
 
         private void TitanGoldTargets_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             if (_initializing) return;
-            var temp = Main.Settings.TitanGoldTargets.ToArray();
-            temp[(int)e.Item.Tag] = e.Item.Checked;
-            Main.Settings.TitanGoldTargets = temp;
+            Settings.TitanGoldTargets[(int)e.Item.Tag] = e.Item.Checked;
+            Settings.SaveSettings();
         }
 
         private void ResetTitanStatus_Click(object sender, EventArgs e)
         {
             if (_initializing) return;
             var temp = new bool[ZoneHelpers.TitanZones.Length];
-            Main.Settings.TitanMoneyDone = temp;
+            Settings.TitanMoneyDone = temp;
         }
 
         private void ManageGoldLoadouts_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageGoldLoadouts = ManageGoldLoadouts.Checked;
+            Settings.ManageGoldLoadouts = ManageGoldLoadouts.Checked;
         }
 
-        private void SaveResnipeButton_Click(object sender, EventArgs e)
+        private void ResnipeInput_ValueChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
             if (TryGetValueFromNumericUpDown(ResnipeInput, out int val))
-            {
-                Main.Settings.ResnipeTime = val;
-            }
+                Settings.ResnipeTime = val;
+        }
+
+        private void GoldSnipeNow_Click(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.GoldSnipeComplete = false;
         }
 
         private void CBlockMode_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.GoldCBlockMode = CBlockMode.Checked;
+            Settings.GoldCBlockMode = CBlockMode.Checked;
         }
 
-        private void HarvestSafety_CheckedChanged(object sender, EventArgs e)
-        {
-            HarvestAllButton.Enabled = HarvestSafety.Checked;
-        }
+        private void HarvestSafety_CheckedChanged(object sender, EventArgs e) => HarvestAllButton.Enabled = HarvestSafety.Checked;
 
         private void HarvestAllButton_Click(object sender, EventArgs e)
         {
-            if (Main.Settings.SwapYggdrasilLoadouts && Main.Settings.YggdrasilLoadout.Length > 0 && YggdrasilManager.AnyHarvestable())
+            if (Settings.SwapYggdrasilLoadouts && Settings.YggdrasilLoadout.Length > 0 && YggdrasilManager.AnyHarvestable())
             {
-                if (!LoadoutManager.TryYggdrasilSwap() || !DiggerManager.TryYggSwap())
-                {
-                    Main.Log("Unable to harvest now");
-                    return;
-                }
-
-                YggdrasilManager.HarvestAll();
+                if (LockManager.TryYggdrasilSwap(true))
+                    YggdrasilManager.HarvestAll(true);
+                else
+                    Log("Unable to harvest now");
             }
-        }
-
-        private void OptimizeITOPOD_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.OptimizeITOPODFloor = OptimizeITOPOD.Checked;
         }
 
         private void TargetITOPOD_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AdventureTargetITOPOD = TargetITOPOD.Checked;
+            Settings.AdventureTargetITOPOD = TargetITOPOD.Checked;
         }
 
-        private void TargetTitans_CheckedChanged(object sender, EventArgs e)
+        private void KillTitan_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AdventureTargetTitans = TargetTitans.Checked;
+            var checkBox = (CheckBox)sender;
+            if (int.TryParse(checkBox.Name.Substring(9), out var index))
+            {
+                Settings.TitanSwapTargets[index - 1] = checkBox.Checked;
+                Settings.SaveSettings();
+            }
+        }
+
+        private void TitanVersion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            var comboBox = (ComboBox)sender;
+            if (int.TryParse(comboBox.Name.Substring(5, comboBox.Name.Length - 12), out var index))
+                ZoneHelpers.SetTitanVersion(index - 1, comboBox.SelectedIndex + 1);
         }
 
         private void TitanSwapTargets_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             if (_initializing) return;
-            var temp = Main.Settings.TitanSwapTargets.ToArray();
-            temp[(int)e.Item.Tag] = e.Item.Checked;
-            Main.Settings.TitanSwapTargets = temp;
+            Settings.TitanSwapTargets[(int)e.Item.Tag] = e.Item.Checked;
+            Settings.SaveSettings();
         }
 
-        private void UnloadSafety_CheckedChanged(object sender, EventArgs e)
-        {
-            UnloadButton.Enabled = UnloadSafety.Checked;
-        }
+        private void UnloadSafety_CheckedChanged(object sender, EventArgs e) => UnloadButton.Enabled = UnloadSafety.Checked;
 
-        private void UnloadButton_Click(object sender, EventArgs e)
-        {
-            Loader.Unload();
-        }
+        private void UnloadButton_Click(object sender, EventArgs e) => Loader.Unload();
 
         private void ITOPODCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selected = ITOPODCombatMode.SelectedIndex;
-
-            bool isManualMode = selected == 0;
-            ITOPODPrecastBuffs.Enabled = isManualMode;
-            ITOPODFastCombat.Enabled = isManualMode;
-            ITOPODSmartBeastMode.Enabled = isManualMode && !ITOPODFastCombat.Checked;
-
             if (_initializing) return;
-            Main.Settings.ITOPODCombatMode = selected;
+            Settings.ITOPODCombatMode = ITOPODCombatMode.SelectedIndex;
         }
 
-        private void ITOPODPrecastBuffs_CheckedChanged(object sender, EventArgs e)
+        private void ITOPODOptimizeMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ITOPODPrecastBuffs = ITOPODPrecastBuffs.Checked;
-        }
-
-        private void ITOPODRecoverHP_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.ITOPODRecoverHP = ITOPODRecoverHP.Checked;
-        }
-
-        private void ITOPODFastCombat_CheckedChanged(object sender, EventArgs e)
-        {
-            ITOPODSmartBeastMode.Enabled = ITOPODCombatMode.SelectedIndex == 0 && !ITOPODFastCombat.Checked;
-            if (_initializing) return;
-            Main.Settings.ITOPODFastCombat = ITOPODFastCombat.Checked;
+            Settings.ITOPODOptimizeMode = ITOPODOptimizeMode.SelectedIndex;
         }
 
         private void ITOPODBeastMode_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ITOPODBeastMode = ITOPODBeastMode.Checked;
-            if (ITOPODBeastMode.Checked)
-            {
-                Main.Settings.ITOPODSmartBeastMode = ITOPODSmartBeastMode.Checked = false;
-            }
+            Settings.ITOPODBeastMode = ITOPODBeastMode.Checked;
         }
 
-        private void ITOPODSmartBeastMode_CheckedChanged(object sender, EventArgs e)
+        private void ITOPODAutoPush_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ITOPODSmartBeastMode = ITOPODSmartBeastMode.Checked;
-            if (ITOPODSmartBeastMode.Checked)
-            {
-                Main.Settings.ITOPODBeastMode = ITOPODBeastMode.Checked = false;
-            }
+            Settings.ITOPODAutoPush = ITOPODAutoPush.Checked;
         }
 
         private void DisableOverlay_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.DisableOverlay = DisableOverlay.Checked;
+            Settings.DisableOverlay = DisableOverlay.Checked;
         }
 
-        private void MoneyPitInput_TextChanged(object sender, EventArgs e)
+        private void MoneyPitRunMode_CheckedChanged(object sender, EventArgs e)
         {
-            TryItemBoxTextChanged(_pitControls, out _);
+            if (_initializing) return;
+            Settings.MoneyPitRunMode = MoneyPitRunMode.Checked;
         }
 
-        private void MoneyPitInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            ItemBoxKeyDown(e, _pitControls);
-        }
+        private void ShockwaveInput_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_shockwaveControls, out _);
 
-        private void MoneyPitAdd_Click(object sender, EventArgs e)
-        {
-            ItemListAdd(_pitControls);
-        }
+        private void ShockwaveInput_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _shockwaveControls);
 
-        private void MoneyPitRemove_Click(object sender, EventArgs e)
-        {
-            ItemListRemove(_pitControls);
-        }
+        private void ShockwaveAdd_Click(object sender, EventArgs e) => ItemListAdd(_shockwaveControls);
+
+        private void ShockwaveRemove_Click(object sender, EventArgs e) => ItemListRemove(_shockwaveControls);
+
+        private void ShockwavePrioUpButton_Click(object sender, EventArgs e) => ItemListUp(_shockwaveControls);
+
+        private void ShockwavePrioDownButton_Click(object sender, EventArgs e) => ItemListDown(_shockwaveControls);
 
         private void UpgradeDiggers_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.UpgradeDiggers = UpgradeDiggers.Checked;
+            Settings.UpgradeDiggers = UpgradeDiggers.Checked;
         }
 
         private void CastBloodSpells_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.CastBloodSpells = CastBloodSpells.Checked;
+            Settings.CastBloodSpells = CastBloodSpells.Checked;
         }
 
         private void IronPillOnRebirth_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.IronPillOnRebirth = IronPillOnRebirth.Checked;
+            Settings.IronPillOnRebirth = IronPillOnRebirth.Checked;
         }
 
         private void GuffAOnRebirth_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.BloodMacGuffinAOnRebirth = GuffAOnRebirth.Checked;
+            Settings.BloodMacGuffinAOnRebirth = GuffAOnRebirth.Checked;
         }
 
         private void GuffBOnRebirth_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.BloodMacGuffinBOnRebirth = GuffBOnRebirth.Checked;
+            Settings.BloodMacGuffinBOnRebirth = GuffBOnRebirth.Checked;
         }
 
         private void QuestCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selected = QuestCombatMode.SelectedIndex;
 
-            bool isManualMode = selected == 0;
-            QuestFastCombat.Enabled = isManualMode;
-            QuestSmartBeastMode.Enabled = isManualMode && !QuestFastCombat.Checked;
-
             if (_initializing) return;
-            Main.Settings.QuestCombatMode = selected;
+            Settings.QuestCombatMode = selected;
         }
 
         private void YggSwapThreshold_ValueChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
             if (TryGetValueFromNumericUpDown(YggSwapThreshold, out int val))
-            {
-                Main.Settings.YggSwapThreshold = val;
-            }
-        }
-
-        private void MoreBlockParry_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.MoreBlockParry = MoreBlockParry.Checked;
+                Settings.YggSwapThreshold = val;
         }
 
         private void EnemyBlacklistZone_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selected = EnemyBlacklistZone.SelectedItem;
-            var item = (KeyValuePair<int, string>)selected;
-            var values = Main.Character.adventureController.enemyList[item.Key]
-                .Select(x => new KeyValuePair<int, string>(x.spriteID, x.name)).ToList();
+            var item = (KeyValuePair<int, string>)EnemyBlacklistZone.SelectedItem;
+            var values = _character.adventureController.enemyList[item.Key]
+                .Select(x => new KeyValuePair<int, string>(x.spriteID, x.name)).Distinct().ToList();
             EnemyBlacklistNames.DataSource = null;
             EnemyBlacklistNames.ValueMember = "Key";
             EnemyBlacklistNames.DisplayMember = "Value";
@@ -1682,263 +1368,139 @@ namespace NGUInjector
 
             var id = (KeyValuePair<int, string>)item;
 
-            var temp = Main.Settings.BlacklistedBosses.ToList();
+            var temp = Settings.BlacklistedBosses.ToList();
             temp.RemoveAll(x => x == id.Key);
-            Main.Settings.BlacklistedBosses = temp.ToArray();
+            Settings.BlacklistedBosses = temp.ToArray();
         }
 
         private void BlacklistAddEnemyButton_Click(object sender, EventArgs e)
         {
             var item = EnemyBlacklistNames.SelectedItem;
-            if (item == null) return;
+            if (item == null)
+                return;
 
             var id = (KeyValuePair<int, string>)item;
-            var temp = Main.Settings.BlacklistedBosses.ToList();
+
+            // This enemy is excluded already
+            if (Array.IndexOf(Settings.BlacklistedBosses, id.Key) >= 0)
+                return;
+
+            var temp = Settings.BlacklistedBosses.ToList();
             temp.Add(id.Key);
-            Main.Settings.BlacklistedBosses = temp.ToArray();
+            Settings.BlacklistedBosses = temp.ToArray();
         }
 
-        private void BoostAvgReset_Click(object sender, EventArgs e)
-        {
-            Main.reference.ResetBoostProgress();
-        }
+        private void BoostAvgReset_Click(object sender, EventArgs e) => ResetBoostProgress();
 
-        private void WishSortPriorities_CheckedChanged(object sender, EventArgs e)
+        private void WeakPriorities_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.WishSortPriorities = WishSortPriorities.Checked;
+            Settings.WeakPriorities = WeakPriorities.Checked;
         }
 
-        private void WishSortOrder_CheckedChanged(object sender, EventArgs e)
+        private void ManageMayo_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.WishSortOrder = WishSortOrder.Checked;
-        }
-
-        private void manageMayo_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.ManageMayo = balanceMayo.Checked;
+            Settings.ManageMayo = BalanceMayo.Checked;
         }
 
         private void TrashCards_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.TrashCards = TrashCards.Checked;
-        }
-
-        private void TrashQuality_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.CardsTrashQuality = TrashQuality.SelectedIndex;
+            Settings.TrashCards = TrashCards.Checked;
         }
 
         private void AutoCastCards_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoCastCards = AutoCastCards.Checked;
+            Settings.AutoCastCards = AutoCastCards.Checked;
         }
 
-        private void OpenSettingsFolder_Click(object sender, EventArgs e)
+        private void CastChonkers_CheckedChanged(object sender, EventArgs e)
         {
-            Process.Start(Main.GetSettingsDir());
+            if (_initializing) return;
+            Settings.CastProtectedCards = CastProtectedCards.Checked;
         }
+
+        private void CardRarity_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            var comboBox = (ComboBox)sender;
+            if (int.TryParse(comboBox.Name.Substring(10), out var index))
+                Settings.SetCardRarity(index - 1, ((KeyValuePair<int, string>)comboBox.SelectedItem).Key);
+        }
+
+        private void CardCost_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            var comboBox = (ComboBox)sender;
+            if (int.TryParse(comboBox.Name.Substring(8), out var index))
+                Settings.SetCardCost(index - 1, (int)comboBox.SelectedItem);
+        }
+
+        private void OpenSettingsFolder_Click(object sender, EventArgs e) => Process.Start(GetSettingsDir());
+
+        private void OpenProfileFolder_Click(object sender, EventArgs e) => Process.Start(GetProfilesDir());
 
         private void ProfileEditButton_Click(object sender, EventArgs e)
         {
-            var filename = Main.Settings.AllocationFile + ".json";
-            var path = Path.Combine(Main.GetProfilesDir(), filename);
+            var filename = Settings.AllocationFile + ".json";
+            var path = Path.Combine(GetProfilesDir(), filename);
             Process.Start(path);
-        }
-
-        private void OpenProfileFolder_Click(object sender, EventArgs e)
-        {
-            Process.Start(Main.GetProfilesDir());
-        }
-
-        private void trashAdventureCards_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TrashAdventureCards = TrashAdventureCards.Checked;
         }
 
         private void TrashProtectedCards_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.TrashProtectedCards = TrashProtectedCards.Checked;
-        }
-
-        private void trashCardCost_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TrashCardCost = (int)TrashTier.SelectedItem;
-        }
-
-        private void DontCastAdd_Click(object sender, EventArgs e)
-        {
-            if (DontCastSelection.SelectedItem != null && !DontCastList.Items.Contains(DontCastSelection.SelectedItem))
-            {
-                DontCastList.Items.Add(DontCastSelection.SelectedItem);
-                Main.Settings.DontCastCardType = DontCastList.Items.Cast<string>().ToArray();
-            }
-        }
-
-        private void DontCastRemove_Click(object sender, EventArgs e)
-        {
-            if (DontCastList.SelectedItem != null)
-            {
-                DontCastList.Items.RemoveAt(DontCastList.SelectedIndex);
-                Main.Settings.DontCastCardType = DontCastList.Items.Cast<string>().ToArray();
-            }
-        }
-
-        private void TrashChunkers_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TrashChunkers = TrashChunkers.Checked;
-        }
-
-        private void UseTitanCombat_CheckedChanged(object sender, EventArgs e)
-        {
-            bool useTitanCombat = UseTitanCombat.Checked;
-            var selected = TitanCombatMode.SelectedIndex;
-            bool isManualMode = selected == 0;
-
-            TitanCombatMode.Enabled = useTitanCombat;
-            TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
-            TitanRecoverHealth.Enabled = useTitanCombat;
-            TitanFastCombat.Enabled = useTitanCombat && isManualMode;
-            TitanBeastMode.Enabled = useTitanCombat;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
-            TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
-
-            if (_initializing) return;
-            Main.Settings.UseTitanCombat = useTitanCombat;
-        }
-
-        private void TitansWithVersion_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            VersionedTitan titan = TitansWithVersion.SelectedItem as VersionedTitan;
-            TitanVersions.SelectedIndexChanged -= new System.EventHandler(this.TitanVersions_SelectedIndexChanged);
-
-            if (titan.IsUnlocked())
-            {
-                TitanVersions.Enabled = true;
-                TitanVersions.SelectedIndex = titan.GetVersion();
-            }
-            else
-            {
-                TitanVersions.SelectedIndex = 0;
-                TitanVersions.Enabled = false;
-            }
-
-            TitanVersions.SelectedIndexChanged += new System.EventHandler(this.TitanVersions_SelectedIndexChanged);
-        }
-
-        private void TitanVersions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-
-            VersionedTitan titan = TitansWithVersion.SelectedItem as VersionedTitan;
-            if (titan.IsUnlocked())
-            {
-                titan.SetVersion(TitanVersions.SelectedIndex);
-                Main.Character.adventureController.updateTitanDifficultyUI();
-            }
-        }
-
-        private void SetTitanVersion_Click(object sender, EventArgs e)
-        {
+            Settings.TrashProtectedCards = TrashProtectedCards.Checked;
         }
 
         private void TitanCombatMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool useTitanCombat = UseTitanCombat.Checked;
-            var selected = TitanCombatMode.SelectedIndex;
-            bool isManualMode = selected == 0;
-
-            TitanPrecastBuffs.Enabled = useTitanCombat && isManualMode;
-            TitanFastCombat.Enabled = useTitanCombat && isManualMode;
-            TitanSmartBeastMode.Enabled = useTitanCombat && isManualMode && !TitanFastCombat.Checked;
-            TitanMoreBlockParry.Enabled = useTitanCombat && isManualMode;
-
             if (_initializing) return;
-            Main.Settings.TitanCombatMode = selected;
-        }
-
-        private void TitanPrecastBuffs_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TitanPrecastBuffs = TitanPrecastBuffs.Checked;
-        }
-
-        private void TitanRecoverHealth_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TitanRecoverHealth = TitanRecoverHealth.Checked;
-        }
-
-        private void TitanFastCombat_CheckedChanged(object sender, EventArgs e)
-        {
-            TitanSmartBeastMode.Enabled = TitanCombatMode.SelectedIndex == 0 && !TitanFastCombat.Checked;
-            if (_initializing) return;
-            Main.Settings.TitanFastCombat = TitanFastCombat.Checked;
+            Settings.TitanCombatMode = TitanCombatMode.SelectedIndex;
         }
 
         private void TitanBeastMode_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.TitanBeastMode = TitanBeastMode.Checked;
-            if (TitanBeastMode.Checked)
-            {
-                Main.Settings.TitanSmartBeastMode = TitanSmartBeastMode.Checked = false;
-            }
-        }
-
-        private void TitanSmartBeastMode_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TitanSmartBeastMode = TitanSmartBeastMode.Checked;
-            if (TitanSmartBeastMode.Checked)
-            {
-                Main.Settings.TitanBeastMode = TitanBeastMode.Checked = false;
-            }
-        }
-
-        private void TitanMoreBlockParry_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Main.Settings.TitanMoreBlockParry = TitanMoreBlockParry.Checked;
+            Settings.TitanBeastMode = TitanBeastMode.Checked;
         }
 
         private void ManageConsumables_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageConsumables = ManageConsumables.Checked;
+            Settings.ManageConsumables = ManageConsumables.Checked;
         }
 
         private void AutoBuyAdv_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoBuyAdventure = AutoBuyAdv.Checked;
+            Settings.AutoBuyAdventure = AutoBuyAdv.Checked;
         }
 
         private void AutoBuyConsumables_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.AutoBuyConsumables = AutoBuyConsumables.Checked;
+            Settings.AutoBuyConsumables = AutoBuyConsumables.Checked;
         }
 
         private void ConsumeIfRunning_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ConsumeIfAlreadyRunning = ConsumeIfRunning.Checked;
+            Settings.ConsumeIfAlreadyRunning = ConsumeIfRunning.Checked;
+        }
+
+        private void Autosave_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.Autosave = Autosave.Checked;
         }
 
         private void SortCards_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.CardSortEnabled = SortCards.Checked;
+            Settings.CardSortEnabled = SortCards.Checked;
         }
 
         private void CardSortAdd_Click(object sender, EventArgs e)
@@ -1946,7 +1508,7 @@ namespace NGUInjector
             if (CardSortOptions.SelectedItem != null && !CardSortList.Items.Contains(CardSortOptions.SelectedItem))
             {
                 CardSortList.Items.Add(CardSortOptions.SelectedItem);
-                Main.Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
+                Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
             }
         }
 
@@ -1955,59 +1517,81 @@ namespace NGUInjector
             if (CardSortList.SelectedItem != null)
             {
                 CardSortList.Items.RemoveAt(CardSortList.SelectedIndex);
-                Main.Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
+                Settings.CardSortOrder = CardSortList.Items.Cast<string>().ToArray();
             }
         }
 
-        private void CardSortUp_Click(object sender, EventArgs e)
-        {
-            ItemListUp(CardSortList, Main.Settings.CardSortOrder, (settings) => Main.Settings.CardSortOrder = settings);
-        }
+        private void CardSortUp_Click(object sender, EventArgs e) => ItemListMove(CardSortList, Settings.CardSortOrder, Direction.Up);
 
-        private void CardSortDown_Click(object sender, EventArgs e)
-        {
-            ItemListDown(CardSortList, Main.Settings.CardSortOrder, (settings) => Main.Settings.CardSortOrder = settings);
-        }
+        private void CardSortDown_Click(object sender, EventArgs e) => ItemListMove(CardSortList, Settings.CardSortOrder, Direction.Down);
 
         private void LocateWalderp_Click(object sender, EventArgs e)
         {
-            if (Main.Character.waldoUnlocker.currentMenu >= 0)
-            {
-                Main.Character.menuSwapper.swapMenu(Main.Character.waldoUnlocker.currentMenu);
-            }
+            if (_character.waldoUnlocker.currentMenu >= 0)
+                _character.menuSwapper.swapMenu(_character.waldoUnlocker.currentMenu);
         }
 
         private void ManageCooking_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageCooking = ManageCooking.Checked;
+            Settings.ManageCooking = ManageCooking.Checked;
         }
 
         private void ManageCookingLoadout_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Main.Settings.ManageCookingLoadouts = ManageCookingLoadout.Checked;
+            Settings.ManageCookingLoadouts = ManageCookingLoadout.Checked;
         }
 
-        private void CookingLoadoutBox_TextChanged(object sender, EventArgs e)
+        private void CookingLoadoutBox_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_cookingControls, out _);
+
+        private void CookingLoadoutItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _cookingControls);
+
+        private void CookingAddButton_Click(object sender, EventArgs e) => ItemListAdd(_cookingControls);
+
+        private void CookingRemoveButton_Click(object sender, EventArgs e) => ItemListRemove(_cookingControls);
+
+        private void DiggerCap_ValueChanged(object sender, EventArgs e)
         {
-            TryItemBoxTextChanged(_cookingControls, out _);
+            if (_initializing) return;
+            Settings.DiggerCap = (double)(DiggerCap.Value);
         }
 
-        private void CookingLoadoutItem_KeyDown(object sender, KeyEventArgs e)
+        private void ManageWishes_CheckedChanged(object sender, EventArgs e)
         {
-            ItemBoxKeyDown(e, _cookingControls);
+            if (_initializing) return;
+            Settings.ManageWishes = ManageWishes.Checked;
         }
 
-        private void cookingAddButton_Click(object sender, EventArgs e)
+        private void WishLimit_ValueChanged(object sender, EventArgs e)
         {
-            ItemListAdd(_cookingControls);
+            if (_initializing) return;
+            if (TryGetValueFromNumericUpDown(WishLimit, out int val))
+                Settings.WishLimit = val;
         }
 
-        private void cookingRemoveButton_Click(object sender, EventArgs e)
+        private void WishMode_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_initializing) return;
+            Settings.WishMode = WishMode.SelectedIndex;
+        }
 
-            ItemListRemove(_cookingControls);
+        private void WishEnergy_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.WishEnergy = (double)WishEnergy.Value;
+        }
+
+        private void WishMagic_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.WishMagic = (double)WishMagic.Value;
+        }
+
+        private void WishR3_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.WishR3 = (double)WishR3.Value;
         }
     }
 }

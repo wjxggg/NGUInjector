@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using SimpleJSON;
 
 namespace NGUInjector.Managers
 {
-    internal class ZoneStatHelper
+    public class ZoneStatHelper
     {
-        internal static Dictionary<int, ZoneStats> UserOverrides;
+        public static Dictionary<int, ZoneStats> UserOverrides;
 
-        internal static void CreateOverrides(string dir)
+        public static void CreateOverrides(string dir)
         {
             UserOverrides = Defaults.ToDictionary(entry => entry.Key, entry => entry.Value);
             var overridePath = Path.Combine(dir, "zoneOverride.json");
@@ -46,7 +44,7 @@ namespace NGUInjector.Managers
                 var text = File.ReadAllText(overridePath);
                 var parsed = JSON.Parse(text);
                 var zones = parsed["zones"];
-                
+
                 foreach (var key in zones.Keys)
                 {
                     var success = int.TryParse(key.Value, out var index);
@@ -73,19 +71,28 @@ namespace NGUInjector.Managers
             }
 
             if (overrides.Count > 0)
-                Main.Log($"Loaded Zone Overrides: {string.Join(",", overrides.ToArray())}");
+                Main.Log($"Loaded Zone Overrides: {string.Join(", ", overrides.ToArray())}");
         }
 
-        internal static ZoneTarget GetBestZone()
+        public static ZoneTarget GetBestZone()
         {
             if (UserOverrides == null)
                 return null;
-            var power = Main.Character.totalAdvAttack();
-            var toughness = Main.Character.totalAdvDefense();
+
+            float power = Main.Character.totalAdvAttack() / Main.Character.adventureController.beastModeBonus();
+            float toughness = Main.Character.totalAdvDefense();
+
             var availableZones = UserOverrides.Where(x => x.Key <= ZoneHelpers.GetMaxReachableZone(false));
-            var finalAvailableZones = availableZones.Where(x => x.Value.FightType(power, toughness) > 0).ToDictionary(x => x.Key, x => x.Value);;
-            var bestZoneId = finalAvailableZones.Max(x => x.Key);
+
+            var fightType = 2;
+            if (CombatHelpers.UltimateAttackUnlocked() && CombatHelpers.UltimateBuffUnlocked())
+                fightType = 1;
+
+            var finalAvailableZones = availableZones.Where(x => x.Value.FightType(power, toughness) >= fightType).ToDictionary(x => x.Key, x => x.Value);
+
+            int bestZoneId = finalAvailableZones.Max(x => x.Key);
             var zoneStats = finalAvailableZones[bestZoneId];
+
             var bestZone = new ZoneTarget
             {
                 FightType = zoneStats.FightType(power, toughness),
@@ -96,7 +103,7 @@ namespace NGUInjector.Managers
         }
 
 
-        internal static Dictionary<int, ZoneStats> Defaults = new Dictionary<int, ZoneStats>
+        public static Dictionary<int, ZoneStats> Defaults = new Dictionary<int, ZoneStats>
         {
             {
                 0, new ZoneStats
@@ -443,38 +450,38 @@ namespace NGUInjector.Managers
 
     }
 
-    internal class ZoneTarget
+    public class ZoneTarget
     {
         public int Zone { get; set; }
+
         public int FightType { get; set; }
     }
 
-    internal class ZoneStats
+    public class ZoneStats
     {
         public double MPower { get; set; }
+
         public double MToughness { get; set; }
+
         public double IPower { get; set; }
+
         public double IToughness { get; set; }
+
         public double OPower { get; set; }
+
         public string Name { get; set; }
 
-        internal int FightType(float attack, float def)
+        public int FightType(float attack, float def)
         {
-            //2 Means we can use fast combat
-            //1 means we need to precast buffs
-            //0 Means we cant do the zone
+            // 2 Means we can use fast combat
+            // 1 means we need to precast buffs
+            // 0 Means we cant do the zone
             if (attack > OPower)
-            {
                 return 2;
-            }
             if (attack >= IPower && def >= IToughness)
-            {
                 return 2;
-            }
             if (attack >= MPower && def >= MToughness)
-            {
                 return 1;
-            }
 
             return 0;
         }

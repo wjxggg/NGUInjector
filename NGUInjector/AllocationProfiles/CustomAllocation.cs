@@ -1,40 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Xml.Serialization;
-using NGUInjector.AllocationProfiles.BreakpointTypes;
+using NGUInjector.AllocationProfiles.Breakpoints;
 using NGUInjector.AllocationProfiles.RebirthStuff;
 using NGUInjector.Managers;
 using SimpleJSON;
-using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
+using static NGUInjector.Main;
 
 namespace NGUInjector.AllocationProfiles
 {
-    [Serializable]
-    internal class CustomAllocation : AllocationProfile
+    public class CustomAllocation
     {
+        private readonly Character _character = Main.Character;
         private BreakpointWrapper _wrapper;
-        private AllocationBreakPoint _currentMagicBreakpoint;
-        private AllocationBreakPoint _currentEnergyBreakpoint;
-        private AllocationBreakPoint _currentR3Breakpoint;
-        private GearBreakpoint _currentGearBreakpoint;
-        private DiggerBreakpoint _currentDiggerBreakpoint;
-        private WandoosBreakpoint _currentWandoosBreakpoint;
-        private NGUDiffBreakpoint _currentNguBreakpoint;
-        private ConsumablesBreakpoint _currentConsumablesBreakpoint;
-        private bool _hasGearSwapped;
-        private bool _hasDiggerSwapped;
-        private bool _hasWandoosSwapped;
-        private bool _hasNGUSwapped;
-        private bool _didConsumeConsumables;
         private readonly string _allocationPath;
         private readonly string _profileName;
 
-        internal bool IsAllocationRunning;
+        public bool IsAllocationRunning;
 
         public CustomAllocation(string profilesDir, string profile)
         {
@@ -42,122 +27,24 @@ namespace NGUInjector.AllocationProfiles
             _profileName = profile;
         }
 
-        internal void ReloadAllocation()
+        public void ReloadAllocation()
         {
             if (File.Exists(_allocationPath))
             {
                 try
                 {
-                    var text = File.ReadAllText(_allocationPath);
-                    var parsed = JSON.Parse(text);
-                    var breakpoints = parsed["Breakpoints"];
-                    _wrapper = new BreakpointWrapper { Breakpoints = new Breakpoints() };
-                    var rb = breakpoints["Rebirth"];
-                    var rbtime = breakpoints["RebirthTime"];
-                    if (rb == null)
-                    {
-                        _wrapper.Breakpoints.Rebirth = rbtime == null ? new NoRebirth() : BaseRebirth.CreateRebirth(ParseTime(rbtime), "time", new string[0]);
-                    }
-                    else
-                    {
-                        if (rb["Type"] == null || rb["Target"] == null)
-                            _wrapper.Breakpoints.Rebirth = new NoRebirth();
+                    _wrapper = new BreakpointWrapper(JSON.Parse(File.ReadAllText(_allocationPath))["Breakpoints"]);
 
-                        var type = rb["Type"].Value.ToUpper();
-                        var target = type == "TIME" ? ParseTime(rb["Target"]) : rb["Target"].AsDouble;
-                        _wrapper.Breakpoints.Rebirth = BaseRebirth.CreateRebirth(target, type, rb["Challenges"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray());
-                    }
+                    Log(_wrapper.BuildAllocationString(_profileName));
 
-                    _wrapper.Breakpoints.ConsumablesBreakpoints = breakpoints["Consumables"].Children.Select(bp => new ConsumablesBreakpoint
-                    {
-                        Time = ParseTime(bp["Time"]),
-                        Consumables = ParseConsumableItemNames(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray()),
-                        Quantity = GetConsumablesQuantities(bp["Items"].AsArray.Children.Select(x => x.Value.ToUpper()).ToArray())
-                    }).OrderByDescending(x => x.Time).ToArray();
-
-
-                    _wrapper.Breakpoints.Magic = breakpoints["Magic"].Children.Select(bp => new AllocationBreakPoint
-                    {
-                        Time = ParseTime(bp["Time"]),
-                        Priorities = BaseBreakpoint.ParseBreakpointArray(bp["Priorities"].AsArray.Children.Select(x => x.Value.ToUpper())
-                            .ToArray(), ResourceType.Magic, rbtime).Where(x => x != null).ToArray()
-                    }).OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.Energy = breakpoints["Energy"].Children.Select(bp => new AllocationBreakPoint
-                    {
-                        Time = ParseTime(bp["Time"]),
-                        Priorities = BaseBreakpoint.ParseBreakpointArray(bp["Priorities"].AsArray.Children.Select(x => x.Value.ToUpper())
-                            .ToArray(), ResourceType.Energy, rbtime).Where(x => x != null).ToArray()
-                    }).OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.R3 = breakpoints["R3"].Children.Select(bp => new AllocationBreakPoint
-                    {
-                        Time = ParseTime(bp["Time"]),
-                        Priorities = BaseBreakpoint.ParseBreakpointArray(bp["Priorities"].AsArray.Children.Select(x => x.Value.ToUpper())
-                            .ToArray(), ResourceType.R3, rbtime).Where(x => x != null).ToArray()
-                    }).OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.Gear = breakpoints["Gear"].Children
-                        .Select(bp => new GearBreakpoint
-                        {
-                            Time = ParseTime(bp["Time"]),
-                            Gear = bp["ID"].AsArray.Children.Select(x => x.AsInt).ToArray()
-                        })
-                        .OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.Diggers = breakpoints["Diggers"].Children
-                        .Select(bp => new DiggerBreakpoint
-                        {
-                            Time = ParseTime(bp["Time"]),
-                            Diggers = bp["List"].AsArray.Children.Select(x => x.AsInt).ToArray()
-                        }).OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.Wandoos = breakpoints["Wandoos"].Children
-                        .Select(bp => new WandoosBreakpoint { Time = ParseTime(bp["Time"]), OS = bp["OS"].AsInt })
-                        .OrderByDescending(x => x.Time).ToArray();
-
-                    _wrapper.Breakpoints.NGUBreakpoints = breakpoints["NGUDiff"].Children
-                        .Select(bp => new NGUDiffBreakpoint { Time = ParseTime(bp["Time"]), Diff = bp["Diff"].AsInt })
-                        .Where(x => x.Diff <= 2).OrderByDescending(x => x.Time).ToArray();
-
-                    Main.Log(BuildAllocationString());
-
-                    _currentDiggerBreakpoint = null;
-                    _currentEnergyBreakpoint = null;
-                    _currentGearBreakpoint = null;
-                    _currentWandoosBreakpoint = null;
-                    _currentMagicBreakpoint = null;
-                    _currentR3Breakpoint = null;
-                    _currentNguBreakpoint = null;
-                    _currentConsumablesBreakpoint = null;
-
-                    this.DoAllocations();
+                    DoAllocations();
                 }
                 catch (Exception e)
                 {
-                    Main.Log("Failed to load allocation file. Resave to reload");
-                    Main.Log(e.Message);
-                    Main.Log(e.StackTrace);
-                    _wrapper = new BreakpointWrapper
-                    {
-                        Breakpoints =
-                        {
-                            Rebirth = new NoRebirth(), R3 = new AllocationBreakPoint[0],
-                            Diggers = new DiggerBreakpoint[0], Energy = new AllocationBreakPoint[0],
-                            Gear = new GearBreakpoint[0], Magic = new AllocationBreakPoint[0],
-                            NGUBreakpoints = new NGUDiffBreakpoint[0], Wandoos = new WandoosBreakpoint[0],
-                            ConsumablesBreakpoints = new ConsumablesBreakpoint[0]
-                        }
-                    };
-
-                    _currentDiggerBreakpoint = null;
-                    _currentEnergyBreakpoint = null;
-                    _currentGearBreakpoint = null;
-                    _currentWandoosBreakpoint = null;
-                    _currentMagicBreakpoint = null;
-                    _currentR3Breakpoint = null;
-                    _currentNguBreakpoint = null;
-                    _currentConsumablesBreakpoint = null;
+                    Log("Failed to load allocation file. Resave to reload");
+                    Log(e.Message);
+                    Log(e.StackTrace);
+                    _wrapper = new BreakpointWrapper();
                 }
             }
             else
@@ -194,6 +81,12 @@ namespace NGUInjector.AllocationProfiles
           ""OS"": 0
         }
       ],
+      ""Beards"": [
+        {
+          ""Time"": 0,
+          ""List"": []
+        }
+      ],
       ""Diggers"": [
         {
           ""Time"": 0,
@@ -206,12 +99,13 @@ namespace NGUInjector.AllocationProfiles
           ""Diff"": 0
         }
       ],
-      ""RebirthTime"": -1
+      ""RebirthTime"": -1,
+      ""Challenges"": []
     }
   }
         ";
 
-                Main.Log("Created empty allocation profile. Please update allocation.json");
+                Log("Created empty allocation profile. Please update allocation.json");
                 using (var writer = new StreamWriter(File.Open(_allocationPath, FileMode.CreateNew)))
                 {
                     writer.WriteLine(emptyAllocation);
@@ -220,26 +114,137 @@ namespace NGUInjector.AllocationProfiles
             }
         }
 
-        private string[] ParseConsumableItemNames(string[] itemNames)
+        public void DoAllocations()
         {
-            string[] items = new string[itemNames.Length];
-            int i = 0;
+            if (!Settings.GlobalEnabled)
+                return;
 
-            foreach (string item in itemNames)
+            if (IsAllocationRunning)
+                return;
+
+            var preventMagicAllocation = Settings.MoneyPitRunMode && Main.Character.machine.realBaseGold <= 0.0 && MoneyPitManager.NeedsLowerTier();
+
+            try
             {
-                String value = item;
-                if (value.Contains(":"))
+                long originalInput = Main.Character.energyMagicPanel.energyMagicInput;
+                IsAllocationRunning = true;
+
+                if (Settings.ManageNGUDiff && Main.Character.buttons.ngu.interactable)
+                    _wrapper.ngus.Swap();
+                if (Settings.ManageGear && Main.Character.buttons.inventory.interactable)
+                    _wrapper.gear.Swap();
+                if (Settings.ManageWishes && !preventMagicAllocation)
                 {
-                    value = item.Substring(0, item.IndexOf(":"));
+                    if (Settings.ManageEnergy)
+                        _character.removeMostEnergy();
+                    if (Settings.ManageMagic)
+                        _character.removeMostMagic();
+                    if (Settings.ManageR3)
+                        _character.removeAllRes3();
+                    WishManager.Allocate();
                 }
+                if (Settings.ManageEnergy)
+                    _wrapper.energy.Swap();
+                if (Settings.ManageMagic && !preventMagicAllocation)
+                    _wrapper.magic.Swap();
+                if (Settings.ManageR3)
+                    _wrapper.r3.Swap();
+                if (Settings.ManageWishes && !preventMagicAllocation)
+                {
+                    // Allocating to wishes again because there can be spare resources
+                    WishManager.Allocate(true);
+                    WishManager.UpdateWishMenu();
+                }
+                if (Settings.ManageConsumables)
+                    _wrapper.consumables.Swap();
+                if (Settings.ManageBeards && Main.Character.buttons.beards.interactable)
+                    _wrapper.beards.Swap();
+                if (Settings.ManageDiggers && Main.Character.buttons.diggers.interactable)
+                {
+                    _wrapper.diggers.Swap();
+                    DiggerManager.RecapDiggers();
+                }
+                if (Settings.ManageWandoos && Main.Character.buttons.wandoos.interactable)
+                    _wrapper.wandoos.Swap();
 
-                items[i++] = value;
+                Main.Character.energyMagicPanel.energyRequested.text = originalInput.ToString(CultureInfo.InvariantCulture);
+                Main.Character.energyMagicPanel.validateInput();
             }
-
-            return items;
+            catch (Exception e)
+            {
+                LogDebug($"Error while allocating: {e}");
+            }
+            finally
+            {
+                IsAllocationRunning = false;
+            }
         }
 
-        private double ParseTime(JSONNode timeNode)
+        public void DoRebirth()
+        {
+            if (_wrapper == null)
+                return;
+
+            var rbs = _wrapper.rebirth.Where(x => x.RebirthTime >= 0.0);
+            if (!rbs.Any())
+                return;
+
+            if (rbs.Any(x => x.RebirthTime <= _character.rebirthTime.totalseconds))
+                rbs = rbs.Where(x => x.RebirthTime <= _character.rebirthTime.totalseconds);
+
+            var rb = rbs.AllMaxBy(x => x.RebirthTime).First();
+
+            if (rb.RebirthAvailable(out _))
+            {
+                if (_character.bossController.isFighting || _character.bossController.nukeBoss)
+                {
+                    Log("Delaying rebirth while boss fight is in progress");
+                    return;
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            if (rb.DoRebirth())
+            {
+                _wrapper.energy.Reset();
+                _wrapper.magic.Reset();
+                _wrapper.r3.Reset();
+                _wrapper.gear.Reset();
+                _wrapper.beards.Reset();
+                _wrapper.diggers.Reset();
+                _wrapper.wandoos.Reset();
+                _wrapper.ngus.Reset();
+                _wrapper.consumables.Reset();
+            }
+        }
+
+        public void CastBloodSpells()
+        {
+            if (!Settings.CastBloodSpells)
+                return;
+
+            var needCast = _wrapper.rebirth.Length == 0;
+            foreach (TimeRebirth rb in _wrapper.rebirth)
+            {
+                if (rb.RebirthTime - _character.rebirthTime.totalseconds >= 30 * 60)
+                {
+                    needCast = true;
+                    break;
+                }
+            }
+
+            if (!needCast)
+                return;
+
+            BloodMagicManager.guffB.Cast();
+            BloodMagicManager.guffA.Cast();
+            BloodMagicManager.ironPill.Cast();
+        }
+
+        public static double ParseTime(JSONNode timeNode)
         {
             var time = 0;
 
@@ -257,7 +262,6 @@ namespace NGUInjector.AllocationProfiles
                             case "m":
                                 time += 60 * N.Value.AsInt;
                                 break;
-                            case "s":
                             default:
                                 time += N.Value.AsInt;
                                 break;
@@ -267,734 +271,99 @@ namespace NGUInjector.AllocationProfiles
             }
 
             if (timeNode.IsNumber)
-            {
                 time = timeNode.AsInt;
-            }
 
             return time;
         }
+    }
 
-        private string BuildAllocationString()
+    public class BreakpointWrapper
+    {
+        public TimeRebirth[] rebirth = new TimeRebirth[0];
+        public EnergyBreakpoints energy = new EnergyBreakpoints();
+        public MagicBreakpoints magic = new MagicBreakpoints();
+        public R3Breakpoints r3 = new R3Breakpoints();
+        public GearBreakpoints gear = new GearBreakpoints();
+        public DiggerBreakpoints diggers = new DiggerBreakpoints();
+        public BeardBreakpoints beards;
+        public WandoosBreakpoints wandoos = new WandoosBreakpoints();
+        public NGUDiffBreakpoints ngus = new NGUDiffBreakpoints();
+        public ConsumablesBreakpoints consumables = new ConsumablesBreakpoints();
+
+        public BreakpointWrapper(JSONNode parsed)
+        {
+            var rb = parsed["Rebirth"];
+            var rbtime = parsed["RebirthTime"];
+
+            if (rb == null)
+            {
+                if (rbtime != null)
+                {
+                    var newRebirth = TimeRebirth.CreateRebirth(CustomAllocation.ParseTime(rbtime), 0.0, "time");
+                    Array.Resize(ref rebirth, 1);
+                    rebirth[0] = newRebirth;
+                }
+            }
+            else
+            {
+                var rbs = new List<TimeRebirth>();
+                foreach (var bp in rb.Children)
+                {
+                    if (bp["Type"] == null)
+                        continue;
+
+                    var type = bp["Type"].Value.ToUpper();
+                    if (type != "TIME" && bp["Target"] == null)
+                        continue;
+
+                    var target = type == "TIME" ? 0.0 : bp["Target"].AsDouble;
+                    var time = 0.0;
+                    if (bp["Time"] != null)
+                        time = CustomAllocation.ParseTime(bp["Time"]);
+
+                    var newRebirth = TimeRebirth.CreateRebirth(time, target, type);
+                    if (newRebirth != null)
+                        rbs.Add(newRebirth);
+                }
+                rebirth = rbs.ToArray();
+            }
+
+            BaseRebirth.ParseChallenges(parsed["Challenges"].AsArray.Children.Select(bp => bp.Value.ToUpper()).ToArray());
+            energy = new EnergyBreakpoints(parsed["Energy"]);
+            magic = new MagicBreakpoints(parsed["Magic"]);
+            r3 = new R3Breakpoints(parsed["R3"]);
+            gear = new GearBreakpoints(parsed["Gear"]);
+            diggers = new DiggerBreakpoints(parsed["Diggers"]);
+            beards = new BeardBreakpoints(parsed["Beards"], diggers);
+            wandoos = new WandoosBreakpoints(parsed["Wandoos"]);
+            ngus = new NGUDiffBreakpoints(parsed["NGUDiff"]);
+            consumables = new ConsumablesBreakpoints(parsed["Consumables"]);
+        }
+
+        public BreakpointWrapper()
+        {
+            beards = new BeardBreakpoints(diggers);
+        }
+
+        public string BuildAllocationString(string profileName)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($"Loaded Custom Allocation from profile '{_profileName}'");
-            builder.AppendLine($"{_wrapper.Breakpoints.Energy.Length} Energy Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.Magic.Length} Magic Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.R3.Length} R3 Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.Gear.Length} Gear Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.Diggers.Length} Digger Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.Wandoos.Length} Wandoos Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.NGUBreakpoints.Length} NGU Difficulty Breakpoints");
-            builder.AppendLine($"{_wrapper.Breakpoints.ConsumablesBreakpoints.Length} Consumable Breakpoints");
-            var rb = _wrapper.Breakpoints.Rebirth;
-            if (rb is NoRebirth)
-            {
+            builder.AppendLine($"Loaded Custom Allocation from profile '{profileName}'");
+            builder.AppendLine($"{energy.Length} Energy Breakpoints");
+            builder.AppendLine($"{magic.Length} Magic Breakpoints");
+            builder.AppendLine($"{r3.Length} R3 Breakpoints");
+            builder.AppendLine($"{gear.Length} Gear Breakpoints");
+            builder.AppendLine($"{beards.Length} Beard Breakpoints");
+            builder.AppendLine($"{diggers.Length} Digger Breakpoints");
+            builder.AppendLine($"{wandoos.Length} Wandoos Breakpoints");
+            builder.AppendLine($"{ngus.Length} NGU Difficulty Breakpoints");
+            builder.AppendLine($"{consumables.Length} Consumable Breakpoints");
+            if (rebirth?.Length > 0)
+                builder.AppendLine($"{rebirth.Length} Rebirth Breakpoints");
+            else
                 builder.AppendLine($"Rebirth Disabled.");
-            }
-            else if (rb is NumberRebirth nrb)
-            {
-                builder.AppendLine($"Rebirthing when number bonus is {nrb.MultTarget}x previous number");
-            }
-            else if (rb is TimeRebirth trb)
-            {
-                builder.AppendLine($"Rebirthing at {trb.RebirthTime} seconds");
-            }
-            else if (rb is BossNumRebirth brb)
-            {
-                builder.AppendLine($"Rebirthing when number allows you +{brb.NumBosses} bosses");
-            }
-
-            if (rb.ChallengeTargets.Length > 0)
-            {
-                builder.AppendLine(
-                    $"Challenge targets: {string.Join(",", rb.ChallengeTargets.Select(x => x.ToString()).ToArray())}");
-            }
 
             return builder.ToString();
         }
-
-        internal void SwapNGUDiff()
-        {
-            var bp = GetCurrentNGUDiffBreakpoint();
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentNguBreakpoint.Time)
-            {
-                _hasNGUSwapped = false;
-            }
-
-            if (_hasNGUSwapped)
-                return;
-
-            if (bp.Diff == 0)
-            {
-                _character.settings.nguLevelTrack = difficulty.normal;
-                if (_character.settings.nguLevelTrack == difficulty.normal)
-                {
-                    _hasNGUSwapped = true;
-                }
-            }
-            else if (bp.Diff == 1 && (_character.settings.rebirthDifficulty == difficulty.evil ||
-                                      _character.settings.rebirthDifficulty == difficulty.sadistic))
-            {
-                _character.settings.nguLevelTrack = difficulty.evil;
-                if (_character.settings.nguLevelTrack == difficulty.evil)
-                {
-                    _hasNGUSwapped = true;
-                }
-            }
-            else if (bp.Diff == 2 && _character.settings.rebirthDifficulty == difficulty.sadistic)
-            {
-                _character.settings.nguLevelTrack = difficulty.sadistic;
-                if (_character.settings.nguLevelTrack == difficulty.sadistic)
-                {
-                    _hasNGUSwapped = true;
-                }
-            }
-
-            _character.NGUController.refreshMenu();
-        }
-
-        internal void SwapOS()
-        {
-            var bp = GetCurrentWandoosBreakpoint();
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentWandoosBreakpoint.Time)
-            {
-                _hasWandoosSwapped = false;
-            }
-
-            if (_hasWandoosSwapped) return;
-
-            _hasWandoosSwapped = true;
-            if (bp.OS == 0 && _character.wandoos98.os == OSType.wandoos98) return;
-            if (bp.OS == 1 && _character.wandoos98.os == OSType.wandoosMEH) return;
-            if (bp.OS == 2 && _character.wandoos98.os == OSType.wandoosXL) return;
-
-            var id = bp.OS;
-            if (id == 0)
-            {
-                var controller = Main.Character.wandoos98Controller;
-                var type = controller.GetType().GetField("nextOS",
-                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                type?.SetValue(controller, id);
-
-                typeof(Wandoos98Controller)
-                    .GetMethod("setOSType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(controller, null);
-            }
-
-            if (id == 1 && _character.inventory.itemList.jakeComplete)
-            {
-                var controller = Main.Character.wandoos98Controller;
-                var type = controller.GetType().GetField("nextOS",
-                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                type?.SetValue(controller, id);
-                typeof(Wandoos98Controller)
-                    .GetMethod("setOSType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(controller, null);
-            }
-
-            if (id == 2 && _character.wandoos98.XLLevels > 0)
-            {
-                var controller = Main.Character.wandoos98Controller;
-                var type = controller.GetType().GetField("nextOS",
-                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                type?.SetValue(controller, id);
-                typeof(Wandoos98Controller)
-                    .GetMethod("setOSType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(controller, null);
-            }
-
-            _character.wandoos98Controller.refreshMenu();
-        }
-
-        public void DoRebirth()
-        {
-            if (_wrapper == null)
-                return;
-
-            if (_wrapper.Breakpoints.Rebirth.RebirthAvailable())
-            {
-                if (_character.bossController.isFighting || _character.bossController.nukeBoss)
-                {
-                    Main.Log("Delaying rebirth while boss fight is in progress");
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-
-            if (_wrapper.Breakpoints.Rebirth.DoRebirth())
-            {
-                _currentDiggerBreakpoint = null;
-                _currentEnergyBreakpoint = null;
-                _currentGearBreakpoint = null;
-                _currentWandoosBreakpoint = null;
-                _currentMagicBreakpoint = null;
-                _currentR3Breakpoint = null;
-                _currentNguBreakpoint = null;
-                _currentConsumablesBreakpoint = null;
-                ConsumablesManager.resetLastConsumables();
-            }
-        }
-
-        public void CastBloodSpells()
-        {
-            if (!Main.Settings.CastBloodSpells)
-                return;
-
-            if (_wrapper.Breakpoints.Rebirth is TimeRebirth trb && trb.RebirthTime > 0 && Main.Settings.AutoRebirth)
-            {
-                if (trb.RebirthTime - _character.rebirthTime.totalseconds < 30 * 60)// && !rebirth)
-                {
-                    return;
-                }
-            }
-
-            BloodMagicManager.CastGuffB(false);
-            BloodMagicManager.CastGuffA(false);
-            BloodMagicManager.CastIronPill(false);
-        }
-
-        public override void AllocateEnergy()
-        {
-            if (_wrapper == null)
-                return;
-
-            var bp = GetCurrentBreakpoint(true);
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentEnergyBreakpoint.Time)
-            {
-                _currentEnergyBreakpoint = bp;
-            }
-
-            var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
-            if (temp.Count == 0)
-                return;
-
-            bool shouldRetry = true;
-            while (shouldRetry)
-            {
-                var successList = new List<BaseBreakpoint>();
-                shouldRetry = false;
-                var prioCount = temp.Count(x => !x.IsCapPrio());
-
-                if (temp.Any(x => x is BasicTrainingBP))
-                    _character.removeAllEnergy();
-                else
-                    _character.removeMostEnergy();
-
-                var toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
-                SetInput(toAdd);
-
-                foreach (var prio in temp)
-                {
-                    if (!prio.IsCapPrio())
-                    {
-                        prioCount--;
-                    }
-
-                    if (prio.Allocate())
-                    {
-                        successList.Add(prio);
-                        toAdd = (long)Math.Ceiling((double)_character.idleEnergy / prioCount);
-                        SetInput(toAdd);
-                    }
-                    else
-                    {
-                        shouldRetry = true;
-                    }
-                }
-                temp = successList;
-                shouldRetry &= temp.Any();
-            }
-
-            _character.NGUController.refreshMenu();
-            _character.wandoos98Controller.refreshMenu();
-            _character.advancedTrainingController.refresh();
-            _character.timeMachineController.updateMenu();
-            _character.allOffenseController.refresh();
-            _character.allDefenseController.refresh();
-            Main.WishManager.UpdateWishMenu();
-            _character.augmentsController.updateMenu();
-        }
-
-        public override void AllocateMagic()
-        {
-            if (_wrapper == null)
-                return;
-
-            var bp = GetCurrentBreakpoint(false);
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentMagicBreakpoint.Time)
-            {
-                _currentMagicBreakpoint = bp;
-            }
-
-            var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
-            if (temp.Count == 0)
-                return;
-
-            bool shouldRetry = true;
-            while (shouldRetry)
-            {
-                var successList = new List<BaseBreakpoint>();
-                shouldRetry = false;
-
-                var prioCount = temp.Count(x => !x.IsCapPrio());
-
-                _character.removeMostMagic();
-                var toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
-                SetInput(toAdd);
-
-                var nextBP = GetNextBreakpoint(false, bp.Time);
-                foreach (var prio in temp)
-                {
-                    if (!prio.IsCapPrio())
-                    {
-                        prioCount--;
-                    }
-
-                    prio.NextBreakpointTime = nextBP?.Time;
-                    if (prio.Allocate())
-                    {
-                        successList.Add(prio);
-                        toAdd = (long)Math.Ceiling((double)_character.magic.idleMagic / prioCount);
-                        SetInput(toAdd);
-                    }
-                    else
-                    {
-                        shouldRetry = true;
-                    }
-                }
-                temp = successList;
-                shouldRetry &= temp.Any();
-            }
-
-            _character.timeMachineController.updateMenu();
-            _character.bloodMagicController.updateMenu();
-            _character.NGUController.refreshMenu();
-            _character.wandoos98Controller.refreshMenu();
-            Main.WishManager.UpdateWishMenu();
-        }
-
-        public override void AllocateR3()
-        {
-            if (_wrapper == null)
-                return;
-
-            var bp = GetCurrentR3Breakpoint();
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentR3Breakpoint.Time)
-            {
-                _currentR3Breakpoint = bp;
-            }
-
-            var temp = bp.Priorities.Where(x => x.IsValid()).ToList();
-            if (temp.Count == 0)
-                return;
-
-            var prioCount = temp.Count(x => !x.IsCapPrio() && !(x is HackBP)) + (temp.Any(x => x is HackBP && !x.IsCapPrio()) ? 1 : 0);
-            _character.removeAllRes3();
-            var toAdd = (long)Math.Ceiling((double)_character.res3.idleRes3 / prioCount);
-            SetInput(toAdd);
-
-            var hackAllocated = false;
-
-            foreach (var prio in temp)
-            {
-                switch (prio)
-                {
-                    case HackBP _ when hackAllocated:
-                        continue;
-                    case HackBP _:
-                        hackAllocated = true;
-                        break;
-                }
-
-                if (!prio.IsCapPrio())
-                {
-                    prioCount--;
-                }
-
-                if (prio.Allocate())
-                {
-                    toAdd = (long)Math.Ceiling((double)_character.res3.idleRes3 / prioCount);
-                    SetInput(toAdd);
-                }
-            }
-
-            _character.hacksController.refreshMenu();
-            Main.WishManager.UpdateWishMenu();
-        }
-
-        public override void EquipGear()
-        {
-            if (_wrapper == null)
-                return;
-            var bp = GetCurrentGearBreakpoint();
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentGearBreakpoint.Time)
-            {
-                _hasGearSwapped = false;
-            }
-
-            if (_hasGearSwapped) return;
-
-            if (!LoadoutManager.CanSwap()) return;
-            _hasGearSwapped = true;
-            _currentGearBreakpoint = bp;
-            LoadoutManager.ChangeGear(bp.Gear);
-            Main.InventoryController.assignCurrentEquipToLoadout(0);
-        }
-
-        public override void EquipDiggers()
-        {
-            if (_wrapper == null)
-                return;
-            var bp = GetCurrentDiggerBreakpoint();
-            if (bp == null)
-                return;
-
-            if (bp.Time != _currentDiggerBreakpoint.Time)
-            {
-                _hasDiggerSwapped = false;
-            }
-
-            if (_hasDiggerSwapped) return;
-
-            if (!DiggerManager.CanSwap()) return;
-
-            //Main.LogDebug($"Setting diggers from bp {bp.Time}: {string.Join(",", bp.Diggers.Select(x => x.ToString()))}");
-            
-            _hasDiggerSwapped = DiggerManager.TryEquipDiggers(bp.Diggers);
-            
-            //Main.LogDebug($"Result: {_hasDiggerSwapped}");
-
-            if (_hasDiggerSwapped)
-            {
-                Main.Log($"Equipping Diggers: {string.Join(",", bp.Diggers.Select(x => x.ToString()))}");
-                _currentDiggerBreakpoint = bp;
-            }
-            else
-            {
-                //Main.LogDebug($"Not all configured diggers enabled, retry at next loop...");
-            }
-
-            _character.allDiggers.refreshMenu();
-        }
-
-        public override void ConsumeConsumables()
-        {
-            if (_wrapper == null)
-                return;
-            var bp = GetCurrentConsumablesBreakpoint();
-            if (bp == null)
-                return;
-            if (bp.Time != _currentConsumablesBreakpoint.Time)
-            {
-                _didConsumeConsumables = false;
-            }
-
-            if (_didConsumeConsumables) return;
-            _didConsumeConsumables = true;
-            _currentConsumablesBreakpoint = bp;
-            ConsumablesManager.EatConsumables(bp.Consumables, bp.Time, bp.Quantity);
-        }
-
-        private AllocationBreakPoint GetCurrentBreakpoint(bool energy)
-        {
-            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
-            if (bps == null)
-                return null;
-
-            AllocationBreakPoint bp = GetBreakpoint(energy, _character.rebirthTime.totalseconds);
-
-            if (energy && _currentEnergyBreakpoint == null)
-            {
-                _currentEnergyBreakpoint = bp;
-            }
-
-            if (!energy && _currentMagicBreakpoint == null)
-            {
-                _currentMagicBreakpoint = bp;
-            }
-
-            return bp;
-        }
-
-        private AllocationBreakPoint GetBreakpoint(bool energy, double time)
-        {
-            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
-            if (bps == null)
-                return null;
-
-            return bps.OrderByDescending(x => x.Time).FirstOrDefault(x => x.Time <= time);
-        }
-
-        private AllocationBreakPoint GetNextBreakpoint(bool energy, double time)
-        {
-            var bps = energy ? _wrapper?.Breakpoints?.Energy : _wrapper?.Breakpoints?.Magic;
-            if (bps == null)
-                return null;
-
-            return bps.OrderByDescending(x => x.Time).LastOrDefault(x => x.Time > time);
-        }
-
-        private AllocationBreakPoint GetCurrentR3Breakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.NGUBreakpoints;
-            if (bps == null)
-                return null;
-            foreach (var b in _wrapper.Breakpoints.R3)
-            {
-                var rbTime = _character.rebirthTime.totalseconds;
-                if (rbTime > b.Time)
-                {
-                    if (_currentR3Breakpoint == null)
-                    {
-                        _currentR3Breakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentR3Breakpoint = null;
-            return null;
-        }
-
-        private GearBreakpoint GetCurrentGearBreakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.Gear;
-            if (bps == null)
-                return null;
-            foreach (var b in bps)
-            {
-                if (_character.rebirthTime.totalseconds > b.Time)
-                {
-                    if (_currentGearBreakpoint == null)
-                    {
-                        _hasGearSwapped = false;
-                        _currentGearBreakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentGearBreakpoint = null;
-            return null;
-        }
-
-        private DiggerBreakpoint GetCurrentDiggerBreakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.Diggers;
-            if (bps == null)
-                return null;
-
-            if (_character.challenges.timeMachineChallenge.inChallenge)
-                return null;
-            if (!_character.buttons.brokenTimeMachine.interactable)
-                return null;
-            if (_character.machine.realBaseGold == 0.0)
-                return null;
-
-            foreach (var b in bps)
-            {
-                if (_character.rebirthTime.totalseconds > b.Time)
-                {
-                    if (_currentDiggerBreakpoint == null || _character.challenges.trollChallenge.inChallenge)
-                    {
-                        _hasDiggerSwapped = false;
-                        _currentDiggerBreakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentDiggerBreakpoint = null;
-            return null;
-        }
-
-        private NGUDiffBreakpoint GetCurrentNGUDiffBreakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.NGUBreakpoints;
-            if (bps == null)
-                return null;
-            foreach (var b in bps)
-            {
-                if (_character.rebirthTime.totalseconds > b.Time)
-                {
-                    if (_currentNguBreakpoint == null)
-                    {
-                        _hasNGUSwapped = false;
-                        _currentNguBreakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentNguBreakpoint = null;
-            return null;
-        }
-
-        private WandoosBreakpoint GetCurrentWandoosBreakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.Wandoos;
-            if (bps == null)
-                return null;
-
-            foreach (var b in bps)
-            {
-                if (_character.rebirthTime.totalseconds > b.Time)
-                {
-                    if (_currentWandoosBreakpoint == null)
-                    {
-                        _hasWandoosSwapped = false;
-                        _currentWandoosBreakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentWandoosBreakpoint = null;
-            return null;
-        }
-
-        private ConsumablesBreakpoint GetCurrentConsumablesBreakpoint()
-        {
-            var bps = _wrapper?.Breakpoints?.ConsumablesBreakpoints;
-            if (bps == null)
-                return null;
-            foreach (var b in bps)
-            {
-                if (_character.rebirthTime.totalseconds > b.Time)
-                {
-                    if (_currentConsumablesBreakpoint == null)
-                    {
-                        _didConsumeConsumables = false;
-                        _currentConsumablesBreakpoint = b;
-                    }
-
-                    return b;
-                }
-            }
-
-            _currentConsumablesBreakpoint = null;
-            return null;
-        }
-
-        private void SetInput(float val)
-        {
-            _character.energyMagicPanel.energyRequested.text = val.ToString("000000000000000000");
-            _character.energyMagicPanel.validateInput();
-        }
-
-        private int[] GetConsumablesQuantities(string[] consumableTypes)
-        {
-            int[] quantities = new int[consumableTypes.Length];
-            int i = 0;
-
-            foreach (string consumable in consumableTypes)
-            {
-                int count = 1;
-
-                if (consumable.Contains(":")) // "EPOT-A:5" = 5 energy A potions
-                {
-                    string[] split = consumable.Split(':');
-                    if (!int.TryParse(split[1], out count))
-                    {
-                        count = 1;
-                    }
-                }
-
-                quantities[i++] = count;
-            }
-
-            return quantities;
-        }
     }
-
-    [Serializable]
-    internal class BreakpointWrapper
-    {
-        [SerializeField] public Breakpoints Breakpoints;
-    }
-
-    [Serializable]
-    internal class Breakpoints
-    {
-        [SerializeField] public AllocationBreakPoint[] Magic;
-        [SerializeField] public AllocationBreakPoint[] Energy;
-        [SerializeField] public AllocationBreakPoint[] R3;
-        [SerializeField] public GearBreakpoint[] Gear;
-        [SerializeField] public DiggerBreakpoint[] Diggers;
-        [SerializeField] public WandoosBreakpoint[] Wandoos;
-        [SerializeField] public BaseRebirth Rebirth;
-        [SerializeField] public NGUDiffBreakpoint[] NGUBreakpoints;
-        [SerializeField] public ConsumablesBreakpoint[] ConsumablesBreakpoints;
-
-    }
-
-    [Serializable]
-    internal class AllocationBreakPoint
-    {
-        [SerializeField] public double Time;
-        [SerializeField] public BaseBreakpoint[] Priorities;
-    }
-
-    [Serializable]
-    public class GearBreakpoint
-    {
-        public double Time;
-        public int[] Gear;
-    }
-
-    [Serializable]
-    public class DiggerBreakpoint
-    {
-        public double Time;
-        public int[] Diggers;
-    }
-
-    [Serializable]
-    public class WandoosBreakpoint
-    {
-        public double Time;
-        public int OS;
-    }
-
-    [Serializable]
-    public class NGUDiffBreakpoint
-    {
-        public double Time;
-        public int Diff;
-    }
-
-    [Serializable]
-    internal class ConsumablesBreakpoint
-    {
-        [SerializeField] public double Time;
-        [SerializeField] public string[] Consumables;
-        [SerializeField] public int[] Quantity;
-    }
-
 }

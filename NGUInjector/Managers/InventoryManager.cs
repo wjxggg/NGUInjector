@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using static NGUInjector.Main;
-using static System.Resources.ResXFileRef;
 
 namespace NGUInjector.Managers
 {
@@ -23,21 +21,16 @@ namespace NGUInjector.Managers
             queue.Enqueue(obj);
 
             while (queue.Count > Size)
-            {
                 queue.Dequeue();
-            }
         }
 
-        public void Reset()
-        {
-            queue.Clear();
-        }
+        public void Reset() => queue.Clear();
 
         public float Avg()
         {
             try
             {
-                return queue.Average(x => x);
+                return queue.Average();
             }
             catch (Exception e)
             {
@@ -49,385 +42,277 @@ namespace NGUInjector.Managers
 
     public class Cube
     {
-        internal float Power { get; set; }
-        internal float PowerSoftcap { get; set; }
-        internal float Toughness { get; set; }
-        internal float ToughnessSoftcap { get; set; }
+        public float Power { get; set; }
 
-        internal float PowerSoftcapRatio { get { return Power / PowerSoftcap; } }
+        public float Toughness { get; set; }
 
-        internal float ToughnessSoftcapRatio { get { return Toughness / ToughnessSoftcap; } }
-
-        public Cube(float power, float powerSoftcap, float toughness, float toughnessSoftcap) 
-        { 
-            Power = power;
-            PowerSoftcap = powerSoftcap;
-            Toughness = toughness;
-            ToughnessSoftcap = toughnessSoftcap;
-        }
-
-        protected bool Equals(Cube other)
-        {
-            return Power.Equals(other.Power) && Toughness.Equals(other.Toughness);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Cube)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Power.GetHashCode() * 397) ^ Toughness.GetHashCode();
-            }
-        }
+        public bool Changed(float power, float toughness) => Power != power || Toughness != toughness;
     }
 
-    internal class InventoryManager
+    public static class InventoryManager
     {
-        private readonly Character _character;
-        private readonly InventoryController _controller;
+        private static readonly Character _character = Main.Character;
+        private static readonly InventoryController _ic = Main.InventoryController;
+        // Pendants, Lootys, Wanderer's Cane, Lonely Flubber, A Giant Seed
+        private static readonly int[] _convertibles = { 53, 67, 76, 92, 94, 120, 128, 142, 154, 169, 170, 229, 230, 295, 296, 388, 389, 430, 431, 504, 505 };
+        private static readonly int[] _filterExcludes = { 119, 129, 162, 171, 195, 196, 212, 293, 297, 344, 390 }; // Lemmi and Hearts
+        private static BoostsNeeded _previousBoostsNeeded;
+        private static readonly Cube _cube = new Cube { Power = Inventory.cubePower, Toughness = Inventory.cubeToughness };
+        private static readonly FixedSizedQueue _invBoostAvg = new FixedSizedQueue(60);
+        private static readonly FixedSizedQueue _cubeBoostAvg = new FixedSizedQueue(60);
+        private static int[] _savedMacguffins = null;
+        private static int _daycareSlot = -1;
 
-        private readonly int[] _pendants = { 53, 76, 94, 142, 170, 229, 295, 388, 430, 504 };
-        private readonly int[] _lootys = { 67, 128, 169, 230, 296, 389, 431, 505 };
-        private readonly int[] _convertibles;
-        private readonly int[] _wandoos = { 66, 169 };
-        private readonly int[] _guffs = { 198, 200, 199, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 228, 211, 250, 291, 289, 290, 298, 299, 300 };
-        private readonly int[] _mergeBlacklist = { 367, 368, 369, 370, 371, 372 };
-        private BoostsNeeded _previousBoostsNeeded = null;
-        private Cube _lastCube = null;
-        private readonly FixedSizedQueue _invBoostAvg = new FixedSizedQueue(60);
-        private readonly FixedSizedQueue _cubeBoostAvg = new FixedSizedQueue(60);
+        private static Inventory Inventory => _character.inventory;
 
-
-        //Wandoos 98, Giant Seed, Wandoos XL, Lonely Flubber, Wanderer's Cane, Guffs, Lemmi
-        private readonly int[] _filterExcludes = { 66, 92, 163, 120, 154, 195, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287 };
-        public InventoryManager()
+        public static readonly Dictionary<int, string> macguffinList = new Dictionary<int, string>
         {
-            _character = Main.Character;
-            _controller = Main.InventoryController;
-            var temp = _pendants.Concat(_lootys).ToList();
-            //Wanderer's Cane
-            temp.Add(154);
-            //Lonely Flubber
-            temp.Add(120);
-            //A Giant Seed
-            temp.Add(92);
-            _convertibles = temp.ToArray();
-        }
+            { -1, "None" },
+            { 198, "Energy Power" },
+            { 199, "Energy Cap" },
+            { 200, "Magic Power" },
+            { 201, "Magic Cap" },
+            { 202, "Energy NGU" },
+            { 203, "Magic NGU" },
+            { 204, "Energy Bar" },
+            { 205, "Magic Bar" },
+            { 206, "SEXY" },
+            { 207, "SMART" },
+            { 208, "Drop Chance" },
+            { 209, "Golden" },
+            { 210, "Augment" },
+            { 211, "Energy Wandoos" },
+            { 228, "Stat" },
+            { 250, "Magic Wandoos" },
+            { 289, "NUMBER" },
+            { 290, "Blood" },
+            { 291, "Adventure" },
+            { 298, "Resource 3 Power" },
+            { 299, "Resource 3 Cap" },
+            { 300, "Resource 3 Bars" }
+        };
 
-        internal void Reset()
+        public static void Reset()
         {
             _invBoostAvg.Reset();
             _cubeBoostAvg.Reset();
         }
 
-        internal static ih[] GetBoostSlots(ih[] ci)
+        public static ih[] GetBoostSlots(ih[] ci)
         {
             var result = new List<ih>();
-            //First, find items in our priority list
-            foreach (var id in Settings.PriorityBoosts)
+            // First, find items in our priority list
+            foreach (var id in Settings.PriorityBoosts.Except(Settings.BoostBlacklist))
             {
-                if (Settings.BoostBlacklist.Contains(id))
-                    continue;
-
-                var f = FindItemSlot(ci, id);
-                if (f != null)
+                var f = LoadoutManager.FindItemSlot(id);
+                if (f?.equipment.isEquipment() == true)
                     result.Add(f);
             }
 
-            //Next, get equipped items that aren't in our priority list and aren't blacklisted
-            var equipped = Main.Character.inventory.GetConvertedEquips()
-                .Where(x => !Settings.PriorityBoosts.Contains(x.id) && !Settings.BoostBlacklist.Contains(x.id));
-            result = result.Concat(equipped).ToList();
+            // Next, get equipped items that aren't in our priority list and aren't blacklisted
+            var equipped = Inventory.GetConvertedEquips().Where(x => !IsPriority(x) && !IsBlacklisted(x));
+            result.AddRange(equipped);
 
-            //Finally, find locked items in inventory that aren't blacklisted
-            var invItems = ci.Where(x => x.locked && x.equipment.isEquipment() && !Settings.BoostBlacklist.Contains(x.id) && !Settings.PriorityBoosts.Contains(x.id));
-            result = result.Concat(invItems).ToList();
+            // Finally, find locked items in inventory that aren't blacklisted
+            var invItems = Array.FindAll(ci, x => x.locked && x.equipment.isEquipment() && !IsPriority(x) && !IsBlacklisted(x));
+            result.AddRange(invItems);
 
-            //Make sure we filter out non-equips again, just in case one snuck into priorityboosts
-            return result.Where(x => x.equipment.isEquipment()).Where(x => x.equipment.GetNeededBoosts().Total() > 0).ToArray();
+            // Make sure we filter out non-equips again, just in case one snuck into priorityboosts
+            return result.FindAll(x => x.equipment.GetNeededBoosts().Total() > 0).ToArray();
         }
 
-        internal void BoostInventory(ih[] boostSlots)
+        public static void BoostInventory(ih[] boostSlots)
         {
             foreach (var item in boostSlots)
             {
-                if (!_character.inventory.HasBoosts())
+                if (!Inventory.HasBoosts())
                     break;
-                _controller.applyAllBoosts(item.slot);
+                _ic.applyAllBoosts(item.slot);
             }
         }
 
-        private static ih FindItemSlot(IEnumerable<ih> ci, int id)
+        private static int ChangePage(int slot)
         {
-            var inv = Main.Character.inventory;
-            if (inv.head.id == id)
-            {
-                return inv.head.GetInventoryHelper(-1);
-            }
-
-            if (inv.chest.id == id)
-            {
-                return inv.chest.GetInventoryHelper(-2);
-            }
-
-            if (inv.legs.id == id)
-            {
-                return inv.legs.GetInventoryHelper(-3);
-            }
-
-            if (inv.boots.id == id)
-            {
-                return inv.boots.GetInventoryHelper(-4);
-            }
-
-            if (inv.weapon.id == id)
-            {
-                return inv.weapon.GetInventoryHelper(-5);
-            }
-
-            if (Main.InventoryController.weapon2Unlocked())
-            {
-                if (inv.weapon2.id == id)
-                {
-                    inv.weapon2.GetInventoryHelper(-6);
-                }
-            }
-
-            for (var i = 0; i < inv.accs.Count; i++)
-            {
-                if (inv.accs[i].id == id)
-                {
-                    return inv.accs[i].GetInventoryHelper(i + 10000);
-                }
-            }
-
-            var items = ci.Where(x => x.id == id).ToArray();
-            if (items.Length != 0) return items.MaxItem();
-
-            return null;
-        }
-
-        private int ChangePage(int slot)
-        {
-            var page = (int)Math.Floor((double)slot / 60);
-            _controller.changePage(page);
+            var page = slot / 60;
+            _ic.changePage(page);
             return slot - (page * 60);
         }
 
-        internal void BoostInfinityCube()
+        public static void BoostInfinityCube()
         {
-            if (!_character.inventory.HasBoosts())
+            if (!Inventory.HasBoosts())
                 return;
-            _controller.infinityCubeAll();
-            _controller.updateInventory();
+            _ic.infinityCubeAll();
         }
 
-        internal void MergeEquipped(ih[] ci)
+        public static void MergeEquipped(ih[] ci)
         {
-            if (ci.Any(x => x.id == _character.inventory.head.id))
+            if (!IsBlacklisted(Inventory.head.id) && Array.Exists(ci, x => x.id == Inventory.head.id))
+                _ic.mergeAll(-1);
+
+            if (!IsBlacklisted(Inventory.chest.id) && Array.Exists(ci, x => x.id == Inventory.chest.id))
+                _ic.mergeAll(-2);
+
+            if (!IsBlacklisted(Inventory.legs.id) && Array.Exists(ci, x => x.id == Inventory.legs.id))
+                _ic.mergeAll(-3);
+
+            if (!IsBlacklisted(Inventory.boots.id) && Array.Exists(ci, x => x.id == Inventory.boots.id))
+                _ic.mergeAll(-4);
+
+            if (!IsBlacklisted(Inventory.weapon.id) && Array.Exists(ci, x => x.id == Inventory.weapon.id))
+                _ic.mergeAll(-5);
+
+            if (_ic.weapon2Unlocked())
             {
-                _controller.mergeAll(-1);
+                if (!IsBlacklisted(Inventory.weapon2.id) && Array.Exists(ci, x => x.id == Inventory.weapon2.id))
+                    _ic.mergeAll(-6);
             }
 
-            if (ci.Any(x => x.id == _character.inventory.chest.id))
+            // Merge Accessories
+            for (var i = 10000; _ic.accessoryID(i) < _ic.accessorySpaces(); i++)
             {
-                _controller.mergeAll(-2);
-            }
-
-            if (ci.Any(x => x.id == _character.inventory.legs.id))
-            {
-                _controller.mergeAll(-3);
-            }
-
-            if (ci.Any(x => x.id == _character.inventory.boots.id))
-            {
-                _controller.mergeAll(-4);
-            }
-
-            if (ci.Any(x => x.id == _character.inventory.weapon.id))
-            {
-                _controller.mergeAll(-5);
-            }
-
-            if (_controller.weapon2Unlocked())
-            {
-                if (ci.Any(x => x.id == _character.inventory.weapon2.id))
-                {
-                    _controller.mergeAll(-6);
-                }
-            }
-
-            //Boost Accessories
-            for (var i = 10000; _controller.accessoryID(i) < _controller.accessorySpaces(); i++)
-            {
-                if (ci.Any(x => x.id == _character.inventory.accs[_controller.accessoryID(i)].id))
-                {
-                    _controller.mergeAll(i);
-                }
+                int id = _ic.accessoryID(i);
+                if (!IsBlacklisted(id) && Array.Exists(ci, x => x.id == Inventory.accs[id].id))
+                    _ic.mergeAll(i);
             }
         }
 
-        internal void MergeBoosts(ih[] ci)
+        public static void MergeBoosts(ih[] ci)
         {
-            var grouped = ci.Where(x =>
-                x.id <= 39 && !_character.inventory.inventory[x.slot].removable &&
-                !_character.inventory.itemList.itemMaxxed[x.id]);
-
+            var grouped = Array.FindAll(ci, x => IsBoost(x) && !IsBlacklisted(x) && IsLocked(x) && !IsMaxxed(x));
             foreach (var target in grouped)
             {
-                if (ci.Count(x => x.id == target.id) <= 1) continue;
+                if (ci.Count(x => x.id == target.id) <= 1)
+                    continue;
                 Log($"Merging {target.name} in slot {target.slot}");
-                _controller.mergeAll(target.slot);
+                _ic.mergeAll(target.slot);
             }
         }
 
-        private string SanitizeName(string name)
+        private static string SanitizeName(string name)
         {
             if (name.Contains("\n"))
-            {
                 name = name.Split('\n').Last();
-            }
 
             return name;
         }
 
-        internal void ManageQuestItems(ih[] ci)
+        public static void ManageQuestItems(ih[] ci)
         {
-            var curPage = (int)Math.Floor((double)_controller.inventory[0].id / 60);
-            //Merge quest items first
-            var toMerge = ci.Where(x =>
-                x.id >= 278 && x.id <= 287 && !_character.inventory.inventory[x.slot].removable &&
-                !_character.inventory.itemList.itemMaxxed[x.id]);
+            int curPage = _ic.inventory[0].id / 60;
 
+            var questItems = Array.FindAll(ci, x => IsQuest(x));
+
+            // Merge quest items first
+            var toMerge = Array.FindAll(questItems, x => !IsBlacklisted(x) && IsLocked(x) && !IsMaxxed(x)).GroupBy(x => x.id).Where(x => x.Count() > 1);
             foreach (var target in toMerge)
             {
-                if (ci.Count(x => x.id == target.id) <= 1) continue;
-                Log($"Merging {SanitizeName(target.name)} in slot {target.slot}");
-                _controller.mergeAll(target.slot);
+                if (target.All(x => x.locked))
+                    continue;
+                var item = target.First();
+                Log($"Merging {SanitizeName(item.name)} in slot {item.slot}");
+                _ic.mergeAll(item.slot);
             }
 
-            //Consume quest items that dont need to be merged
-            var questItems = ci.Where(x =>
-                x.id >= 278 && x.id <= 287 && _character.inventory.inventory[x.slot].removable).ToArray();
+            // Consume quest items that dont need to be merged
+            var quest = Main.Character.beastQuest;
+            if (!quest.inQuest)
+                return;
 
-            if (questItems.Length > 0)
-                Log($"Turning in {questItems.Length} quest items");
-            foreach (var target in questItems)
+            int num = quest.targetDrops - quest.curDrops;
+            var handin = Array.FindAll(questItems, x => x.id == quest.questID && !IsLocked(x)).Take(num);
+
+            if (handin.Any())
+                Log($"Turning in {handin.Count()} quest items");
+            foreach (var target in handin)
             {
                 var newSlot = ChangePage(target.slot);
-                var ic = _controller.inventory[newSlot];
-                typeof(ItemController).GetMethod("consumeItem", BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(ic, null);
+                _ic.inventory[newSlot].CallMethod("consumeItem");
             }
-            _controller.changePage(curPage);
+            _ic.changePage(curPage);
         }
 
-        internal void MergeInventory(ih[] ci)
+        public static void MergeInventory(ih[] ci)
         {
-            var grouped =
-                ci.Where(x => x.id >= 40 && x.level < 100 && !_mergeBlacklist.Contains(x.id) && !Settings.MergeBlacklist.Contains(x.id) && !_guffs.Contains(x.id) && (x.id < 278 || x.id > 287)).GroupBy(x => x.id).Where(x => x.Count() > 1);
+            var filtered = Array.FindAll(ci, x => !IsBoost(x) && x.level < 100 && !IsCooking(x) && !IsBlacklisted(x) && !IsGuff(x) && !IsQuest(x));
+            var grouped = filtered.GroupBy(x => x.id).Where(x => x.Count() > 1);
 
             foreach (var item in grouped)
             {
                 if (item.All(x => x.locked))
                     continue;
 
-                var target = item.MaxItem();
+                ih target = item.MaxItem();
 
                 Log($"Merging {SanitizeName(target.name)} in slot {target.slot}");
-                _controller.mergeAll(target.slot);
+                _ic.mergeAll(target.slot);
             }
         }
 
-        internal void MergeGuffs(ih[] ci)
+        public static void MergeGuffs(ih[] ci)
         {
-            for (var id = 0; id < _character.inventory.macguffins.Count; ++id)
+            for (var id = 0; id < Inventory.macguffins.Count; ++id)
             {
-                var guffId = _character.inventory.macguffins[id].id;
-                if (ci.Any(x => x.id == guffId))
-                    _controller.mergeAll(_controller.globalMacguffinID(id));
+                int guffId = Inventory.macguffins[id].id;
+                if (!IsBlacklisted(guffId) && Array.Exists(ci, x => x.id == guffId))
+                    _ic.mergeAll(_ic.globalMacguffinID(id));
             }
 
-            var invGuffs = ci.Where(x => _guffs.Contains(x.id)).GroupBy(x => x.id).Where(x => x.Count() > 1);
+            var invGuffs = Array.FindAll(ci, x => IsGuff(x) && !IsBlacklisted(x)).GroupBy(x => x.id).Where(x => x.Count() > 1);
             foreach (var guff in invGuffs)
             {
-                var target = guff.MaxItem();
-                _controller.mergeAll(target.slot);
+                ih target = guff.MaxItem();
+                _ic.mergeAll(target.slot);
             }
         }
 
-        internal void ManageConvertibles(ih[] ci)
+        public static void ManageConvertibles(ih[] ci)
         {
-            var curPage = (int)Math.Floor((double)_controller.inventory[0].id / 60);
-            var grouped = ci.Where(x => _convertibles.Contains(x.id));
+            int curPage = _ic.inventory[0].id / 60;
+            var grouped = ci.Where(x => Array.BinarySearch(_convertibles, x.id) >= 0);
             foreach (var item in grouped)
             {
-                if (item.level != 100) continue;
-                var temp = _character.inventory.inventory[item.slot];
-                if (!temp.removable) continue;
+                if (item.level != 100)
+                    continue;
+                var temp = Inventory.inventory[item.slot];
+                if (!temp.removable)
+                    continue;
                 var newSlot = ChangePage(item.slot);
-                var ic = _controller.inventory[newSlot];
-                typeof(ItemController).GetMethod("consumeItem", BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(ic, null);
+                _ic.inventory[newSlot].CallMethod("consumeItem");
             }
-            _controller.changePage(curPage);
+            _ic.changePage(curPage);
         }
 
-        internal void ShowBoostProgress(ih[] boostSlots)
+        public static void ShowBoostProgress(ih[] boostSlots)
         {
             var needed = new BoostsNeeded();
-            var cube = new Cube(
-                _character.inventory.cubePower,
-                _character.inventoryController.cubePowerSoftcap(),
-                _character.inventory.cubeToughness,
-                _character.inventoryController.cubeToughnessSoftcap()
-            );
 
             foreach (var item in boostSlots)
-            {
-                //var eq = item.equipment;
+                needed += item.equipment.GetNeededBoosts();
 
-                //LogDebug($"{eq.id}:{item.name} (Lv {eq.level})");
-                //LogDebug($"\tAtk {eq.curAttack}/{Extensions.CalcCap(eq.capAttack, eq.level)}");
-                //LogDebug($"\tDef {eq.curDefense}/{Extensions.CalcCap(eq.capDefense, eq.level)}");
-                //LogDebug($"\tSpec1 {eq.spec1Cur}/{Extensions.CalcCap(eq.spec1Cap, eq.level)} | Spec2 {eq.spec2Cur}/{Extensions.CalcCap(eq.spec2Cap, eq.level)} | Spec3 {eq.spec3Cur}/{Extensions.CalcCap(eq.spec3Cap, eq.level)}");
-
-                needed.Add(item.equipment.GetNeededBoosts());
-            }
-
-            var current = needed.Power + needed.Toughness + needed.Special;
+            float current = needed.Total();
 
             if (current > 0)
             {
                 if (_previousBoostsNeeded == null)
                 {
-                    Log($"Boosts Needed to Green: {needed.Power} Power, {needed.Toughness} Toughness, {needed.Special} Special");
+                    Log($"Boosts Needed to Green: {needed.power} Power, {needed.toughness} Toughness, {needed.special} Special");
                     _previousBoostsNeeded = needed;
                 }
                 else
                 {
-                    var old = _previousBoostsNeeded.Power + _previousBoostsNeeded.Toughness +
-                              _previousBoostsNeeded.Special;
+                    float old = _previousBoostsNeeded.Total();
 
                     var diff = current - old;
+                    if (diff == 0)
+                        return;
 
-                    if (diff == 0) return;
-
-                    //If diff is > 0, then we either added another item to boost or we levelled something. Don't add the diff to average
+                    // If diff is > 0, then we either added another item to boost or we levelled something. Don't add the diff to average
                     if (diff <= 0)
-                    {
-                        _invBoostAvg.Enqueue(diff * -1);
-                    }
+                        _invBoostAvg.Enqueue(-diff);
 
-                    Log($"Boosts Needed to Green: {needed.Power} Power, {needed.Toughness} Toughness, {needed.Special} Special");
-                    var average = _invBoostAvg.Avg();
+                    Log($"Boosts Needed to Green: {needed.power} Power, {needed.toughness} Toughness, {needed.special} Special");
+                    float average = _invBoostAvg.Avg();
                     if (average > 0)
                     {
                         var eta = current / average;
@@ -442,234 +327,391 @@ namespace NGUInjector.Managers
                 }
             }
 
-            if (_lastCube == null)
+            var power = Inventory.cubePower;
+            var toughness = Inventory.cubeToughness;
+
+            if (_cube.Changed(power, toughness))
             {
-                _lastCube = cube;
-            }
-            else
-            {
-                if (!_lastCube.Equals(cube))
-                {
-                    var output = $"Cube Progress:";
-                    var toughnessDiff = cube.Toughness - _lastCube.Toughness;
-                    var powerDiff = cube.Power - _lastCube.Power;
+                var output = "Cube Progress:";
+                float toughnessDiff = toughness - _cube.Toughness;
+                float powerDiff = power - _cube.Power;
 
-                    output = toughnessDiff > 0 ? $"{output} {toughnessDiff} Toughness." : output;
-                    output = powerDiff > 0 ? $"{output} {powerDiff} Power." : output;
+                output = toughnessDiff > 0 ? $"{output} {toughnessDiff} Toughness." : output;
+                output = powerDiff > 0 ? $"{output} {powerDiff} Power." : output;
 
-                    _cubeBoostAvg.Enqueue(toughnessDiff + powerDiff);
-                    output = $"{output} Average Per Minute: {_cubeBoostAvg.Avg():0}";
-                    Log(output);
-                    Log($"Cube Power: {cube.Power} ({_character.inventoryController.cubePowerSoftcap()} softcap). Cube Toughness: {cube.Toughness} ({_character.inventoryController.cubeToughnessSoftcap()} softcap)");
-                }
+                _cubeBoostAvg.Enqueue(toughnessDiff + powerDiff);
+                output = $"{output} Average Per Minute: {_cubeBoostAvg.Avg():0}";
+                Log(output);
+                Log($"Cube Power: {power} ({_ic.cubePowerSoftcap()} softcap). Cube Toughness: {toughness} ({_ic.cubeToughnessSoftcap()} softcap)");
 
-                _lastCube = cube;
+                _cube.Power = power;
+                _cube.Toughness = toughness;
             }
         }
 
-        internal void ManageBoostConversion(ih[] boostSlots)
+        public static void ManageBoostConversion(ih[] boostSlots)
         {
-            if (_character.challenges.levelChallenge10k.curCompletions <
-                _character.allChallenges.level100Challenge.maxCompletions)
+            if (_character.challenges.levelChallenge10k.curCompletions < _character.allChallenges.level100Challenge.maxCompletions)
                 return;
 
             if (!Settings.AutoConvertBoosts)
                 return;
 
-            var converted = _character.inventory.GetConvertedInventory();
-            //If we have a boost locked, we want to stay on that until its maxxed
-            var lockedBoosts = converted.Where(x => x.id < 40 && x.locked).ToArray();
+            var converted = Inventory.GetConvertedInventory();
+            // If we have a boost locked, we want to stay on that until its maxxed
+            var lockedBoosts = converted.Where(x => x.id < 40 && x.locked);
             if (lockedBoosts.Any())
             {
-                //Unlock level 100 boosts
-                lockedBoosts.Where(x => x.level == 100).ToList().ForEach(maxLockedBoost => _character.inventory.inventory[maxLockedBoost.slot].removable = true);
+                // Unlock level 100 boosts
+                lockedBoosts.Where(x => x.level == 100).ToList().ForEach(maxLockedBoost => Inventory.inventory[maxLockedBoost.slot].removable = true);
 
                 int? minId = lockedBoosts.Where(x => x.level != 100).DefaultIfEmpty().Min(x => x.id);
-                if (minId.HasValue)
-                {
-                    if (minId <= 13)
-                    {
-                        _controller.selectAutoPowerTransform();
-                    }
-                    else if (minId <= 26)
-                    {
-                        _controller.selectAutoToughTransform();
-                    }
-                    else if (minId <= 39)
-                    {
-                        _controller.selectAutoSpecialTransform();
-                    }
-
+                if (minId <= 13)
+                    _ic.selectAutoPowerTransform();
+                else if (minId <= 26)
+                    _ic.selectAutoToughTransform();
+                else if (minId <= 39)
+                    _ic.selectAutoSpecialTransform();
+                else
                     return;
-                }
             }
 
             var needed = new BoostsNeeded();
 
             foreach (var item in boostSlots)
-            {
-                needed.Add(item.equipment.GetNeededBoosts());
-            }
+                needed += item.equipment.GetNeededBoosts();
 
-            var boostPriorities = Main.Settings.BoostPriority.Length > 0 ? Main.Settings.BoostPriority : new string[] { "Power", "Toughness", "Special" };
+            string[] boostPriorities = Settings.BoostPriority.Length > 0 ? Settings.BoostPriority : new string[] { "Power", "Toughness", "Special" };
 
             foreach (var boostPriority in boostPriorities)
             {
                 switch (boostPriority)
                 {
                     case "Power":
-                        if (needed.Power > 0)
+                        if (needed.power > 0)
                         {
-                            _controller.selectAutoPowerTransform();
+                            _ic.selectAutoPowerTransform();
                             return;
                         }
                         break;
                     case "Toughness":
-                        if (needed.Toughness > 0)
+                        if (needed.toughness > 0)
                         {
-                            _controller.selectAutoToughTransform();
+                            _ic.selectAutoToughTransform();
                             return;
                         }
                         break;
                     case "Special":
-                        if (needed.Special > 0)
+                        if (needed.special > 0)
                         {
-                            _controller.selectAutoSpecialTransform();
+                            _ic.selectAutoSpecialTransform();
                             return;
                         }
                         break;
                 }
             }
 
-            var cube = new Cube(
-                _character.inventory.cubePower,
-                _character.inventoryController.cubePowerSoftcap(),
-                _character.inventory.cubeToughness,
-                _character.inventoryController.cubeToughnessSoftcap()
-            );
-
-            if (Settings.CubePriority > 0)
+            switch (Settings.CubePriority)
             {
-                if (Settings.CubePriority == 1)
+                case 0:
+                    _ic.selectAutoNoneTransform();
+                    return;
+                case 1:
+                    if (Inventory.cubePower > Inventory.cubeToughness)
+                        _ic.selectAutoToughTransform();
+                    else
+                        _ic.selectAutoPowerTransform();
+                    return;
+                case 2:
+                    if (Inventory.cubePower / _ic.cubePowerSoftcap() > Inventory.cubeToughness / _ic.cubeToughnessSoftcap())
+                        _ic.selectAutoToughTransform();
+                    else
+                        _ic.selectAutoPowerTransform();
+                    return;
+                case 3:
+                    _ic.selectAutoPowerTransform();
+                    return;
+                case 4:
+                    _ic.selectAutoToughTransform();
+                    return;
+            }
+        }
+
+        public static int MoveFromDaycareToInventory(Inventory inv, int slot)
+        {
+            int emptySlot = inv.inventory.FindIndex(x => x.id == 0);
+            if (emptySlot < 0 || emptySlot > inv.inventory.Count)
+                return -1;
+
+            inv.item1 = slot;
+            inv.item2 = emptySlot;
+
+            _ic.swapDaycare();
+
+            return emptySlot;
+        }
+
+        public static int MoveFromMacguffinsToInventory(Inventory inv, int slot)
+        {
+            int emptySlot = inv.inventory.FindIndex(x => x.id == 0);
+            if (emptySlot < 0 || emptySlot > inv.inventory.Count)
+                return -1;
+
+            inv.item1 = slot;
+            inv.item2 = emptySlot;
+
+            _ic.swapMacguffin();
+
+            return emptySlot;
+        }
+
+        public static void ManageFavoredMacguffin(bool spell = false, bool fruit = false)
+        {
+            if (Settings.FavoredMacguffin < 0)
+                return;
+
+            var inventory = Main.Character.inventory;
+            int slot;
+            _savedMacguffins = inventory.macguffins.Select(x => x.id).ToArray();
+            if (Array.Exists(_savedMacguffins, x => x == Settings.FavoredMacguffin))
+            {
+                _daycareSlot = -1;
+                slot = Array.IndexOf(_savedMacguffins, Settings.FavoredMacguffin) + 1000000;
+            }
+            else if (inventory.inventory.Exists(x => x.id == Settings.FavoredMacguffin))
+            {
+                _daycareSlot = -1;
+                // Equip highest level MacGuffin
+                var item = inventory.inventory.Where(x => x.id == Settings.FavoredMacguffin).AllMaxBy(x => x.level).First();
+                slot = inventory.inventory.IndexOf(item);
+            }
+            else if (inventory.daycare.Exists(x => x.id == Settings.FavoredMacguffin))
+            {
+                var item = inventory.daycare.First(x => x.id == Settings.FavoredMacguffin);
+                _daycareSlot = inventory.daycare.IndexOf(item) + 100000;
+                slot = MoveFromDaycareToInventory(inventory, _daycareSlot);
+                if (slot < 0)
                 {
-                    if (cube.Power > cube.Toughness)
+                    try
                     {
-                        _controller.selectAutoToughTransform();
+                        Log("Failed to move an item from daycare: missing empty slots in the inventory.");
+                    }
+                    catch (Exception)
+                    {
+                        // pass
+                    }
+                    return;
+                }
+            }
+            else
+            {
+                _daycareSlot = -1;
+                return;
+            }
+
+            if (slot != 1000000)
+            {
+                inventory.item2 = slot;
+                inventory.item1 = 1000000;
+                _ic.swapMacguffin();
+            }
+
+            if ((!spell || Main.Character.wishes.wishes[24].level <= 0) && (!fruit || Main.Character.wishes.wishes[25].level <= 0))
+            {
+                for (var i = 1; i < inventory.macguffins.Count; i++)
+                {
+                    if (inventory.macguffins[i].id != Settings.FavoredMacguffin)
+                    {
+                        if (MoveFromMacguffinsToInventory(inventory, i + 1000000) < 0)
+                        {
+                            try
+                            {
+                                Log("Failed to unequip a macguffin: missing empty slots in the inventory.");
+                            }
+                            catch (Exception)
+                            {
+                                // pass
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            _ic.updateBonuses();
+            _ic.updateInventory();
+        }
+
+        public static void RestoreMacguffins()
+        {
+            if (_savedMacguffins?.Length > 0 == false)
+                return;
+
+            var macguffins = Inventory.macguffins.Select(x => x.id);
+            var allMacguffins = Inventory.macguffins.Select((x, i) => (equip: x, i: i + 1000000)).Where(x => x.equip.id != 0);
+            allMacguffins = allMacguffins.Union(Inventory.inventory.Select((x, i) => (equip: x, i)).Where(x => x.equip.id != 0));
+            for (var i = 0; i < _savedMacguffins.Length; i++)
+            {
+                if (_savedMacguffins[i] != macguffins.ElementAt(i))
+                {
+                    if (allMacguffins.Any(x => x.equip.id == _savedMacguffins[i]))
+                    {
+                        Inventory.item1 = i + 1000000;
+                        // Equip highest level MacGuffins
+                        Inventory.item2 = allMacguffins.AllMaxBy(x => x.equip.level).First(x => x.equip.id == _savedMacguffins[i]).i;
+
+                        _ic.swapMacguffin();
                     }
                     else
                     {
-                        _controller.selectAutoPowerTransform();
+                        Log($"Failed to find a macguffin with id {_savedMacguffins[i]}.");
                     }
                 }
-                else if (Settings.CubePriority == 2)
+            }
+
+            if (_daycareSlot >= 0)
+            {
+                var favMacguffins = allMacguffins.Where(x => x.i < 1000000 && x.equip.id == Settings.FavoredMacguffin);
+                if (favMacguffins.Any())
                 {
-                    if (cube.PowerSoftcapRatio > cube.ToughnessSoftcapRatio)
-                    {
-                        _controller.selectAutoToughTransform();
-                    }
-                    else
-                    {
-                        _controller.selectAutoPowerTransform();
-                    }
-                }
-                else if (Settings.CubePriority == 3)
-                {
-                    _controller.selectAutoPowerTransform();
+                    Inventory.item1 = _daycareSlot;
+                    // Put lowest level MacGuffin into daycare
+                    Inventory.item2 = favMacguffins.AllMinBy(x => x.equip.level).First().i;
+
+                    _ic.swapDaycare();
                 }
                 else
                 {
-                    _controller.selectAutoToughTransform();
+                    Log($"Failed to find a macguffin with id {Settings.FavoredMacguffin}.");
                 }
-
-                return;
             }
 
-            _controller.selectAutoNoneTransform();
+            _savedMacguffins = null;
+            _daycareSlot = -1;
+
+            _ic.updateBonuses();
+            _ic.updateInventory();
         }
 
         #region Filtering
-        internal void EnsureFiltered(ih[] ci)
+        public static void EnsureFiltered(ih[] ci)
         {
-            if (!Main.Character.arbitrary.lootFilter)
+            if (!_character.arbitrary.lootFilter)
                 return;
 
-            var targets = ci.Where(x => x.level == 100);
+            var targets = Array.FindAll(ci, x => x.level == 100);
             foreach (var target in targets)
-            {
                 FilterItem(target.id);
-            }
 
-            FilterEquip(_character.inventory.head);
-            FilterEquip(_character.inventory.boots);
-            FilterEquip(_character.inventory.chest);
-            FilterEquip(_character.inventory.legs);
-            FilterEquip(_character.inventory.weapon);
-            if (_character.inventoryController.weapon2Unlocked())
-                FilterEquip(_character.inventory.weapon2);
+            FilterEquip(Inventory.head);
+            FilterEquip(Inventory.boots);
+            FilterEquip(Inventory.chest);
+            FilterEquip(Inventory.legs);
+            FilterEquip(Inventory.weapon);
+            if (_ic.weapon2Unlocked())
+                FilterEquip(Inventory.weapon2);
 
-            foreach (var acc in _character.inventory.accs)
-            {
+            foreach (var acc in Inventory.accs)
                 FilterEquip(acc);
-            }
         }
 
-        void FilterItem(int id)
+        private static void FilterItem(int id)
         {
-            if (_pendants.Contains(id) || _lootys.Contains(id) || _wandoos.Contains(id) ||
-                _filterExcludes.Contains(id) || _guffs.Contains(id) || id < 40 || _mergeBlacklist.Contains(id))
+            // Don't filter out wandoos 98 if it is not level 100
+            if (id == 66 && _character.wandoos98.OSlevel < 100L)
                 return;
 
-            //Dont filter quest items
+            // Don't filter out wandoos XL if it is not level 100
+            if (id == 163 && _character.wandoos98.XLLevels < 100L)
+                return;
+
+            // Don't filter out convertibles
+            if (Array.BinarySearch(_convertibles, id) >= 0)
+                return;
+
+            // Don't filter out MacGuffins
+            if (macguffinList.ContainsKey(id))
+                return;
+
+            // Don't filter out cooking
+            if (id >= 367 && id <= 372)
+                return;
+
+            // Don't filter out Lemmi and hearts
+            if (Array.BinarySearch(_filterExcludes, id) >= 0)
+                return;
+
+            // Dont filter out quest items
             if (id >= 278 && id <= 287)
                 return;
 
-            _character.inventory.itemList.itemFiltered[id] = true;
+            // Don't filter out boosts
+            if (id < 40)
+                return;
+
+            Inventory.itemList.itemFiltered[id] = true;
         }
 
-        void FilterEquip(Equipment e)
+        private static void FilterEquip(Equipment e)
         {
             if (e.level == 100)
-            {
                 FilterItem(e.id);
-            }
         }
         #endregion
 
+        #region Lambda
+        private static bool IsPriority(ih x) => Settings.PriorityBoosts.Contains(x.id);
+
+        private static bool IsBlacklisted(ih x) => Settings.BoostBlacklist.Contains(x.id);
+
+        private static bool IsBlacklisted(int id) => Settings.BoostBlacklist.Contains(id);
+
+        private static bool IsLocked(ih x) => !Inventory.inventory[x.slot].removable;
+
+        private static bool IsMaxxed(ih x) => Inventory.itemList.itemMaxxed[x.id];
+
+        private static bool IsBoost(ih x) => x.id >= 1 && x.id <= 39;
+
+        private static bool IsQuest(ih x) => x.id >= 278 && x.id <= 287;
+
+        private static bool IsGuff(ih x) => macguffinList.ContainsKey(x.id);
+
+        private static bool IsCooking(ih x) => x.id >= 367 && x.id <= 372;
+        #endregion
     }
 
     public class ih
     {
-        internal int slot { get; set; }
-        internal string name { get; set; }
-        internal int level { get; set; }
-        internal bool locked { get; set; }
-        internal int id { get; set; }
-        internal Equipment equipment { get; set; }
+        public int slot;
+        public string name;
+        public int level;
+        public bool locked;
+        public int id;
+        public Equipment equipment;
     }
 
     public class BoostsNeeded
     {
-        internal float Power { get; set; }
-        internal float Toughness { get; set; }
-        internal float Special { get; set; }
+        public float power;
+        public float toughness;
+        public float special;
 
-        public BoostsNeeded()
+        public BoostsNeeded(float power = 0f, float toughness = 0f, float special = 0f)
         {
-            Power = 0;
-            Toughness = 0;
-            Special = 0;
+            this.power = power;
+            this.toughness = toughness;
+            this.special = special;
         }
 
-        public void Add(BoostsNeeded other)
+        public static BoostsNeeded operator +(BoostsNeeded boostsNeeded, BoostsNeeded other)
         {
-            Power += other.Power;
-            Toughness += other.Toughness;
-            Special += other.Special;
+            return new BoostsNeeded(
+                boostsNeeded.power + other.power,
+                boostsNeeded.toughness + other.toughness,
+                boostsNeeded.special + other.special
+            );
         }
 
-        public float Total()
-        {
-            return Power + Toughness + Special;
-        }
+        public float Total() => power + toughness + special;
     }
 }

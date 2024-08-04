@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NGUInjector.AllocationProfiles.RebirthStuff
 {
-    internal class BossNumRebirth : BaseRebirth
+    public class BossNumRebirth : TimeRebirth
     {
-        internal double NumBosses { get; set; }
-        internal override bool RebirthAvailable()
+        public double NumBosses { get; set; }
+
+        public override bool RebirthAvailable(out bool challenges)
         {
-            if (!Main.Settings.AutoRebirth)
+            if (!base.RebirthAvailable(out challenges))
                 return false;
 
-            if (!BaseRebirthChecks())
-                return false;
-
-            if (!CharObj.challenges.inChallenge && AnyChallengesValid())
+            if (challenges)
                 return true;
 
-            var bosses = Math.Round(Math.Log10(CharObj.nextAttackMulti / CharObj.attackMulti));
-            return bosses > NumBosses;
+            double bosses = Math.Round(Math.Log10(_character.nextAttackMulti / _character.attackMulti));
+            return bosses >= NumBosses;
         }
     }
 }

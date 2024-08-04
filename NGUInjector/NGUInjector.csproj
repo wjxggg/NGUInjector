@@ -49,53 +49,63 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.26f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.26f1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.26f1\Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.26f1\Editor\Data\Managed\UnityEngine\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.26f1\Editor\Data\Managed\UnityEngine\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\NGU IDLE\NGUIdle_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllocationProfiles\BreakpointTypes\AdvancedTrainingBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\AugmentBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\BaseBreakpoint.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\BasicTrainingBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\BestAug.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\BestHackBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\BR.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\CapCalc.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\HackBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\RitualBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\TimeMachineBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\WandoosBP.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\WishBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\BaseBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\BeardBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ConsumablesBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\DiggerBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\EnergyBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\GearBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\MagicBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\NGUDiffBreakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\R3Breakpoints.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\AdvancedTrainingBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\AugmentBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\ResourceBreakpoint.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\BasicTrainingBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\BestAug.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\BR.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\CapCalc.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\HackBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\RitualBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\TimeMachineBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\WandoosBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\WandoosBreakpoints.cs" />
     <Compile Include="AllocationProfiles\CustomAllocation.cs" />
-    <Compile Include="AllocationProfiles\AllocationProfile.cs" />
-    <Compile Include="AllocationProfiles\BreakpointTypes\NGUBP.cs" />
+    <Compile Include="AllocationProfiles\Breakpoints\ResourceBreakpoints\NGUBP.cs" />
+    <Compile Include="AllocationProfiles\RebirthStuff\MoneyPitRunRebirth.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\MuffinRebirth.cs" />
+    <Compile Include="Managers\BeardManager.cs" />
     <Compile Include="Managers\BloodMagicManager.cs" />
     <Compile Include="Managers\CardManager.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\BaseRebirth.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\BossNumRebirth.cs" />
-    <Compile Include="AllocationProfiles\RebirthStuff\NoRebirth.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\NumberRebirth.cs" />
     <Compile Include="AllocationProfiles\RebirthStuff\TimeRebirth.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Managers\CombatAI.cs" />
     <Compile Include="Managers\ConsumablesManager.cs" />
     <Compile Include="Managers\CookingManager.cs" />
+    <Compile Include="Managers\ITOPODManager.cs" />
+    <Compile Include="Managers\LockManager.cs" />
     <Compile Include="Managers\ZoneStatHelper.cs" />
     <Compile Include="Managers\ZoneHelpers.cs" />
     <Compile Include="Managers\CombatHelpers.cs" />
@@ -138,6 +148,7 @@
   <ItemGroup>
     <EmbeddedResource Include="SettingsForm.dje.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>

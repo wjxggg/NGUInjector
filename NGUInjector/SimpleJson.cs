@@ -108,6 +108,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -326,7 +327,7 @@ namespace SimpleJSON
             get
             {
                 double v = 0.0;
-                if (double.TryParse(Value, out v))
+                if (double.TryParse(Value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out v))
                     return v;
                 return 0.0;
             }

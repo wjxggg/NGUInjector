@@ -1,301 +1,270 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using UnityEngine;
+using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    public class CardManager
+    public static class CardManager
     {
-        private readonly Character _character;
-        private readonly int _maxManas;
-        private CardsController _cardsController;
-        private readonly IDictionary<cardBonus, float> _cardValues = new Dictionary<cardBonus, float>();
+        private static readonly Character _character = Main.Character;
+        private static readonly CardsController _cc = _character.cardsController;
+        private static readonly IDictionary<cardBonus, float> _cardValues = new Dictionary<cardBonus, float>();
+        public static readonly int[] tierList = new int[]
+            { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
 
-        public CardManager()
+        public static readonly Dictionary<int, string> rarityList = new Dictionary<int, string>
+        {
+            { -1, "Don't trash" },
+            { 0, "Crappy" },
+            { 1, "Bad" },
+            { 2, "Meh" },
+            { 3, "Okay" },
+            { 4, "Good" },
+            { 5, "Great" },
+            { 6, "Hot Damn" },
+            { 7, "BIG CHONKER" }
+        };
+
+        private static List<Card> Cards => _character.cards.cards;
+
+        private static List<Mana> Manas => _character.cards.manas;
+
+        static CardManager()
         {
             try
             {
-                _character = Main.Character;
-                _cardsController = _character.cardsController;
-                _maxManas = _character.cardsController.maxManaGenSize();
-                foreach (cardBonus bonus in Enum.GetValues(typeof(cardBonus)))
+                foreach (cardBonus bonus in typeof(cardBonus).GetEnumValues())
                 {
-                    float bonusValue = _cardsController.generateCardEffect(bonus, 6, 1, 1, false);
+                    float bonusValue = _cc.generateCardEffect(bonus, 6, 1, 1, false);
                     _cardValues.Add(bonus, bonusValue);
                 }
             }
             catch (Exception e)
             {
-                Main.Log(e.Message);
-                Main.Log(e.StackTrace);
+                LogDebug(e.Message);
+                LogDebug(e.StackTrace);
             }
         }
-        int CurTogg() => _character.cardsController.curManaToggleCount();
-        public void CheckManas()
-        {
 
+        public static bool WouldBeTrashed(Card card, out string reason)
+        {
+            reason = "";
+            if (card.bonusType == cardBonus.none)
+                return false;
+            if ((int)card.cardRarity <= Settings.CardRarities[(int)card.bonusType - 1])
+            {
+                reason = "Rarity";
+                return true;
+            }
+            if (card.manaCosts.Sum() <= Settings.CardCosts[(int)card.bonusType - 1])
+            {
+                reason = "Cost";
+                return true;
+            }
+            return false;
+        }
+
+        public static void CheckManas()
+        {
             try
             {
-                List<Mana> manas = _character.cards.manas;
-                int lowestCount = int.MaxValue;
-                Mana lowestProgress = manas[0];
-                bool balanceMayo = true;
-                if (_character.cards.cards.Count > 0)
+                var needMayo = false;
+                int[] target = new int[Manas.Count];
+                foreach (var card in Cards)
                 {
-                    Card card = _character.cards.cards[0];
-                    for (int i = 0; i < manas.Count; i++)
+                    // Don't save Mayo for protected cards if the flaf is not set
+                    if (card.isProtected && !Settings.CastProtectedCards)
+                        continue;
+                    for (int i = 0; i < Manas.Count; i++)
                     {
-                        if (manas[i].amount < card.manaCosts[i])
-                        {
-                            balanceMayo = false;
-                            break;
-                        }
+                        target[i] += card.manaCosts[i];
+                        if (target[i] > Manas[i].amount)
+                            needMayo = true;
                     }
-                    for (int i = 0; i < manas.Count && !balanceMayo; i++)
-                    {
-                        if (manas[i].amount >= card.manaCosts[i] && manas[i].running)
-                        {
-                            _cardsController.toggleManaGen(i);
-                            i = 0;
-                        }
-                        if (manas[i].amount < card.manaCosts[i] && !manas[i].running && CurTogg() < _maxManas) _cardsController.toggleManaGen(i);
-                    }
+                    if (needMayo)
+                        break;
                 }
 
-                if (balanceMayo)
+                if (needMayo)
                 {
-                    foreach (Mana mana in manas)
+                    for (int i = 0; i < Manas.Count && _cc.curManaToggleCount() > 0; i++)
                     {
-
-                        if (lowestCount > mana.amount)
-                        {
-                            lowestCount = mana.amount;
-                            lowestProgress = mana;
-                        }
-                        else if (lowestCount == mana.amount && mana.progress < lowestProgress.progress) lowestProgress = mana;
+                        if (target[i] <= Manas[i].amount && Manas[i].running)
+                            _cc.toggleManaGen(i);
                     }
-
-                    for (int i = 0; i < manas.Count; i++)
+                    for (int i = 0; i < Manas.Count && _cc.curManaToggleCount() < _cc.maxManaGenSize(); i++)
                     {
-                        int toggStart = CurTogg();
-                        float progressPerSec = _cardsController.manaGenProgressPerTick() * 50;
-                        Mana mana = manas[i];
-
+                        if (target[i] > Manas[i].amount && !Manas[i].running)
+                            _cc.toggleManaGen(i);
+                    }
+                }
+                else
+                {
+                    var min = Manas.AllMinBy(x => x.amount + x.progress).First();
+                    for (int i = 0; i < Manas.Count; i++)
+                    {
+                        var mana = Manas[i];
+                        if (mana == min)
+                            continue;
                         if (mana.running)
+                            _cc.toggleManaGen(i);
+                    }
+                    if (!min.running)
+                        _cc.toggleManaGen(Manas.IndexOf(min));
+                }
+            }
+            catch (Exception e)
+            {
+                LogDebug(e.Message);
+                LogDebug(e.StackTrace);
+            }
+        }
+
+        public static void TrashCard(int index)
+        {
+            Cards[index].isProtected = false;
+            _cc.trashCard(index);
+        }
+
+        public static void TrashCards()
+        {
+            try
+            {
+                if (!Settings.TrashCards)
+                    return;
+
+                var hasEndPiece = _character.inventory.inventory.Exists(c => c.id == 492);
+                var hasEndCard = false;
+
+                for (int index = Cards.Count - 1; index >= 0; index--)
+                {
+                    Card card = Cards[index];
+
+                    // Don't trash protected cards unless the trash protected flag is set
+                    if (card.isProtected && !Settings.TrashProtectedCards)
+                        continue;
+
+                    if (card.type == cardType.end)
+                    {
+                        if (hasEndPiece)
                         {
-                            if (mana.amount - lowestCount == 1 && Math.Abs((1f + mana.progress - lowestProgress.progress) / progressPerSec) <= 10) continue;
-                            else if (mana.amount == lowestCount && Math.Abs((mana.progress - lowestProgress.progress) / progressPerSec) <= 10) continue;
+                            LogCard($"Trashed Card: Bonus Type: END, due to already having the END piece");
+                            TrashCard(index);
+                        }
+                        else if (hasEndCard)
+                        {
+                            LogCard($"Trashed Card: Bonus Type: END, due to already having one in the cards list");
+                            TrashCard(index);
                         }
                         else
                         {
-                            if (CurTogg() >= _maxManas) continue;
-                            else if (mana.amount == lowestCount && Math.Abs((mana.progress - lowestProgress.progress) / progressPerSec) > 10) continue;
-                            else if (mana.amount - lowestCount == 1 && Math.Abs((1f + mana.progress - lowestProgress.progress) / progressPerSec) > 10) continue;
-                            else if (mana.amount - lowestProgress.amount > 1) continue;
+                            hasEndCard = true;
                         }
-                        _cardsController.toggleManaGen(i);
-                        if (toggStart < CurTogg()) i = 0;
                     }
-                }
-            }
-            catch (Exception e)
-            {
-                Main.Log(e.Message);
-                Main.Log(e.StackTrace);
-            }
-        }
-
-        public void TrashCard(int index)
-        {
-            if (_character.cards.cards[index].isProtected)
-            {
-                _character.cards.cards[index].isProtected = false;
-            }
-            _cardsController.trashCard(index);
-        }
-
-        public void TrashCards()
-        {
-            try
-            {
-                if (Main.Settings.TrashCards)
-                {
-                    var cards = _character.cards.cards;
-                    if (cards.Count > 0)
+                    else if (WouldBeTrashed(card, out var reason))
                     {
-                        int index = (cards.Count - 1);
-                        while (index >= 0)
-                        {
-                            Card card = cards[index];
-
-                            //Don't trash adventure cards unless the trash adventure flag is set
-                            if (card.bonusType == cardBonus.adventureStat && !Main.Settings.TrashAdventureCards)
-                            {
-                                index--;
-                                continue;
-                            }
-
-                            //Don't trash protected cards unless the trash protected flag is set or its chonker card with the trash chonker flag set
-                            if (card.isProtected && !Main.Settings.TrashProtectedCards && (card.cardRarity != rarity.BigChonker || !Main.Settings.TrashChunkers))
-                            {
-                                index--;
-                                continue;
-                            }
-
-                            if (card.type == cardType.end)
-                            {
-                                if (_character.inventory.inventory.Any(c => c.id == 492))
-                                {
-                                    Main.LogCard($"Trashed Card: Bonus Type: END, due to already having the END piece");
-                                    TrashCard(index);
-                                }
-                                else if (cards.Count(c => c.type == cardType.end) > 1)
-                                {
-                                    Main.LogCard($"Trashed Card: Bonus Type: END, due to already having one in the cards list");
-                                    TrashCard(index);
-                                }
-                            }
-                            else if ((int)cards[index].cardRarity <= Main.Settings.CardsTrashQuality - 1)
-                            {
-                                Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Quality settings");
-                                TrashCard(index);
-                            }
-                            else if (cards[index].manaCosts.Sum() <= Main.Settings.TrashCardCost)
-                            {
-                                Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to Cost settings");
-                                TrashCard(index);
-                            }
-                            else if (Main.Settings.DontCastCardType.Contains(card.bonusType.ToString()))
-                            {
-                                //Dont trash cards of BigChonker rarity unless the flag is set
-                                if (card.cardRarity != rarity.BigChonker || Main.Settings.TrashChunkers)
-                                {
-                                    Main.LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}, due to trash all settings");
-                                    TrashCard(index);
-                                }
-                            }
-
-                            index--;
-                        }
+                        LogCard($"Trashed Card: Cost: {card.manaCosts.Sum()}, Rarity: {card.cardRarity}, Bonus Type: {card.bonusType}, due to {reason} settings");
+                        TrashCard(index);
                     }
                 }
             }
             catch (Exception e)
             {
-                Main.Log(e.Message);
-                Main.Log(e.StackTrace);
+                LogDebug(e.Message);
+                LogDebug(e.StackTrace);
             }
         }
 
-        public void CastCards()
+        public static void CastCards()
         {
-            bool castCard = true;
-            while (castCard && _character.cards.cards.Count > 0)
+            if (Settings.TrashCards)
+                TrashCards(); // Make sure all cards in inventory are ones that should be cast
+
+            var index = 0;
+            var count = Cards.Count;
+            var reservedMayo = new bool[6] { false, false, false, false, false, false };
+            while (index < count)
             {
-                Card card = _character.cards.cards[0];
-                List<Mana> manas = _character.cards.manas;
-                if (Main.Settings.TrashCards) TrashCards(); //Make sure all cards in inventory are ones that should be cast
+                Card card = Cards[index];
+                // Don't cast protected cards if the flag is not set
+                if (card.isProtected && !Settings.CastProtectedCards)
+                {
+                    index++;
+                    continue;
+                }
+                var enoughMayo = true;
                 for (int i = 0; i < card.manaCosts.Count; i++)
                 {
-                    //Main.LogCard(manas[i].amount.ToString());
-                    //Main.LogCard(card.manaCosts[i].ToString());
-                    if (manas[i].amount < card.manaCosts[i])
+                    if (Manas[i].amount > 0 && reservedMayo[i])
                     {
-                        //Main.LogCard("false");
-                        castCard = false;
+                        enoughMayo = false;
+                        break;
+                    }
+                    if (Manas[i].amount < card.manaCosts[i])
+                    {
+                        reservedMayo[i] = true;
+                        enoughMayo = false;
                         break;
                     }
                 }
-                //Main.LogCard(castCard.ToString());
-                if (castCard)
+                if (!enoughMayo)
                 {
-                    Main.LogCard($"Cast Card: Cost: {card.manaCosts.Sum()} Rarity: {card.cardRarity} Bonus Type: {card.bonusType}");
-                    if (card.isProtected) card.isProtected = false;
-                    _cardsController.tryConsumeCard(0);
+                    index++;
+                    continue;
                 }
+                LogCard($"Cast Card: Cost: {card.manaCosts.Sum()}, Rarity: {card.cardRarity}, Bonus Type: {card.bonusType}");
+                card.isProtected = false;
+                _cc.tryConsumeCard(index);
+                count--;
             }
         }
 
-        public void SortCards()
+        public static void SortCards()
         {
             try
             {
-                _character.cards.cards.Sort(CompareCards);
-                for (var i = 0; i < _character.cards.cards.Count; i++)
-                {
-                    _cardsController.updateDeckCard(i);
-                }
+                Cards.Sort(CompareCards);
+                for (var i = 0; i < Cards.Count; i++)
+                    _cc.updateDeckCard(i);
             }
             catch (Exception e)
             {
-                Main.Log(e.Message);
-                Main.Log(e.StackTrace);
+                LogDebug(e.Message);
+                LogDebug(e.StackTrace);
             }
         }
 
-        private float getCardChange(Card card)
-        {
-            return (_cardsController.getBonus(card.bonusType) + card.effectAmount) / _cardsController.getBonus(card.bonusType);
-        }
+        private static float GetCardChange(Card card) => (_cc.getBonus(card.bonusType) + card.effectAmount) / _cc.getBonus(card.bonusType);
 
-        private float getCardValue(Card card)
-        {
-            return (getCardChange(card) - 1) / card.manaCosts.Sum();
-        }
+        private static float GetCardValue(Card card) => (GetCardChange(card) - 1) / card.manaCosts.Sum();
 
-        private float getCardNormalValue(Card card)
-        {
-            return getCardValue(card) / _cardValues[card.bonusType];
-        }
+        private static float GetCardNormalValue(Card card) => GetCardValue(card) / _cardValues[card.bonusType];
 
-        private int CompareByPriority(string priority, Card c1, Card c2)
+        private static int CompareByPriority(string priority, Card c1, Card c2)
         {
             string[] temp = priority.Split(':');
             string bonusType = temp.Length > 1 ? temp[1] : "";
             temp[0] = temp[0].ToUpper();
             bool sortAsc = temp[0].EndsWith("-ASC");
             if (sortAsc)
-            {
                 temp[0] = temp[0].Substring(0, temp[0].Length - 4);
-            }
+
             priority = temp[0];
 
             if (priority == "RARITY")
-            {
-                //return c2.cardRarity.CompareTo(c1.cardRarity);
                 return DirectionalCompareTo(c1.cardRarity, c2.cardRarity, sortAsc);
-            }
 
             if (priority == "TIER")
-            {
-                //return c2.tier.CompareTo(c1.tier);
                 return DirectionalCompareTo(c1.tier, c2.tier, sortAsc);
-            }
 
             if (priority == "COST")
-            {
-                //return c2.manaCosts.Sum().CompareTo(c1.manaCosts.Sum());
                 return DirectionalCompareTo(c1.manaCosts.Sum(), c2.manaCosts.Sum(), sortAsc);
-            }
 
             if (priority == "TYPE")
             {
                 if (string.IsNullOrWhiteSpace(bonusType))
-                {
                     return 0;
-                }
-
-                //if (c1.bonusType.ToString() == c2.bonusType.ToString())
-                //    return 0;
-                //else if (c2.bonusType.ToString() == bonusType)
-                //    return 1;
-                //else if (c1.bonusType.ToString() == bonusType)
-                //    return -1;
-                //else
-                //    return 0;
 
                 if (c1.bonusType.ToString() == c2.bonusType.ToString())
                     return 0;
@@ -308,33 +277,16 @@ namespace NGUInjector.Managers
             }
 
             if (priority == "PROTECTED")
-            {
-                //return c2.isProtected.CompareTo(c1.isProtected);
                 return DirectionalCompareTo(c1.isProtected, c2.isProtected, sortAsc);
-            }
 
             if (priority == "CHANGE")
-            {
-                //return getCardChange(c2).CompareTo(getCardChange(c1));
-                return DirectionalCompareTo(getCardChange(c1), getCardChange(c2), sortAsc);
-            }
+                return DirectionalCompareTo(GetCardChange(c1), GetCardChange(c2), sortAsc);
 
             if (priority == "VALUE")
-            {
-                //return getCardValue(c2).CompareTo(getCardValue(c1));
-                return DirectionalCompareTo(getCardValue(c1), getCardValue(c2), sortAsc);
-            }
+                return DirectionalCompareTo(GetCardValue(c1), GetCardValue(c2), sortAsc);
 
             if (priority == "NORMALVALUE")
-            {
-                if (c1.bonusType == c2.bonusType)
-                {
-                    //return getCardValue(c2).CompareTo(getCardValue(c1));
-                    return DirectionalCompareTo(getCardValue(c1), getCardValue(c2), sortAsc);
-                }
-                //return getCardNormalValue(c2).CompareTo(getCardNormalValue(c1));
-                return DirectionalCompareTo(getCardNormalValue(c1), getCardNormalValue(c2), sortAsc);
-            }
+                return DirectionalCompareTo(GetCardNormalValue(c1), GetCardNormalValue(c2), sortAsc);
 
             return 0;
         }
@@ -342,22 +294,19 @@ namespace NGUInjector.Managers
         private static int DirectionalCompareTo<T>(T value1, T value2, bool sortAsc) where T : IComparable
         {
             if (sortAsc)
-            {
                 return value1.CompareTo(value2);
-            }
             else
-            {
                 return value2.CompareTo(value1);
-            }
         }
 
-        private int CompareCards(Card c1, Card c2)
+        private static int CompareCards(Card c1, Card c2)
         {
-            foreach (var priority in Main.Settings.CardSortOrder)
+            foreach (string priority in Settings.CardSortOrder)
             {
-                var index = CompareByPriority(priority, c1, c2);
+                int index = CompareByPriority(priority, c1, c2);
 
-                if (index != 0) return index;
+                if (index != 0)
+                    return index;
             }
 
             return 0;

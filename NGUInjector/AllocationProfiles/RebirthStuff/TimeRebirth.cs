@@ -2,26 +2,81 @@
 
 namespace NGUInjector.AllocationProfiles.RebirthStuff
 {
-    internal class TimeRebirth : BaseRebirth
+    public class TimeRebirth
     {
-        internal double RebirthTime { get; set; }
+        protected static readonly Character _character = Main.Character;
 
-        internal override bool RebirthAvailable()
+        public double RebirthTime { get; set; }
+
+        public static TimeRebirth CreateRebirth(double time, double target, string type)
         {
-            if (!Main.Settings.AutoRebirth)
+            type = type.ToUpper();
+            if (type == "TIME")
+            {
+                return new TimeRebirth { RebirthTime = time };
+            }
+
+            if (type.Contains("MUFFIN"))
+            {
+                bool balanceTime = type.StartsWith("TIMEBALANCED");
+
+                double minimum = 1;
+                double maximum = balanceTime ? 15 : 60;
+
+                double minuteBuffer = Math.Min(Math.Max(target, minimum), maximum);
+
+                return new MuffinRebirth()
+                {
+                    BalanceTime = balanceTime,
+                    MuffinMinuteBuffer = minuteBuffer
+                };
+            }
+
+            if (type == "NUMBER")
+            {
+                return new NumberRebirth
+                {
+                    MultTarget = target,
+                    RebirthTime = time
+                };
+            }
+
+            if (type == "BOSSES")
+            {
+                return new BossNumRebirth
+                {
+                    NumBosses = target,
+                    RebirthTime = time
+                };
+            }
+
+            return null;
+        }
+
+        public virtual bool RebirthAvailable(out bool challenges)
+        {
+            challenges = false;
+            if (RebirthTime < 0.0)
                 return false;
 
-            if (RebirthTime < 0)
+            if (!BaseRebirth.RebirthAvailable())
                 return false;
 
-            if (!BaseRebirthChecks())
-                return false;
-
-            if (!CharObj.challenges.inChallenge && AnyChallengesValid())
+            challenges = !_character.challenges.inChallenge && BaseRebirth.AnyChallengesValid();
+            if (challenges)
                 return true;
 
-            var time = CharObj.rebirthTime.totalseconds;
-            return time >= RebirthTime;
+            return _character.rebirthTime.totalseconds >= RebirthTime;
+        }
+
+        public bool DoRebirth()
+        {
+            return BaseRebirth.DoRebirth();
+        }
+
+        protected virtual bool PreRebirth()
+        {
+            return BaseRebirth.PreRebirth();
         }
     }
 }

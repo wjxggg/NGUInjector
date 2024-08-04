@@ -1,235 +1,199 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    internal static class DiggerManager
+    public static class DiggerManager
     {
+        private static readonly Character _character = Main.Character;
+        private static readonly AllGoldDiggerController _dc = _character.allDiggers;
+
         private static int[] _savedDiggers;
         private static int[] _tempDiggers;
+        private static int[] _curDiggers;
         private static int _cheapestDigger;
 
-        internal static LockType CurrentLock { get; set; }
-        private static readonly int[] TitanDiggers = { 0, 3, 8, 11 };
-        private static readonly int[] YggDiggers = { 8, 11 };
+        public static LockType CurrentLock { get; set; }
+        private static readonly int[] TitanDiggers = { 11, 8, 3, 0 };
+        private static readonly int[] YggDiggers = { 11, 8 };
 
-        internal static bool CanSwap()
+        private static List<GoldDigger> Diggers => _character.diggers.diggers;
+
+        private static List<int> ActiveDiggers => _character.diggers.activeDiggers;
+
+        public static void SaveDiggers() => _savedDiggers = ActiveDiggers?.OrderFrom(_curDiggers).ToArray();
+
+        public static void RestoreDiggers()
         {
-            return CurrentLock == LockType.None;
+            EquipDiggers(_savedDiggers);
+            RecapDiggers();
         }
 
-        internal static void TryTitanSwap()
-        {
-            if (!CanAcquireOrHasLock(LockType.Titan))
-                return;
+        public static void SaveTempDiggers() => _tempDiggers = ActiveDiggers?.OrderFrom(_curDiggers).ToArray();
 
-            if (CurrentLock == LockType.Titan)
-            {
-                if (ZoneHelpers.AnyTitansSpawningSoon())
-                    return;
-
-                RestoreDiggers();
-                ReleaseLock();
-                return;
-            }
-
-            if (ZoneHelpers.AnyTitansSpawningSoon())
-            {
-                CurrentLock = LockType.Titan;
-                SaveDiggers();
-                EquipDiggers(TitanDiggers);
-            }
-        }
-
-        internal static bool TryYggSwap()
-        {
-            if (!CanAcquireOrHasLock(LockType.Yggdrasil))
-                return false;
-
-            if (CurrentLock == LockType.Yggdrasil)
-                return true;
-
-            CurrentLock = LockType.Yggdrasil;
-            SaveDiggers();
-            EquipDiggers(YggDiggers);
-            return true;
-        }
-
-        internal static void ReleaseLock()
-        {
-            CurrentLock = LockType.None;
-        }
-
-        internal static void SaveDiggers()
-        {
-            var temp = new List<int>();
-            for (var i = 0; i < Main.Character.diggers.diggers.Count; i++)
-            {
-                if (Main.Character.diggers.diggers[i].active)
-                {
-                    temp.Add(i);
-                }
-            }
-
-            _savedDiggers = temp.ToArray();
-        }
-
-        internal static void SaveTempDiggers()
-        {
-            var temp = new List<int>();
-            for (var i = 0; i < Main.Character.diggers.diggers.Count; i++)
-            {
-                if (Main.Character.diggers.diggers[i].active)
-                {
-                    temp.Add(i);
-                }
-            }
-
-            _tempDiggers = temp.ToArray();
-        }
-
-        internal static void RestoreTempDiggers()
+        public static void RestoreTempDiggers()
         {
             EquipDiggers(_tempDiggers);
+            RecapDiggers();
         }
 
-        internal static void EquipDiggers(int[] diggers)
+        public static void EquipDiggers(LockType currentLock)
         {
-            Main.Log($"Equipping Diggers: {string.Join(",", diggers.Select(x => x.ToString()))}");
-            TryEquipDiggers(diggers);
-        }
-
-        internal static bool TryEquipDiggers(int[] diggers)
-        {
-            Main.Character.allDiggers.clearAllActiveDiggers();
-            var sorted = diggers.OrderByDescending(x => x).Where(x => x <= 11 && x >= 0).ToArray();
-
-            bool allEquipped = true;
-
-            for (var i = 0; i < sorted.Length; i++)
+            switch (currentLock)
             {
-                if (Main.Character.diggers.diggers[sorted[i]].maxLevel <= 0)
+                case LockType.Titan:
+                    EquipDiggers(TitanDiggers);
+                    return;
+                case LockType.Yggdrasil:
+                    EquipDiggers(YggDiggers);
+                    return;
+            }
+        }
+
+        public static bool EquipDiggers(int[] diggers, bool ignoreCap = false)
+        {
+            if (!_character.buttons.diggers.interactable)
+                return false;
+
+            _dc.clearAllActiveDiggers();
+
+            if (diggers?.Length > 0 == false)
+            {
+                _curDiggers = null;
+                return true;
+            }
+
+            Log($"Equipping Diggers: {string.Join(", ", diggers)}");
+
+            var gps = 0.0;
+            if (!ignoreCap)
+                gps = _character.grossGoldPerSecond() * (100.0 - Settings.DiggerCap) / 100.0;
+
+            var allEquipped = true;
+
+            foreach (var digger in diggers)
+            {
+                if (ActiveDiggers.Count >= _dc.maxDiggerSlots())
                 {
+                    allEquipped = false;
+                    break;
+                }
+
+                if (Diggers[digger].maxLevel <= 0)
+                {
+                    allEquipped = false;
                     continue;
                 }
 
-                Main.Character.allDiggers.setLevelMaxAffordable(sorted[i]);
+                Diggers[digger].curLevel = 1;
+                if (_character.goldPerSecond() - _dc.drain(digger, true) >= gps)
+                    _dc.activateDigger(digger);
 
-                //Main.LogDebug($"Digger {sorted[i]} level: {Main.Character.diggers.diggers[sorted[i]].curLevel} active:{Main.Character.diggers.diggers[sorted[i]].active}");
-
-                allEquipped &= Main.Character.diggers.diggers[sorted[i]].active;
+                allEquipped &= Diggers[digger].active;
             }
 
+            _curDiggers = diggers.ToArray();
+
             UpdateCheapestDigger();
+
+            _dc.refreshMenu();
             return allEquipped;
         }
 
-        private static bool CanAcquireOrHasLock(LockType requestor)
+        public static void RecapDiggers(bool ignoreCap = false)
         {
-            if (CurrentLock == requestor)
+            if (!_character.buttons.diggers.interactable)
+                return;
+
+            var gps = _character.grossGoldPerSecond();
+            if (gps == 0.0)
+                return;
+
+            if (!ignoreCap)
+                gps *= Settings.DiggerCap / 100.0;
+
+            var count = ActiveDiggers.Count;
+
+            for (var i = Diggers.Count - 1; i >= 0; i--)
             {
-                return true;
+                if (Diggers[i].active)
+                    SetLevelMaxAffordable(i, gps / count);
             }
 
-            if (CurrentLock == LockType.None)
+            for (var i = 0; i < _curDiggers?.Length; i++)
             {
-                return true;
+                if (!Diggers[_curDiggers[i]].active)
+                    continue;
+
+                long curLevel = Diggers[_curDiggers[i]].curLevel;
+                long num = curLevel + 1;
+
+                if (num > Diggers[_curDiggers[i]].maxLevel)
+                    continue;
+
+                Diggers[_curDiggers[i]].curLevel = num;
+                if (_character.totalGPSDrain() > gps)
+                    Diggers[_curDiggers[i]].curLevel = curLevel;
             }
 
-            return false;
-        }
-
-        internal static void RecapDiggers()
-        {
-            var gross = Main.Character.grossGoldPerSecond();
-            var sub = 0.0;
-            for (var i = Main.Character.diggers.diggers.Count - 1; i >= 0; i--)
-            {
-                if (Main.Character.diggers.diggers[i].active)
-                {
-                    SetLevelMaxAffordable(i, gross - sub);
-                    sub += Main.Character.allDiggers.drain(i);
-                }
-            }
             UpgradeCheapestDigger();
-            Main.Character.allDiggers.refreshMenu();
+            _dc.refreshMenu();
         }
 
         private static void SetLevelMaxAffordable(int id, double cap)
         {
-            if (id < 0 || id > Main.Character.diggers.diggers.Count)
+            if (id < 0 || id > Diggers.Count)
                 return;
-            var curLevel = Main.Character.diggers.diggers[id].curLevel;
-            Main.Character.diggers.diggers[id].curLevel = 0L;
-            if (Main.Character.goldPerSecond() < Main.Character.allDiggers.drain(id, 1, true))
-            {
-                Main.Character.diggers.diggers[id].curLevel = curLevel;
-            }
+            var curLevel = Diggers[id].curLevel;
+            Diggers[id].curLevel = 0L;
+            if (cap < _dc.drain(id, 1, true))
+                Diggers[id].curLevel = curLevel;
             else
             {
-                var num1 = cap;
-                var num2 = Main.Character.allDiggers.baseGPSDrain[id];
-                var a = Main.Character.allDiggers.gpsGrowthRate[id];
-                var num3 = Math.Min((long)(Math.Log(num1 / num2, Math.E) / Math.Log(a, Math.E)), Main.Character.diggers.diggers[id].maxLevel);
-                if (num3 < 0L)
-                    num3 = 0L;
-                if (num3 > Main.Character.diggers.diggers[id].maxLevel)
-                    num3 = Main.Character.diggers.diggers[id].maxLevel;
-                Main.Character.diggers.diggers[id].curLevel = num3;
-                if (Main.Character.diggers.diggers[id].curLevel == 0L && Main.Character.diggers.diggers[id].active)
-                {
-                    var num4 = 0;
-                    while (num4 < Main.Character.diggers.activeDiggers.Count)
-                        ++num4;
-                    Main.Character.diggers.diggers[id].active = false;
-                    Main.Character.diggers.activeDiggers.RemoveAt(Main.Character.diggers.activeDiggers.IndexOf(id));
-                }
-                if (Main.Character.grossGoldPerSecond() < Main.Character.allDiggers.totalGPSDrain())
-                {
-                    Main.Character.diggers.diggers[id].curLevel = curLevel;
-                }
-                else if (!Main.Character.diggers.diggers[id].active && Main.Character.diggers.diggers[id].curLevel > 0L && Main.Character.diggers.activeDiggers.Count < Main.Character.allDiggers.maxDiggerSlots())
-                    Main.Character.allDiggers.activateDigger(id);
+                var num1 = (long)Math.Floor(Math.Log(cap / _dc.baseGPSDrain[id], _dc.gpsGrowthRate[id]) + 1L);
+                if (num1 < curLevel)
+                    num1 = curLevel;
+                if (num1 > Diggers[id].maxLevel)
+                    num1 = Diggers[id].maxLevel;
+                Diggers[id].curLevel = num1;
+                if (Diggers[id].curLevel == 0L && Diggers[id].active)
+                    _dc.activateDigger(id);
+                if (_character.grossGoldPerSecond() < _dc.totalGPSDrain())
+                    Diggers[id].curLevel = curLevel;
+                else if (!Diggers[id].active && Diggers[id].curLevel > 0L && ActiveDiggers.Count < _dc.maxDiggerSlots())
+                    _dc.activateDigger(id);
             }
         }
 
-        internal static void RestoreDiggers()
+        public static void UpdateCheapestDigger()
         {
-            Main.Character.allDiggers.clearAllActiveDiggers();
-            EquipDiggers(_savedDiggers);
-        }
-
-        internal static void UpdateCheapestDigger()
-        {
-            if (!Main.Settings.UpgradeDiggers) return;
+            if (!Settings.UpgradeDiggers)
+                return;
             _cheapestDigger = -1;
-            for (var i = 0; i < Main.Character.diggers.diggers.Count; i++)
+            for (var i = 0; i < Diggers.Count; i++)
             {
                 if (_cheapestDigger == -1)
-                {
                     _cheapestDigger = i;
-                }
-                if (Main.Character.allDiggers.upgradeCost(i) < Main.Character.allDiggers.upgradeCost(_cheapestDigger))
-                {
+                if (_dc.upgradeCost(i) < _dc.upgradeCost(_cheapestDigger))
                     _cheapestDigger = i;
-                }
             }
         }
 
-        internal static void UpgradeCheapestDigger()
+        public static void UpgradeCheapestDigger()
         {
-            if (!Main.Settings.UpgradeDiggers) return;
-            if (_cheapestDigger == -1) return;
-            if (Main.Character.allDiggers.upgradeCost(_cheapestDigger) + Main.Settings.MoneyPitThreshold < Main.Character.realGold)
-            {
-                Main.Log("Upgrading Digger " + _cheapestDigger);
-                Main.Character.allDiggers.upgradeMaxLevel(_cheapestDigger);
-            }
-            else
-            {
+            if (!Settings.UpgradeDiggers)
                 return;
-            }
+            if (_cheapestDigger == -1)
+                return;
+            if (!_character.buttons.diggers.interactable)
+                return;
+            if (_dc.upgradeCost(_cheapestDigger) + Settings.MoneyPitThreshold > _character.realGold)
+                return;
+
+            Log("Upgrading Digger " + _cheapestDigger);
+            _dc.upgradeMaxLevel(_cheapestDigger);
 
             UpdateCheapestDigger();
             UpgradeCheapestDigger();

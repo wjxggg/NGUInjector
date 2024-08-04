@@ -1,345 +1,132 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    internal enum LockType
+    public static class LoadoutManager
     {
-        Titan,
-        Yggdrasil,
-        MoneyPit,
-        Gold,
-        Quest,
-        Cooking,
-        None
-    }
-    internal static class LoadoutManager
-    {
+        private static readonly Character _character = Main.Character;
+        private static readonly InventoryController _ic = Main.InventoryController;
+
         private static int[] _savedLoadout;
         private static int[] _tempLoadout;
-        private static int[] _originalQuestLoadout;
-        private static bool _swappedQuestToMoneyPit = false;
-        private static bool _swappedQuestToTitan = false;
-        public static bool SwappedQuestToMoneyPit { get => _swappedQuestToMoneyPit; }
-        public static bool SwappedQuestToTitan { get => _swappedQuestToTitan; }
+        private static int[] _savedDaycare;
 
+        private static Inventory Inventory => _character.inventory;
 
-        internal static LockType CurrentLock { get; set; }
+        private static List<Equipment> Daycare => Inventory.daycare;
 
-        internal static bool CanSwap()
-        {
-            return CurrentLock == LockType.None;
-        }
-
-        internal static void AcquireLock(LockType type)
-        {
-            CurrentLock = type;
-        }
-
-        internal static void ReleaseLock()
-        {
-            CurrentLock = LockType.None;
-        }
-
-        internal static void RestoreGear()
+        public static void RestoreGear()
         {
             Log($"Restoring original loadout");
             ChangeGear(_savedLoadout);
         }
 
-        internal static void RestoreOriginalQuestGear()
+        public static void ChangeGear(int[] gearIds, bool shockwave = false)
         {
-            Log($"Restoring original loadout");
-            ChangeGear(_originalQuestLoadout);
-        }
-
-        internal static void TryTitanSwap()
-        {
-            //If we're currently holding the lock
-            if (CurrentLock == LockType.Titan)
-            {
-                //If we haven't AKed yet, just return
-                if (ZoneHelpers.AnyTitansSpawningSoon())
-                {
-                    //LogDebug("Waiting for kill...");
-                    return;
-                }
-
-                //Titans have been AKed, restore back to original gear
-                if (_swappedQuestToTitan)
-                {
-                    RestoreQuestLayoutFromTitan();
-                    _swappedQuestToTitan = !_swappedQuestToTitan;
-                }
-                else
-                {
-                    RestoreGear();
-                    ReleaseLock();
-                    //LogDebug("Releasing Titan Lock");
-                }
-
+            if (gearIds?.Length > 0 == false)
                 return;
-            }
 
-            //Skip if we have no defined titan gear sets
-            if (Settings.TitanLoadout.Length == 0 && Settings.GoldDropLoadout.Length == 0)
-            {
-                return;
-            }
-
-            //Skip if we're currently locked for yggdrasil (although this generally shouldn't happen)
-            if (CurrentLock != LockType.Quest && !CanAcquireOrHasLock(LockType.Titan))
-            {
-                return;
-            }
-
-            //No lock currently, check if titans are spawning
-            if (ZoneHelpers.AnyTitansSpawningSoon())
-            {
-                //If we're questing save Quest gear and go back to that gearset after the titan kill
-                if (CurrentLock == LockType.Quest)
-                {
-                    SaveTempLoadout();
-                    ReleaseLock();
-                    _swappedQuestToTitan = true;
-                }
-
-                Log("Equipping Loadout for Titans");
-
-                //Titans are spawning soon, grab a lock and swap
-                AcquireLock(LockType.Titan);
-                SaveCurrentLoadout();
-                //LogDebug("Locking Titan");
-
-                if (Settings.ManageGoldLoadouts && ZoneHelpers.ShouldRunGoldLoadout())
-                {
-                    Log("Equipping Gold Drop Loadout");
-                    ChangeGear(Settings.GoldDropLoadout);
-                    Settings.DoGoldSwap = false;
-                    //LogDebug("Gold Gear swap");
-                }
-                else if(ZoneHelpers.ShouldRunTitanLoadout())
-                {
-                    Log("Equipping Titan Loadout");
-                    ChangeGear(Settings.TitanLoadout);
-                    //LogDebug("Titan Gear swap");
-                }
-            }
-        }
-
-        internal static bool TryYggdrasilSwap()
-        {
-            if (!CanAcquireOrHasLock(LockType.Yggdrasil))
-                return false;
-
-            if (CurrentLock == LockType.Yggdrasil)
-                return true;
-
-            Log("Equipping Yggdrasil Loadout");
-            AcquireLock(LockType.Yggdrasil);
-            SaveCurrentLoadout();
-            ChangeGear(Settings.YggdrasilLoadout);
-            return true;
-        }
-
-        internal static bool TryMoneyPitSwap()
-        {
-            if (CurrentLock == LockType.Quest)
-            {
-                SaveTempLoadout();
-                ReleaseLock();
-                _swappedQuestToMoneyPit = true;
-            }
-
-            else if (!CanAcquireOrHasLock(LockType.MoneyPit))
-            {
-                return false;
-            }
-
-            Log("Equipping Money Pit");
-            AcquireLock(LockType.MoneyPit);
-            SaveCurrentLoadout();
-            ChangeGear(Settings.MoneyPitLoadout, true);
-            return true;
-        }
-
-        internal static bool TryGoldDropSwap()
-        {
-            if (!CanAcquireOrHasLock(LockType.Gold))
-                return false;
-
-            //We already hold the lock so just return true
-            if (CurrentLock == LockType.Gold)
-            {
-                return true;
-            }
-
-            Log("Equipping Gold Loadout");
-            AcquireLock(LockType.Gold);
-            SaveCurrentLoadout();
-            ChangeGear(Settings.GoldDropLoadout);
-
-            return true;
-        }
-
-        internal static bool TryQuestSwap()
-        {
-
-            if (!CanAcquireOrHasLock(LockType.Quest))
-            {
-                return false;
-            }
-
-            //We already hold the lock so just return true
-            if (CurrentLock == LockType.Quest)
-            {
-                return true;
-            }
-
-            Log("Equipping Quest Loadout");
-            AcquireLock(LockType.Quest);
-            SaveOriginalQuestLoadout();
-            ChangeGear(Settings.QuestLoadout);
-
-            return true;
-        }
-
-        internal static bool HasQuestLock()
-        {
-            return CurrentLock == LockType.Quest;
-        }
-
-        internal static bool TryCookingSwap()
-        {
-            if (!CanAcquireOrHasLock(LockType.Cooking))
-            {
-                return false;
-            }
-
-            //We already hold the lock so just return true
-            if (CurrentLock == LockType.Cooking)
-            {
-                return true;
-            }
-
-            Log("Equipping Cooking Loadout");
-            AcquireLock(LockType.Cooking);
-            SaveCurrentLoadout();
-            ChangeGear(Settings.CookingLoadout);
-
-            return true;
-        }
-
-        internal static bool HasCookingLock()
-        {
-            return CurrentLock == LockType.Cooking;
-        }
-
-        private static bool CanAcquireOrHasLock(LockType requestor)
-        {
-            if (CurrentLock == requestor)
-            {
-                return true;
-            }
-
-            if (CurrentLock == LockType.Quest)
-            {
-                LoadoutManager.RestoreOriginalQuestGear();
-                LoadoutManager.ReleaseLock();
-            }
-
-            if (CurrentLock == LockType.None)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static void ChangeGear(int[] gearIds, bool moneyPit = false)
-        {
-            if (gearIds.Length == 0)
-                return;
-            Log($"Received New Gear for {getLockTypeName(CurrentLock)}: {string.Join(",", gearIds.Select(x => x.ToString()).ToArray())}");
+            Log($"Received New Gear for {LockManager.GetLockTypeName()}: {string.Join(", ", gearIds)}");
+            var headSwapped = false;
+            var chestSwapped = false;
+            var legsSwapped = false;
+            var bootsSwapped = false;
             var weaponSlot = -5;
             var accSlot = 10000;
-            var controller = Main.InventoryController;
 
-            Main.Character.removeMostEnergy();
-            Main.Character.removeMostMagic();
-            Main.Character.removeAllRes3();
+            _character.removeMostEnergy();
+            _character.removeMostMagic();
+            _character.removeAllRes3();
 
             try
             {
                 foreach (var itemId in gearIds)
                 {
-                    var inv = Main.Character.inventory;
-
-                    var equip = FindItemSlot(itemId, moneyPit);
+                    var equip = FindItemSlot(itemId, shockwave);
 
                     if (equip == null)
                     {
                         try
                         {
-                            Log($"Missing item {Main.InventoryController.itemInfo.itemName[itemId]} with ID {itemId}");
+                            Log($"Missing item {_ic.itemInfo.itemName[itemId]} with ID {itemId}");
                         }
                         catch (Exception)
                         {
-                            //pass
+                            // pass
                         }
 
                         continue;
                     }
 
+                    if (equip.slot >= 100000)
+                    {
+                        if (!equip.equipment.isEquipment())
+                            continue;
+
+                        var newSlot = InventoryManager.MoveFromDaycareToInventory(Inventory, equip.slot);
+                        if (newSlot < 0)
+                        {
+                            try
+                            {
+                                Log("Failed to move an item from daycare: missing empty slots in the inventory.");
+                            }
+                            catch (Exception)
+                            {
+                                // pass
+                            }
+
+                            continue;
+                        }
+                        equip.slot = newSlot;
+                    }
+
                     var type = equip.equipment.type;
 
-                    inv.item2 = equip.slot;
+                    Inventory.item2 = equip.slot;
                     switch (type)
                     {
-                        case part.Head:
-                            inv.item1 = -1;
-                            controller.swapHead();
+                        case part.Head when !headSwapped:
+                            Inventory.item1 = -1;
+                            _ic.swapHead();
+                            headSwapped = true;
                             break;
-                        case part.Chest:
-                            inv.item1 = -2;
-                            controller.swapChest();
+                        case part.Chest when !chestSwapped:
+                            Inventory.item1 = -2;
+                            _ic.swapChest();
+                            chestSwapped = true;
                             break;
-                        case part.Legs:
-                            inv.item1 = -3;
-                            controller.swapLegs();
+                        case part.Legs when !legsSwapped:
+                            Inventory.item1 = -3;
+                            _ic.swapLegs();
+                            legsSwapped = true;
                             break;
-                        case part.Boots:
-                            inv.item1 = -4;
-                            controller.swapBoots();
+                        case part.Boots when !bootsSwapped:
+                            Inventory.item1 = -4;
+                            _ic.swapBoots();
+                            bootsSwapped = true;
                             break;
-                        case part.Weapon:
-                            if (weaponSlot == -5)
-                            {
-                                inv.item1 = -5;
-                                controller.swapWeapon();
-                            }
-                            else if (weaponSlot == -6 && controller.weapon2Unlocked())
-                            {
-                                inv.item1 = -6;
-                                controller.swapWeapon2();
-                            }
-
+                        case part.Weapon when weaponSlot == -5:
+                            Inventory.item1 = -5;
+                            _ic.swapWeapon();
                             weaponSlot--;
                             break;
-                        case part.Accessory:
-                            if (controller.accessoryID(accSlot) < controller.accessorySpaces() && accSlot != equip.slot)
-                            {
-                                inv.item1 = accSlot;
-                                controller.swapAcc();
-                            }
-
-                            accSlot++;
-
+                        case part.Weapon when weaponSlot == -6 && _ic.weapon2Unlocked():
+                            Inventory.item1 = -6;
+                            _ic.swapWeapon2();
                             break;
+                        case part.Accessory:
+                            if (_ic.accessoryID(accSlot) < _ic.accessorySpaces() && accSlot != equip.slot)
+                            {
+                                Inventory.item1 = accSlot;
+                                _ic.swapAcc();
+                            }
+                            accSlot++;
+                            break;
+                        default:
+                            continue;
                     }
                 }
             }
@@ -349,210 +136,324 @@ namespace NGUInjector.Managers
                 Log(e.StackTrace);
             }
 
-            controller.updateBonuses();
-            controller.updateInventory();
+            _ic.updateBonuses();
+            _ic.updateInventory();
 
-            updateEnergy();
-            updateMagic();
-            updateRes3();
-            
+            UpdateResources();
+
             Log("Finished equipping gear");
         }
 
-        private static void updateEnergy()
+        public static void FillDaycare()
         {
-            if (Main.Character.curEnergy >= Main.Character.hardCap() || Main.Character.curEnergy >= Main.Character.totalCapEnergy())
+            if (Settings.Shockwave.Length > 0)
             {
-                long num1 = Main.Character.totalCapEnergy() - Main.Character.curEnergy;
-                Main.Character.curEnergy += num1;
-                Main.Character.idleEnergy += num1;
-            }
-        }
+                var missingDaycare = Settings.Shockwave.Except(Daycare.Select(x => x.id));
+                if (!missingDaycare.Any())
+                    return;
 
-        private static void updateMagic()
-        {
-            if (Main.Character.magic.curMagic >= Main.Character.hardCap() || Main.Character.magic.curMagic >= Main.Character.totalCapMagic())
-            {
-                long num2 = Main.Character.totalCapMagic() - Main.Character.magic.curMagic;
-                Main.Character.magic.curMagic += num2;
-                Main.Character.magic.idleMagic += num2;
-            }
-        }
+                Log($"Putting gear into daycare: {string.Join(", ", missingDaycare)}");
 
-        private static void updateRes3()
-        {
-            if (Main.Character.res3.curRes3 >= Main.Character.hardCap() || Main.Character.res3.curRes3 >= Main.Character.totalCapRes3())
-            {
-                long num3 = Main.Character.totalCapRes3() - Main.Character.res3.curRes3;
-                Main.Character.res3.curRes3 += num3;
-                Main.Character.res3.idleRes3 += num3;
-            }
-        }
-
-        private static ih FindItemSlot(int id, bool moneyPit = false)
-        {
-            var inv = Main.Character.inventory;
-            if (inv.head.id == id)
-            {
-                return inv.head.GetInventoryHelper(-1);
-            }
-
-            if (inv.chest.id == id)
-            {
-                return inv.chest.GetInventoryHelper(-2);
-            }
-
-            if (inv.legs.id == id)
-            {
-                return inv.legs.GetInventoryHelper(-3);
-            }
-
-            if (inv.boots.id == id)
-            {
-                return inv.boots.GetInventoryHelper(-4);
-            }
-
-            if (inv.weapon.id == id)
-            {
-                return inv.weapon.GetInventoryHelper(-5);
-            }
-
-            if (Main.InventoryController.weapon2Unlocked())
-            {
-                if (inv.weapon2.id == id)
+                var availableSlots = new Queue<int>();
+                for (int i = 0; i < Daycare.Count; i++)
                 {
-                    return inv.weapon2.GetInventoryHelper(-6);
+                    var slotInfo = Daycare[i];
+                    if (slotInfo.id == 0)
+                        availableSlots.Enqueue(i + 100000);
                 }
-            }
 
-            for (var i = 0; i < inv.accs.Count; i++)
-            {
-                if (inv.accs[i].id == id)
+                if (Settings.MoneyPitDaycare)
                 {
-                    return inv.accs[i].GetInventoryHelper(i + 10000);
+                    for (int i = 0; i < Daycare.Count; i++)
+                    {
+                        var slotInfo = Daycare[i];
+                        if (slotInfo.id == 0)
+                            continue;
+                        if (Array.IndexOf(Settings.Shockwave, slotInfo.id) >= 0)
+                            continue;
+                        if (_ic.daycares[i].daycareSlider.value < Settings.DaycareThreshold / 100f)
+                            availableSlots.Enqueue(i + 100000);
+                    }
                 }
+
+                foreach (var itemId in missingDaycare)
+                {
+                    if (availableSlots.Count <= 0)
+                        break;
+
+                    var equip = FindItemSlot(itemId, true);
+                    if (equip == null)
+                    {
+                        try
+                        {
+                            Log($"Missing item {_ic.itemInfo.itemName[itemId]} with ID {itemId}");
+                        }
+                        catch (Exception)
+                        {
+                            // pass
+                        }
+
+                        continue;
+                    }
+
+                    if (equip.slot < 0 || _ic.accessoryID(equip.slot) >= 0)
+                    {
+                        var emptySlot = Inventory.inventory.FindIndex(x => x.id == 0);
+                        if (emptySlot < 0)
+                            continue;
+
+                        _character.removeMostEnergy();
+                        _character.removeMostMagic();
+                        _character.removeAllRes3();
+
+                        Inventory.item1 = equip.slot;
+                        Inventory.item2 = emptySlot;
+                        switch (equip.equipment.type)
+                        {
+                            case part.Head:
+                                _ic.swapHead();
+                                break;
+                            case part.Chest:
+                                _ic.swapChest();
+                                break;
+                            case part.Legs:
+                                _ic.swapLegs();
+                                break;
+                            case part.Boots:
+                                _ic.swapBoots();
+                                break;
+                            case part.Weapon:
+                                _ic.swapWeapon();
+                                break;
+                            case part.Accessory:
+                                _ic.swapAcc();
+                                break;
+                            default:
+                                continue;
+                        }
+                    }
+                    else
+                    {
+                        Inventory.item2 = equip.slot;
+                    }
+                    Inventory.item1 = availableSlots.Dequeue();
+                    _ic.swapDaycare();
+                }
+
+                _ic.updateBonuses();
+                _ic.updateInventory();
+
+                UpdateResources();
+
+                Log("Finished putting gear into daycare");
+            }
+        }
+
+        public static ih FindItemSlot(int id, bool shockwave = false)
+        {
+            if (id <= 0)
+                return null;
+
+            var items = Inventory.GetConvertedEquips().Concat(Inventory.GetConvertedInventory()).Where(x => x.id == id);
+            var isMacGuffin = InventoryManager.macguffinList.Keys.Contains(id);
+
+            if (shockwave)
+            {
+                // MacGuffins don't hardcap at level 100
+                if (!isMacGuffin)
+                    items = items.Where(x => x.level < 100);
+
+                // We want to upgrade highest level items
+                if (items.Any())
+                    return items.AllMaxBy(x => x.level).First();
+            }
+            else if (items.Any())
+            {
+                // We want to put lowest level MacGuffin into daycare
+                if (isMacGuffin)
+                    return items.AllMinBy(x => x.level).First();
+
+                return items.MaxItem();
             }
 
-            var items = Main.Character.inventory.GetConvertedInventory()
-                .Where(x => x.id == id && x.equipment.isEquipment()).ToArray();
-            if (items.Length != 0)
+            if (shockwave && Settings.MoneyPitDaycare)
             {
-                return moneyPit ? items.OrderByDescending(x => x.level == 100 ? 0 : x.level).First() : items.MaxItem();
+                var index = Daycare.FindIndex(x => x.id == id);
+                if (index >= 0)
+                {
+                    var completion = Main.InventoryController.daycares[index].daycareSlider.value;
+                    if (isMacGuffin || completion <= Settings.DaycareThreshold / 100f)
+                    {
+                        var helper = Daycare.First(x => x.id == id).GetInventoryHelper(index + 100000);
+                        return helper;
+                    }
+                }
             }
 
             return null;
         }
 
+        public static void SaveDaycare() => _savedDaycare = Daycare.Select(x => x.id).ToArray();
+
+        public static void RestoreDaycare()
+        {
+            for (int i = 0; i < _savedDaycare?.Length; i++)
+            {
+                var item = _savedDaycare[i];
+
+                if (Daycare[i].id == item)
+                    continue;
+
+                if (item == 0)
+                {
+                    InventoryManager.MoveFromDaycareToInventory(Inventory, i + 100000);
+                }
+                else
+                {
+                    if (Daycare.Find(x => x.id == item) != null)
+                        continue;
+
+                    var equip = FindItemSlot(item, true);
+                    if (equip == null)
+                    {
+                        InventoryManager.MoveFromDaycareToInventory(Inventory, i + 100000);
+                        continue;
+                    }
+
+                    if (equip.level == 100 && equip.equipment.type != part.MacGuffin)
+                    {
+                        InventoryManager.MoveFromDaycareToInventory(Inventory, i + 100000);
+                        continue;
+                    }
+
+                    if (equip.slot < 0 || _ic.accessoryID(equip.slot) >= 0)
+                    {
+                        var emptySlot = Inventory.inventory.FindIndex(x => x.id == 0);
+                        if (emptySlot < 0)
+                            continue;
+
+                        _character.removeMostEnergy();
+                        _character.removeMostMagic();
+                        _character.removeAllRes3();
+
+                        Inventory.item1 = equip.slot;
+                        Inventory.item2 = emptySlot;
+                        switch (equip.equipment.type)
+                        {
+                            case part.Head:
+                                _ic.swapHead();
+                                break;
+                            case part.Chest:
+                                _ic.swapChest();
+                                break;
+                            case part.Legs:
+                                _ic.swapLegs();
+                                break;
+                            case part.Boots:
+                                _ic.swapBoots();
+                                break;
+                            case part.Weapon:
+                                _ic.swapWeapon();
+                                break;
+                            case part.Accessory:
+                                _ic.swapAcc();
+                                break;
+                            default:
+                                continue;
+                        }
+                    }
+                    else
+                    {
+                        Inventory.item2 = equip.slot;
+                    }
+                    Inventory.item1 = i + 100000;
+                    _ic.swapDaycare();
+                }
+            }
+
+            _ic.updateBonuses();
+            _ic.updateInventory();
+
+            UpdateResources();
+        }
+
+        private static void UpdateResources()
+        {
+            UpdateEnergy();
+            UpdateMagic();
+            UpdateRes3();
+        }
+
+        private static void UpdateEnergy()
+        {
+            if (_character.curEnergy >= _character.totalCapEnergy())
+            {
+                long num = _character.totalCapEnergy() - _character.curEnergy;
+                _character.curEnergy += num;
+                _character.idleEnergy += num;
+            }
+        }
+
+        private static void UpdateMagic()
+        {
+            if (_character.magic.curMagic >= _character.totalCapMagic())
+            {
+                long num = _character.totalCapMagic() - _character.magic.curMagic;
+                _character.magic.curMagic += num;
+                _character.magic.idleMagic += num;
+            }
+        }
+
+        private static void UpdateRes3()
+        {
+            if (_character.res3.curRes3 >= _character.totalCapRes3())
+            {
+                long num = _character.totalCapRes3() - _character.res3.curRes3;
+                _character.res3.curRes3 += num;
+                _character.res3.idleRes3 += num;
+            }
+        }
+
         private static List<int> GetCurrentGear()
         {
-            var inv = Main.Character.inventory;
             var loadout = new List<int>
             {
-                inv.head.id,
-                inv.boots.id,
-                inv.chest.id,
-                inv.legs.id,
-                inv.weapon.id
+                Inventory.head.id,
+                Inventory.boots.id,
+                Inventory.chest.id,
+                Inventory.legs.id,
+                Inventory.weapon.id
             };
 
 
-            if (Main.Character.inventoryController.weapon2Unlocked())
-            {
-                loadout.Add(inv.weapon2.id);
-            }
+            if (_ic.weapon2Unlocked())
+                loadout.Add(Inventory.weapon2.id);
 
-            for (var id = 10000; Main.InventoryController.accessoryID(id) < Main.Character.inventory.accs.Count; ++id)
+            for (var id = 10000; _ic.accessoryID(id) < Inventory.accs.Count; ++id)
             {
                 var index = Main.InventoryController.accessoryID(id);
-                loadout.Add(Main.Character.inventory.accs[index].id);
+                loadout.Add(Inventory.accs[index].id);
             }
 
             return loadout;
         }
 
-        private static void SaveOriginalQuestLoadout()
-        {
-            var loadout = GetCurrentGear();
-            _originalQuestLoadout = loadout.ToArray();
-            Log($"Saved Original Quest Loadout {string.Join(",", _originalQuestLoadout.Select(x => x.ToString()).ToArray())}");
-        }
-
-        private static void SaveCurrentLoadout()
+        public static void SaveCurrentLoadout()
         {
             var loadout = GetCurrentGear();
             _savedLoadout = loadout.ToArray();
-            Log($"Saved Current Loadout {string.Join(",", _savedLoadout.Select(x => x.ToString()).ToArray())}");
+            if (_savedLoadout?.Length > 0)
+                Log($"Saved Current Loadout {string.Join(", ", _savedLoadout)}");
         }
 
-        internal static void SaveTempLoadout()
+        public static void SaveTempLoadout()
         {
             var loadout = GetCurrentGear();
             _tempLoadout = loadout.ToArray();
-            Log($"Saved Temp Loadout {string.Join(",", _tempLoadout.Select(x => x.ToString()).ToArray())}");
+            if (_tempLoadout?.Length > 0)
+                Log($"Saved Temp Loadout {string.Join(", ", _tempLoadout)}");
         }
 
-        internal static void RestoreTempLoadout()
-        {
-            ChangeGear(_tempLoadout);
-        }
-
-        internal static void RestoreQuestLayoutFromPit()
-        {
-            RestoreTempLoadout();
-            _swappedQuestToMoneyPit = false;
-            AcquireLock(LockType.Quest);
-        }
-
-        private static void RestoreQuestLayoutFromTitan()
-        {
-            RestoreTempLoadout();
-            AcquireLock(LockType.Quest);
-        }
-
-
-        public static string getLockTypeName(LockType currentLock)
-        {
-            switch (currentLock)
-            {
-                case LockType.Cooking:
-                    return "Cooking";
-                case LockType.Gold:
-                    return "Gold";
-                case LockType.MoneyPit:
-                    return "MoneyPit";
-                case LockType.None:
-                    return "None";
-                case LockType.Quest:
-                    return "Quest";
-                case LockType.Titan:
-                    return "Titan";
-                case LockType.Yggdrasil:
-                    return "Yggdrasil";
-            }
-            return "Unknown";
-        }
-
-        //private static float GetSeedGain(Equipment e)
-        //{
-        //    var amount =
-        //        typeof(ItemController).GetMethod("effectBonus", BindingFlags.NonPublic | BindingFlags.Instance);
-        //    if (e.spec1Type == specType.Seeds)
-        //    {
-        //        var p = new object[] { e.spec1Cur, e.spec1Type };
-        //        return (float)amount?.Invoke(Main.Controller, p);
-        //    }
-        //    if (e.spec2Type == specType.Seeds)
-        //    {
-        //        var p = new object[] { e.spec2Cur, e.spec2Type };
-        //        return (float)amount?.Invoke(Main.Controller, p);
-        //    }
-        //    if (e.spec3Type == specType.Seeds)
-        //    {
-        //        var p = new object[] { e.spec3Cur, e.spec3Type };
-        //        return (float)amount?.Invoke(Main.Controller, p);
-        //    }
-
-        //    return 0;
-        //}
+        public static void RestoreTempLoadout() => ChangeGear(_tempLoadout);
     }
 }

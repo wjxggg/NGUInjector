@@ -1,203 +1,240 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
+using UnityEngine;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    internal class YggdrasilManager
+    public static class YggdrasilManager
     {
-        private readonly Character _character;
+        private static readonly Character _character = Main.Character;
+        private static readonly AllYggdrasil _yc = _character.yggdrasilController;
+        private static readonly FruitController _fc = _yc.fruits[0];
 
-        public YggdrasilManager()
-        {
-            _character = Main.Character;
-        }
+        private static List<Fruit> Fruits => _character.yggdrasil.fruits;
 
-        internal static bool AnyHarvestable()
+        public static bool AnyHarvestable()
         {
-            for (var i = 0; i < Main.Character.yggdrasil.fruits.Count; i++)
+            for (var i = 0; i < Fruits.Count; i++)
             {
-                if (Main.Character.yggdrasilController.fruits[0].harvestTier(i) > 0)
+                if (_fc.harvestTier(i) > 0)
                     return true;
             }
 
             return false;
         }
 
-        internal bool NeedsHarvest()
+        private static float EquipYggdrasilYield()
         {
-            return _character.yggdrasilController.anyFruitMaxxed();
+            float result = 1f;
+            foreach (var id in Settings.YggdrasilLoadout)
+            {
+                ih item = LoadoutManager.FindItemSlot(id);
+                if (item == null)
+                    continue;
+
+                if (item.equipment.spec1Type == specType.Yggdrasil)
+                    result += item.equipment.spec1Cur / 1e7f;
+                if (item.equipment.spec2Type == specType.Yggdrasil)
+                    result += item.equipment.spec2Cur / 1e7f;
+                if (item.equipment.spec3Type == specType.Yggdrasil)
+                    result += item.equipment.spec3Cur / 1e7f;
+            }
+            return result;
         }
 
-        internal bool NeedsSwap()
+        private static long MacguffinFruit2Bonus(int tier, bool firstHarvest = true)
         {
-            var thresh = Math.Max(1, Settings.YggSwapThreshold);
-            for (var i = 0; i < Main.Character.yggdrasil.fruits.Count; i++)
+            var fruit = Fruits[13];
+            int tierFactor = _fc.tierFactor(tier);
+            bool usePoop = fruit.usePoop && (!_character.settings.poopOnlyMaxTier || tier == (int)fruit.maxTier);
+            float poopModifier = usePoop ? _character.allArbitrary.poopModifier() : 1f;
+            float harvestBonus = firstHarvest ? _character.adventureController.itopod.totalHarvestBonus(13) : 1f;
+            float equipBonus = EquipYggdrasilYield();
+            var result = (long)Mathf.Ceil(tierFactor * 0.1f * poopModifier * equipBonus * _character.yggdrasilYieldBonus() * harvestBonus);
+            if (result >= int.MaxValue)
+                result = int.MaxValue;
+            if (result < 0)
+                result = 0L;
+            return result;
+        }
+
+        private static bool MacguffinFruit2Ready()
+        {
+            var fruit = Fruits[13];
+            if (!fruit.eatFruit)
+                return false;
+
+            long maxTier = fruit.maxTier;
+            if (maxTier < 1)
+                return false;
+
+            int harvestTier = fruit.harvestTier();
+            if (harvestTier < 1)
+                return false;
+
+            if (fruit.usePoop && !_character.settings.poopOnlyMaxTier)
+                return false;
+
+            var maxBonus = (double)MacguffinFruit2Bonus((int)maxTier) / maxTier;
+            var bonus = (double)MacguffinFruit2Bonus(harvestTier);
+            bonus += (maxTier - harvestTier) * (double)MacguffinFruit2Bonus(1, false);
+            bonus /= maxTier;
+            if (bonus <= maxBonus)
+                return false;
+
+            return true;
+        }
+
+        private static bool QPFruitReady()
+        {
+            var fruit = Fruits[14];
+            if (!fruit.eatFruit)
+                return false;
+
+            long maxTier = fruit.maxTier;
+            if (maxTier < 1)
+                return false;
+
+            int harvestTier = fruit.harvestTier();
+            if (harvestTier < 1)
+                return false;
+
+            if (harvestTier < Settings.YggSwapThreshold && Settings.SwapYggdrasilLoadouts && Settings.YggdrasilLoadout.Length > 0)
+                return false;
+
+            if (fruit.usePoop)
+                return false;
+
+            if (_character.adventureController.itopod.totalHarvestBonus(14) > 1f)
+                return false;
+
+            return true;
+        }
+
+        public static bool NeedsHarvest(bool forced = false)
+        {
+            if (forced)
+                return AnyHarvestable();
+            return _yc.anyFruitMaxxed() || MacguffinFruit2Ready() || QPFruitReady();
+        }
+
+        public static bool NeedsSwap()
+        {
+            int thresh = Math.Max(1, Settings.YggSwapThreshold);
+            for (var i = 0; i < Fruits.Count; i++)
             {
-                if (Main.Character.yggdrasilController.fruits[0].harvestTier(i) >= thresh && Main.Character.yggdrasilController.fruits[0].fruitMaxxed(i))
+                if (_fc.harvestTier(i) >= thresh && _fc.fruitMaxxed(i))
                     return true;
             }
 
             return false;
         }
 
-        internal void ManageYggHarvest()
+        public static void ManageYggHarvest()
         {
-            //We need to harvest but we dont have a loadout to manage OR we're not managing loadout
-            if (!Settings.SwapYggdrasilLoadouts || Settings.YggdrasilLoadout.Length == 0)
-            {
-                //Not sure why this would be true, but safety first
-                if (LoadoutManager.CurrentLock == LockType.Yggdrasil)
-                {
-                    LoadoutManager.RestoreGear();
-                    LoadoutManager.ReleaseLock();
-                }
-
-                if (DiggerManager.CurrentLock == LockType.Yggdrasil)
-                {
-                    DiggerManager.RestoreDiggers();
-                    DiggerManager.ReleaseLock();
-                }
-                ActuallyHarvest();
-                return;
-            }
-
-            //We dont need to harvest anymore and we've already swapped, so swap back
-            if (!NeedsHarvest() && LoadoutManager.CurrentLock == LockType.Yggdrasil)
-            {
-                LoadoutManager.RestoreGear();
-                LoadoutManager.ReleaseLock();
-            }
-
-            if (!NeedsHarvest() && DiggerManager.CurrentLock == LockType.Yggdrasil)
-            {
-                DiggerManager.RestoreDiggers();
-                DiggerManager.ReleaseLock();
-            }
-
-            //We're managing loadouts
-            if (NeedsHarvest())
-            {
-                if (NeedsSwap())
-                {
-                    if (!LoadoutManager.TryYggdrasilSwap() || !DiggerManager.TryYggSwap())
-                        return;
-
-                    Log("Equipping Loadout for Yggdrasil and Harvesting");
-                }
-                else
-                {
-                    Log("Harvesting without swap because threshold not met");
-                }
-
-                //Harvest stuff
-                ActuallyHarvest();
-            }
+            if (LockManager.TryYggdrasilSwap())
+                HarvestAll();
         }
 
-        private void ActuallyHarvest()
+        public static void HarvestAll(bool tierOver1 = false)
         {
             ReadTooltipLog(false);
-            var currentPage = _character.yggdrasilController.curPage;
-            _character.yggdrasilController.changePage(0);
-            _character.yggdrasilController.consumeAll();
-            _character.yggdrasilController.changePage(1);
-            _character.yggdrasilController.consumeAll();
-            _character.yggdrasilController.changePage(2);
-            _character.yggdrasilController.consumeAll();
-            _character.yggdrasilController.changePage(currentPage);
-            _character.yggdrasilController.refreshMenu();
+            var macguffinFruit = Fruits[10];
+            if (tierOver1)
+            {
+                if (macguffinFruit.harvestTier() > 0 && Settings.FavoredMacguffin >= 0)
+                {
+                    InventoryManager.ManageFavoredMacguffin(false, true);
+                    _fc.consumeFruit(10);
+                }
+                InventoryManager.RestoreMacguffins();
+                _yc.consumeAll(true);
+            }
+            else
+            {
+                if (macguffinFruit.harvestTier() > 0 && macguffinFruit.harvestTier() >= macguffinFruit.maxTier && Settings.FavoredMacguffin >= 0)
+                {
+                    InventoryManager.ManageFavoredMacguffin(false, true);
+                    _fc.consumeFruit(10);
+                }
+                InventoryManager.RestoreMacguffins();
+                _yc.consumeAll();
+                if (MacguffinFruit2Ready())
+                    _fc.consumeFruit(13);
+                if (QPFruitReady())
+                    _fc.consumeFruit(14);
+            }
+            LockManager.TryYggdrasilSwap();
             ReadTooltipLog(true);
         }
 
-        internal static void HarvestAll()
-        {
-            ReadTooltipLog(false);
-            var currentPage = Main.Character.yggdrasilController.curPage;
-            Main.Character.yggdrasilController.changePage(0);
-            Main.Character.yggdrasilController.consumeAll(true);
-            Main.Character.yggdrasilController.changePage(1);
-            Main.Character.yggdrasilController.consumeAll(true);
-            Main.Character.yggdrasilController.changePage(2);
-            Main.Character.yggdrasilController.consumeAll(true);
-            Main.Character.yggdrasilController.changePage(currentPage);
-            Main.Character.yggdrasilController.refreshMenu();
-            ReadTooltipLog(true);
-        }
-
-        internal static void ReadTooltipLog(bool doLog)
+        public static void ReadTooltipLog(bool doLog)
         {
             var bLog = Main.Character.tooltip.log;
-            var type = bLog.GetType().GetField("Eventlog",
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-            var val = type?.GetValue(bLog);
-
-            if (val != null)
+            var log = bLog.GetFieldValue<TooltipLog, List<string>>("Eventlog");
+            // Add something to the end of our logs to mark them as complete
+            for (var i = 0; i < log.Count; i++)
             {
-                //Add something to the end of our logs to mark them as complete
-                var log = (List<string>)val;
-                for (var i = log.Count - 1; i >= 0; i--)
+                if (log[i].EndsWith("<b></b>"))
+                    continue;
+                if (doLog)
                 {
-                    var line = log[i];
-                    if (line.EndsWith("<b></b>")) continue;
-                    if (doLog)
-                    {
-                        LogPitSpin(line);
-                    }
-                    log[i] = $"{line}<b></b>";
+                    var sb = new StringBuilder(log[i]);
+                    sb.Replace("<b>", "");
+                    sb.Replace("</b>", "");
+                    LogPitSpin(sb.ToString());
                 }
+                log[i] += "<b></b>";
             }
         }
 
-        internal void CheckFruits()
+        public static void CheckFruits()
         {
             if (!Settings.ActivateFruits)
                 return;
-            var curPage = _character.yggdrasilController.curPage;
-            for (var i = 0; i < _character.yggdrasil.fruits.Count; i++)
+            int curPage = _yc.curPage;
+            for (var i = 0; i < Fruits.Count; i++)
             {
-                var fruit = _character.yggdrasil.fruits[i];
-                //Skip inactive fruits
+                var fruit = Fruits[i];
+                // Skip inactive fruits
                 if (fruit.maxTier == 0L)
                     continue;
 
-                //Skip fruits that are permed
+                // Skip fruits that are permed
                 if (fruit.permCostPaid)
                     continue;
 
                 if (fruit.activated)
                     continue;
 
-                if (_character.yggdrasilController.usesEnergy[i] &&
-                    _character.curEnergy >= _character.yggdrasilController.activationCost[i])
+                if (_yc.usesEnergy[i] &&
+                    _character.curEnergy >= _yc.activationCost[i])
                 {
                     Log($"Removing energy for fruit {i}");
                     _character.removeMostEnergy();
                     var slot = ChangePage(i);
-                    _character.yggdrasilController.fruits[slot].activate(i);
+                    _yc.fruits[slot].activate(i);
                     continue;
                 }
 
-                if (!_character.yggdrasilController.usesEnergy[i] &&
-                    _character.magic.curMagic >= _character.yggdrasilController.activationCost[i])
+                if (!_yc.usesEnergy[i] &&
+                    _character.magic.curMagic >= _yc.activationCost[i])
                 {
                     Log($"Removing magic for fruit {i}");
                     _character.removeMostMagic();
                     var slot = ChangePage(i);
-                    _character.yggdrasilController.fruits[slot].activate(i);
+                    _yc.fruits[slot].activate(i);
                 }
             }
-            _character.yggdrasilController.changePage(curPage);
+            _yc.changePage(curPage);
         }
 
-        private int ChangePage(int slot)
+        private static int ChangePage(int slot)
         {
-            var page = (int)Math.Floor((double)slot / 9);
-            _character.yggdrasilController.changePage(page);
+            var page = slot / 9;
+            _yc.changePage(page);
             return slot - (page * 9);
         }
     }

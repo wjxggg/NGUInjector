@@ -1,45 +1,132 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using NGUInjector.AllocationProfiles;
 using NGUInjector.Managers;
 using UnityEngine;
 using static NGUInjector.Main;
 
 namespace NGUInjector
 {
-    public static class Extensions
+    public static class EnumerableExtensions
     {
-        public static MethodInfo GetPrivateMethod(this Type t, string method)
+        // Orders elements in first collection by their order in second collection
+        public static IEnumerable<TSource> OrderFrom<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
-            return t.GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.NonPublic);
+            if (second == null)
+                return first;
+            return second.Concat(first).Intersect(first);
         }
 
+        // Returns all maximum values in a generic sequence according to a specified key selector function
+        public static IEnumerable<TSource> AllMaxBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector) where TKey : IComparable
+        {
+            var array = source.ToArray();
+            var max = selector(array[0]);
+            var count = 1;
+            for (var i = 1; i < array.Length; i++)
+            {
+                var item = array[i];
+                var value = selector(item);
+                var comp = value.CompareTo(max);
+                if (comp >= 0)
+                {
+                    if (comp > 0)
+                    {
+                        count = 0;
+                        max = value;
+                    }
+                    array[count++] = item;
+                }
+            }
+            Array.Resize(ref array, count);
+            return array;
+        }
 
+        // Returns all minimum values in a generic sequence according to a specified key selector function
+        public static IEnumerable<TSource> AllMinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector) where TKey : IComparable
+        {
+            var array = source.ToArray();
+            var min = selector(array[0]);
+            var count = 1;
+            for (var i = 1; i < array.Length; i++)
+            {
+                var item = array[i];
+                var value = selector(item);
+                var comp = value.CompareTo(min);
+                if (comp <= 0)
+                {
+                    if (comp < 0)
+                    {
+                        count = 0;
+                        min = value;
+                    }
+                    array[count++] = item;
+                }
+            }
+            Array.Resize(ref array, count);
+            return array;
+        }
+    }
+
+    public static class ReflectionExtensions
+    {
+        private const BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+        private static readonly Dictionary<(Type, string), FieldInfo> fieldCache = new Dictionary<(Type, string), FieldInfo>();
+        private static readonly Dictionary<(Type, string, Type[]), MethodInfo> methodCache = new Dictionary<(Type, string, Type[]), MethodInfo>();
+
+        private static FieldInfo GetFieldInfo<TObj>(string name)
+        {
+            var type = typeof(TObj);
+            var key = (type, name);
+            if (!fieldCache.TryGetValue(key, out var result))
+            {
+                result = type.GetField(name, flags);
+                fieldCache.Add(key, result);
+            }
+
+            return result;
+        }
+
+        private static MethodInfo GetMethodInfo<TObj>(string name, Type[] paramTypes)
+        {
+            var type = typeof(TObj);
+            var key = (type, name, paramTypes);
+            if (!methodCache.TryGetValue(key, out var result))
+            {
+                result = type.GetMethod(name, flags, null, paramTypes, null);
+                methodCache.Add(key, result);
+            }
+
+            return result;
+        }
+
+        public static TRes GetFieldValue<TObj, TRes>(this TObj obj, string name) => (TRes)GetFieldInfo<TObj>(name).GetValue(obj);
+
+        public static void SetFieldValue<TObj>(this TObj obj, string name, object value) => GetFieldInfo<TObj>(name).SetValue(obj, value);
+
+        public static void CallMethod<TObj>(this TObj obj, string name, object[] parameters = null)
+        {
+            Type[] paramTypes = parameters?.Select(x => x.GetType()).ToArray() ?? Type.EmptyTypes;
+            GetMethodInfo<TObj>(name, paramTypes).Invoke(obj, parameters);
+        }
+
+        public static TRes CallMethod<TObj, TRes>(this TObj obj, string name, object[] parameters = null)
+        {
+            Type[] paramTypes = parameters?.Select(x => x.GetType()).ToArray() ?? Type.EmptyTypes;
+            return (TRes)GetMethodInfo<TObj>(name, paramTypes).Invoke(obj, parameters);
+        }
+    }
+
+    public static class InventoryExtensions
+    {
         public static ih MaxItem(this IEnumerable<ih> items)
         {
-            return items.Aggregate(
-                new { max = int.MinValue, t = (ih)null, b = float.MaxValue },
-                (state, el) =>
-                {
-                    var current = el.locked ? el.level + 101 : el.level;
-                    if (current > state.max)
-                    {
-                        return new {max = current, t = el, b = el.equipment.GetNeededBoosts().Total()};
-                    }
-                    
-                    if (current == state.max)
-                    {
-                        return el.equipment.GetNeededBoosts().Total() > state.b
-                            ? state
-                            : new {max = current, t = el, b = el.equipment.GetNeededBoosts().Total()};
-                    }
-
-                    return state;
-                }).t;
+            return items.
+                AllMaxBy(x => x.locked ? x.level + 101 : x.level).
+                AllMinBy(x => x.equipment.GetNeededBoosts().Total()).
+                First();
         }
 
         public static ih GetInventoryHelper(this Equipment equip, int slot)
@@ -64,10 +151,7 @@ namespace NGUInjector
             }).Where(x => x.id != 0);
         }
 
-        public static bool HasBoosts(this Inventory inv)
-        {
-            return inv.inventory.Any(x => x.id < 40 && x.id > 0);
-        }
+        public static bool HasBoosts(this Inventory inv) => inv.inventory.Exists(x => x.id < 40 && x.id > 0);
 
         public static IEnumerable<ih> GetConvertedEquips(this Inventory inv)
         {
@@ -78,9 +162,7 @@ namespace NGUInjector
             };
 
             if (Main.InventoryController.weapon2Unlocked())
-            {
                 list.Add(inv.weapon2.GetInventoryHelper(-6));
-            }
 
             list.AddRange(inv.accs.Select((t, i) => t.GetInventoryHelper(i + 10000)));
 
@@ -88,171 +170,103 @@ namespace NGUInjector
             return list;
         }
 
-        public static T GetPV<T>(this EnemyAI ai, string val)
+        public static BoostsNeeded GetNeededBoosts(this Equipment equip)
         {
-            var type = ai.GetType().GetField(val,
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            return (T)type?.GetValue(ai);
-        }
+            float CalcCap(float cap, int level) => Mathf.Floor(cap * (1f + level / 100f));
 
-        public static BoostsNeeded GetNeededBoosts(this Equipment eq)
-        {
             var n = new BoostsNeeded();
 
-            if (eq.capAttack != 0.0)
-                n.Power += Math.Max(CalcCap(eq.capAttack, eq.level) - eq.curAttack, 0f);
+            if (equip.capAttack != 0.0)
+                n.power += Math.Max(CalcCap(equip.capAttack, equip.level) - equip.curAttack, 0f);
 
-            if (eq.capDefense != 0.0)
-                n.Toughness += Math.Max(CalcCap(eq.capDefense, eq.level) - eq.curDefense, 0f);
+            if (equip.capDefense != 0.0)
+                n.toughness += Math.Max(CalcCap(equip.capDefense, equip.level) - equip.curDefense, 0f);
 
-            if (Settings.SpecialBoostBlacklist.Contains(eq.id))
+            if (Settings.SpecialBoostBlacklist.Contains(equip.id))
                 return n;
 
-            if (eq.spec1Type != specType.None)
-                n.Special += Math.Max(CalcCap(eq.spec1Cap, eq.level) - eq.spec1Cur, 0f);
+            if (equip.spec1Type != specType.None)
+                n.special += Math.Max(CalcCap(equip.spec1Cap, equip.level) - equip.spec1Cur, 0f);
 
-            if (eq.spec2Type != specType.None)
-                n.Special += Math.Max(CalcCap(eq.spec2Cap, eq.level) - eq.spec2Cur, 0f);
+            if (equip.spec2Type != specType.None)
+                n.special += Math.Max(CalcCap(equip.spec2Cap, equip.level) - equip.spec2Cur, 0f);
 
-            if (eq.spec3Type != specType.None)
-                n.Special += Math.Max(CalcCap(eq.spec3Cap, eq.level) - eq.spec3Cur, 0f);
+            if (equip.spec3Type != specType.None)
+                n.special += Math.Max(CalcCap(equip.spec3Cap, equip.level) - equip.spec3Cur, 0f);
 
             return n;
         }
+    }
+
+    public static class AugmentsExtensions
+    {
+        private static readonly Character _character = Main.Character;
 
         public static float AugTimeLeftEnergy(this AugmentController aug, long energy)
         {
-            return (float)((1.0 - (double)aug.character.augments.augs[aug.id].augProgress) / (double)aug.getAugProgressPerTick(energy) / 50.0);
+            return (float)((1.0 - aug.AugProgress()) / aug.getAugProgressPerTick(energy) / 50.0);
         }
 
         public static float AugTimeLeftEnergyMax(this AugmentController aug, long energy)
         {
-            return (float)(1.0 / (double)aug.getAugProgressPerTick(energy) / 50.0);
+            return (float)(1.0 / aug.getAugProgressPerTick(energy) / 50.0);
         }
 
-        public static float AugProgress(this AugmentController aug)
-        {
-            return aug.character.augments.augs[aug.id].augProgress;
-        }
+        public static float AugProgress(this AugmentController aug) => _character.augments.augs[aug.id].augProgress;
 
         public static float UpgradeTimeLeftEnergy(this AugmentController aug, long energy)
         {
-            return (float)((1.0 - (double)aug.character.augments.augs[aug.id].upgradeProgress) / (double)getUpgradeProgressPerTick(aug, energy) / 50.0);
+            return (float)((1.0 - aug.UpgradeProgress()) / GetUpgradeProgressPerTick(aug, energy) / 50.0);
         }
 
         public static float UpgradeTimeLeftEnergyMax(this AugmentController aug, long energy)
         {
-            return (float)(1.0 / (double)getUpgradeProgressPerTick(aug, energy) / 50.0);
+            return (float)(1.0 / GetUpgradeProgressPerTick(aug, energy) / 50.0);
         }
 
-        public static float UpgradeProgress(this AugmentController aug)
-        {
-            return aug.character.augments.augs[aug.id].upgradeProgress;
-        }
+        public static float UpgradeProgress(this AugmentController aug) => _character.augments.augs[aug.id].upgradeProgress;
 
-        public static float getUpgradeProgressPerTick(this AugmentController aug, long amount)
+        public static float GetUpgradeProgressPerTick(this AugmentController aug, long amount)
         {
-            double num = 0.0;
-            if (aug.character.settings.rebirthDifficulty == difficulty.normal)
-            {
-                num = (double)((float)amount * aug.character.totalEnergyPower() / 50000f / aug.character.augmentsController.normalUpgradeSpeedDividers[aug.id] / (float)(aug.character.augments.augs[aug.id].upgradeLevel + 1L));
-            }
-            else if (aug.character.settings.rebirthDifficulty == difficulty.evil)
-            {
-                num = (double)amount * (double)aug.character.totalEnergyPower() / 50000.0 / (double)aug.character.augmentsController.evilUpgradeSpeedDividers[aug.id] / (double)(aug.character.augments.augs[aug.id].upgradeLevel + 1L);
-            }
-            else if (aug.character.settings.rebirthDifficulty == difficulty.sadistic)
-            {
-                num = (double)amount * (double)aug.character.totalEnergyPower() / (double)aug.character.augmentsController.sadisticUpgradeSpeedDividers[aug.id] / (double)(aug.character.augments.augs[aug.id].upgradeLevel + 1L);
-            }
-            num *= (double)(1f + aug.character.inventoryController.bonuses[specType.Augs]);
-            num *= (double)aug.character.inventory.macguffinBonuses[12];
-            num *= (double)aug.character.hacksController.totalAugSpeedBonus();
-            num *= (double)aug.character.adventureController.itopod.totalAugSpeedBonus();
-            num *= (double)aug.character.cardsController.getBonus(cardBonus.augSpeed);
-            num *= (double)(1f + (float)aug.character.allChallenges.noAugsChallenge.evilCompletions() * 0.05f);
-            if (aug.character.allChallenges.noAugsChallenge.completions() >= 1)
-            {
+            var num = (double)amount * _character.totalEnergyPower() / (_character.augments.augs[aug.id].upgradeLevel + 1L);
+
+            if (_character.settings.rebirthDifficulty == difficulty.normal)
+                num /= 50000.0 * _character.augmentsController.normalUpgradeSpeedDividers[aug.id];
+            else if (_character.settings.rebirthDifficulty == difficulty.evil)
+                num /= 50000.0 * _character.augmentsController.evilUpgradeSpeedDividers[aug.id];
+            else if (_character.settings.rebirthDifficulty == difficulty.sadistic)
+                num /= _character.augmentsController.sadisticUpgradeSpeedDividers[aug.id];
+
+            num *= (1f + _character.inventoryController.bonuses[specType.Augs]);
+            num *= _character.inventory.macguffinBonuses[12];
+            num *= _character.hacksController.totalAugSpeedBonus();
+            num *= _character.adventureController.itopod.totalAugSpeedBonus();
+            num *= _character.cardsController.getBonus(cardBonus.augSpeed);
+            num *= 1f + _character.allChallenges.noAugsChallenge.evilCompletions() * 0.05f;
+
+            if (_character.allChallenges.noAugsChallenge.completions() >= 1)
                 num *= 1.1000000238418579;
-            }
-            if (aug.character.allChallenges.noAugsChallenge.evilCompletions() >= aug.character.allChallenges.noAugsChallenge.maxCompletions)
-            {
+
+            if (_character.allChallenges.noAugsChallenge.evilCompletions() >= _character.allChallenges.noAugsChallenge.maxCompletions)
                 num *= 1.25;
-            }
-            if (aug.character.settings.rebirthDifficulty >= difficulty.sadistic)
-            {
-                num /= (double)aug.sadisticDivider();
-            }
-            if (num <= -3.4028234663852886E+38)
-            {
-                num = 0.0;
-            }
+
+            if (_character.settings.rebirthDifficulty >= difficulty.sadistic)
+                num /= aug.sadisticDivider();
+
             if (num >= 3.4028234663852886E+38)
-            {
                 num = 3.4028234663852886E+38;
-            }
+
             if (num <= 9.9999997171806854E-10)
-            {
                 num = 0.0;
-            }
+
             return (float)num;
         }
+    }
 
-        internal static float CalcCap(float cap, int level)
-        {
-            return Mathf.Floor(cap * (1f + (float)level / 100f));
-        }
-
-        internal static void DoAllocations(this CustomAllocation allocation)
-        {
-            if (!Settings.GlobalEnabled)
-                return;
-
-            if (allocation.IsAllocationRunning)
-                return;
-            try
-            {
-                var originalInput = Main.Character.energyMagicPanel.energyMagicInput;
-
-                allocation.IsAllocationRunning = true;
-
-                if (Settings.ManageNGUDiff)
-                    allocation.SwapNGUDiff();
-                if (Settings.ManageGear)
-                    allocation.EquipGear();
-                if (Settings.ManageEnergy)
-                    allocation.AllocateEnergy();
-                if (Settings.ManageMagic)
-                    allocation.AllocateMagic();
-                if (Settings.ManageR3)
-                    allocation.AllocateR3();
-                if (Settings.ManageConsumables)
-                    allocation.ConsumeConsumables();
-
-                if (Settings.ManageDiggers && Main.Character.buttons.diggers.interactable)
-                {
-                    allocation.EquipDiggers();
-                    DiggerManager.RecapDiggers();
-                }
-
-                if (Settings.ManageWandoos && Main.Character.buttons.wandoos.interactable)
-                    allocation.SwapOS();
-
-                Main.Character.energyMagicPanel.energyRequested.text = originalInput.ToString(CultureInfo.InvariantCulture);
-                Main.Character.energyMagicPanel.validateInput();
-            }
-            catch (Exception e)
-            {
-                Main.Log($"Error while allocating: {e.ToString()}");
-            }
-            finally
-            {
-                allocation.IsAllocationRunning = false;
-            }
-        }
-
-        //Function from https://www.dotnetperls.com/pretty-date
-        internal static string GetPrettyDate(this DateTime d)
+    public static class MiscExtensions
+    {
+        // Function from https:// www.dotnetperls.com/pretty-date
+        public static string GetPrettyDate(this DateTime d)
         {
             // 1.
             // Get time span elapsed since the date.
@@ -286,7 +300,7 @@ namespace NGUInjector
                 // C.
                 // Less than one hour ago.
                 if (secDiff < 3600)
-                    return $"{Math.Floor((double) secDiff / 60)} minutes ago";
+                    return $"{Math.Floor((double)secDiff / 60)} minutes ago";
                 // D.
                 // Less than 2 hours ago.
                 if (secDiff < 7200)
@@ -294,7 +308,7 @@ namespace NGUInjector
                 // E.
                 // Less than one day ago.
                 if (secDiff < 86400)
-                    return $"{Math.Floor((double) secDiff / 3600)} hours ago";
+                    return $"{Math.Floor((double)secDiff / 3600)} hours ago";
             }
             // 6.
             // Handle previous days.
@@ -303,7 +317,7 @@ namespace NGUInjector
             if (dayDiff < 7)
                 return $"{dayDiff} days ago";
             if (dayDiff < 31)
-                return $"{Math.Ceiling((double) dayDiff / 7)} weeks ago";
+                return $"{Math.Ceiling((double)dayDiff / 7)} weeks ago";
             return null;
         }
     }

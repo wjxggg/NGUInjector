@@ -1,73 +1,249 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using UnityEngine;
+using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    internal static class MoneyPitManager
+    public static class MoneyPitManager
     {
-        internal static void CheckMoneyPit()
+        public enum Outcomes
         {
-            if (Main.Character.pit.pitTime.totalseconds < Main.Character.pitController.currentPitTime()) return;
-            if (Main.Character.realGold < Main.Settings.MoneyPitThreshold) return;
-            if (Main.Character.realGold < 1e5) return;
+            None,
+            IronPill,
+            Worn,
+            Exp,
+            Pomegranate,
+            Daycare
+        }
 
-            if (Main.Settings.MoneyPitLoadout.Length > 0)
-            {
-                if (!LoadoutManager.TryMoneyPitSwap()) return;
-            }
-            if (Main.Character.realGold >= 1e50 && Main.Settings.ManageMagic && Main.Character.wishes.wishes[4].level > 0)
-            {
-                Main.Character.removeMostMagic();
-                for (var i = Main.Character.bloodMagic.ritual.Count - 1; i >= 0; i--)
-                {
-                    Main.Character.bloodMagicController.bloodMagics[i].cap();
-                }
+        private static readonly Character _character = Main.Character;
 
-                if (!DiggerManager.CanSwap())
+        public static float TimeUntilReady() => Mathf.Max(0f, _character.pitController.currentPitTime() - (float)_character.pit.pitTime.totalseconds);
+
+        public static bool MoneyPitReady() => TimeUntilReady() <= 0f;
+
+        public static double ShockwaveTier()
+        {
+            if (!Settings.MoneyPitRunMode)
+                return 0.0;
+
+            Outcomes outcome;
+
+            outcome = PredictMoneyPit(1e50);
+            if (outcome == Outcomes.Worn || outcome == Outcomes.Daycare)
+                return 1e50;
+
+            outcome = PredictMoneyPit(1e18);
+            if (outcome == Outcomes.Worn || outcome == Outcomes.Daycare)
+                return 1e18;
+            if (PredictMoneyPit(1e15) == Outcomes.Worn)
+                return 1e15;
+            if (PredictMoneyPit(1e13) == Outcomes.Worn)
+                return 1e13;
+
+            return 0.0;
+        }
+
+        public static bool NeedsLowerTier()
+        {
+            if (!Settings.MoneyPitRunMode)
+                return false;
+
+            if (!MoneyPitReady())
+                return false;
+
+            var tier = ShockwaveTier();
+
+            if (tier == 1e50 || tier == 0.0)
+                return false;
+
+            return true;
+        }
+
+        public static bool NeedsGold()
+        {
+            if (!Settings.MoneyPitRunMode)
+                return false;
+
+            if (!NeedsLowerTier() || NeedsRebirth())
+                return false;
+
+            var tier = ShockwaveTier();
+            double gold = _character.realGold;
+            var needGold = gold < tier;
+            if (tier == 1e15)
+                needGold &= gold % 8e16 < 1e15;
+            else if (tier == 1e13)
+                needGold &= gold % 4e14 < 1e13;
+            return needGold;
+        }
+
+        public static bool NeedsRebirth()
+        {
+            if (!Settings.MoneyPitRunMode)
+                return false;
+
+            if (_character.machine.realBaseGold <= 0.0)
+                return false;
+
+            return NeedsLowerTier();
+        }
+
+        public static void CheckMoneyPit()
+        {
+            if (!MoneyPitReady())
+                return;
+
+            var predictionEnabled = Settings.PredictMoneyPit || Settings.MoneyPitRunMode;
+            if (!predictionEnabled && _character.realGold < Settings.MoneyPitThreshold)
+                return;
+
+            double gold = _character.realGold;
+            if (gold < 1e5)
+                return;
+
+            if (Settings.MoneyPitRunMode)
+            {
+                if (NeedsRebirth() || NeedsGold())
                     return;
-                DiggerManager.SaveDiggers();
-                DiggerManager.EquipDiggers(new[] {10});
-                DoMoneyPit();
-                DiggerManager.RestoreDiggers();
+
+                var tier = ShockwaveTier();
+                if (tier == 1e15 && gold >= 1e18)
+                    return;
+                if (tier == 1e13 && gold >= 1e15)
+                    return;
+            }
+
+            if (predictionEnabled)
+            {
+                switch (PredictMoneyPit())
+                {
+                    case Outcomes.IronPill:
+                        if (gold < Settings.MoneyPitThreshold)
+                            return;
+
+                        if (!LockManager.TryMoneyPitSwap(null, new int[] { 10 }))
+                            return;
+
+                        if (Settings.ManageMagic)
+                        {
+                            _character.removeMostMagic();
+                            _character.bloodMagicController.capAllRituals();
+                        }
+
+                        break;
+                    case Outcomes.Worn:
+                        LoadoutManager.SaveDaycare();
+                        if (!LockManager.TryMoneyPitSwap(Settings.Shockwave, null, true))
+                            return;
+
+                        break;
+                    case Outcomes.Exp:
+                        if (gold < Settings.MoneyPitThreshold)
+                            return;
+
+                        if (!LockManager.TryMoneyPitSwap(null, new int[] { 11 }))
+                            return;
+
+                        break;
+                    case Outcomes.Pomegranate:
+                        if (gold < Settings.MoneyPitThreshold)
+                            return;
+
+                        if (!LockManager.TryMoneyPitSwap(Settings.YggdrasilLoadout))
+                            return;
+
+                        break;
+                    case Outcomes.Daycare:
+                        LoadoutManager.SaveDaycare();
+
+                        if (!LockManager.TryMoneyPitSwap())
+                            return;
+
+                        LoadoutManager.FillDaycare();
+
+                        break;
+                    default:
+                        if (gold >= Settings.MoneyPitThreshold)
+                            DoMoneyPit();
+
+                        return;
+                }
             }
             else
             {
-                DoMoneyPit();
+                if (gold < Settings.MoneyPitThreshold)
+                    return;
+
+                if (gold >= 1e50 && _character.wishes.wishes[4].level > 0)
+                {
+                    if (!LockManager.TryMoneyPitSwap(Settings.Shockwave, new[] { 11, 10 }))
+                        return;
+
+                    if (Settings.ManageMagic)
+                    {
+                        _character.removeMostMagic();
+                        _character.bloodMagicController.capAllRituals();
+                    }
+                }
             }
-            
-            if (Main.Settings.MoneyPitLoadout.Length > 0)
+
+            DoMoneyPit();
+
+            LoadoutManager.RestoreDaycare();
+            if (LockManager.HasMoneyPitLock())
+                LockManager.TryMoneyPitSwap();
+        }
+
+        private static Outcomes PredictMoneyPit(double gold = -1.0)
+        {
+            if (gold < 0.0)
+                gold = Main.Character.realGold;
+            if (gold >= 1e50 && _character.wishes.wishes[4].level > 0)
             {
-                if (LoadoutManager.SwappedQuestToMoneyPit)
-                {
-                    LoadoutManager.RestoreQuestLayoutFromPit();
-                }
+                var tempState = Random.state;
+                Random.state = _character.pit.pitState;
+                int num = Random.Range(1, 6);
+                Random.state = tempState;
+                return (Outcomes)num;
+            }
+            else if (gold >= 1e13)
+            {
+                int num;
+                var tempState = Random.state;
+                Random.state = _character.pit.pitState;
+                if (gold >= 1e18)
+                    num = Random.Range(1, 13);
+                else if (gold >= 1e15)
+                    num = Random.Range(1, 12);
                 else
+                    num = Random.Range(1, 11);
+                Random.state = tempState;
+                switch (num)
                 {
-                    LoadoutManager.RestoreGear();
-                    LoadoutManager.ReleaseLock();
+                    case 4:
+                        return Outcomes.Worn;
+                    case 12:
+                        return Outcomes.Daycare;
                 }
             }
+            return Outcomes.None;
         }
 
         private static void DoMoneyPit()
         {
-            var controller = Main.Character.pitController;
-            typeof(PitController).GetMethod("engage", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.Invoke(controller, null);
-
-            Main.LogPitSpin($"Money Pit Reward: {controller.pitText.text}");
+            _character.pitController.CallMethod("engage");
+            LogPitSpin($"Money Pit Reward: {_character.pitController.pitText.text}");
         }
 
-        internal static void DoDailySpin()
+        public static void DoDailySpin()
         {
-            if (Main.Character.daily.spinTime.totalseconds < Main.Character.dailyController.targetSpinTime()) return;
+            var controller = _character.dailyController;
+            if (_character.daily.spinTime.totalseconds < controller.targetSpinTime())
+                return;
 
-            Main.Character.dailyController.startNoBullshitSpin();
-            var result = Main.Character.dailyController.outcomeText.text;
-            Main.LogPitSpin($"Daily Spin Reward: {result}");
+            controller.startNoBullshitSpin();
+            string result = controller.outcomeText.text;
+            LogPitSpin($"Daily Spin Reward: {result}");
         }
     }
 }

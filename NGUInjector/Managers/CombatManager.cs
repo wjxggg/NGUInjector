@@ -1,84 +1,154 @@
-﻿using NGUInjector.AllocationProfiles;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
-using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using static NGUInjector.Main;
 using static NGUInjector.Managers.CombatHelpers;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskBand;
 
 namespace NGUInjector.Managers
 {
-    internal class CombatManager
+    public static class CombatManager
     {
-        private readonly Character _character;
-        private readonly PlayerController _pc;
-        private bool _isFighting = false;
-        private float _fightTimer = 0;
-        private string _enemyName;
+        private static readonly Character _character = Main.Character;
+        private static readonly AdventureController _ac = _character.adventureController;
+        private static readonly PlayerController _pc = _ac.playerController;
+        private static bool isFighting = false;
+        private static float fightTimer = 0;
+        private static string enemyName;
+        private static List<int> blacklistZones = new List<int>();
 
-        public CombatManager()
+        private static Adventure Adventure => _character.adventure;
+
+        public static void UpdateFightTimer(float diff) => fightTimer += diff;
+
+        private static void DoBuffs(int combatMode, bool bossOnly)
         {
-            _character = Main.Character;
-            _pc = Main.PlayerController;
+            // Use Move 69 between fights
+            if (combatMode >= 3 && CastMove69())
+                return;
+
+            // Do not cast buffs if idling or one-shotting
+            if (combatMode <= 0 || combatMode >= 4)
+                return;
+
+            // Can't cast buffs while global cooldown is on
+            if (RemainingGlobalCooldown() > 0f)
+                return;
+
+            // Amount of time we have until enemy spawn
+            float remainingTime = RemainingRespawnTime();
+            if (combatMode == 3)
+                remainingTime -= BaseGlobalCooldown() + 0.05f;
+
+            // The list of buffs we might want to cast
+            var buffs = new List<Skill>();
+            if (!bossOnly)
+            {
+                if (MegaBuffUnlocked())
+                {
+                    buffs.Add(Skill.MegaBuff);
+                }
+                else
+                {
+                    buffs.Add(Skill.OffensiveBuff);
+                    buffs.Add(Skill.UltimateBuff);
+                }
+            }
+            if (!ParryActive())
+                buffs.Add(Skill.Parry);
+            if (!ChargeActive())
+                buffs.Add(Skill.Charge);
+
+            // Remaining cooldowns of these buffs
+            var cooldowns = AllCooldowns().Where(x => buffs.Contains(x.Key) && x.Value < remainingTime).ToDictionary(x => x.Key, x => x.Value);
+
+            // Can't cast any buff yet
+            if (!cooldowns.Any(x => x.Value <= 0f))
+                return;
+
+            while (cooldowns.Count > 0 && remainingTime >= 0f)
+            {
+                // Schedule the buff with the longest cooldown
+                var skill = cooldowns.AllMaxBy(x => x.Value).First().Key;
+                cooldowns.Remove(skill);
+
+                // Go back in time by one move
+                remainingTime -= BaseGlobalCooldown() + 0.05f;
+                cooldowns = cooldowns.Where(x => x.Value < remainingTime).ToDictionary(x => x.Key, x => x.Value);
+            }
+
+            // It's too early to cast buffs
+            if (remainingTime > 0f)
+                return;
+
+            if (!bossOnly)
+            {
+                if (MegaBuffUnlocked())
+                {
+                    if (CastMegaBuff())
+                        return;
+                }
+                else if (CastOffensiveBuff() || CastUltimateBuff())
+                {
+                    return;
+                }
+            }
+
+            if (CastCharge())
+                return;
+
+            CastParry();
         }
 
-        internal void UpdateFightTimer(float diff)
-        {
-            _fightTimer += diff;
-        }
-
-        private void DoCombat(bool fastCombat, bool smartBeastMode)
+        private static void DoCombat(int combatMode)
         {
             if (!_pc.canUseMove || !_pc.moveCheck())
                 return;
 
-            CombatAI combatAI = new CombatAI(_character, fastCombat, smartBeastMode);
+            if (combatMode == 4)
+            {
+                _ac.regularAttackMove.doMove();
+                return;
+            }
 
+            var combatAI = new CombatAI(_character, combatMode);
             if (combatAI.DoPreCombat())
-            {
                 return;
-            }
-
             if (combatAI.DoCombatBuffs())
-            {
                 return;
-            }
-
             combatAI.DoCombat();
         }
 
-        internal static bool IsZoneUnlocked(int zone)
+        public static bool IsZoneUnlocked(int zone)
         {
-            return zone <= Main.Character.adventureController.zoneDropdown.options.Count - 2;
+            if (zone == -1)
+                return true;
+            if (zone >= 1000)
+                return _character.settings.itopodOn;
+            return zone <= _ac.zoneDropdown.options.Count - 2;
         }
 
-        internal void MoveToZone(int zone)
+        private static bool MoveToZone(int zone)
         {
-            if (_character.adventure.zone != zone)
+            if (IsZoneUnlocked(zone) && Adventure.zone != zone)
             {
-                _isFighting = false;
-                _fightTimer = 0;
+                isFighting = false;
+                fightTimer = 0;
+                _ac.zoneSelector.changeZone(zone);
+                return true;
             }
-            CurrentCombatZone = zone;
-            _character.adventureController.zoneSelector.changeZone(zone);
+
+            return false;
         }
 
-        private bool CheckBeastModeToggle(bool beastMode, out bool beastModeWasToggled)
+        private static bool CheckBeastModeToggle(bool beastMode, out bool beastModeWasToggled)
         {
             beastModeWasToggled = false;
-            //Beast mode checks
+            // Beast mode checks
             if (BeastModeUnlocked())
             {
                 bool needToToggle = BeastModeActive() != beastMode;
 
-                //If the button is inaccessible, we need to stay in manual mode until we can press it
+                // If the button is inaccessible, we need to stay in manual mode until we can press it
                 if (needToToggle)
                 {
                     beastModeWasToggled = CastBeastMode();
@@ -89,312 +159,314 @@ namespace NGUInjector.Managers
             return false;
         }
 
-        internal void IdleZone(int zone, bool bossOnly, bool recoverHealth, bool beastMode)
+        private static bool CheckEnemy()
         {
-            if (zone == -1 && _character.adventure.zone != -1)
+            // Skip blacklisted enemies
+            if (Adventure.zone < 1000 && Settings.BlacklistedBosses.Contains(_ac.currentEnemy.spriteID))
+                return MoveToZone(-1);
+
+            bool bossOnly = IsCurrentlyAdventuring ? Settings.SnipeBossOnly : IsCurrentlyGoldSniping;
+
+            // Skip regular enemies if we're in bossOnly mode
+            if (bossOnly && Adventure.zone < 1000 && !ZoneHelpers.ZoneIsTitan(Adventure.zone))
             {
-                MoveToZone(-1);
+                if (_ac.currentEnemy.enemyType != enemyType.boss)
+                    return MoveToZone(-1);
+            }
+
+            return false;
+        }
+
+        public static void UpdateBlacklists()
+        {
+            blacklistZones.Clear();
+            for (int i = 0; i < _ac.enemyList.Count; i++)
+            {
+                var enemyList = _ac.enemyList[i];
+                if (enemyList.Any(x => Settings.BlacklistedBosses.Contains(x.spriteID)))
+                    blacklistZones.Add(i);
+            }
+        }
+
+        public static void DoZone(int zone)
+        {
+            // If we have no enemy and we were fighting, the fight has ended, update combat flags and release any gear locks. Move to safe zone if we need to heal.
+            if (_ac.currentEnemy == null)
+            {
+                if (isFighting)
+                {
+                    if (fightTimer >= 1f && _ac.globalKillCounter > 0L)
+                        LogCombat($"{enemyName} killed in {fightTimer:0.0}s");
+
+                    if (LockManager.HasGoldLock())
+                        IsCurrentlyGoldSniping = false;
+                }
+
+                isFighting = false;
+                fightTimer = 0f;
+            }
+
+            // Equip Gold loadout if we are gold sniping
+            if (IsCurrentlyGoldSniping != LockManager.HasGoldLock())
+            {
+                LockManager.TryGoldDropSwap();
                 return;
             }
 
-            bool needsToHeal = recoverHealth && !HasFullHP();
+            // ITOPOD is handled by ITOPOD manager
+            if (zone >= 1000)
+                return;
 
-            //If we have no enemy and we were fighting, the fight has ended, update combat flags and release any gear locks. Move to safe zone if we need to heal.
-            if (_character.adventureController.currentEnemy == null)
-            {
-                if (_isFighting)
-                {
-                    if (_fightTimer > 1)
-                    {
-                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
-                    }
+            var combatMode = 2;
+            if (IsCurrentlyAdventuring)
+                combatMode = Settings.CombatMode;
+            else if (IsCurrentlyQuesting)
+                combatMode = Settings.QuestCombatMode;
+            else if (IsCurrentlyFightingTitan)
+                combatMode = Settings.TitanCombatMode;
 
-                    _isFighting = false;
-                    _fightTimer = 0;
+            if (combatMode == 0 && (ZoneHelpers.ZoneIsWalderp(zone) || ZoneHelpers.ZoneIsGodmother(zone)))
+                combatMode = 3;
 
-                    if (LoadoutManager.CurrentLock == LockType.Gold)
-                    {
-                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
-                        Settings.DoGoldSwap = false;
-                        LoadoutManager.RestoreGear();
-                        LoadoutManager.ReleaseLock();
-                        MoveToZone(-1);
-                        return;
-                    }
-                }
-                else
-                {
-                    _fightTimer = 0;
-                }
+            if (combatMode == 0 || !RegularAttackUnlocked())
+                IdleZone(zone);
+            else
+                ManualZone(zone, combatMode);
+        }
 
-                if (_character.adventure.zone != -1 && needsToHeal)
-                {
-                    MoveToZone(-1);
-                    return;
-                }
-            }
+        private static void IdleZone(int zone)
+        {
+            var beastMode = false;
+            if (IsCurrentlyAdventuring)
+                beastMode = Settings.BeastMode;
+            else if (IsCurrentlyGoldSniping)
+                beastMode = BeastModeActive();
+            else if (IsCurrentlyQuesting)
+                beastMode = Settings.QuestBeastMode;
+            else if (IsCurrentlyFightingTitan)
+                beastMode = Settings.TitanBeastMode;
 
-            //If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is enabled
+            // If we need to toggle beast mode, wait in the safe zone in manual mode until beast mode is toggled
             if (CheckBeastModeToggle(beastMode, out bool beastModeWasToggled))
             {
                 if (!beastModeWasToggled)
                 {
-                    if (_character.adventure.zone != -1)
-                    {
-                        MoveToZone(-1);
-                    }
-                    if (_character.adventure.autoattacking)
-                    {
-                        _character.adventureController.idleAttackMove.setToggle();
-                    }
+                    if (MoveToZone(-1))
+                        return;
+                    if (Adventure.autoattacking)
+                        _ac.idleAttackMove.setToggle();
                 }
                 return;
             }
 
-            //Enable idle attack if its not on
-            if (!_character.adventure.autoattacking)
+            // Wait for titan spawn in Safe Zone
+            if (!isFighting && ZoneHelpers.ZoneIsTitan(zone))
             {
-                _character.adventureController.idleAttackMove.setToggle();
-                return;
-            }
-
-            //Check if we're in not in the right zone and not in safe zone, if not move to safe zone first
-            if (_character.adventure.zone != zone && _character.adventure.zone != -1)
-            {
-                MoveToZone(-1);
-            }
-
-            //If we're in safe zone, recover health if needed.
-            if (_character.adventure.zone == -1 && needsToHeal)
-            {
-                return;
-            }
-
-            //Move to the zone
-            if (_character.adventure.zone != zone)
-            {
-                MoveToZone(zone);
-                return;
-            }
-
-            //Wait for an enemy to spawn
-            if (_character.adventureController.currentEnemy == null)
-            {
-                return;
-            }
-
-            //Skip blacklisted enemies
-            if (zone < 1000 && Settings.BlacklistedBosses.Contains(_character.adventureController.currentEnemy.spriteID))
-            {
-                MoveToZone(-1);
-                MoveToZone(zone);
-                return;
-            }
-
-            //Skip regular enemies if we're in bossOnly mode
-            if (bossOnly && zone < 1000 && !ZoneHelpers.ZoneIsTitan(zone))
-            {
-                var ec = _character.adventureController.currentEnemy.enemyType;
-                if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))
+                float time = ZoneHelpers.TimeTillTitanSpawn(Array.IndexOf(ZoneHelpers.TitanZones, zone)) ?? BaseRespawnTime();
+                if (time > BaseRespawnTime() - 0.05f)
                 {
                     MoveToZone(-1);
-                    MoveToZone(zone);
                     return;
                 }
             }
 
-            //We have a valid enemy and we're ready to fight, allow idle combat to continue
-            _isFighting = true;
-            _enemyName = _character.adventureController.currentEnemy.name;
+            // Move to the zone
+            if (Adventure.zone != zone)
+            {
+                // Check if we're in not in the right zone and not in safe zone, if not move to safe zone first
+                if (MoveToZone(-1))
+                    return;
+
+                // We're in safe zone, recover health
+                if (!HasFullHP())
+                    return;
+
+                MoveToZone(zone);
+                return;
+            }
+
+            // Enable idle attack if it's off
+            if (!Adventure.autoattacking)
+            {
+                _ac.idleAttackMove.setToggle();
+                return;
+            }
+
+            // Wait for an enemy to spawn
+            if (_ac.currentEnemy == null)
+                return;
+
+            if (CheckEnemy())
+                return;
+
+            // We have a valid enemy and we're ready to fight, allow idle combat to continue
+            isFighting = true;
+            enemyName = _ac.currentEnemy.name;
         }
 
-        internal void ManualZone(int zone, bool bossOnly, bool recoverHealth, bool precastBuffs, bool fastCombat, bool beastMode, bool smartBeastMode)
+        private static void ManualZone(int zone, int combatMode)
         {
-            if (fastCombat)
+            // Disable idle attack if it's on
+            if (Adventure.autoattacking)
             {
-                smartBeastMode = false;
-            }
-
-            if (zone == -1 && _character.adventure.zone != -1)
-            {
-                MoveToZone(-1);
+                _ac.idleAttackMove.setToggle();
                 return;
             }
 
-            //If we havent unlocked any attacks yet, use the Idle loop, otherwise turn off idle mode
-            if (_character.training.attackTraining[1] == 0)
+            // Enable Beast Mode when one-shotting
+            if (combatMode == 4 && BeastModeAvailable() && !BeastModeActive())
             {
-                IdleZone(zone, bossOnly, recoverHealth, beastMode);
-                return;
-            }
-            else if (_character.adventure.autoattacking)
-            {
-                _character.adventureController.idleAttackMove.setToggle();
-                return;
+                if (CastBeastMode())
+                    return;
             }
 
-            bool needsToPrecast = precastBuffs &&
-                (
-                    (ChargeUnlocked() && !ChargeReady()) ||
-                    (ParryUnlocked() && (!ParryReady() || !ParryActive())) ||
-                    (smartBeastMode && BeastModeUnlocked() && (!BeastModeReady() || !BeastModeActive())) ||
-                    (MegaBuffUnlocked() && !MegaBuffReady()) ||
-                    (UltimateBuffUnlocked() && !UltimateBuffReady()) ||
-                    (DefensiveBuffUnlocked() && !DefensiveBuffReady())
-                );
-
-            bool needsToHeal = recoverHealth && !HasFullHP();
-
-            //If we have no enemy and we were fighting, the fight has ended, update combat flags and release any gear locks. Move to safe zone if we need to heal or precast.
-            if (_character.adventureController.currentEnemy == null)
+            var needsToPrecast = false;
+            var needsToHeal = false;
+            var hpThreshold = 0f;
+            switch (combatMode)
             {
-                if (_isFighting)
+                case 1:
+                    var activeBuffs = new List<Skill>();
+                    if (DefensiveBuffActive())
+                        activeBuffs.Add(Skill.DefensiveBuff);
+                    if (OffensiveBuffActive())
+                        activeBuffs.Add(Skill.OffensiveBuff);
+                    if (UltimateBuffActive())
+                        activeBuffs.Add(Skill.UltimateBuff);
+                    if (MegaBuffActive())
+                        activeBuffs.Add(Skill.MegaBuff);
+                    var inactiveCooldowns = AllCooldowns().Where(x => !activeBuffs.Contains(x.Key));
+                    needsToPrecast = inactiveCooldowns.Any(x => x.Value > 0f); // If any inactive skill is on cooldown, wait for it
+                    needsToPrecast |= ChargeUnlocked() && !ChargeActive(); // If Charge is unlocked and not active, cast it
+                    needsToPrecast |= ParryUnlocked() && !ParryActive(); // If Parry is unlocked and not active, cast it
+                    needsToPrecast |= BeastModeUnlocked() && !BeastModeActive(); // If Beast mode is unlocked and not active, cast it
+                    needsToHeal = !HasFullHP();
+                    break;
+                case 2:
+                    needsToHeal = GetHPPercentage() < 0.8f;
+                    hpThreshold = 0.8f;
+                    break;
+                case 3:
+                    needsToHeal = GetHPPercentage() < 0.6f;
+                    hpThreshold = 0.6f;
+                    break;
+            }
+
+            if (!isFighting && (needsToPrecast || needsToHeal))
+            {
+                // Move to safe zone if we're not fighting and need to precast buffs or heal
+                if (MoveToZone(-1))
+                    return;
+
+                if (combatMode == 1)
                 {
-                    if (_fightTimer > 1)
-                    {
-                        LogCombat($"{_enemyName} killed in {_fightTimer:00.0}s");
-                    }
-
-                    _isFighting = false;
-                    _fightTimer = 0;
-
-                    if (LoadoutManager.CurrentLock == LockType.Gold)
-                    {
-                        Log("Gold Loadout kill done. Turning off setting and swapping gear");
-                        Settings.DoGoldSwap = false;
-                        LoadoutManager.RestoreGear();
-                        LoadoutManager.ReleaseLock();
-                        MoveToZone(-1);
+                    // When sniping cast Charge if it's not active
+                    if (CastCharge())
                         return;
-                    }
-                }
-                else
-                {
-                    _fightTimer = 0;
-                }
 
-                if (_character.adventure.zone != -1 && (needsToPrecast || needsToHeal))
+                    // When sniping cast Parry if it's not active
+                    if (CastParry())
+                        return;
+
+                    // When sniping cast Beast Mode if it's not active
+                    if (!BeastModeActive())
+                        CastBeastMode();
+                }
+                // Cast Hyper Regen if not sniping, need at least 10s to regenerate and Hyper Regen is ready
+                else if (HyperRegenReady())
+                {
+                    float regen = _character.totalAdvHPRegen() * (_character.inventory.itemList.GRBComplete ? 10f : 5f);
+                    float timeToRegen = (_ac.maxHP() * hpThreshold - Adventure.curHP) / regen;
+                    if (timeToRegen >= 10f)
+                        CastHyperRegen();
+                }
+                return;
+            }
+
+            // Wait for titan spawn in Safe Zone
+            if (!isFighting && ZoneHelpers.ZoneIsTitan(zone))
+            {
+                float time = ZoneHelpers.TimeTillTitanSpawn(Array.IndexOf(ZoneHelpers.TitanZones, zone)) ?? BaseRespawnTime();
+                if (time > BaseRespawnTime() - 0.05f)
                 {
                     MoveToZone(-1);
                     return;
                 }
             }
 
-            //If we need to toggle beast mode, just do the normal combat loop until the cooldown is ready
-            if (!smartBeastMode)
+            bool bossOnly = IsCurrentlyAdventuring ? Settings.SnipeBossOnly : IsCurrentlyGoldSniping;
+
+            if (!isFighting && combatMode == 1)
             {
-                CheckBeastModeToggle(beastMode, out bool beastModeWasToggled);
-                if (beastModeWasToggled)
+                bool skipEnemies = bossOnly || blacklistZones.Contains(zone);
+                if (!skipEnemies)
                 {
-                    return;
-                }
-            }
-
-            //Check if we're in not in the right zone and not in safe zone, if not move to safe zone first
-            if (_character.adventure.zone != zone && _character.adventure.zone != -1)
-            {
-                MoveToZone(-1);
-            }
-
-            //If we're in safe zone, precast buffs and recover health if needed.
-            if (_character.adventure.zone == -1)
-            {
-                if (needsToPrecast)
-                {
-                    if (ParryUnlocked() && !ParryActive())
+                    // When sniping, cast buffs before the fight
+                    float time = RemainingGlobalCooldown();
+                    if (MegaBuffUnlocked() && !MegaBuffActive())
                     {
-                        if (CastParry()) return;
-                    }
+                        time += BaseGlobalCooldown();
 
-                    if (smartBeastMode && BeastModeUnlocked() && !BeastModeActive())
-                    {
-                        if (CastBeastMode()) return;
-                    }
-
-                    return;
-                }
-
-                if (needsToHeal)
-                {
-                    if (ParryUnlocked() && !ParryActive())
-                    {
-                        if (CastParry()) return;
-                    }
-
-                    return;
-                }
-            }
-
-            //Move to the zone
-            if (_character.adventure.zone != zone)
-            {
-                MoveToZone(zone);
-                return;
-            }
-
-            //Wait for an enemy to spawn
-            if (_character.adventureController.currentEnemy == null)
-            {
-                if (!precastBuffs && bossOnly)
-                {
-                    if (!ParryActive())
-                    {
-                        if (CastParry())
+                        if (time > BaseRespawnTime())
                         {
+                            if (MoveToZone(-1))
+                                return;
+
+                            CastMegaBuff();
+
                             return;
                         }
                     }
-
-                    if (GetHPPercentage() < .75)
+                    else
                     {
-                        if (CastHeal())
+                        if (OffensiveBuffUnlocked() && !OffensiveBuffActive())
+                            time += BaseGlobalCooldown();
+                        if (UltimateBuffUnlocked() && !UltimateBuffActive())
+                            time += BaseGlobalCooldown();
+
+                        if (time > BaseRespawnTime())
+                        {
+                            if (MoveToZone(-1))
+                                return;
+
+                            if (CastOffensiveBuff())
+                                return;
+
+                            CastUltimateBuff();
+
                             return;
+                        }
                     }
                 }
-
-                if (fastCombat)
-                {
-                    if (GetHPPercentage() < .75)
-                    {
-                        if (CastHeal())
-                            return;
-                    }
-
-                    if (GetHPPercentage() < .60)
-                    {
-                        if (CastHyperRegen())
-                            return;
-                    }
-                }
-
-                return;
             }
 
-            //Skip blacklisted enemies
-            if (zone < 1000 && Settings.BlacklistedBosses.Contains(_character.adventureController.currentEnemy.spriteID))
+            // Move to the zone
+            if (Adventure.zone != zone)
             {
-                MoveToZone(-1);
+                // Check if we're in not in the right zone and not in safe zone, if not move to safe zone first
+                if (MoveToZone(-1))
+                    return;
+
                 MoveToZone(zone);
                 return;
             }
 
-            //Skip regular enemies if we're in bossOnly mode
-            if (bossOnly && zone < 1000 && !ZoneHelpers.ZoneIsTitan(zone))
+            // Wait for an enemy to spawn
+            if (_ac.currentEnemy == null)
             {
-                var ec = _character.adventureController.currentEnemy.enemyType;
-                if (ec != enemyType.boss && !ec.ToString().Contains("bigBoss"))
-                {
-                    MoveToZone(-1);
-                    MoveToZone(zone);
-                    return;
-                }
+                // Cast buffs while waiting
+                DoBuffs(combatMode, bossOnly);
+                return;
             }
 
-            //We have a valid enemy and we're ready to fight. Run through our manual combat routine.
-            _isFighting = true;
-            _enemyName = _character.adventureController.currentEnemy.name;
+            if (CheckEnemy())
+                return;
 
-            DoCombat(fastCombat, smartBeastMode);
+            // We have a valid enemy and we're ready to fight. Run through our manual combat routine.
+            isFighting = true;
+            enemyName = _ac.currentEnemy.name;
+
+            DoCombat(combatMode);
         }
     }
 }

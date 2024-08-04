@@ -1,190 +1,197 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
-    internal class WishManager
+    public static class WishManager
     {
-        private readonly Character _character;
-        private readonly List<int> _curValidUpgradesList = new List<int>();
+        private static readonly Character _character = Main.Character;
+        private static readonly WishesController _wc = _character.wishesController;
 
-        public WishManager()
-        {
-            _character = Main.Character;
-        }
+        private static long energy;
+        private static long magic;
+        private static long res3;
 
-        public void UpdateWishMenu()
+        private static List<Wish> Wishes => _character.wishes.wishes;
+
+        private static int MaxSlots => _wc.curWishSlots() > Settings.WishLimit ? Settings.WishLimit : _wc.curWishSlots();
+
+        private static bool Allocated(Wish wish) => wish.energy > 0 || wish.magic > 0 || wish.res3 > 0;
+
+        public static void UpdateWishMenu()
         {
-            if (!_character.wishesController.pods.Any() || !_character.wishesController.curValidUpgradesList.Any() || !_character.wishes.wishes.Any())
-            {
+            var filteredWishes = _wc.curValidUpgradesList;
+            var pods = _wc.pods;
+
+            if (pods.Count <= 0 || filteredWishes.Count <= 0 || Wishes.Count <= 0)
                 return;
-            }
 
-            int wishToSelect = _character.wishesController.curSelectedWish;
+            int wishToSelect = _wc.curSelectedWish;
 
-            int firstWishOnCurrentPage = _character.wishesController.pods[0].id;
+            int firstWishOnCurrentPage = pods[0].id;
             int wishPageIndex = 0;
 
-            if (_character.wishesController.curValidUpgradesList.Contains(firstWishOnCurrentPage))
-            {
-                wishPageIndex = _character.wishesController.curValidUpgradesList.IndexOf(firstWishOnCurrentPage);
-            }
+            if (filteredWishes.Contains(firstWishOnCurrentPage))
+                wishPageIndex = filteredWishes.IndexOf(firstWishOnCurrentPage);
 
-            int pageNumber = Mathf.FloorToInt((float)wishPageIndex / (float)_character.wishesController.pods.Count);
+            int pageNumber = wishPageIndex / pods.Count;
 
-            if (!_character.wishesController.curValidUpgradesList.Contains(wishToSelect) && _character.wishes.wishes[wishToSelect].energy == 0 && _character.wishes.wishes[wishToSelect].magic == 0 && _character.wishes.wishes[wishToSelect].res3 == 0)
-            {
-                wishToSelect = _character.wishesController.curValidUpgradesList.Cast<int?>().FirstOrDefault(x => _character.wishes.wishes[x.Value].energy > 0 || _character.wishes.wishes[x.Value].magic > 0 || _character.wishes.wishes[x.Value].res3 > 0) 
-                    ?? _character.wishesController.curValidUpgradesList.First();
-            }
+            if (!filteredWishes.Contains(wishToSelect) && !Allocated(Wishes[wishToSelect]))
+                wishToSelect = filteredWishes.FirstOrDefault(x => Allocated(Wishes[x]));
 
-            _character.wishesController.updateMenu();
+            if (wishToSelect == 0)
+                wishToSelect = filteredWishes[0];
+
+            _wc.updateMenu();
 
             if (pageNumber > 0)
-            {
-                _character.wishesController.changePage(pageNumber);
-            }
+                _wc.changePage(pageNumber);
 
-            if(wishToSelect != _character.wishesController.curSelectedWish)
-            {
-                _character.wishesController.selectNewWish(wishToSelect);
-            }
+            if (wishToSelect != _wc.curSelectedWish)
+                _wc.selectNewWish(wishToSelect);
         }
 
-        public int GetSlot(int slotId)
+        public static void Allocate(bool overCap = false)
         {
-            BuildWishList();
-            if (slotId + 1 > _curValidUpgradesList.Count)
+            _wc.removeAllResources();
+
+            long remainingEnergy = overCap ? _character.idleEnergy : (long)Math.Ceiling(_character.idleEnergy * Settings.WishEnergy / 100.0);
+            if (remainingEnergy > _character.idleEnergy)
+                remainingEnergy = _character.idleEnergy;
+
+            long remainingMagic = overCap ? _character.magic.idleMagic : (long)Math.Ceiling(_character.magic.idleMagic * Settings.WishMagic / 100.0);
+            if (remainingMagic > _character.magic.idleMagic)
+                remainingMagic = _character.magic.idleMagic;
+
+            long remainingRes3 = overCap ? _character.res3.idleRes3 : (long)Math.Ceiling(_character.res3.idleRes3 * Settings.WishR3 / 100.0);
+            if (remainingRes3 > _character.res3.idleRes3)
+                remainingRes3 = _character.res3.idleRes3;
+
+            var validWishes = GetValidWishes();
+            for (var slots = MaxSlots - _wc.numAllocatedWishes(); slots > 0; slots--)
             {
-                return -1;
-            }
-            return _curValidUpgradesList[slotId];
-        }
+                if (validWishes.Count <= 0)
+                    return;
 
-        public void BuildWishList()
-        {
-            var wishList = new List<Tuple<int, bool, double, int>>();
+                energy = remainingEnergy / slots + Math.Sign(remainingEnergy % slots);
+                magic = remainingMagic / slots + Math.Sign(remainingMagic % slots);
+                res3 = remainingRes3 / slots + Math.Sign(remainingRes3 % slots);
+                if (energy <= 0L || magic <= 0L || res3 <= 0L)
+                    return;
 
-            _curValidUpgradesList.Clear();
-
-            for (var i = 0; i < _character.wishes.wishes.Count; i++)
-            {
-                if (!IsValidWish(i))
-                {
+                int wishId = BestWishId(validWishes);
+                if (wishId < 0)
                     continue;
-                }
 
-                bool isOnPriorityList = Settings.WishPriorities.Contains(i);
-                double sortValue = -1;
-                if (!isOnPriorityList || Settings.WishSortPriorities)
-                {
-                    sortValue = GetSortValue(i);
-                }
-                int tieBreaker = isOnPriorityList ? Array.IndexOf(Settings.WishPriorities, i) : i;
+                validWishes.Remove(wishId);
 
-                wishList.Add(new Tuple<int, bool, double, int>(i, isOnPriorityList, sortValue, tieBreaker));
+                AllocateToWish(wishId);
+                var wish = Wishes[wishId];
+                remainingEnergy -= wish.energy;
+                remainingMagic -= wish.magic;
+                remainingRes3 -= wish.res3;
             }
-
-            //foreach (var wish in wishList.OrderByDescending(x => x.Item2).ThenBy(x => x.Item3).ThenBy(x => x.Item4))
-            //{
-            //    LogDebug($"Wish {wish.Item1}: Prioritized:{wish.Item2} | SortValue:{wish.Item3} | TieBreaker:{wish.Item4}");
-            //}
-
-            _curValidUpgradesList.AddRange(wishList.OrderByDescending(x => x.Item2).ThenBy(x => x.Item3).ThenBy(x => x.Item4).Select(x => x.Item1));
-
-
-
-
-
-            //var dictDouble = new Dictionary<int, double>();
-
-            //_curValidUpgradesList.Clear();
-
-            //for (var i = 0; i < Settings.WishPriorities.Length; i++)
-            //{
-            //    if (IsValidWish(Settings.WishPriorities[i]))
-            //    {
-            //        if (Settings.WishSortPriorities)
-            //        {
-            //            dictDouble.Add(Settings.WishPriorities[i], GetSortValue(Settings.WishPriorities[i]) + i);
-            //        }
-            //        else
-            //        {
-            //            //LogDebug($"Wish {Settings.WishPriorities[i]}: Prioritized:{true} | SortValue:{-1}");
-            //            _curValidUpgradesList.Add(Settings.WishPriorities[i]);
-            //        }
-            //    }
-            //}
-            //if (Settings.WishSortPriorities)
-            //{
-            //    dictDouble = (from x in dictDouble
-            //                  orderby x.Value
-            //                  select x).ToDictionary(x => x.Key, x => x.Value);
-            //    for (var j = 0; j < dictDouble.Count; j++)
-            //    {
-            //        //LogDebug($"Wish {dictDouble.ElementAt(j).Key}: Prioritized:{true} | SortValue:{dictDouble.ElementAt(j).Value}");
-            //        _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
-            //    }
-            //    dictDouble = new Dictionary<int, double>();
-            //}
-            //for (var i = 0; i < _character.wishes.wishes.Count; i++)
-            //{
-            //    if (_curValidUpgradesList.Contains(i))
-            //    {
-            //        continue;
-            //    }
-            //    if (IsValidWish(i))
-            //    {
-            //        dictDouble.Add(i, this.GetSortValue(i) + i);
-            //    }
-            //}
-            //dictDouble = (from x in dictDouble
-            //              orderby x.Value
-            //              select x).ToDictionary(x => x.Key, x => x.Value);
-            //for (var j = 0; j < dictDouble.Count; j++)
-            //{
-            //    //LogDebug($"Wish {dictDouble.ElementAt(j).Key}: Prioritized:{false} | SortValue:{dictDouble.ElementAt(j).Value}");
-            //    _curValidUpgradesList.Add(dictDouble.ElementAt(j).Key);
-            //}
         }
 
-        public bool IsValidWish(int wishId)
+        private static List<int> GetValidWishes()
         {
-            if (wishId < 0 || wishId > _character.wishes.wishSize())
-            {
-                return false;
-            }
-            if (_character.wishesController.properties[wishId].difficultyRequirement > _character.wishesController.character.settings.rebirthDifficulty)
-            {
-                return false;
-            }
-            if (_character.wishesController.progressPerTickMax(wishId) <= 0f)
-            {
-                return false;
-            }
-            if (_character.wishesController.character.wishes.wishes[wishId].level >= _character.wishesController.properties[wishId].maxLevel)
-            {
-                return false;
-            }
-            if (Settings.WishBlacklist.Length > 0 && Settings.WishBlacklist.Contains(wishId))
-            {
-                return false;
-            }
-            return true;
+            bool diffCheck(int id) => _wc.properties[id].difficultyRequirement <= _character.settings.rebirthDifficulty;
+            bool levelCheck(int id) => Wishes[id].level < _wc.properties[id].maxLevel;
+            var validWishes = Enumerable.Range(0, _character.wishes.wishSize()).Where(id => diffCheck(id) && levelCheck(id));
+            validWishes = validWishes.Except(Settings.WishBlacklist);
+            return validWishes.ToList();
         }
 
-        public double GetSortValue(int wishId)
+        private static int BestWishId(List<int> wishIds)
         {
-            if (Settings.WishSortOrder)
+            var maxima = wishIds.Where(id => ProgressPerTick(id, out _) > 0);
+            if (!maxima.Any())
+                return -1;
+            if (!Settings.WeakPriorities && Settings.WishMode > 0)
+                maxima = maxima.AllMaxBy(id => Settings.WishPriorities.Contains(id));
+            switch (Settings.WishMode)
             {
-                return _character.wishesController.wishSpeedDivider(wishId) * (1f - _character.wishes.wishes[wishId].progress);
+                case 1: // Cheapest
+                case 3 when _wc.numAllocatedWishes() == 0 && MaxSlots > 1: // Balanced, first slot
+                    maxima = maxima.AllMinBy(id => _wc.wishSpeedDivider(id));
+                    break;
+                case 2: // Fastest
+                    maxima = maxima.AllMaxBy(id => ProgressPerTick(id, out _) / (1f - Wishes[id].progress));
+                    break;
+                case 3: // Balanced
+                    if (_wc.numAllocatedWishes() == MaxSlots - 1) // Last slot
+                        maxima = maxima.AllMaxBy(id => BaseProgressPerTick(id) <= _wc.minimumWishTime() * 1.1f);
+                    maxima = maxima.AllMaxBy(id => ProgressPerTick(id, out _)).AllMaxBy(id => _wc.wishSpeedDivider(id));
+                    break;
             }
-            return _character.wishesController.properties[wishId].wishSpeedDivider;
+            maxima = maxima.AllMinBy(id =>
+            {
+                var i = Array.IndexOf(Settings.WishPriorities, id);
+                return i == -1 ? int.MaxValue : i;
+            });
+            if (Settings.WishMode > 0)
+                maxima = maxima.AllMaxBy(id => Wishes[id].progress);
+            return maxima.First();
+        }
+
+        private static float BaseProgressPerTick(int id)
+        {
+            float energyFactor = Mathf.Pow(_character.totalEnergyPower() * energy, _wc.energyBias(id));
+            float magicFactor = Mathf.Pow(_character.totalMagicPower() * magic, _wc.magicBias(id));
+            float res3Factor = Mathf.Pow(_character.totalRes3Power() * res3, _wc.res3Bias(id));
+
+            return energyFactor * magicFactor * res3Factor * _wc.totalWishSpeedBonuses() / _wc.wishSpeedDivider(id);
+        }
+
+        private static float ProgressPerTick(int id, out float ppt)
+        {
+            if (_wc.invalidID(id))
+            {
+                ppt = 0f;
+                return 0f;
+            }
+
+            ppt = BaseProgressPerTick(id);
+            if (ppt < 1E-8f)
+                return 0f;
+
+            if (ppt > _wc.minimumWishTime())
+                return _wc.minimumWishTime();
+
+            // 499 tick offset
+            float progress = Wishes[id].progress + ppt * 499f;
+            if (progress > 1f)
+                progress = 1f;
+
+            if (ppt / progress <= 5.9604644E-8f) // Math.Pow(2, -24)
+                return 0f;
+
+            return ppt;
+        }
+
+        private static void AllocateToWish(int id)
+        {
+            if (_wc.invalidID(id))
+                return;
+
+            var ppt = ProgressPerTick(id, out var baseppt);
+            if (ppt <= 0f)
+                return;
+
+            double multi = Math.Pow((double)baseppt / ppt, 1.0 / 3.0 / _wc.energyBias(id));
+
+            _character.input.energyMagicInput = (long)Math.Ceiling(energy * 1.000002 / multi);
+            _wc.addEnergy(id);
+
+            _character.input.energyMagicInput = (long)Math.Ceiling(magic * 1.000002 / multi);
+            _wc.addMagic(id);
+
+            _character.input.energyMagicInput = (long)Math.Ceiling(res3 * 1.000002 / multi);
+            _wc.addRes3(id);
         }
     }
 }
