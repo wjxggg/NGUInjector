@@ -5,12 +5,11 @@
     "Energy": [
       {
         "Time": 0,
-	    "Priorities": [ "CAPALLBT", "CAPTM:80", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+	    "Priorities": [ "CAPALLBT", "CAPTM:80" ]
       },
       {
         "Time": { "m": 30 },
-        "Priorities": [ "CAPTM:10", "CAPALLNGU", "CAPWAN", "AUG-8", "AUG-9" ],
-		"Comment": "All R3 is dedicated to Hacks, no reason to put any into wishes"
+        "Priorities": [ "CAPTM:10", "CAPALLNGU", "CAPWAN", "AUG-8", "AUG-9" ]
       },
       {
         "Time": { "h": 24, "m": 30 },
@@ -18,18 +17,17 @@
       },
       {
         "Time": { "h": 48, "m": 30 },
-        "Priorities": [ "CAPWAN:15", "CAPAUG-8:20", "CAPAUG-9:20", "CAPTM:10", "CAPALLNGU", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPWAN:15", "CAPAUG-8:20", "CAPAUG-9:20", "CAPTM:10", "CAPALLNGU" ]
       }
     ],
     "Magic": [
       {
         "Time": 0,
-        "Priorities": [ "CAPTM:80", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPTM:80" ]
       },
       {
         "Time": { "m": 30 },
         "Priorities": [ "CAPTM:10", "CAPALLNGU", "CAPWAN", "BR" ],
-		"Comment": "All R3 is dedicated to Hacks, no reason to put any into wishes"
       },
       {
         "Time": { "h": 24, "m": 30 },
@@ -37,13 +35,13 @@
       },
       {
         "Time": { "h": 48, "m": 30 },
-        "Priorities": [ "CAPWAN:20", "CAPTM:10", "BR:50", "CAPALLNGU", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPWAN:20", "CAPTM:10", "BR:50", "CAPALLNGU" ]
       }
     ],
     "R3": [
       {
         "Time": 0,
-        "Priorities": [ "CAPHACK-1:10", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPHACK-1:10" ]
       },
       {
         "Time": { "m": 30 },
@@ -51,12 +49,11 @@
       },
       {
         "Time": { "h": 24, "m": 30 },
-        "Priorities": [ "HACK-1" ],
-		"Comment": "All E/M is dedicated to NGU, no reason to put any into wishes"
+        "Priorities": [ "HACK-1" ]
       },
       {
         "Time": { "h": 48, "m": 30 },
-        "Priorities": [ "HACK-1:10", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "HACK-1:10" ]
       }
     ],
     "Gear": [
@@ -95,6 +92,13 @@
         "List": [ 0, 1, 2, 3, 4, 5, 8, 9, 10, 11 ]
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 1, 3, 6, 0, 4, 2 ],
+		"Comment": "All beards"
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
@@ -123,6 +127,7 @@
         "Items": [ "EPOT-C", "MPOT-C" ]
       }
     ],
-    "RebirthTime": -1
+    "RebirthTime": -1,
+	"Challenges": [ ]
   }
 }
