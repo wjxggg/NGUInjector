@@ -294,8 +294,10 @@ namespace NGUInjector
             Separator4.Height = 1;
 
             Graphics g = CreateGraphics();
-            tabControl1.ItemSize = new Size(tabControl1.ItemSize.Width, (int)(tabControl1.ItemSize.Height * (g.DpiY / 96f)));
+            var scale = g.DpiY / 96f;
             g.Dispose();
+
+            tabControl1.ItemSize = new Size(tabControl1.ItemSize.Width, (int)(tabControl1.ItemSize.Height * scale));
 
             // General Tab
             UnloadButton.Height = OpenSettingsFolder.Height;
@@ -319,20 +321,23 @@ namespace NGUInjector
             BlacklistAdd.Size = BlacklistRemove.Size;
 
             // Titans Tab
-            {
-                TitanAdd.Size = TitanRemove.Size;
+            TitanAdd.Size = TitanRemove.Size;
 
-                var height = Titan6Version.Height;
-                label64.Height = height;
-                label65.Height = height;
-                Titan1Placeholder.Height = height;
-                Titan2Placeholder.Height = height;
-                Titan3Placeholder.Height = height;
-                Titan4Placeholder.Height = height;
-                Titan5Placeholder.Height = height;
-                Titan13Placeholder.Height = height;
-                Titan14Placeholder.Height = height;
-            }
+            var height = Titan6Version.Height;
+            label64.Height = height;
+            label65.Height = height;
+            Titan1Placeholder.Height = height;
+            Titan2Placeholder.Height = height;
+            Titan3Placeholder.Height = height;
+            Titan4Placeholder.Height = height;
+            Titan5Placeholder.Height = height;
+            Titan13Placeholder.Height = height;
+            Titan14Placeholder.Height = height;
+
+            if (tableLayoutPanel15.Height < (height + 1) * 14)
+                tableLayoutPanel22.ColumnStyles[2].Width = SystemInformation.VerticalScrollBarWidth - 1;
+            else
+                tableLayoutPanel22.ColumnStyles.Remove(tableLayoutPanel22.ColumnStyles[2]);
 
             // Adventure Tab
             BlacklistAddEnemyButton.Size = BlacklistRemoveEnemyButton.Size;
@@ -342,14 +347,12 @@ namespace NGUInjector
             GoldLoadoutAdd.Size = GoldLoadoutRemove.Size;
 
             // Wishes Tab
-            {
-                var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
-                width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
-                width -= WishMode.Margin.Left + WishMode.Margin.Right;
-                WishMode.Width = width;
+            var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
+            width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
+            width -= WishMode.Margin.Left + WishMode.Margin.Right;
+            WishMode.Width = width;
 
-                AddWishButton.Size = RemoveWishButton.Size;
-            }
+            AddWishButton.Size = RemoveWishButton.Size;
 
             // Pit Tab
             AlignWidth(MoneyPitThreshold, AutoMoneyPit);
@@ -358,6 +361,11 @@ namespace NGUInjector
             // Cards Tab
             CardSortAdd.Size = CardSortRemove.Size;
             label1.Height = CardRarity1.Height;
+
+            if (tableLayoutPanel13.Height < (CardRarity1.Height + 1) * 14)
+                tableLayoutPanel14.ColumnStyles[3].Width = SystemInformation.VerticalScrollBarWidth - 1;
+            else
+                tableLayoutPanel14.ColumnStyles.Remove(tableLayoutPanel14.ColumnStyles[3]);
 
             // Cooking Tab
             CookingAddButton.Size = CookingRemoveButton.Size;

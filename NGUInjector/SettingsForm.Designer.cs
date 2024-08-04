@@ -367,6 +367,15 @@
             this.label40 = new System.Windows.Forms.Label();
             this.SortCards = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel13 = new System.Windows.Forms.TableLayoutPanel();
+            this.CardRarity14 = new System.Windows.Forms.ComboBox();
+            this.CardRarity13 = new System.Windows.Forms.ComboBox();
+            this.CardRarity12 = new System.Windows.Forms.ComboBox();
+            this.CardRarity11 = new System.Windows.Forms.ComboBox();
+            this.CardRarity10 = new System.Windows.Forms.ComboBox();
+            this.CardRarity9 = new System.Windows.Forms.ComboBox();
+            this.CardRarity8 = new System.Windows.Forms.ComboBox();
+            this.CardRarity7 = new System.Windows.Forms.ComboBox();
+            this.CardRarity5 = new System.Windows.Forms.ComboBox();
             this.CardCost14 = new System.Windows.Forms.ComboBox();
             this.CardCost13 = new System.Windows.Forms.ComboBox();
             this.CardCost12 = new System.Windows.Forms.ComboBox();
@@ -376,7 +385,6 @@
             this.CardCost8 = new System.Windows.Forms.ComboBox();
             this.CardCost7 = new System.Windows.Forms.ComboBox();
             this.CardCost6 = new System.Windows.Forms.ComboBox();
-            this.CardCost5 = new System.Windows.Forms.ComboBox();
             this.CardCost4 = new System.Windows.Forms.ComboBox();
             this.CardCost3 = new System.Windows.Forms.ComboBox();
             this.CardCost2 = new System.Windows.Forms.ComboBox();
@@ -386,6 +394,7 @@
             this.label23 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
             this.label55 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label56 = new System.Windows.Forms.Label();
@@ -397,9 +406,10 @@
             this.CardRarity1 = new System.Windows.Forms.ComboBox();
             this.CardRarity2 = new System.Windows.Forms.ComboBox();
             this.CardRarity3 = new System.Windows.Forms.ComboBox();
-            this.CardRarity4 = new System.Windows.Forms.ComboBox();
-            this.CardRarity6 = new System.Windows.Forms.ComboBox();
             this.label63 = new System.Windows.Forms.Label();
+            this.CardRarity6 = new System.Windows.Forms.ComboBox();
+            this.CardRarity4 = new System.Windows.Forms.ComboBox();
+            this.CardCost5 = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
             this.label17 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -423,16 +433,6 @@
             this.cookingErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.shockwaveErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.yggErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label34 = new System.Windows.Forms.Label();
-            this.CardRarity5 = new System.Windows.Forms.ComboBox();
-            this.CardRarity7 = new System.Windows.Forms.ComboBox();
-            this.CardRarity8 = new System.Windows.Forms.ComboBox();
-            this.CardRarity9 = new System.Windows.Forms.ComboBox();
-            this.CardRarity10 = new System.Windows.Forms.ComboBox();
-            this.CardRarity11 = new System.Windows.Forms.ComboBox();
-            this.CardRarity12 = new System.Windows.Forms.ComboBox();
-            this.CardRarity13 = new System.Windows.Forms.ComboBox();
-            this.CardRarity14 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.titanErrProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).BeginInit();
@@ -3316,6 +3316,78 @@
             this.tableLayoutPanel13.Controls.Add(this.CardCost5, 2, 4);
             this.tableLayoutPanel13.Name = "tableLayoutPanel13";
             // 
+            // CardRarity14
+            // 
+            resources.ApplyResources(this.CardRarity14, "CardRarity14");
+            this.CardRarity14.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity14.FormattingEnabled = true;
+            this.CardRarity14.Name = "CardRarity14";
+            this.CardRarity14.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity13
+            // 
+            resources.ApplyResources(this.CardRarity13, "CardRarity13");
+            this.CardRarity13.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity13.FormattingEnabled = true;
+            this.CardRarity13.Name = "CardRarity13";
+            this.CardRarity13.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity12
+            // 
+            resources.ApplyResources(this.CardRarity12, "CardRarity12");
+            this.CardRarity12.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity12.FormattingEnabled = true;
+            this.CardRarity12.Name = "CardRarity12";
+            this.CardRarity12.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity11
+            // 
+            resources.ApplyResources(this.CardRarity11, "CardRarity11");
+            this.CardRarity11.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity11.FormattingEnabled = true;
+            this.CardRarity11.Name = "CardRarity11";
+            this.CardRarity11.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity10
+            // 
+            resources.ApplyResources(this.CardRarity10, "CardRarity10");
+            this.CardRarity10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity10.FormattingEnabled = true;
+            this.CardRarity10.Name = "CardRarity10";
+            this.CardRarity10.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity9
+            // 
+            resources.ApplyResources(this.CardRarity9, "CardRarity9");
+            this.CardRarity9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity9.FormattingEnabled = true;
+            this.CardRarity9.Name = "CardRarity9";
+            this.CardRarity9.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity8
+            // 
+            resources.ApplyResources(this.CardRarity8, "CardRarity8");
+            this.CardRarity8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity8.FormattingEnabled = true;
+            this.CardRarity8.Name = "CardRarity8";
+            this.CardRarity8.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity7
+            // 
+            resources.ApplyResources(this.CardRarity7, "CardRarity7");
+            this.CardRarity7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity7.FormattingEnabled = true;
+            this.CardRarity7.Name = "CardRarity7";
+            this.CardRarity7.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardRarity5
+            // 
+            resources.ApplyResources(this.CardRarity5, "CardRarity5");
+            this.CardRarity5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity5.FormattingEnabled = true;
+            this.CardRarity5.Name = "CardRarity5";
+            this.CardRarity5.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
             // CardCost14
             // 
             resources.ApplyResources(this.CardCost14, "CardCost14");
@@ -3388,14 +3460,6 @@
             this.CardCost6.Name = "CardCost6";
             this.CardCost6.SelectedIndexChanged += new System.EventHandler(this.CardCost_SelectedIndexChanged);
             // 
-            // CardCost5
-            // 
-            resources.ApplyResources(this.CardCost5, "CardCost5");
-            this.CardCost5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardCost5.FormattingEnabled = true;
-            this.CardCost5.Name = "CardCost5";
-            this.CardCost5.SelectedIndexChanged += new System.EventHandler(this.CardCost_SelectedIndexChanged);
-            // 
             // CardCost4
             // 
             resources.ApplyResources(this.CardCost4, "CardCost4");
@@ -3457,6 +3521,12 @@
             resources.ApplyResources(this.label33, "label33");
             this.label33.BackColor = System.Drawing.Color.Transparent;
             this.label33.Name = "label33";
+            // 
+            // label34
+            // 
+            resources.ApplyResources(this.label34, "label34");
+            this.label34.BackColor = System.Drawing.Color.Transparent;
+            this.label34.Name = "label34";
             // 
             // label55
             // 
@@ -3530,13 +3600,11 @@
             this.CardRarity3.Name = "CardRarity3";
             this.CardRarity3.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
             // 
-            // CardRarity4
+            // label63
             // 
-            resources.ApplyResources(this.CardRarity4, "CardRarity4");
-            this.CardRarity4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity4.FormattingEnabled = true;
-            this.CardRarity4.Name = "CardRarity4";
-            this.CardRarity4.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            resources.ApplyResources(this.label63, "label63");
+            this.tableLayoutPanel13.SetColumnSpan(this.label63, 3);
+            this.label63.Name = "label63";
             // 
             // CardRarity6
             // 
@@ -3546,11 +3614,21 @@
             this.CardRarity6.Name = "CardRarity6";
             this.CardRarity6.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
             // 
-            // label63
+            // CardRarity4
             // 
-            resources.ApplyResources(this.label63, "label63");
-            this.tableLayoutPanel13.SetColumnSpan(this.label63, 3);
-            this.label63.Name = "label63";
+            resources.ApplyResources(this.CardRarity4, "CardRarity4");
+            this.CardRarity4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardRarity4.FormattingEnabled = true;
+            this.CardRarity4.Name = "CardRarity4";
+            this.CardRarity4.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
+            // 
+            // CardCost5
+            // 
+            resources.ApplyResources(this.CardCost5, "CardCost5");
+            this.CardCost5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CardCost5.FormattingEnabled = true;
+            this.CardCost5.Name = "CardCost5";
+            this.CardCost5.SelectedIndexChanged += new System.EventHandler(this.CardCost_SelectedIndexChanged);
             // 
             // tableLayoutPanel14
             // 
@@ -3708,84 +3786,6 @@
             // yggErrorProvider
             // 
             this.yggErrorProvider.ContainerControl = this;
-            // 
-            // label34
-            // 
-            resources.ApplyResources(this.label34, "label34");
-            this.label34.BackColor = System.Drawing.Color.Transparent;
-            this.label34.Name = "label34";
-            // 
-            // CardRarity5
-            // 
-            resources.ApplyResources(this.CardRarity5, "CardRarity5");
-            this.CardRarity5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity5.FormattingEnabled = true;
-            this.CardRarity5.Name = "CardRarity5";
-            this.CardRarity5.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity7
-            // 
-            resources.ApplyResources(this.CardRarity7, "CardRarity7");
-            this.CardRarity7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity7.FormattingEnabled = true;
-            this.CardRarity7.Name = "CardRarity7";
-            this.CardRarity7.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity8
-            // 
-            resources.ApplyResources(this.CardRarity8, "CardRarity8");
-            this.CardRarity8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity8.FormattingEnabled = true;
-            this.CardRarity8.Name = "CardRarity8";
-            this.CardRarity8.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity9
-            // 
-            resources.ApplyResources(this.CardRarity9, "CardRarity9");
-            this.CardRarity9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity9.FormattingEnabled = true;
-            this.CardRarity9.Name = "CardRarity9";
-            this.CardRarity9.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity10
-            // 
-            resources.ApplyResources(this.CardRarity10, "CardRarity10");
-            this.CardRarity10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity10.FormattingEnabled = true;
-            this.CardRarity10.Name = "CardRarity10";
-            this.CardRarity10.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity11
-            // 
-            resources.ApplyResources(this.CardRarity11, "CardRarity11");
-            this.CardRarity11.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity11.FormattingEnabled = true;
-            this.CardRarity11.Name = "CardRarity11";
-            this.CardRarity11.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity12
-            // 
-            resources.ApplyResources(this.CardRarity12, "CardRarity12");
-            this.CardRarity12.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity12.FormattingEnabled = true;
-            this.CardRarity12.Name = "CardRarity12";
-            this.CardRarity12.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity13
-            // 
-            resources.ApplyResources(this.CardRarity13, "CardRarity13");
-            this.CardRarity13.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity13.FormattingEnabled = true;
-            this.CardRarity13.Name = "CardRarity13";
-            this.CardRarity13.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
-            // 
-            // CardRarity14
-            // 
-            resources.ApplyResources(this.CardRarity14, "CardRarity14");
-            this.CardRarity14.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CardRarity14.FormattingEnabled = true;
-            this.CardRarity14.Name = "CardRarity14";
-            this.CardRarity14.SelectedIndexChanged += new System.EventHandler(this.CardRarity_SelectedIndexChanged);
             // 
             // SettingsForm
             // 
