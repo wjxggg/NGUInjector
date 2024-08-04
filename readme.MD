@@ -4,26 +4,26 @@ NGUInjector is an automation platform for the steam version of NGU Idle.
 
 # Instructions
 
-Releases can be found in the releases section of the github page [here](https://github.com/JConquistador/NGUInjector/releases). Do not download the source code archive, instead download the zip file with the release version in the name (dist_3.6.3.zip for example). Extract the downloaded archive to a directory of your choice. To start automation, run inject.bat in the extracted folder when NGU Idle is open.
+Releases can be found in the releases section of the github page [here](https://github.com/rus9384/NGUInjector/releases). Do not download the source code archive, instead download the zip file with the release version in the name (dist_4.1.0.zip for example). Extract the downloaded archive to a directory of your choice. To start automation, run inject.bat in the extracted folder when NGU Idle is open.
 
 You'll know the injection has worked if you see the following in the upper left portion of NGU.
 
-![Injected](https://i.imgur.com/JIF2pl4.png)
+![Injected](https://i.imgur.com/9liKClh.png)
 
 To upgrade to a new release, unload the injector from the General Settings page and then inject the new version.
 
 # Configuration
 
-**IMPORTANT NOTE** For those upgrading from an older version of NGUInjector (< 3.7.0), your configuration folder will be recreated in the directory shown below. Your old settings and profiles are NOT gone. Simply copy the old NGUInjector folder from the desktop to the new location.
+**IMPORTANT NOTE** For those upgrading from an older version of NGUInjector (< 4.1.0), your profiles using "Rebirth" section will need to be updated according to the new format. See the allocation section for more information.
 
 After injecting the dll, a new folder will be created in your AppData directory called NGUInjector (full path is %UserProfile%\AppData\LocalLow\NGUInjector). Settings files will be automatically written to this directory. The following files are of interest:
 
-- **settings.json** - Contains settings used by the application. Most settings can be configured from the in-game menu.
-- **zoneOverrides.json** - Override the default values for Idle/Manual Power/Toughness for gold sniping
+- **settings.json** - Contains settings used by the application. All settings can be configured from the settings form.
+- **zoneOverrides.json** - Override the default values for Idle/Manual Power/Toughness for gold sniping.
 
 A profiles folder will be created with the following files:
 
-- **default.json** - Breakpoints for assigning gear, magic, energy, wandoos OS, rebirth time, and diggers. See the allocation section for more information
+- **default.json** - Breakpoints for assigning gear, magic, energy, wandoos OS, rebirth time, beards, and diggers. See the allocation section for more information.
 
 More profiles can be added to this folder at your discretion.
 
@@ -34,16 +34,14 @@ A logs folder will also be created with the following files:
 - **combat.log** - Logs information from the combat algorithm
 - **allocation.log** - Logs information about allocating energy/magic/gear/diggers
 - **pitspin.log** - Logs important things like fruit harvests, money pit, daily spin. This log file will not be overwritten.
+- **cards.log** - Logs information about cast and trashed cards. This log file will not be overwritten.
+- **debug.log** - Logs information about errors. If your settings profile does not work, check this file.
 
 Saving settings.json, zoneOverrides.json, or any profile will automatically reload the settings in the Injector. Reloading the game isn't necessary
 
 # Settings.json Configurations
 
 Settings in the GUI can be managed directly in the underlying settings file if desired. This can be helpful when pasting in loadouts from the Gear Optimizer. To access these settings, open the **settings.json** file in your AppData NGUInjector folder mentioned above.
-
-There should be only one setting not found in the GUI and *must* be managed directly:
-
-- **_debugAllocation** - Will enable debug logging to a separate file of various allocation decisions made by the injector
 
 # Log Parsing
 
@@ -58,11 +56,12 @@ This is what it looks like once you set it up:
 
 An in game menu can be opened using the F1 button.
 
-![General](https://i.imgur.com/5k0KmJm.png)
+![General](https://i.imgur.com/rKcBFVr.png)
 
 - **Master Switch** - If turned off, will disable all automation
 - **Disable Overlay** - If switched on, will disable the in-game overlay.
 
+- **Money Pit Run Mode** - This mode automatically tosses gold into the Money Pit and performs rebirths to maximize the levels gained from the Money Pit.
 - **Auto Move to ITOPOD** - Automatically move to ITOPOD when nothing else is happening in automation.
 - **Auto Fight Bosses** - Automatically nuke/fight bosses.
 - **Auto Buy Energy/Magic/R3** - Automatically spend EXP on Energy/Magic/R3 based on the custom caps set by the user on their respective tabs. Will buy stats all at once after the total of all custom caps are met (including Adventure Stats if enabled).
@@ -71,11 +70,13 @@ An in game menu can be opened using the F1 button.
 - **Auto Buy Consumables** - Set this to true to have the injector auto purchase any consumables your profile is configured to use that you do not own. Will only buy consumables if you have the AP to purchase them.
 - **Use Consumables if already running** - If this is false, consumables in the consumable breakpoint will NOT be used if the consumable in question has time remaining. See section on Consumables below for more details.
 
+- **Auto Daily Save** - Automatically create save files as soon as AP reward is available. Will award AP. The files are stored in the default location for saves files and have "(NGU Injector)" in their name.
+
 - **Open Settings Folder** - Opens a folder to the NGUInjector folder which contains the settings, profiles and logs.
 
 - **Unload** - Allows you to unload the injector from the game. Check the box next to the unload button and then hit unload
 
-![Allocation](https://i.imgur.com/FvoQLZF.png)
+![Allocation](https://i.imgur.com/91Gfpq9.png)
 
 - **Allocation Profile** - Allows you to quickly switch allocation profiles. Any profiles stored in the profiles folder will be listed here. Press "Change profile" to load the profile selected in the dropdown. Press "Edit" to open the selected profile in a text editor. Press "Open Profile Folder" to open the folder containing all profiles.
 
@@ -106,7 +107,7 @@ An in game menu can be opened using the F1 button.
 - **Guff B** - Number of +levels to cast Guff B at
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/EksfVj0.png)
+![Yggdrasil](https://i.imgur.com/gvI9qqF.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for
@@ -115,7 +116,7 @@ An in game menu can be opened using the F1 button.
 - **Loadout** - Edit the loadout used for harvest yggdrasil. Add items using the box in the bottom.
 - **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths
 
-![Inventory](https://i.imgur.com/4smaL33.png)
+![Inventory](https://i.imgur.com/aaXGdyw.png)
 
 - **Manage Inventory** - When enabled, the following features will be enabled
   - **Auto Boost Merging** - If a boost is locked, boosts will automatically be merged until the boost hits 100.
@@ -136,7 +137,7 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/VpF8Wwf.png)
+![Titans](https://i.imgur.com/SzFuMat.png)
 
 - **Manage Titans** - Turns on combat and gear swapping for titans.
 - **Use Titan Combat Settings** - If enabled will override the default combat settings in the Adventure tab.
@@ -152,7 +153,7 @@ An in game menu can be opened using the F1 button.
 - **Block/Parry with Buffs** - If checked, combat will use block/parry along with offensive/defensive/ultimate buffs. Ignored during Idle combat mode.
 - **Locate Walderp** - If Walderp is hiding, will take you to the menu he's currently in.
 
-![Adventure](https://i.imgur.com/91ri7DG.png)
+![Adventure](https://i.imgur.com/y0vuEc6.png)
 
 - **Combat Enabled** - Turns on auto combat to go to target zone and kill stuff.
 
@@ -181,7 +182,7 @@ An in game menu can be opened using the F1 button.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
-![Gold](https://i.imgur.com/CAZvwq9.png)
+![Gold](https://i.imgur.com/9LLFh5M.png)
 
 - **Enable Gold Management** - If turned off, will disable all gold swap logic
 - **Do Gold Snipe** - If checked, will immediately equip gold loadout gear and perform a boss snipe in the best calculated zone based on the zone stats and gold loadout power/toughness.
@@ -191,7 +192,7 @@ An in game menu can be opened using the F1 button.
 - **Titans to Gold Snipe** - Check the box next to titans you want to swap to gold loadouts for. Leave all boxes unchecked in order to never use gold loadouts for titans. If a titan is green, gold snipe has already been completed for this titan.
 - **Reset Titan Status** - Immediately mark all titan gold swaps as incomplete
 
-![Quests](https://i.imgur.com/URjSuL1.png)
+![Quests](https://i.imgur.com/ystBmjC.png)
 
 - **Auto Quest** - If enabled, quests will automatically be turned in. Behavior varies based on the Allow Major Quests option
 - **Allow Major Quests**
@@ -212,21 +213,21 @@ An in game menu can be opened using the F1 button.
 - **Beast Mode** - Whether to use beast mode or not while in combat. Will deselect Smart Beast Mode option if selected.
 - **Smart Beast Mode** - Will enable beast mode if Defensive or Ultimate Buff is active, Piercing or Ultimate Attacks can be used AND beast mode can be turned off again before that buff expires. Will deselect Beast Mode option if selected. Ignored during Idle combat mode or if Fast Combat is enabled.
 
-![Wishes](https://i.imgur.com/g8nsInJ.png)
+![Wishes](https://i.imgur.com/undefined.png)
 
 - **Sort Wishes by Completion Time** - Each wish has a raw speed value that determines how fast it progresses. By default wishes are assigned to wish slots based on this speed (fastest wishes first). If this is checked, wishes will be assigned to slots by the remaining time to complete the current level of the wish instead. For example Wish 9 and Wish 10 both have the same raw speed, if this option is unchecked, Wish 9 will go to max level before any levels are gained in Wish 10. But since each additional level adds more time to the raw speed, if this option is checked, Wish 9 and 10 will gain levels equally.
 - **Priority Wishes** - The wishes to prioritize for the available wish slots. If there are open slots remaining after all prioritized wishes are assigned, other available wishes will be assigned to open slots ordered by the method outlined above.
 - **Sort Priority Wishes** - If unchecked, will assign wishes to wish slots based on their order in the Priority list. If checked, will order by the method outlined above.
 - **Blacklist Wishes** - Assign wishes you never want to cast here. Any which in this list will be ignored when working out the wish priorities. Supersedes Priority list if the same wish is in both lists.
 
-![The Pit](https://i.imgur.com/vXvkQPT.png)
+![The Pit](https://i.imgur.com/8HeHy2f.png)
 
 - **Auto Daily Spin** - Automatically do daily spin and log the result to the loot.log file
 - **Auto Money Pit** - Automatically throw money into the money pit if the Money Pit Threshold is met. Logs the result to the loot.log file
 - **Money Pit Threshold** - The amount of gold to wait for to throw gold into the money pit. Accepts scientific notation (ex: 1E+28)
 - **Loadout** - Items to equip before throwing money in the pit
 
-![Cards](https://i.imgur.com/b5G9O1Z.png)
+![Cards](https://i.imgur.com/fC3FFJj.png)
 
 - **Manage Mayo** - Prioritize mayo production to be able to cast the first card in your deck asap. If you have no cards, it will equalize all mayo types.
 - **Auto Cast Cards** - Cast any card that is not trashed according to your settings.
@@ -255,7 +256,7 @@ This will place any protected cards first. For all the protected cards, it will 
 - **Trash Chonkers** - If checked, BigChonker level cards will be yeeted when their type is on the Always Trash List. If not checked, BigChonker cards will not be yeeted unless they are below the configured quality or cost thresholds.
 - **Trash All Cards of Type** Will trash ALL of these card types regardless of the quality/cost settings.
 
-![Cooking](https://i.imgur.com/2pgJoUZ.png)
+![Cooking](https://i.imgur.com/undefined.png)
 
 - **Manage Cooking** - Set this to true to have the injector optimize your cooking efficiency
 - **Swap Loadout for Cooking** - Set this to true to have the injector swap to a Cooking loadout when eating meals
