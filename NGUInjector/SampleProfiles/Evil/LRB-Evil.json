@@ -4,7 +4,7 @@
     "Energy": [
       {
         "Time": 0,
-	    "Priorities": [ "CAPALLBT", "TM" }
+	    "Priorities": [ "CAPALLBT", "TM" ]
       },
       {
         "Time": { "m": 30 },
@@ -24,11 +24,11 @@
       },
       {
         "Time": { "h": 24 },
-        "Priorities": [ "WISH-0:10", "CAPALLAT", "ALLNGU" ]
+        "Priorities": [ "CAPALLAT", "ALLNGU" ]
       },
       {
         "Time": { "h": 48 },
-        "Priorities": [ "CAPALLAT", "CAPALLNGU", "CAPWAN", "WISH-0", "AUG-8", "AUG-9" ]
+        "Priorities": [ "CAPALLAT", "CAPALLNGU", "CAPWAN", "AUG-8", "AUG-9" ]
       }
     ],
     "Magic": [
@@ -54,21 +54,21 @@
       },
       {
         "Time": { "h": 24 },
-        "Priorities": [ "WISH-0:10", "ALLNGU", "BR" ]
+        "Priorities": [ "ALLNGU", "BR" ]
       },
       {
         "Time": { "h": 48 },
-        "Priorities": [ "CAPALLNGU", "CAPWAN", "WISH-0:25", "BR" ]
+        "Priorities": [ "CAPALLNGU", "CAPWAN", "BR" ]
       }
     ],
     "R3": [
       {
         "Time": 0,
-        "Priorities": [ "WISH-0" ]
+        "Priorities": [ ]
       },
       {
         "Time": { "h": 48 },
-        "Priorities": [ "WISH-0", "HACK-7", "HACK-8", "HACK-1" ]
+        "Priorities": [ "HACK-7", "HACK-8", "HACK-1" ]
       }
     ],
     "Gear": [
@@ -118,6 +118,18 @@
         "Comment": "No drop/wan/stats"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 4, 5, 6, 1, 3 ],
+		"Comment": "Wandoos + Adv + GPS + Drops + NGU"
+	  },
+	  {
+		"Time": { "h": 1 },
+		"List": [ 5, 1, 3, 6, 0 ],
+		"Comment": "Adv + Drops + NGU + GPS + Stats"
+	  }	  
+	],
     "NGUDiff": [
       {
         "Time": 0,
@@ -132,6 +144,7 @@
         "Diff": 0
       }
     ],
-    "RebirthTime": -1
+    "RebirthTime": -1,
+	"Challenges": []
   }
 }
