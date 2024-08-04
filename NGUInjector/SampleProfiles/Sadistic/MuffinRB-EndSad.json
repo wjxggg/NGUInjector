@@ -29,7 +29,7 @@
       },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPWAN:10", "WISH-0:5", "WISH-1:5", "WISH-2:6", "WISH-3:6", "CAPALLNGU", "WISH-0" ],
+        "Priorities": [ "CAPWAN:10", "CAPALLNGU" ],
         "Note": "Figure out SAD NGU gear/allocation needs to BB NGU up to Adv a"
       }
     ],
@@ -44,7 +44,7 @@
       },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPWAN:10", "BR:10", "WISH-0:5", "WISH-1:5", "WISH-2:6", "WISH-3:6", "CAPALLNGU", "WISH-0" ],
+        "Priorities": [ "CAPWAN:10", "BR:10", "CAPALLNGU" ],
         "Note": "Figure out SAD NGU gear/allocation needs to BB NGU up to Exp"
       }
     ],
@@ -55,7 +55,7 @@
       }
       {
         "Time": { "h": 1 },
-        "Priorities": [ "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ ]
       }
     ],
 	"Gear Note 1": "Make sure to set hardcap input in Gear Optimizer!",
@@ -110,6 +110,13 @@
 		"Priorities7": "6+7 are useful mid-game (early to mid evil), early on there aren't the diggers to spare and beards provide small bonuses, and later beards can be BB capped without digger support"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 1, 3, 6, 0, 4, 2 ],
+		"Comment": "All beards"
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
@@ -142,20 +149,24 @@
         "Items": [ "EPOT-B", "MPOT-B" ]
 	  }
     ],
-    "Rebirth_bak1": {
-	  "Type": "TimeBalancedMuffin",
-	  "Target": 15,
-	  "Challenges": [ ]
-	},
-    "Rebirth": {
-	  "Type": "Time",
-	  "Target": { "h": 24 },
-	  "Challenges": [ ]
-	},
-    "Rebirth_bak2": {
-	  "Type": "Time",
-	  "Target": -1,
-	  "Challenges": [ ]
-	}
+    "Rebirth_bak1": [
+	  {
+	    "Type": "TimeBalancedMuffin",
+	    "Target": 15
+	  }
+	],
+    "Rebirth": [
+	  {
+	    "Type": "Time",
+	    "Time": { "h": 24 },
+	  }
+	],
+    "Rebirth_bak2": [
+	  {
+	    "Type": "Time",
+	    "Time": -1
+	  }
+	],
+	"Challenges": [ ]
   }
 }
