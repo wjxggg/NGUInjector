@@ -3361,7 +3361,7 @@
     <value>NoControl</value>
   </data>
   <data name="BlacklistRemove.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1054, 373</value>
+    <value>1054, 348</value>
   </data>
   <data name="BlacklistRemove.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -3400,13 +3400,13 @@
     <value>test2</value>
   </data>
   <data name="BlacklistBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>603, 215</value>
+    <value>603, 165</value>
   </data>
   <data name="BlacklistBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
   </data>
   <data name="BlacklistBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>438, 352</value>
+    <value>438, 402</value>
   </data>
   <data name="BlacklistBox.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -3436,7 +3436,7 @@
     <value>NoControl</value>
   </data>
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>603, 177</value>
+    <value>603, 127</value>
   </data>
   <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 4, 5, 4</value>
@@ -3475,7 +3475,7 @@
     <value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 177</value>
+    <value>5, 127</value>
   </data>
   <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 4, 5, 4</value>
@@ -3514,13 +3514,13 @@
     <value>test2</value>
   </data>
   <data name="PriorityBoostBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 215</value>
+    <value>5, 165</value>
   </data>
   <data name="PriorityBoostBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
   </data>
   <data name="PriorityBoostBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>438, 352</value>
+    <value>438, 402</value>
   </data>
   <data name="PriorityBoostBox.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -3730,7 +3730,7 @@
     <value>TopDown</value>
   </data>
   <data name="flowLayoutPanel10.Location" type="System.Drawing.Point, System.Drawing">
-    <value>450, 323</value>
+    <value>450, 298</value>
   </data>
   <data name="flowLayoutPanel10.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -3853,7 +3853,7 @@
     <value>TopDown</value>
   </data>
   <data name="flowLayoutPanel14.Location" type="System.Drawing.Point, System.Drawing">
-    <value>342, 58</value>
+    <value>342, 33</value>
   </data>
   <data name="flowLayoutPanel14.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -3892,7 +3892,7 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="BoostPriorityList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>332, 130</value>
+    <value>332, 80</value>
   </data>
   <data name="BoostPriorityList.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
@@ -3997,7 +3997,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>600, 173</value>
+    <value>600, 123</value>
   </data>
   <data name="tableLayoutPanel9.TabIndex" type="System.Int32, mscorlib">
     <value>43</value>
