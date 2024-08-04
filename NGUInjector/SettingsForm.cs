@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Windows.Forms;
 using NGUInjector.Managers;
 using static NGUInjector.Main;
