@@ -347,10 +347,10 @@ namespace NGUInjector
             GoldLoadoutAdd.Size = GoldLoadoutRemove.Size;
 
             // Wishes Tab
-            var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
-            width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
-            width -= WishMode.Margin.Left + WishMode.Margin.Right;
-            WishMode.Width = width;
+            //var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
+            //width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
+            //width -= WishMode.Margin.Left + WishMode.Margin.Right;
+            //WishMode.Width = width;
 
             AddWishButton.Size = RemoveWishButton.Size;
 
@@ -448,7 +448,6 @@ namespace NGUInjector
             MasterEnable.Checked = newSettings.GlobalEnabled;
             DisableOverlay.Checked = newSettings.DisableOverlay;
             MoneyPitRunMode.Checked = newSettings.MoneyPitRunMode;
-            AutoITOPOD.Checked = newSettings.AutoQuestITOPOD;
             AutoFightBosses.Checked = newSettings.AutoFight;
             AutoBuyAdv.Checked = newSettings.AutoBuyAdventure;
             AutoBuyEM.Checked = newSettings.AutoBuyEM;
@@ -768,12 +767,6 @@ namespace NGUInjector
         {
             if (_initializing) return;
             Settings.MoneyPitDaycare = MoneyPitDaycare.Checked;
-        }
-
-        private void AutoITOPOD_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_initializing) return;
-            Settings.AutoQuestITOPOD = AutoITOPOD.Checked;
         }
 
         private void AutoFightBosses_CheckedChanged(object sender, EventArgs e)

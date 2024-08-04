@@ -160,7 +160,6 @@ namespace NGUInjector
                         AutoQuest = false,
                         ManageQuestLoadouts = false,
                         QuestLoadout = new int[] { },
-                        AutoQuestITOPOD = false,
                         AllowMajorQuests = false,
                         QuestsFullBank = false,
                         GoldDropLoadout = new int[] { },
@@ -403,9 +402,6 @@ namespace NGUInjector
 
             if (Input.GetKeyDown(KeyCode.F7))
                 QuickLoad();
-
-            if (Input.GetKeyDown(KeyCode.F4))
-                Settings.AutoQuestITOPOD = !Settings.AutoQuestITOPOD;
 
             if (Input.GetKeyDown(KeyCode.F5))
                 DumpEquipped();

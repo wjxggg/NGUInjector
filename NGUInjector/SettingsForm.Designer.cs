@@ -46,7 +46,6 @@
             this.VersionLabel = new System.Windows.Forms.Label();
             this.MoneyPitRunMode = new System.Windows.Forms.CheckBox();
             this.Autosave = new System.Windows.Forms.CheckBox();
-            this.AutoITOPOD = new System.Windows.Forms.CheckBox();
             this.AutoFightBosses = new System.Windows.Forms.CheckBox();
             this.AutoBuyConsumables = new System.Windows.Forms.CheckBox();
             this.ConsumeIfRunning = new System.Windows.Forms.CheckBox();
@@ -307,7 +306,6 @@
             this.RemoveWishButton = new System.Windows.Forms.Button();
             this.WishDownButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanel16 = new System.Windows.Forms.FlowLayoutPanel();
             this.label48 = new System.Windows.Forms.Label();
             this.WishMode = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel28 = new System.Windows.Forms.TableLayoutPanel();
@@ -433,6 +431,7 @@
             this.cookingErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.shockwaveErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.yggErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.tableLayoutPanel29 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.titanErrProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).BeginInit();
@@ -519,7 +518,6 @@
             this.flowLayoutPanel19.SuspendLayout();
             this.flowLayoutPanel20.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
-            this.flowLayoutPanel16.SuspendLayout();
             this.tableLayoutPanel28.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.WishEnergy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishMagic)).BeginInit();
@@ -555,6 +553,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.shockwaveErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
+            this.tableLayoutPanel29.SuspendLayout();
             this.SuspendLayout();
             // 
             // invPrioErrorProvider
@@ -601,19 +600,18 @@
             // tableLayoutPanel2
             // 
             resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
-            this.tableLayoutPanel2.Controls.Add(this.OpenSettingsFolder, 0, 10);
+            this.tableLayoutPanel2.Controls.Add(this.OpenSettingsFolder, 0, 9);
             this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel2, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.UnloadButton, 2, 10);
-            this.tableLayoutPanel2.Controls.Add(this.UnloadSafety, 1, 10);
-            this.tableLayoutPanel2.Controls.Add(this.VersionLabel, 2, 9);
+            this.tableLayoutPanel2.Controls.Add(this.UnloadButton, 2, 9);
+            this.tableLayoutPanel2.Controls.Add(this.UnloadSafety, 1, 9);
+            this.tableLayoutPanel2.Controls.Add(this.VersionLabel, 2, 8);
             this.tableLayoutPanel2.Controls.Add(this.MoneyPitRunMode, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.Autosave, 0, 7);
-            this.tableLayoutPanel2.Controls.Add(this.AutoITOPOD, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.AutoFightBosses, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.AutoBuyConsumables, 0, 5);
-            this.tableLayoutPanel2.Controls.Add(this.ConsumeIfRunning, 1, 5);
-            this.tableLayoutPanel2.Controls.Add(this.AutoBuyEM, 0, 4);
-            this.tableLayoutPanel2.Controls.Add(this.AutoBuyAdv, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.Autosave, 0, 6);
+            this.tableLayoutPanel2.Controls.Add(this.AutoFightBosses, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.AutoBuyConsumables, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.ConsumeIfRunning, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.AutoBuyEM, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.AutoBuyAdv, 1, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             // 
             // OpenSettingsFolder
@@ -679,13 +677,6 @@
             this.Autosave.Name = "Autosave";
             this.Autosave.UseVisualStyleBackColor = true;
             this.Autosave.CheckedChanged += new System.EventHandler(this.Autosave_CheckedChanged);
-            // 
-            // AutoITOPOD
-            // 
-            resources.ApplyResources(this.AutoITOPOD, "AutoITOPOD");
-            this.AutoITOPOD.Name = "AutoITOPOD";
-            this.AutoITOPOD.UseVisualStyleBackColor = true;
-            this.AutoITOPOD.CheckedChanged += new System.EventHandler(this.AutoITOPOD_CheckedChanged);
             // 
             // AutoFightBosses
             // 
@@ -2824,16 +2815,9 @@
             // tableLayoutPanel8
             // 
             resources.ApplyResources(this.tableLayoutPanel8, "tableLayoutPanel8");
-            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel16, 0, 1);
             this.tableLayoutPanel8.Controls.Add(this.tableLayoutPanel28, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.tableLayoutPanel29, 0, 1);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
-            // 
-            // flowLayoutPanel16
-            // 
-            resources.ApplyResources(this.flowLayoutPanel16, "flowLayoutPanel16");
-            this.flowLayoutPanel16.Controls.Add(this.label48);
-            this.flowLayoutPanel16.Controls.Add(this.WishMode);
-            this.flowLayoutPanel16.Name = "flowLayoutPanel16";
             // 
             // label48
             // 
@@ -3766,9 +3750,9 @@
             // 
             // flowLayoutPanel1
             // 
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.progressBar1);
             this.flowLayoutPanel1.Controls.Add(this.tabControl1);
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // questErrorProvider
@@ -3786,6 +3770,13 @@
             // yggErrorProvider
             // 
             this.yggErrorProvider.ContainerControl = this;
+            // 
+            // tableLayoutPanel29
+            // 
+            resources.ApplyResources(this.tableLayoutPanel29, "tableLayoutPanel29");
+            this.tableLayoutPanel29.Controls.Add(this.label48, 0, 0);
+            this.tableLayoutPanel29.Controls.Add(this.WishMode, 1, 0);
+            this.tableLayoutPanel29.Name = "tableLayoutPanel29";
             // 
             // SettingsForm
             // 
@@ -3945,8 +3936,6 @@
             this.flowLayoutPanel20.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel8.PerformLayout();
-            this.flowLayoutPanel16.ResumeLayout(false);
-            this.flowLayoutPanel16.PerformLayout();
             this.tableLayoutPanel28.ResumeLayout(false);
             this.tableLayoutPanel28.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.WishEnergy)).EndInit();
@@ -4005,6 +3994,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.shockwaveErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).EndInit();
+            this.tableLayoutPanel29.ResumeLayout(false);
+            this.tableLayoutPanel29.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4024,7 +4015,6 @@
         private System.Windows.Forms.CheckBox AutoBuyEM;
         private System.Windows.Forms.CheckBox MasterEnable;
         private System.Windows.Forms.CheckBox AutoFightBosses;
-        private System.Windows.Forms.CheckBox AutoITOPOD;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.CheckBox ManageNGUDiff;
         private System.Windows.Forms.Button ChangeProfileFile;
@@ -4299,7 +4289,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel9;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel10;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel14;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel16;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel17;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel18;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel19;
@@ -4413,5 +4402,6 @@
         private System.Windows.Forms.ComboBox CardRarity11;
         private System.Windows.Forms.ComboBox CardRarity10;
         private System.Windows.Forms.ComboBox CardRarity9;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel29;
     }
 }

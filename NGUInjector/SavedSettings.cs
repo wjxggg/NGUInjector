@@ -29,7 +29,6 @@ namespace NGUInjector
         [SerializeField] private bool _allowMajorQuests;
         [SerializeField] private bool _questsFullBank;
         [SerializeField] private bool _autoConvertBoosts;
-        [SerializeField] private bool _autoQuestItopod;
         [SerializeField] private int[] _goldDropLoadout;
         [SerializeField] private bool _autoMoneyPit;
         [SerializeField] private bool _predictMoneyPit;
@@ -215,7 +214,6 @@ namespace NGUInjector
             _autoFight = other.AutoFight;
 
             _autoQuest = other.AutoQuest;
-            _autoQuestItopod = other.AutoQuestITOPOD;
             _allowMajorQuests = other.AllowMajorQuests;
             _questsFullBank = other.QuestsFullBank;
 
@@ -538,17 +536,6 @@ namespace NGUInjector
             {
                 if (value == _autoConvertBoosts) return;
                 _autoConvertBoosts = value;
-                SaveSettings();
-            }
-        }
-
-        public bool AutoQuestITOPOD
-        {
-            get => _autoQuestItopod;
-            set
-            {
-                if (value == _autoQuestItopod) return;
-                _autoQuestItopod = value;
                 SaveSettings();
             }
         }
