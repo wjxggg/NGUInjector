@@ -215,7 +215,7 @@ An in game menu can be opened using the F1 button.
   - **One-shot** - Does not use any buffs. Uses only Regular Attack.
 - **Beast Mode** - Whether to use Beast Mode or not while in *idle combat*.
 
-![Wishes](https://i.imgur.com/undefined.png)
+![Wishes](https://i.imgur.com/fXWD2CL.png)
 
 - **Manage Wishes** - If enabled, will allocate resources into Wishes, according to settings.
 - **Limit to X Wishes** - Maximum number of Wishes it will allocate resources into simultaneously. For example, if you have 3 or 4 Wish slots, but want to use only 2, set this option to 2.
