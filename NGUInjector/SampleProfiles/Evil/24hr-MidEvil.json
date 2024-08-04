@@ -21,11 +21,11 @@
     "Energy": [
       {
         "Time": 0,
-	    "Priorities": [ "CAPALLBT", "CAPALLAT", "CAPTM:80", "WISH-0:50", "WISH-1" }
+	    "Priorities": [ "CAPALLBT", "CAPALLAT", "CAPTM:80" }
       },
       {
         "Time": { "m": 30 },
-        "Priorities": [ "CAPALLAT", "CAPWAN", "CAPWISH-0:25", "CAPWISH-1:25", "AUG-8", "AUG-9" ],
+        "Priorities": [ "CAPALLAT", "CAPWAN", "AUG-8", "AUG-9" ],
 		"Note": "Set AT thresholds, expand time as needed to hit goals",
         "AdvDC": [ "NGU-4", "NGU-6" ],
         "PAWG (Challenge Prep)": [ "NGU-5", "NGU-0", "NGU-1", "NGU-3" ],
@@ -35,7 +35,7 @@
 	  },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPWISH-0:20", "CAPWISH-1:20", "CAPALLAT", "CAPWAN", "ALLNGU", "CAPTM" ],
+        "Priorities": [ "CAPALLAT", "CAPWAN", "ALLNGU", "CAPTM" ],
         "Note1": "Evil NGU time",
 		"Note2": "Use this time to boost up NGUs which are lagging behind according to the Gear Optimizer",
 		"Thresholds": "Magic-NGU or PP > x1.05, Respawn < x0.95, Gold > x1.2"
@@ -44,11 +44,11 @@
     "Magic": [
       {
         "Time": 0,
-        "Priorities": [ "CAPTM:80", "WISH-0:50", "WISH-1" ]
+        "Priorities": [ "CAPTM:80" ]
       },
       {
         "Time": { "m": 30 },
-        "Priorities": [ "CAPWAN", "CAPWISH-0:25", "CAPWISH-1:25", "BR" ],
+        "Priorities": [ "CAPWAN", "BR" ],
         "YggExp": [ "NGU-0", "NGU-1" ],
         "PowBTM (Challenge Prep)": [ "NGU-2", "NGU-4" ],
         "Number": [ "NGU-3" ],
@@ -57,7 +57,7 @@
 	  },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPWISH-0:20", "CAPWISH-1:20", "CAPWAN", "BR:10", "ALLNGU", "CAPTM" ],
+        "Priorities": [ "CAPWAN", "BR:10", "ALLNGU", "CAPTM" ],
         "Note1": "Evil NGU time",
 		"Note2": "Use this time to boost up NGUs which are lagging behind according to the Gear Optimizer",
 		"Thresholds": "Energy-NGU or AdvB > x1.05, TM > x1.2"
@@ -66,8 +66,8 @@
     "R3": [
       {
         "Time": 0,
-        "Priorities": [ "CAPWISH-0:25", "CAPWISH-1:25", "HACK-1" ],
-        "Prioritiesbak": [ "CAPWISH-0:25", "CAPWISH-1:25", "HACK-13", "HACK-14", "HACK-12", "HACK-10", "HACK-8", "HACK-0", "HACK-5", "HACK-6", "HACK-7", "HACK-2", "HACK-3", "HACK-4", "HACK-9", "HACK-11", "HACK-1" ]
+        "Priorities": [ "HACK-1" ],
+        "Prioritiesbak": [ "HACK-13", "HACK-14", "HACK-12", "HACK-10", "HACK-8", "HACK-0", "HACK-5", "HACK-6", "HACK-7", "HACK-2", "HACK-3", "HACK-4", "HACK-9", "HACK-11", "HACK-1" ]
       }
     ],
     "Gear": [
@@ -122,16 +122,34 @@
 		"Priorities7": "6+7 are useful mid-game (early to mid evil), early on there aren't the diggers to spare and beards provide small bonuses, and later beards can be BB capped without digger support"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 6, 1, 3, 0 ],
+		"Comment": "Adv + GPS + Drops + NGU + Stats",
+		"BeardOptions": "0-Stats, 1-Drops, 2-Number, 3-NGU, 4-Wandoos, 5-Adv, 6-GPS",
+		"Priorities1": "The BEARd should be always on to maximize adventure stats",
+		"Priorities2": "The LadyBeard helps to run Wandoos at lower cost",
+		"Priorities3": "The Neckbeard helps with drop chance, the Beard Cage helps with NGUs"
+	  },
+	  {
+		"Time": { "m": 30 },
+		"List": [ 5, 1, 3, 6, 0 ],
+		"Comment": "Adv + Drops + NGU + GPS + Stats"
+	  }	  
+	],
     "NGUDiff": [
       {
         "Time": 0,
         "Diff": 1
       }
     ],
-    "Rebirth": {
-	  "Type": "Time",
-	  "Target": { "h": 24, "m": 2 },
-	  "Challenges": []
-	}
+    "Rebirth": [
+	  {
+	    "Type": "Time",
+	    "Time": { "h": 24, "m": 2 }
+	  }
+	],
+	"Challenges": []
   }
 }
