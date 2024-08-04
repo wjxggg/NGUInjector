@@ -14,11 +14,11 @@
       },
       {
         "Time": { "m": 30 },
-        "Priorities": [ "CAPWAN:20", "CAPALLNGU:30", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ "CAPWAN:20", "CAPALLNGU:30" ]
       },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPALLNGU:50", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ],
+        "Priorities": [ "CAPALLNGU:50" ],
         "PrioritiesNoWish": [ "CAPALLNGU" ]
       }
     ],
@@ -29,11 +29,11 @@
       },
       {
         "Time": { "m": 30 },
-		"Priorities": [ "CAPWAN:20", "BR:25", "CAPALLNGU:25", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+		"Priorities": [ "CAPWAN:20", "BR:25", "CAPALLNGU:25" ]
       },
       {
         "Time": { "h": 1 },
-        "Priorities": [ "CAPALLNGU:50", "BR:10", "WISH-0", "WISH-1", "WISH-2", "WISH-3" ],
+        "Priorities": [ "CAPALLNGU:50", "BR:10" ],
         "PrioritiesNoWish": [ "CAPALLNGU", "BR" ],
         "PrioritiesNoWishOrPP": [ "CAPALLNGU" ],
 		"Note": "Blood can be spent entirely on Adventure stats until Perks are maxed"
@@ -42,7 +42,7 @@
     "R3": [
       {
         "Time": 0,
-        "Priorities": [ "WISH-0", "WISH-1", "WISH-2", "WISH-3" ]
+        "Priorities": [ ]
       }
     ],
     "Gear": [
@@ -73,6 +73,13 @@
         "Comment": "No Beards"
       }
     ],
+	"Beards": [
+	  {
+		"Time": 0,
+		"List": [ 5, 1, 3, 6, 0, 4, 2 ],
+		"Comment": "All beards"
+	  }
+	],
     "NGUDiff": [
       {
         "Time": 0,
@@ -86,25 +93,30 @@
         "ItemsNoWish": [ "EPOT-B", "MPOT-B" ]
 	  }
     ],
-    "Rebirth": {
-	  "Type": "Time",
-	  "Target": -1,
-	  "Challenges": [ ]
-	},
-    "Rebirth_bak1": {
-	  "Type": "Time",
-	  "Target": { "h": 24 },
-	  "Challenges": [ ]
-	},
-    "Rebirth_bak2": {
-	  "Type": "TimeBalancedMuffin",
-	  "Target": 15,
-	  "Challenges": [ ]
-	},
-    "Rebirth_bak3": {
-	  "Type": "Bosses",
-	  "Target": 2,
-	  "Challenges": [ ]
-	}
+    "Rebirth": [
+	  {
+	    "Type": "Time",
+	    "Time": -1
+	  }
+	],
+    "Rebirth_bak1": [
+	  {
+	    "Type": "Time",
+	    "Time": { "h": 24 }
+	  }
+	],
+    "Rebirth_bak2": [
+	  {
+	    "Type": "TimeBalancedMuffin",
+	    "Target": 15
+	  }
+	],
+    "Rebirth_bak3": [
+	  {
+	    "Type": "Bosses",
+	    "Target": 2
+	  }
+	],
+	"Challenges": [ ]
   }
 }
