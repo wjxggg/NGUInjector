@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime;
 using System.Windows.Forms;
 using NGUInjector.Managers;
 using static NGUInjector.Main;
@@ -675,6 +677,8 @@ namespace NGUInjector
             Array.Resize(ref settings, index + 1);
             settings[index] = val;
             controls.SaveSettings(settings);
+
+            controls.ItemList.SelectedIndex = index;
         }
 
         private void ItemListRemove(ItemControlGroup controls)
@@ -685,11 +689,18 @@ namespace NGUInjector
             if (item == null)
                 return;
 
+            var index = controls.ItemList.SelectedIndex;
+
             var id = ((KeyValuePair<int, string>)item).Key;
 
             var settings = controls.GetSettings();
             settings = settings.Where(x => x != id).ToArray();
             controls.SaveSettings(settings);
+
+            if (settings.Length > index)
+                controls.ItemList.SelectedIndex = index;
+            else if (settings.Length > 0)
+                controls.ItemList.SelectedIndex = settings.Length - 1;
         }
 
         private void ItemListUp(ItemControlGroup controls)
@@ -709,6 +720,9 @@ namespace NGUInjector
         private void ItemListMove<T>(ListBox itemList, T[] settings, Direction direction)
         {
             var index = itemList.SelectedIndex;
+            if (index == -1)
+                return;
+
             var newIndex = index - (int)direction;
             if (newIndex < 0 || newIndex >= settings.Length)
                 return;
@@ -716,7 +730,7 @@ namespace NGUInjector
             (settings[newIndex], settings[index]) = (settings[index], settings[newIndex]);
             Settings.SaveSettings();
 
-            itemList.SelectedIndex = index - 1;
+            itemList.SelectedIndex = newIndex;
         }
 
         public void UpdateProfileList(string[] profileList, string selectedProfile)
@@ -1366,11 +1380,18 @@ namespace NGUInjector
             if (item == null)
                 return;
 
+            var index = BlacklistedBosses.SelectedIndex;
+
             var id = (KeyValuePair<int, string>)item;
 
             var temp = Settings.BlacklistedBosses.ToList();
             temp.RemoveAll(x => x == id.Key);
             Settings.BlacklistedBosses = temp.ToArray();
+
+            if (Settings.BlacklistedBosses.Length > index)
+                BlacklistedBosses.SelectedIndex = index;
+            else if (Settings.BlacklistedBosses.Length > 0)
+                BlacklistedBosses.SelectedIndex = Settings.BlacklistedBosses.Length - 1;
         }
 
         private void BlacklistAddEnemyButton_Click(object sender, EventArgs e)
@@ -1388,6 +1409,8 @@ namespace NGUInjector
             var temp = Settings.BlacklistedBosses.ToList();
             temp.Add(id.Key);
             Settings.BlacklistedBosses = temp.ToArray();
+
+            BlacklistedBosses.SelectedIndex = Settings.BlacklistedBosses.Length - 1;
         }
 
         private void BoostAvgReset_Click(object sender, EventArgs e) => ResetBoostProgress();
