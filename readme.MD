@@ -107,11 +107,13 @@ An in game menu can be opened using the F1 button.
 - **Guff B** - Number of +levels to cast Guff B at.
 - **Cast on Rebirth Options** - If selected will use all available blood on the selected options if cooldown and threshold requirements are met. Priority is Guff B > Guff A > Iron Pill. Will use remaining blood on Number if any remains.
 
-![Yggdrasil](https://i.imgur.com/gvI9qqF.png)
+![Yggdrasil](https://i.imgur.com/bKlO2fU.png)
 
 - **Manage Yggdrasil** - Automatically harvest fruits. Can harvest Guff B Fruit and Quirk Fruit at below maximum tier, in case it's optimal.
+- **Swap Diggers** - If checked, activate PP and EXP diggers before harvesting.
+- **Swap Beards** - If checked, activate the Golden Beard before harvesting.
+- **Swap Loadout for Yggdrasil** - If checked, equip the loadout specified in Yggdrasil loadout before harvesting.
 - **Activate Fruits** - Reactivate fruits you haven't bought the exp perk for.
-- **Swap Loadout for Yggdrasil** - If checked, equip the loadout specified in Yggdrasil loadout before harvesting
 - **Minimum Fruit Level for Swap** - Don't equip Yggdrasil loadout for fruits below this level.
 - **Loadout** - Edit the loadout used for harvest Yggdrasil. Add items using the box in the bottom.
 - **Harvest All Now** - Allows you to do a Yggdrasil swap and immediately harvest all fruits. Check the box next to the button to enable it. Good for manual rebirths.
@@ -138,9 +140,12 @@ An in game menu can be opened using the F1 button.
 - **Blacklisted Items** - Edit the items you wish to never be boosted or merged. Add items using the box in the bottom. Supersedes Priority list if the same item is in both lists.
 - **Reset Boost Average** - Resets the running average of cube/item boosting
 
-![Titans](https://i.imgur.com/SzFuMat.png)
+![Titans](https://i.imgur.com/tfgEpF4.png)
 
-- **Manage Titans** - Turns on combat and gear swapping for titans.
+- **Manage Titans** - Turns on combat for titans.
+- **Swap Diggers** - If checked, activate Drop Chance, Adventure, PP and EXP diggers before fighting Titans.
+- **Swap Beards** - If checked, activate the Neckbeard, the BEARd and the Golden Beard before fighting Titans.
+- **Swap Loadout** - If checked, equip the loadout specified in Titans loadout before fighting Titans.
 - **Loadout** - The gear to equip when autokilling or fighting titans.
 - **Titans to Manage**
   - **Titan** - Mark titans you wish to fight and swap gear for.
@@ -231,7 +236,7 @@ An in game menu can be opened using the F1 button.
   - **Soft Priorities** - If enabled, will prioritize Wishes by the method above, and if there is a tie, prioritize a Wish closer to the top of priorities list. If disabled, will ignore the settings above for Wishes in this list.
 - **Blacklist Wishes** - Assign Wishes you never want to cast here. Any Wish in this list will be ignored when working out the Wish priorities. Supersedes Priority list if the same Wish is in both lists.
 
-![The Pit](https://i.imgur.com/8HeHy2f.png)
+![The Pit](https://i.imgur.com/mrPmWmM.png)
 
 - **Auto Daily Spin** - Automatically do Daily Ppin and log the result to the loot.log file.
 - **Auto Money Pit** - Automatically throw money into the Money Pit if the Money Pit Threshold is met. Logs the result to the loot.log file.
@@ -240,6 +245,7 @@ An in game menu can be opened using the F1 button.
 - **Money Pit Threshold** - The amount of gold to wait for to throw gold into the Money Pit.
 - **Daycare Threshold** - If the progress bar of an item in Daycare has reached this threshold, the item won't be put out from Daycare. If you want items to always be put out from Daycare, set this to 100%.
 - **Items for Shockwave** - Items to equip before throwing money in the pit. If prediction is enabled, will only equip items if the reward is equipment shockwave.
+- **Swap Diggers and Beards** - If checked, activate the Golden beard and diggers depending on the predicted reward (if the prediction is on) before throwing money.
 
 ![Cards](https://i.imgur.com/fC3FFJj.png)
 
