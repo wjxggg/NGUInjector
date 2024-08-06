@@ -21,7 +21,7 @@ namespace NGUInjector.Managers
                 if (needsRecache)
                 {
                     // Don't quest if we're currently fighting any titans
-                    bool isSniping = Settings.SwapTitanLoadouts && ZoneHelpers.AnyTitansSpawningSoon();
+                    bool isSniping = Settings.ManageTitans && ZoneHelpers.AnyTitansSpawningSoon();
                     bool majorQuest = Quest.inQuest && !Quest.reducedRewards || Settings.QuestsFullBank && QuestBankOverfill;
 
                     // Major quests take precedence over adventure zones

@@ -29,6 +29,12 @@ namespace NGUInjector.Managers
             if (gearIds?.Length > 0 == false)
                 return;
 
+            var curGear = GetCurrentGear();
+            curGear.Sort();
+            Array.Sort(gearIds);
+            if (curGear.SequenceEqual(gearIds))
+                return;
+
             Log($"Received New Gear for {LockManager.GetLockTypeName()}: {string.Join(", ", gearIds)}");
             var headSwapped = false;
             var chestSwapped = false;

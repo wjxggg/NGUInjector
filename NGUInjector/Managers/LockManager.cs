@@ -16,7 +16,9 @@ namespace NGUInjector.Managers
     public static class LockManager
     {
         private static LockType currentLock;
-        private static bool _swappedFromQuest = false;
+        private static bool _swappedFromQuest;
+        private static bool _swappedDiggers;
+        private static bool _swappedBeards;
 
         public static bool HasTitanLock() => currentLock == LockType.Titan;
 
@@ -30,12 +32,12 @@ namespace NGUInjector.Managers
 
         public static bool CanSwap() => currentLock == LockType.None || HasQuestLock();
 
-        public static bool CanSwapLoadout()
+        /*public static bool CanSwapLoadout()
         {
             switch (currentLock)
             {
                 case LockType.Titan:
-                    return !Settings.SwapTitanLoadouts;
+                    return !Settings.ManageTitans || !Settings.SwapTitanLoadouts;
                 case LockType.Yggdrasil:
                     return !Settings.SwapYggdrasilLoadouts;
                 case LockType.MoneyPit:
@@ -48,7 +50,7 @@ namespace NGUInjector.Managers
                     return !Settings.ManageCookingLoadouts;
             }
             return true;
-        }
+        }*/
 
         private static void AcquireLock(LockType newLock)
         {
@@ -74,7 +76,7 @@ namespace NGUInjector.Managers
             DiggerManager.SaveDiggers();
         }
 
-        public static void RestoreConfiguration()
+        private static void RestoreConfiguration()
         {
             if (_swappedFromQuest)
             {
@@ -92,8 +94,17 @@ namespace NGUInjector.Managers
                 LoadoutManager.RestoreGear();
             }
 
-            BeardManager.RestoreBeards();
-            DiggerManager.RestoreDiggers();
+            if (_swappedBeards)
+            {
+                BeardManager.RestoreBeards();
+                _swappedBeards = false;
+            }
+
+            if (_swappedDiggers)
+            {
+                DiggerManager.RestoreDiggers();
+                _swappedDiggers = false;
+            }
         }
 
         public static void TryTitanSwap()
@@ -103,7 +114,7 @@ namespace NGUInjector.Managers
                 AcquireLock(LockType.Titan);
                 SaveConfiguration();
 
-                if (Settings.ManageGoldLoadouts && ZoneHelpers.ShouldRunGoldLoadout())
+                if (ZoneHelpers.ShouldRunGoldLoadout())
                 {
                     Log("Switching to Gold Drop configuration for titans");
                     LoadoutManager.ChangeGear(Settings.GoldDropLoadout);
@@ -113,9 +124,19 @@ namespace NGUInjector.Managers
                     Log("Switching to Titan configuration");
                     LoadoutManager.ChangeGear(Settings.TitanLoadout);
                 }
-                BeardManager.EquipBeards(currentLock);
-                DiggerManager.EquipDiggers(currentLock);
-                DiggerManager.RecapDiggers();
+
+                if (Settings.SwapTitanBeards)
+                {
+                    BeardManager.EquipBeards(currentLock);
+                    _swappedBeards = true;
+                }
+
+                if (Settings.SwapTitanDiggers)
+                {
+                    DiggerManager.EquipDiggers(currentLock);
+                    DiggerManager.RecapDiggers();
+                    _swappedDiggers = true;
+                }
             }
             else if (currentLock == LockType.Titan)
             {
@@ -132,8 +153,6 @@ namespace NGUInjector.Managers
                     AcquireLock(LockType.Yggdrasil);
                     SaveConfiguration();
 
-                    DiggerManager.SaveDiggers();
-
                     if (Settings.SwapYggdrasilLoadouts && (forced || YggdrasilManager.NeedsSwap()))
                     {
                         Log("Switching to Yggdrasil configuration");
@@ -143,9 +162,20 @@ namespace NGUInjector.Managers
                     {
                         Log("Switching to Yggdrasil configuration without gear swap");
                     }
-                    BeardManager.EquipBeards(currentLock);
-                    DiggerManager.EquipDiggers(currentLock);
-                    DiggerManager.RecapDiggers();
+
+                    if (Settings.SwapYggdrasilBeards)
+                    {
+                        BeardManager.EquipBeards(currentLock);
+                        _swappedBeards = true;
+                    }
+
+                    if (Settings.SwapYggdrasilDiggers)
+                    {
+                        DiggerManager.EquipDiggers(currentLock);
+                        DiggerManager.RecapDiggers();
+                        _swappedDiggers = true;
+                    }
+
                     return true;
                 }
             }
@@ -165,11 +195,15 @@ namespace NGUInjector.Managers
 
                 if (loadout?.Length > 0)
                     LoadoutManager.ChangeGear(loadout, shockwave);
-                if (diggers?.Length > 0)
+
+                if (diggers?.Length > 0 && Settings.SwapPitDiggers)
                 {
                     BeardManager.EquipBeards(currentLock);
+                    _swappedBeards = true;
+
                     DiggerManager.EquipDiggers(diggers);
                     DiggerManager.RecapDiggers();
+                    _swappedDiggers = true;
                 }
 
                 return true;

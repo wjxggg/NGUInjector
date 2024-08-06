@@ -488,6 +488,8 @@ namespace NGUInjector
             ActivateFruits.Checked = newSettings.ActivateFruits;
             YggSwapThreshold.Value = newSettings.YggSwapThreshold;
             YggdrasilSwap.Checked = newSettings.SwapYggdrasilLoadouts;
+            SwapYggdrasilDiggers.Checked = newSettings.SwapYggdrasilDiggers;
+            SwapYggdrasilBeards.Checked = newSettings.SwapYggdrasilBeards;
             _yggControls.UpdateList(newSettings.YggdrasilLoadout);
 
             // Inventory Tab
@@ -507,7 +509,10 @@ namespace NGUInjector
             _blacklistControls.UpdateList(newSettings.BoostBlacklist);
 
             // Titans Tab
+            ManageTitans.Checked = newSettings.ManageTitans;
             SwapTitanLoadout.Checked = newSettings.SwapTitanLoadouts;
+            SwapTitanDiggers.Checked = newSettings.SwapTitanDiggers;
+            SwapTitanBeards.Checked = newSettings.SwapTitanBeards;
             _titanControls.UpdateList(newSettings.TitanLoadout);
 
             for (int i = 0; i <= 13; i++)
@@ -571,6 +576,7 @@ namespace NGUInjector
             AutoDailySpin.Checked = newSettings.AutoSpin;
             AutoMoneyPit.Enabled = !newSettings.MoneyPitRunMode;
             AutoMoneyPit.Checked = newSettings.AutoMoneyPit;
+            SwapPitDiggers.Checked = newSettings.SwapPitDiggers;
             PredictMoneyPit.Enabled = !newSettings.MoneyPitRunMode;
             PredictMoneyPit.Checked = newSettings.PredictMoneyPit;
             MoneyPitDaycare.Checked = newSettings.MoneyPitDaycare;
@@ -771,6 +777,12 @@ namespace NGUInjector
             Settings.AutoMoneyPit = AutoMoneyPit.Checked;
         }
 
+        private void SwapPitDiggers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.SwapPitDiggers = SwapPitDiggers.Checked;
+        }
+
         private void PredictMoneyPit_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
@@ -861,6 +873,18 @@ namespace NGUInjector
             Settings.SwapYggdrasilLoadouts = YggdrasilSwap.Checked;
         }
 
+        private void YggdrasilSwapDiggers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.SwapYggdrasilDiggers = SwapYggdrasilDiggers.Checked;
+        }
+
+        private void YggdrasilSwapBeards_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.SwapYggdrasilBeards = SwapYggdrasilBeards.Checked;
+        }
+
         private void YggLoadoutItem_TextChanged(object sender, EventArgs e) => TryItemBoxTextChanged(_yggControls, out _);
 
         private void YggLoadoutItem_KeyDown(object sender, KeyEventArgs e) => ItemBoxKeyDown(e, _yggControls);
@@ -905,10 +929,28 @@ namespace NGUInjector
 
         private void BlacklistRemove_Click(object sender, EventArgs e) => ItemListRemove(_blacklistControls);
 
+        private void ManageTitans_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.ManageTitans = ManageTitans.Checked;
+        }
+
         private void SwapTitanLoadout_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
             Settings.SwapTitanLoadouts = SwapTitanLoadout.Checked;
+        }
+
+        private void SwapTitanDiggers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.SwapTitanDiggers = SwapTitanDiggers.Checked;
+        }
+
+        private void SwapTitanBeards_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_initializing) return;
+            Settings.SwapTitanBeards = SwapTitanBeards.Checked;
         }
 
         private void ManageQuestLoadout_CheckedChanged(object sender, EventArgs e)
@@ -1225,7 +1267,7 @@ namespace NGUInjector
 
         private void HarvestAllButton_Click(object sender, EventArgs e)
         {
-            if (Settings.SwapYggdrasilLoadouts && Settings.YggdrasilLoadout.Length > 0 && YggdrasilManager.AnyHarvestable())
+            if (YggdrasilManager.AnyHarvestable())
             {
                 if (LockManager.TryYggdrasilSwap(true))
                     YggdrasilManager.HarvestAll(true);

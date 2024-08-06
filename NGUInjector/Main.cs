@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.0";
+        public const string Version = "4.1.1";
         private static int _furthestZone;
 
         private static string _dir;
@@ -142,11 +142,16 @@ namespace NGUInjector
                 {
                     var temp = new SavedSettings(null)
                     {
-                        PriorityBoosts = new int[] { },
-                        YggdrasilLoadout = new int[] { },
+                        PriorityBoosts = new int[0],
+                        YggdrasilLoadout = new int[0],
                         SwapYggdrasilLoadouts = false,
+                        SwapYggdrasilDiggers = false,
+                        SwapYggdrasilBeards = false,
+                        ManageTitans = false,
                         SwapTitanLoadouts = false,
-                        TitanLoadout = new int[] { },
+                        SwapTitanDiggers = false,
+                        SwapTitanBeards = false,
+                        TitanLoadout = new int[0],
                         ManageBeards = true,
                         ManageDiggers = true,
                         ManageYggdrasil = false,
@@ -159,20 +164,21 @@ namespace NGUInjector
                         AutoFight = false,
                         AutoQuest = false,
                         ManageQuestLoadouts = false,
-                        QuestLoadout = new int[] { },
+                        QuestLoadout = new int[0],
                         AllowMajorQuests = false,
                         QuestsFullBank = false,
-                        GoldDropLoadout = new int[] { },
+                        GoldDropLoadout = new int[0],
                         AutoMoneyPit = false,
+                        SwapPitDiggers = false,
                         PredictMoneyPit = false,
                         MoneyPitDaycare = false,
                         AutoSpin = false,
-                        Shockwave = new int[] { },
+                        Shockwave = new int[0],
                         AutoRebirth = false,
                         ManageWandoos = false,
                         MoneyPitThreshold = 1e5,
                         DaycareThreshold = 80,
-                        BoostBlacklist = new int[] { },
+                        BoostBlacklist = new int[0],
                         CombatMode = 0,
                         SnipeBossOnly = true,
                         AllowZoneFallback = false,
@@ -197,15 +203,15 @@ namespace NGUInjector
                         FavoredMacguffin = -1,
                         CombatEnabled = false,
                         GlobalEnabled = false,
-                        QuickDiggers = new int[] { },
-                        QuickLoadout = new int[] { },
+                        QuickDiggers = new int[0],
+                        QuickLoadout = new int[0],
                         UseButterMajor = false,
                         ManualMinors = false,
                         UseButterMinor = false,
                         ActivateFruits = false,
                         ManageR3 = true,
-                        WishPriorities = new int[] { },
-                        WishBlacklist = new int[] { },
+                        WishPriorities = new int[0],
+                        WishBlacklist = new int[0],
                         BeastMode = false,
                         ManageNGUDiff = true,
                         AllocationFile = "default",
@@ -247,14 +253,14 @@ namespace NGUInjector
                         CardRarities = new int[14] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                         CardCosts = new int[14],
                         HackAdvance = false,
-                        MergeBlacklist = new int[] { },
+                        MergeBlacklist = new int[0],
                         ManageConsumables = false,
                         AutoBuyConsumables = false,
                         ConsumeIfAlreadyRunning = false,
                         Autosave = false,
                         ManageCooking = false,
                         ManageCookingLoadouts = false,
-                        CookingLoadout = new int[] { }
+                        CookingLoadout = new int[0]
                     };
 
                     Settings.MassUpdate(temp);
@@ -839,7 +845,7 @@ namespace NGUInjector
                 }
 
                 ZoneHelpers.RefreshTitanSnapshots();
-                if (Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
+                if (Settings.ManageTitans && Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
                 {
                     if (ZoneHelpers.AnyTitansSpawningSoon() != LockManager.HasTitanLock())
                         LockManager.TryTitanSwap();
@@ -1004,7 +1010,7 @@ namespace NGUInjector
                 if (Settings.ManageCooking)
                     CookingManager.ManageFood();
 
-                if (Settings.SwapTitanLoadouts)
+                if (Settings.ManageTitans)
                 {
                     for (int i = 6; i <= 12; i++)
                     {
@@ -1148,7 +1154,7 @@ namespace NGUInjector
                 if (tempZone < 1000 && !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
                     tempZone = Settings.AllowZoneFallback ? ZoneHelpers.GetMaxReachableZone(false) : 1000;
 
-                if (Settings.SwapTitanLoadouts && LockManager.HasTitanLock())
+                if (Settings.ManageTitans && LockManager.HasTitanLock())
                 {
                     int? titanZone = ZoneHelpers.GetHighestSpawningTitanZone();
                     if (titanZone.HasValue && !ZoneHelpers.AutokillAvailable(Array.IndexOf(ZoneHelpers.TitanZones, titanZone.Value)))

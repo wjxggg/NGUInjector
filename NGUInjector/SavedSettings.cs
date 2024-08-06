@@ -10,8 +10,13 @@ namespace NGUInjector
     public class SavedSettings
     {
         [SerializeField] private int _snipeZone = -1;
+        [SerializeField] private bool _manageTitans;
         [SerializeField] private bool _swapTitanLoadouts;
+        [SerializeField] private bool _swapTitanDiggers;
+        [SerializeField] private bool _swapTitanBeards;
         [SerializeField] private bool _swapYggdrasilLoadouts;
+        [SerializeField] private bool _swapYggdrasilDiggers;
+        [SerializeField] private bool _swapYggdrasilBeards;
         [SerializeField] private int[] _priorityBoosts;
         [SerializeField] private bool _manageEnergy;
         [SerializeField] private bool _manageMagic;
@@ -31,6 +36,7 @@ namespace NGUInjector
         [SerializeField] private bool _autoConvertBoosts;
         [SerializeField] private int[] _goldDropLoadout;
         [SerializeField] private bool _autoMoneyPit;
+        [SerializeField] private bool _swapPitDiggers;
         [SerializeField] private bool _predictMoneyPit;
         [SerializeField] private bool _moneyPitDaycare;
         [SerializeField] private bool _autoSpin;
@@ -169,7 +175,7 @@ namespace NGUInjector
                     if (newSettings.WishLimit <= 0)
                         newSettings.WishLimit = 4;
                     if (newSettings.CardRarities?.Length != 14)
-                        newSettings.CardRarities = new int[14] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+                        newSettings.CardRarities = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
                     if (newSettings.CardCosts?.Length != 14)
                         newSettings.CardCosts = new int[14];
                     MassUpdate(newSettings);
@@ -195,8 +201,13 @@ namespace NGUInjector
 
             _yggdrasilLoadout = other.YggdrasilLoadout;
             _swapYggdrasilLoadouts = other.SwapYggdrasilLoadouts;
+            _swapTitanDiggers = other.SwapYggdrasilDiggers;
+            _swapTitanBeards = other.SwapYggdrasilBeards;
 
+            _manageTitans = other.ManageTitans;
             _swapTitanLoadouts = other.SwapTitanLoadouts;
+            _swapTitanDiggers = other.SwapTitanDiggers;
+            _swapTitanBeards = other.SwapTitanBeards;
             _titanLoadout = other.TitanLoadout;
 
             _manageBeards = other.ManageBeards;
@@ -220,6 +231,7 @@ namespace NGUInjector
             _goldDropLoadout = other.GoldDropLoadout;
 
             _autoMoneyPit = other.AutoMoneyPit;
+            _swapPitDiggers = other.SwapPitDiggers;
             _predictMoneyPit = other.PredictMoneyPit;
             _moneyPitDaycare = other.MoneyPitDaycare;
             _autoSpin = other.AutoSpin;
@@ -334,6 +346,17 @@ namespace NGUInjector
             }
         }
 
+        public bool ManageTitans
+        {
+            get => _manageTitans;
+            set
+            {
+                if (value == _manageTitans) return;
+                _manageTitans = value;
+                SaveSettings();
+            }
+        }
+
         public bool SwapTitanLoadouts
         {
             get => _swapTitanLoadouts;
@@ -345,6 +368,28 @@ namespace NGUInjector
             }
         }
 
+        public bool SwapTitanDiggers
+        {
+            get => _swapTitanDiggers;
+            set
+            {
+                if (value == _swapTitanDiggers) return;
+                _swapTitanDiggers = value;
+                SaveSettings();
+            }
+        }
+
+        public bool SwapTitanBeards
+        {
+            get => _swapTitanBeards;
+            set
+            {
+                if (value == _swapTitanBeards) return;
+                _swapTitanBeards = value;
+                SaveSettings();
+            }
+        }
+
         public bool SwapYggdrasilLoadouts
         {
             get => _swapYggdrasilLoadouts;
@@ -352,6 +397,27 @@ namespace NGUInjector
             {
                 if (value == _swapYggdrasilLoadouts) return;
                 _swapYggdrasilLoadouts = value;
+                SaveSettings();
+            }
+        }
+
+        public bool SwapYggdrasilDiggers
+        {
+            get => _swapYggdrasilDiggers;
+            set
+            {
+                if (value == _swapYggdrasilDiggers) return;
+                _swapYggdrasilDiggers = value;
+                SaveSettings();
+            }
+        }
+        public bool SwapYggdrasilBeards
+        {
+            get => _swapYggdrasilBeards;
+            set
+            {
+                if (value == _swapYggdrasilBeards) return;
+                _swapYggdrasilBeards = value;
                 SaveSettings();
             }
         }
@@ -567,6 +633,17 @@ namespace NGUInjector
             {
                 if (value == _autoMoneyPit) return;
                 _autoMoneyPit = value;
+                SaveSettings();
+            }
+        }
+
+        public bool SwapPitDiggers
+        {
+            get => _swapPitDiggers;
+            set
+            {
+                if (value == _swapPitDiggers) return;
+                _swapPitDiggers = value;
                 SaveSettings();
             }
         }

@@ -44,10 +44,10 @@ namespace NGUInjector.Managers
             switch (currentLock)
             {
                 case LockType.Titan:
-                    EquipDiggers(TitanDiggers);
+                    EquipDiggers(TitanDiggers, true);
                     return;
                 case LockType.Yggdrasil:
-                    EquipDiggers(YggDiggers);
+                    EquipDiggers(YggDiggers, true);
                     return;
             }
         }

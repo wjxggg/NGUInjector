@@ -432,6 +432,14 @@
             this.shockwaveErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.yggErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tableLayoutPanel29 = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanel16 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel35 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ManageTitans = new System.Windows.Forms.CheckBox();
+            this.SwapTitanDiggers = new System.Windows.Forms.CheckBox();
+            this.SwapTitanBeards = new System.Windows.Forms.CheckBox();
+            this.SwapYggdrasilDiggers = new System.Windows.Forms.CheckBox();
+            this.SwapYggdrasilBeards = new System.Windows.Forms.CheckBox();
+            this.SwapPitDiggers = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.titanErrProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).BeginInit();
@@ -554,6 +562,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.shockwaveErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
             this.tableLayoutPanel29.SuspendLayout();
+            this.flowLayoutPanel16.SuspendLayout();
+            this.flowLayoutPanel35.SuspendLayout();
             this.SuspendLayout();
             // 
             // invPrioErrorProvider
@@ -1110,7 +1120,8 @@
             // 
             resources.ApplyResources(this.flowLayoutPanel11, "flowLayoutPanel11");
             this.flowLayoutPanel11.Controls.Add(this.ManageYggdrasil);
-            this.flowLayoutPanel11.Controls.Add(this.ActivateFruits);
+            this.flowLayoutPanel11.Controls.Add(this.SwapYggdrasilDiggers);
+            this.flowLayoutPanel11.Controls.Add(this.SwapYggdrasilBeards);
             this.flowLayoutPanel11.Name = "flowLayoutPanel11";
             // 
             // ManageYggdrasil
@@ -1220,6 +1231,7 @@
             resources.ApplyResources(this.flowLayoutPanel12, "flowLayoutPanel12");
             this.flowLayoutPanel12.Controls.Add(this.YggSwapThreshold);
             this.flowLayoutPanel12.Controls.Add(this.label35);
+            this.flowLayoutPanel12.Controls.Add(this.ActivateFruits);
             this.flowLayoutPanel12.Name = "flowLayoutPanel12";
             // 
             // YggSwapThreshold
@@ -1524,8 +1536,8 @@
             // 
             resources.ApplyResources(this.tableLayoutPanel51, "tableLayoutPanel51");
             this.tableLayoutPanel51.Controls.Add(this.tableLayoutPanel63, 0, 1);
-            this.tableLayoutPanel51.Controls.Add(this.SwapTitanLoadout, 0, 0);
             this.tableLayoutPanel51.Controls.Add(this.tableLayoutPanel17, 0, 2);
+            this.tableLayoutPanel51.Controls.Add(this.flowLayoutPanel35, 0, 0);
             this.tableLayoutPanel51.Name = "tableLayoutPanel51";
             // 
             // tableLayoutPanel63
@@ -1538,8 +1550,8 @@
             // tableLayoutPanel16
             // 
             resources.ApplyResources(this.tableLayoutPanel16, "tableLayoutPanel16");
-            this.tableLayoutPanel16.Controls.Add(this.label8, 0, 0);
             this.tableLayoutPanel16.Controls.Add(this.TitanLoadout, 0, 1);
+            this.tableLayoutPanel16.Controls.Add(this.flowLayoutPanel16, 0, 0);
             this.tableLayoutPanel16.Controls.Add(this.TitanRemove, 1, 1);
             this.tableLayoutPanel16.Controls.Add(this.TitanAddItem, 0, 2);
             this.tableLayoutPanel16.Controls.Add(this.TitanAdd, 1, 2);
@@ -1549,7 +1561,6 @@
             // label8
             // 
             resources.ApplyResources(this.label8, "label8");
-            this.tableLayoutPanel16.SetColumnSpan(this.label8, 2);
             this.label8.Name = "label8";
             // 
             // TitanLoadout
@@ -2933,6 +2944,7 @@
             this.tableLayoutPanel32.Controls.Add(this.AutoMoneyPit, 1, 0);
             this.tableLayoutPanel32.Controls.Add(this.PredictMoneyPit, 2, 0);
             this.tableLayoutPanel32.Controls.Add(this.MoneyPitDaycare, 4, 0);
+            this.tableLayoutPanel32.Controls.Add(this.SwapPitDiggers, 4, 1);
             this.tableLayoutPanel32.Name = "tableLayoutPanel32";
             // 
             // AutoDailySpin
@@ -3778,6 +3790,64 @@
             this.tableLayoutPanel29.Controls.Add(this.WishMode, 1, 0);
             this.tableLayoutPanel29.Name = "tableLayoutPanel29";
             // 
+            // flowLayoutPanel16
+            // 
+            resources.ApplyResources(this.flowLayoutPanel16, "flowLayoutPanel16");
+            this.tableLayoutPanel16.SetColumnSpan(this.flowLayoutPanel16, 2);
+            this.flowLayoutPanel16.Controls.Add(this.label8);
+            this.flowLayoutPanel16.Controls.Add(this.SwapTitanLoadout);
+            this.flowLayoutPanel16.Name = "flowLayoutPanel16";
+            // 
+            // flowLayoutPanel35
+            // 
+            resources.ApplyResources(this.flowLayoutPanel35, "flowLayoutPanel35");
+            this.flowLayoutPanel35.Controls.Add(this.ManageTitans);
+            this.flowLayoutPanel35.Controls.Add(this.SwapTitanDiggers);
+            this.flowLayoutPanel35.Controls.Add(this.SwapTitanBeards);
+            this.flowLayoutPanel35.Name = "flowLayoutPanel35";
+            // 
+            // ManageTitans
+            // 
+            resources.ApplyResources(this.ManageTitans, "ManageTitans");
+            this.ManageTitans.Name = "ManageTitans";
+            this.ManageTitans.UseVisualStyleBackColor = true;
+            this.ManageTitans.CheckedChanged += new System.EventHandler(this.ManageTitans_CheckedChanged);
+            // 
+            // SwapTitanDiggers
+            // 
+            resources.ApplyResources(this.SwapTitanDiggers, "SwapTitanDiggers");
+            this.SwapTitanDiggers.Name = "SwapTitanDiggers";
+            this.SwapTitanDiggers.UseVisualStyleBackColor = true;
+            this.SwapTitanDiggers.CheckedChanged += new System.EventHandler(this.SwapTitanDiggers_CheckedChanged);
+            // 
+            // SwapTitanBeards
+            // 
+            resources.ApplyResources(this.SwapTitanBeards, "SwapTitanBeards");
+            this.SwapTitanBeards.Name = "SwapTitanBeards";
+            this.SwapTitanBeards.UseVisualStyleBackColor = true;
+            this.SwapTitanBeards.CheckedChanged += new System.EventHandler(this.SwapTitanBeards_CheckedChanged);
+            // 
+            // SwapYggdrasilDiggers
+            // 
+            resources.ApplyResources(this.SwapYggdrasilDiggers, "SwapYggdrasilDiggers");
+            this.SwapYggdrasilDiggers.Name = "SwapYggdrasilDiggers";
+            this.SwapYggdrasilDiggers.UseVisualStyleBackColor = true;
+            this.SwapYggdrasilDiggers.CheckedChanged += new System.EventHandler(this.YggdrasilSwapDiggers_CheckedChanged);
+            // 
+            // SwapYggdrasilBeards
+            // 
+            resources.ApplyResources(this.SwapYggdrasilBeards, "SwapYggdrasilBeards");
+            this.SwapYggdrasilBeards.Name = "SwapYggdrasilBeards";
+            this.SwapYggdrasilBeards.UseVisualStyleBackColor = true;
+            this.SwapYggdrasilBeards.CheckedChanged += new System.EventHandler(this.YggdrasilSwapBeards_CheckedChanged);
+            // 
+            // SwapPitDiggers
+            // 
+            resources.ApplyResources(this.SwapPitDiggers, "SwapPitDiggers");
+            this.SwapPitDiggers.Name = "SwapPitDiggers";
+            this.SwapPitDiggers.UseVisualStyleBackColor = true;
+            this.SwapPitDiggers.CheckedChanged += new System.EventHandler(this.SwapPitDiggers_CheckedChanged);
+            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -3996,6 +4066,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).EndInit();
             this.tableLayoutPanel29.ResumeLayout(false);
             this.tableLayoutPanel29.PerformLayout();
+            this.flowLayoutPanel16.ResumeLayout(false);
+            this.flowLayoutPanel16.PerformLayout();
+            this.flowLayoutPanel35.ResumeLayout(false);
+            this.flowLayoutPanel35.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4403,5 +4477,13 @@
         private System.Windows.Forms.ComboBox CardRarity10;
         private System.Windows.Forms.ComboBox CardRarity9;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel29;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel16;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel35;
+        private System.Windows.Forms.CheckBox ManageTitans;
+        private System.Windows.Forms.CheckBox SwapTitanDiggers;
+        private System.Windows.Forms.CheckBox SwapTitanBeards;
+        private System.Windows.Forms.CheckBox SwapYggdrasilDiggers;
+        private System.Windows.Forms.CheckBox SwapYggdrasilBeards;
+        private System.Windows.Forms.CheckBox SwapPitDiggers;
     }
 }
