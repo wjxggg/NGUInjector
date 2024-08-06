@@ -56,7 +56,7 @@ namespace NGUInjector.Managers
             DiggerManager.SaveDiggers();
         }
 
-        private static void RestoreConfiguration()
+        public static void RestoreConfiguration()
         {
             if (_swappedFromQuest)
             {

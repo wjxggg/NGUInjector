@@ -400,7 +400,7 @@
     <value>15</value>
   </data>
   <data name="VersionLabel.Text" xml:space="preserve">
-    <value>Version: 4.1.1</value>
+    <value>Version: 4.1.0</value>
   </data>
   <data name="VersionLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>
@@ -2439,7 +2439,10 @@
   <data name="&gt;&gt;ManageYggdrasil.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="SwapYggdrasilDiggers.AutoSize" type="System.Boolean, mscorlib">
+  <data name="ActivateFruits.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="ActivateFruits.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="SwapYggdrasilDiggers.Location" type="System.Drawing.Point, System.Drawing">
@@ -2510,6 +2513,9 @@
   </data>
   <data name="flowLayoutPanel11.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
+  </data>
+  <data name="flowLayoutPanel11.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;flowLayoutPanel11.Name" xml:space="preserve">
     <value>flowLayoutPanel11</value>
@@ -2937,9 +2943,6 @@
   <data name="label35.Text" xml:space="preserve">
     <value>Minimum Fruit Level for Swap</value>
   </data>
-  <data name="label35.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
   <data name="&gt;&gt;label35.Name" xml:space="preserve">
     <value>label35</value>
   </data>
@@ -3005,6 +3008,9 @@
   </data>
   <data name="flowLayoutPanel12.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
+  </data>
+  <data name="flowLayoutPanel12.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;flowLayoutPanel12.Name" xml:space="preserve">
     <value>flowLayoutPanel12</value>
@@ -4339,7 +4345,7 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label8.Parent" xml:space="preserve">
-    <value>flowLayoutPanel16</value>
+    <value>tableLayoutPanel16</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -4404,7 +4410,7 @@
   <data name="&gt;&gt;flowLayoutPanel16.Parent" xml:space="preserve">
     <value>tableLayoutPanel16</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel16.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;TitanLoadout.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="TitanRemove.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -4609,7 +4615,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel16.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="TitanLoadout" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="flowLayoutPanel16" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="TitanRemove" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="TitanAddItem" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="TitanAdd" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="flowLayoutPanel29" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="TitanLoadout" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="TitanRemove" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="TitanAddItem" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="TitanAdd" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="flowLayoutPanel29" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tableLayoutPanel64.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5922,6 +5928,39 @@
   <data name="tableLayoutPanel63.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tableLayoutPanel16" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel64" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Percent,50" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
+  <data name="SwapTitanLoadout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SwapTitanLoadout.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="SwapTitanLoadout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 5</value>
+  </data>
+  <data name="SwapTitanLoadout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
+  <data name="SwapTitanLoadout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>169, 29</value>
+  </data>
+  <data name="SwapTitanLoadout.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="SwapTitanLoadout.Text" xml:space="preserve">
+    <value>Manage Titans</value>
+  </data>
+  <data name="&gt;&gt;SwapTitanLoadout.Name" xml:space="preserve">
+    <value>SwapTitanLoadout</value>
+  </data>
+  <data name="&gt;&gt;SwapTitanLoadout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SwapTitanLoadout.Parent" xml:space="preserve">
+    <value>tableLayoutPanel51</value>
+  </data>
+  <data name="&gt;&gt;SwapTitanLoadout.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="tableLayoutPanel17.ColumnCount" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
@@ -6106,7 +6145,7 @@
     <value>tableLayoutPanel51</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel17.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="tableLayoutPanel17.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LocateWalderp" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label36" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="TitanCombatMode" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="TitanBeastMode" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
@@ -6271,7 +6310,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel51.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tableLayoutPanel63" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel17" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="flowLayoutPanel35" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tableLayoutPanel63" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SwapTitanLoadout" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel17" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tabPage5.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 23</value>
@@ -10816,7 +10855,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel32.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="AutoDailySpin" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="DaycareThreshold" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="MoneyPitThreshold" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label47" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label7" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="AutoMoneyPit" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="PredictMoneyPit" Row="0" RowSpan="1" Column="2" ColumnSpan="2" /&gt;&lt;Control Name="MoneyPitDaycare" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="SwapPitDiggers" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="AutoDailySpin" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="DaycareThreshold" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="MoneyPitThreshold" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label47" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label7" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="AutoMoneyPit" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="PredictMoneyPit" Row="0" RowSpan="1" Column="2" ColumnSpan="2" /&gt;&lt;Control Name="MoneyPitDaycare" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tableLayoutPanel27.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
