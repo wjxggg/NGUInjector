@@ -9,6 +9,9 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             if (!Main.Settings.MoneyPitRunMode)
                 return false;
 
+            if (!BaseRebirth.RebirthAvailable())
+                return false;
+            
             double rebirthDuration = Main.Character.rebirthTime.totalseconds;
             if (rebirthDuration >= 1800.0 && rebirthDuration < 2700.0 && (MoneyPitManager.TimeUntilReady() >= 3600f || MoneyPitManager.NeedsRebirth()))
                 return true;
