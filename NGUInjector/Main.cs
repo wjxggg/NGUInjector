@@ -992,10 +992,11 @@ namespace NGUInjector
                 if (Character.adventure.zone >= 1000)
                     ITOPODManager.UpdateMaxFloor();
 
-                if (Settings.AutoRebirth)
-                    _profile.DoRebirth();
-                else if (Settings.MoneyPitRunMode && MoneyPitRunRebirth.RebirthAvailable())
-                    BaseRebirth.DoRebirth();
+                if (!Settings.AutoRebirth || !_profile.DoRebirth())
+                {
+                    if (Settings.MoneyPitRunMode && MoneyPitRunRebirth.RebirthAvailable())
+                        BaseRebirth.DoRebirth();
+                }
 
                 if (Settings.ManageMayo)
                     CardManager.CheckManas();
