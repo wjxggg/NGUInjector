@@ -180,14 +180,14 @@ namespace NGUInjector.AllocationProfiles
             }
         }
 
-        public void DoRebirth()
+        public bool DoRebirth()
         {
             if (_wrapper == null)
-                return;
+                return false;
 
             var rbs = _wrapper.rebirth.Where(x => x.RebirthTime >= 0.0);
             if (!rbs.Any())
-                return;
+                return false;
 
             if (rbs.Any(x => x.RebirthTime <= _character.rebirthTime.totalseconds))
                 rbs = rbs.Where(x => x.RebirthTime <= _character.rebirthTime.totalseconds);
@@ -199,12 +199,12 @@ namespace NGUInjector.AllocationProfiles
                 if (_character.bossController.isFighting || _character.bossController.nukeBoss)
                 {
                     Log("Delaying rebirth while boss fight is in progress");
-                    return;
+                    return true;
                 }
             }
             else
             {
-                return;
+                return false;
             }
 
             if (rb.DoRebirth())
@@ -219,6 +219,8 @@ namespace NGUInjector.AllocationProfiles
                 _wrapper.ngus.Reset();
                 _wrapper.consumables.Reset();
             }
+
+            return true;
         }
 
         public void CastBloodSpells()
