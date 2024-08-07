@@ -349,11 +349,6 @@ namespace NGUInjector
             GoldLoadoutAdd.Size = GoldLoadoutRemove.Size;
 
             // Wishes Tab
-            //var width = WishBlacklist.Width + WishBlacklist.Margin.Left + WishBlacklist.Margin.Right;
-            //width -= label48.Width + label48.Margin.Left + label48.Margin.Right;
-            //width -= WishMode.Margin.Left + WishMode.Margin.Right;
-            //WishMode.Width = width;
-
             AddWishButton.Size = RemoveWishButton.Size;
 
             // Pit Tab
