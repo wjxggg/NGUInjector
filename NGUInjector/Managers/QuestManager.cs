@@ -1,4 +1,3 @@
-﻿using System;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
@@ -7,81 +6,66 @@ namespace NGUInjector.Managers
     {
         private static readonly Character _character = Main.Character;
         private static readonly BeastQuestController _qc = _character.beastQuestController;
-        private static bool needsRecache = true;
         private static bool shouldQuest;
-        private static bool bankNeedsRecache = true;
         private static bool questBankOverfill;
 
         private static BeastQuest Quest => _character.beastQuest;
 
-        private static bool ShouldQuest
+        public static void PerformSlowActions()
         {
-            get
+            UpdateBankOverfill();
+            UpdateShouldQuest();
+            CheckQuestTurnin();
+        }
+
+        private static void UpdateBankOverfill()
+        {
+            if (!Settings.AutoQuest)
             {
-                if (needsRecache)
+                questBankOverfill = false;
+                return;
+            }
+
+            var slots = _qc.maxBankedQuests() - Quest.curBankedQuests + 1;
+            var time = slots * _qc.timerThreshold() - Quest.dailyQuestTimer.totalseconds;
+            var averageDrops = Settings.FiftyItemMinors || _character.adventure.itopod.perkLevel[94] >= 610 ? 50f : 54.5f;
+            var remainingDrops = Quest.inQuest ? Quest.targetDrops - Quest.curDrops : averageDrops;
+            var eta = _qc.expectedTimePerDrop() * _qc.idleDropFactor() * remainingDrops;
+            // Give a bit of extra time for safety
+            questBankOverfill = time * 1.1f < eta;
+        }
+
+        private static void UpdateShouldQuest()
+        {
+            if (!Settings.AutoQuest)
+            {
+                shouldQuest = false;
+                return;
+            }
+
+            // Major quests take precedence over adventure zones
+            if (Quest.inQuest && !Quest.reducedRewards || Settings.QuestsFullBank && questBankOverfill)
+            {
+                shouldQuest = true;
+            }
+            else if (Settings.CombatEnabled)
+            {
+                // Don't quest if combat is enabled, the snipe zone is unlocked, not farming ITOPOD and Fallthrough is not allowed
+                var isSniping = CombatManager.IsZoneUnlocked(Settings.SnipeZone) && !Settings.AdventureTargetITOPOD && !Settings.AllowZoneFallback;
+
+                if (isSniping)
                 {
-                    // Don't quest if we're currently fighting any titans
-                    bool isSniping = Settings.ManageTitans && ZoneHelpers.AnyTitansSpawningSoon();
-                    bool majorQuest = Quest.inQuest && !Quest.reducedRewards || Settings.QuestsFullBank && QuestBankOverfill;
+                    if (LockManager.HasQuestLock())
+                        LockManager.TryQuestSwap();
 
-                    // Major quests take precedence over adventure zones
-                    if (!isSniping && !majorQuest)
-                    {
-                        int snipeZone = Settings.AdventureTargetITOPOD ? 1000 : Settings.SnipeZone;
-                        bool zoneIsTitan = ZoneHelpers.ZoneIsTitan(Settings.SnipeZone);
-                        bool titanSpawningSoon = zoneIsTitan && ZoneHelpers.TitanSpawningSoon(Array.IndexOf(ZoneHelpers.TitanZones, Settings.SnipeZone));
-
-                        // Don't quest if combat is enabled, the snipe zone is unlocked, the snipe zone is not ITOPOD, AND the snipe zone is either a non-titan or is a spawned titan
-                        isSniping = Settings.CombatEnabled;
-                        isSniping &= CombatManager.IsZoneUnlocked(Settings.SnipeZone);
-                        isSniping &= snipeZone < 1000;
-                        isSniping &= !zoneIsTitan || titanSpawningSoon;
-                    }
-
-                    if (isSniping)
-                    {
-                        if (LockManager.HasQuestLock())
-                            LockManager.TryQuestSwap();
-
-                        SetIdleMode(Quest.reducedRewards && !Settings.ManualMinors);
-                    }
-
-                    shouldQuest = !isSniping;
-
-                    needsRecache = false;
+                    SetIdleMode(Quest.reducedRewards && !Settings.ManualMinors);
                 }
 
-                return shouldQuest;
+                shouldQuest = !isSniping;
             }
         }
 
-        private static bool QuestBankOverfill
-        {
-            get
-            {
-                if (bankNeedsRecache)
-                {
-                    var slots = _qc.maxBankedQuests() - Quest.curBankedQuests + 1;
-                    var time = slots * _qc.timerThreshold() - Quest.dailyQuestTimer.totalseconds;
-                    var averageDrops = Settings.FiftyItemMinors || _character.adventure.itopod.perkLevel[94] >= 610 ? 50f : 54.5f;
-                    var remainingDrops = Quest.inQuest ? Quest.targetDrops - Quest.curDrops : averageDrops;
-                    var eta = _qc.expectedTimePerDrop() * _qc.idleDropFactor() * remainingDrops;
-                    // Give a bit of extra time for safety
-                    questBankOverfill = time * 1.1f < eta;
-
-                    bankNeedsRecache = false;
-                }
-                return questBankOverfill;
-            }
-        }
-
-        public static void ResetCache()
-        {
-            needsRecache = true;
-            bankNeedsRecache = true;
-        }
-
-        public static void CheckQuestTurnin()
+        private static void CheckQuestTurnin()
         {
             if (_character.beastQuest.curDrops >= _character.beastQuest.targetDrops - 2)
             {
@@ -127,7 +111,7 @@ namespace NGUInjector.Managers
             if (!Quest.inQuest)
                 return -1;
 
-            if (!ShouldQuest)
+            if (!shouldQuest)
                 return -1;
 
             if (Quest.reducedRewards && !Settings.ManualMinors)
@@ -163,7 +147,7 @@ namespace NGUInjector.Managers
             var majorQuests = Settings.AllowMajorQuests;
             // Check if Quest Bank will overfill before we can finish the current idle quest
             if (Settings.QuestsFullBank)
-                majorQuests |= QuestBankOverfill;
+                majorQuests |= questBankOverfill;
 
             // First logic: not in a quest
             if (!Quest.inQuest)
@@ -171,19 +155,19 @@ namespace NGUInjector.Managers
                 var startQuest = false;
 
                 // If we're allowing major quests and we have a quest available and we should quest
-                if (majorQuests && Quest.curBankedQuests > 0 && ShouldQuest)
+                if (majorQuests && Quest.curBankedQuests > 0 && shouldQuest)
                 {
                     _character.settings.useMajorQuests = true;
                     SetIdleMode(false);
                     EquipQuestingLoadout();
                     startQuest = true;
                 }
-                else if (!Settings.ManualMinors || ShouldQuest)
+                else if (!Settings.ManualMinors || shouldQuest)
                 {
                     _character.settings.useMajorQuests = false;
                     SetIdleMode(!Settings.ManualMinors);
 
-                    if (Settings.ManualMinors && ShouldQuest)
+                    if (Settings.ManualMinors && shouldQuest)
                         EquipQuestingLoadout();
 
                     startQuest = true;
@@ -206,7 +190,7 @@ namespace NGUInjector.Managers
             // Second logic, we're in a quest
             if (Quest.reducedRewards)
             {
-                var abandonQuest = Settings.QuestsFullBank && QuestBankOverfill;
+                var abandonQuest = Settings.QuestsFullBank && questBankOverfill;
                 if (majorQuests && Settings.AbandonMinors && Quest.curBankedQuests > 0)
                 {
                     float progress = Quest.curDrops / (float)Quest.targetDrops * 100;
