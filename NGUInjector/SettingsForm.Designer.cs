@@ -1,4 +1,4 @@
-﻿namespace NGUInjector
+namespace NGUInjector
 {
     partial class SettingsForm
     {
@@ -103,7 +103,8 @@
             this.HarvestSafety = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel11 = new System.Windows.Forms.FlowLayoutPanel();
             this.ManageYggdrasil = new System.Windows.Forms.CheckBox();
-            this.ActivateFruits = new System.Windows.Forms.CheckBox();
+            this.SwapYggdrasilDiggers = new System.Windows.Forms.CheckBox();
+            this.SwapYggdrasilBeards = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.YggdrasilLoadoutBox = new System.Windows.Forms.ListBox();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
@@ -117,6 +118,7 @@
             this.flowLayoutPanel12 = new System.Windows.Forms.FlowLayoutPanel();
             this.YggSwapThreshold = new System.Windows.Forms.NumericUpDown();
             this.label35 = new System.Windows.Forms.Label();
+            this.ActivateFruits = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
@@ -153,8 +155,10 @@
             this.tableLayoutPanel51 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel63 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel16 = new System.Windows.Forms.TableLayoutPanel();
-            this.label8 = new System.Windows.Forms.Label();
             this.TitanLoadout = new System.Windows.Forms.ListBox();
+            this.flowLayoutPanel16 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.SwapTitanLoadout = new System.Windows.Forms.CheckBox();
             this.TitanRemove = new System.Windows.Forms.Button();
             this.TitanAddItem = new System.Windows.Forms.NumericUpDown();
             this.TitanAdd = new System.Windows.Forms.Button();
@@ -196,12 +200,15 @@
             this.Titan6Version = new System.Windows.Forms.ComboBox();
             this.label66 = new System.Windows.Forms.Label();
             this.Titan1Placeholder = new System.Windows.Forms.Label();
-            this.SwapTitanLoadout = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel17 = new System.Windows.Forms.TableLayoutPanel();
             this.LocateWalderp = new System.Windows.Forms.Button();
             this.label36 = new System.Windows.Forms.Label();
             this.TitanCombatMode = new System.Windows.Forms.ComboBox();
             this.TitanBeastMode = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel35 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ManageTitans = new System.Windows.Forms.CheckBox();
+            this.SwapTitanDiggers = new System.Windows.Forms.CheckBox();
+            this.SwapTitanBeards = new System.Windows.Forms.CheckBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel18 = new System.Windows.Forms.TableLayoutPanel();
             this.Separator4 = new System.Windows.Forms.Label();
@@ -306,8 +313,6 @@
             this.RemoveWishButton = new System.Windows.Forms.Button();
             this.WishDownButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.label48 = new System.Windows.Forms.Label();
-            this.WishMode = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel28 = new System.Windows.Forms.TableLayoutPanel();
             this.label50 = new System.Windows.Forms.Label();
             this.WishEnergy = new System.Windows.Forms.NumericUpDown();
@@ -315,6 +320,9 @@
             this.WishMagic = new System.Windows.Forms.NumericUpDown();
             this.WishR3 = new System.Windows.Forms.NumericUpDown();
             this.label52 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel29 = new System.Windows.Forms.TableLayoutPanel();
+            this.label48 = new System.Windows.Forms.Label();
+            this.WishMode = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel32 = new System.Windows.Forms.FlowLayoutPanel();
             this.AddWishLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel33 = new System.Windows.Forms.FlowLayoutPanel();
@@ -330,6 +338,7 @@
             this.AutoMoneyPit = new System.Windows.Forms.CheckBox();
             this.PredictMoneyPit = new System.Windows.Forms.CheckBox();
             this.MoneyPitDaycare = new System.Windows.Forms.CheckBox();
+            this.SwapPitDiggers = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel27 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel33 = new System.Windows.Forms.TableLayoutPanel();
             this.ShockwaveInput = new System.Windows.Forms.NumericUpDown();
@@ -431,15 +440,6 @@
             this.cookingErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.shockwaveErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.yggErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.tableLayoutPanel29 = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanel16 = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanel35 = new System.Windows.Forms.FlowLayoutPanel();
-            this.ManageTitans = new System.Windows.Forms.CheckBox();
-            this.SwapTitanDiggers = new System.Windows.Forms.CheckBox();
-            this.SwapTitanBeards = new System.Windows.Forms.CheckBox();
-            this.SwapYggdrasilDiggers = new System.Windows.Forms.CheckBox();
-            this.SwapYggdrasilBeards = new System.Windows.Forms.CheckBox();
-            this.SwapPitDiggers = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.invPrioErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.titanErrProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.goldErrorProvider)).BeginInit();
@@ -483,6 +483,7 @@
             this.tableLayoutPanel51.SuspendLayout();
             this.tableLayoutPanel63.SuspendLayout();
             this.tableLayoutPanel16.SuspendLayout();
+            this.flowLayoutPanel16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TitanAddItem)).BeginInit();
             this.flowLayoutPanel29.SuspendLayout();
             this.tableLayoutPanel64.SuspendLayout();
@@ -490,6 +491,7 @@
             this.tableLayoutPanel22.SuspendLayout();
             this.tableLayoutPanel15.SuspendLayout();
             this.tableLayoutPanel17.SuspendLayout();
+            this.flowLayoutPanel35.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tableLayoutPanel18.SuspendLayout();
             this.tableLayoutPanel19.SuspendLayout();
@@ -530,6 +532,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.WishEnergy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishMagic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishR3)).BeginInit();
+            this.tableLayoutPanel29.SuspendLayout();
             this.flowLayoutPanel32.SuspendLayout();
             this.flowLayoutPanel33.SuspendLayout();
             this.tabPage10.SuspendLayout();
@@ -561,9 +564,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.shockwaveErrorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).BeginInit();
-            this.tableLayoutPanel29.SuspendLayout();
-            this.flowLayoutPanel16.SuspendLayout();
-            this.flowLayoutPanel35.SuspendLayout();
             this.SuspendLayout();
             // 
             // invPrioErrorProvider
@@ -1131,12 +1131,19 @@
             this.ManageYggdrasil.UseVisualStyleBackColor = true;
             this.ManageYggdrasil.CheckedChanged += new System.EventHandler(this.ManageYggdrasil_CheckedChanged);
             // 
-            // ActivateFruits
+            // SwapYggdrasilDiggers
             // 
-            resources.ApplyResources(this.ActivateFruits, "ActivateFruits");
-            this.ActivateFruits.Name = "ActivateFruits";
-            this.ActivateFruits.UseVisualStyleBackColor = true;
-            this.ActivateFruits.CheckedChanged += new System.EventHandler(this.ActivateFruits_CheckedChanged);
+            resources.ApplyResources(this.SwapYggdrasilDiggers, "SwapYggdrasilDiggers");
+            this.SwapYggdrasilDiggers.Name = "SwapYggdrasilDiggers";
+            this.SwapYggdrasilDiggers.UseVisualStyleBackColor = true;
+            this.SwapYggdrasilDiggers.CheckedChanged += new System.EventHandler(this.YggdrasilSwapDiggers_CheckedChanged);
+            // 
+            // SwapYggdrasilBeards
+            // 
+            resources.ApplyResources(this.SwapYggdrasilBeards, "SwapYggdrasilBeards");
+            this.SwapYggdrasilBeards.Name = "SwapYggdrasilBeards";
+            this.SwapYggdrasilBeards.UseVisualStyleBackColor = true;
+            this.SwapYggdrasilBeards.CheckedChanged += new System.EventHandler(this.YggdrasilSwapBeards_CheckedChanged);
             // 
             // tableLayoutPanel7
             // 
@@ -1259,6 +1266,13 @@
             // 
             resources.ApplyResources(this.label35, "label35");
             this.label35.Name = "label35";
+            // 
+            // ActivateFruits
+            // 
+            resources.ApplyResources(this.ActivateFruits, "ActivateFruits");
+            this.ActivateFruits.Name = "ActivateFruits";
+            this.ActivateFruits.UseVisualStyleBackColor = true;
+            this.ActivateFruits.CheckedChanged += new System.EventHandler(this.ActivateFruits_CheckedChanged);
             // 
             // tabPage4
             // 
@@ -1558,11 +1572,6 @@
             this.tableLayoutPanel16.Controls.Add(this.flowLayoutPanel29, 0, 3);
             this.tableLayoutPanel16.Name = "tableLayoutPanel16";
             // 
-            // label8
-            // 
-            resources.ApplyResources(this.label8, "label8");
-            this.label8.Name = "label8";
-            // 
             // TitanLoadout
             // 
             resources.ApplyResources(this.TitanLoadout, "TitanLoadout");
@@ -1571,6 +1580,26 @@
             resources.GetString("TitanLoadout.Items"),
             resources.GetString("TitanLoadout.Items1")});
             this.TitanLoadout.Name = "TitanLoadout";
+            // 
+            // flowLayoutPanel16
+            // 
+            resources.ApplyResources(this.flowLayoutPanel16, "flowLayoutPanel16");
+            this.tableLayoutPanel16.SetColumnSpan(this.flowLayoutPanel16, 2);
+            this.flowLayoutPanel16.Controls.Add(this.label8);
+            this.flowLayoutPanel16.Controls.Add(this.SwapTitanLoadout);
+            this.flowLayoutPanel16.Name = "flowLayoutPanel16";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(this.label8, "label8");
+            this.label8.Name = "label8";
+            // 
+            // SwapTitanLoadout
+            // 
+            resources.ApplyResources(this.SwapTitanLoadout, "SwapTitanLoadout");
+            this.SwapTitanLoadout.Name = "SwapTitanLoadout";
+            this.SwapTitanLoadout.UseVisualStyleBackColor = true;
+            this.SwapTitanLoadout.CheckedChanged += new System.EventHandler(this.SwapTitanLoadout_CheckedChanged);
             // 
             // TitanRemove
             // 
@@ -1936,13 +1965,6 @@
             resources.ApplyResources(this.Titan1Placeholder, "Titan1Placeholder");
             this.Titan1Placeholder.Name = "Titan1Placeholder";
             // 
-            // SwapTitanLoadout
-            // 
-            resources.ApplyResources(this.SwapTitanLoadout, "SwapTitanLoadout");
-            this.SwapTitanLoadout.Name = "SwapTitanLoadout";
-            this.SwapTitanLoadout.UseVisualStyleBackColor = true;
-            this.SwapTitanLoadout.CheckedChanged += new System.EventHandler(this.SwapTitanLoadout_CheckedChanged);
-            // 
             // tableLayoutPanel17
             // 
             resources.ApplyResources(this.tableLayoutPanel17, "tableLayoutPanel17");
@@ -1984,6 +2006,35 @@
             this.TitanBeastMode.Name = "TitanBeastMode";
             this.TitanBeastMode.UseVisualStyleBackColor = true;
             this.TitanBeastMode.CheckedChanged += new System.EventHandler(this.TitanBeastMode_CheckedChanged);
+            // 
+            // flowLayoutPanel35
+            // 
+            resources.ApplyResources(this.flowLayoutPanel35, "flowLayoutPanel35");
+            this.flowLayoutPanel35.Controls.Add(this.ManageTitans);
+            this.flowLayoutPanel35.Controls.Add(this.SwapTitanDiggers);
+            this.flowLayoutPanel35.Controls.Add(this.SwapTitanBeards);
+            this.flowLayoutPanel35.Name = "flowLayoutPanel35";
+            // 
+            // ManageTitans
+            // 
+            resources.ApplyResources(this.ManageTitans, "ManageTitans");
+            this.ManageTitans.Name = "ManageTitans";
+            this.ManageTitans.UseVisualStyleBackColor = true;
+            this.ManageTitans.CheckedChanged += new System.EventHandler(this.ManageTitans_CheckedChanged);
+            // 
+            // SwapTitanDiggers
+            // 
+            resources.ApplyResources(this.SwapTitanDiggers, "SwapTitanDiggers");
+            this.SwapTitanDiggers.Name = "SwapTitanDiggers";
+            this.SwapTitanDiggers.UseVisualStyleBackColor = true;
+            this.SwapTitanDiggers.CheckedChanged += new System.EventHandler(this.SwapTitanDiggers_CheckedChanged);
+            // 
+            // SwapTitanBeards
+            // 
+            resources.ApplyResources(this.SwapTitanBeards, "SwapTitanBeards");
+            this.SwapTitanBeards.Name = "SwapTitanBeards";
+            this.SwapTitanBeards.UseVisualStyleBackColor = true;
+            this.SwapTitanBeards.CheckedChanged += new System.EventHandler(this.SwapTitanBeards_CheckedChanged);
             // 
             // tabPage6
             // 
@@ -2830,24 +2881,6 @@
             this.tableLayoutPanel8.Controls.Add(this.tableLayoutPanel29, 0, 1);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             // 
-            // label48
-            // 
-            resources.ApplyResources(this.label48, "label48");
-            this.label48.Name = "label48";
-            // 
-            // WishMode
-            // 
-            resources.ApplyResources(this.WishMode, "WishMode");
-            this.WishMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.WishMode.FormattingEnabled = true;
-            this.WishMode.Items.AddRange(new object[] {
-            resources.GetString("WishMode.Items"),
-            resources.GetString("WishMode.Items1"),
-            resources.GetString("WishMode.Items2"),
-            resources.GetString("WishMode.Items3")});
-            this.WishMode.Name = "WishMode";
-            this.WishMode.SelectedIndexChanged += new System.EventHandler(this.WishMode_SelectedIndexChanged);
-            // 
             // tableLayoutPanel28
             // 
             resources.ApplyResources(this.tableLayoutPanel28, "tableLayoutPanel28");
@@ -2894,6 +2927,31 @@
             // 
             resources.ApplyResources(this.label52, "label52");
             this.label52.Name = "label52";
+            // 
+            // tableLayoutPanel29
+            // 
+            resources.ApplyResources(this.tableLayoutPanel29, "tableLayoutPanel29");
+            this.tableLayoutPanel29.Controls.Add(this.label48, 0, 0);
+            this.tableLayoutPanel29.Controls.Add(this.WishMode, 1, 0);
+            this.tableLayoutPanel29.Name = "tableLayoutPanel29";
+            // 
+            // label48
+            // 
+            resources.ApplyResources(this.label48, "label48");
+            this.label48.Name = "label48";
+            // 
+            // WishMode
+            // 
+            resources.ApplyResources(this.WishMode, "WishMode");
+            this.WishMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.WishMode.FormattingEnabled = true;
+            this.WishMode.Items.AddRange(new object[] {
+            resources.GetString("WishMode.Items"),
+            resources.GetString("WishMode.Items1"),
+            resources.GetString("WishMode.Items2"),
+            resources.GetString("WishMode.Items3")});
+            this.WishMode.Name = "WishMode";
+            this.WishMode.SelectedIndexChanged += new System.EventHandler(this.WishMode_SelectedIndexChanged);
             // 
             // flowLayoutPanel32
             // 
@@ -3005,6 +3063,13 @@
             this.MoneyPitDaycare.Name = "MoneyPitDaycare";
             this.MoneyPitDaycare.UseVisualStyleBackColor = true;
             this.MoneyPitDaycare.CheckedChanged += new System.EventHandler(this.MoneyPitDaycare_CheckedChanged);
+            // 
+            // SwapPitDiggers
+            // 
+            resources.ApplyResources(this.SwapPitDiggers, "SwapPitDiggers");
+            this.SwapPitDiggers.Name = "SwapPitDiggers";
+            this.SwapPitDiggers.UseVisualStyleBackColor = true;
+            this.SwapPitDiggers.CheckedChanged += new System.EventHandler(this.SwapPitDiggers_CheckedChanged);
             // 
             // tableLayoutPanel27
             // 
@@ -3783,71 +3848,6 @@
             // 
             this.yggErrorProvider.ContainerControl = this;
             // 
-            // tableLayoutPanel29
-            // 
-            resources.ApplyResources(this.tableLayoutPanel29, "tableLayoutPanel29");
-            this.tableLayoutPanel29.Controls.Add(this.label48, 0, 0);
-            this.tableLayoutPanel29.Controls.Add(this.WishMode, 1, 0);
-            this.tableLayoutPanel29.Name = "tableLayoutPanel29";
-            // 
-            // flowLayoutPanel16
-            // 
-            resources.ApplyResources(this.flowLayoutPanel16, "flowLayoutPanel16");
-            this.tableLayoutPanel16.SetColumnSpan(this.flowLayoutPanel16, 2);
-            this.flowLayoutPanel16.Controls.Add(this.label8);
-            this.flowLayoutPanel16.Controls.Add(this.SwapTitanLoadout);
-            this.flowLayoutPanel16.Name = "flowLayoutPanel16";
-            // 
-            // flowLayoutPanel35
-            // 
-            resources.ApplyResources(this.flowLayoutPanel35, "flowLayoutPanel35");
-            this.flowLayoutPanel35.Controls.Add(this.ManageTitans);
-            this.flowLayoutPanel35.Controls.Add(this.SwapTitanDiggers);
-            this.flowLayoutPanel35.Controls.Add(this.SwapTitanBeards);
-            this.flowLayoutPanel35.Name = "flowLayoutPanel35";
-            // 
-            // ManageTitans
-            // 
-            resources.ApplyResources(this.ManageTitans, "ManageTitans");
-            this.ManageTitans.Name = "ManageTitans";
-            this.ManageTitans.UseVisualStyleBackColor = true;
-            this.ManageTitans.CheckedChanged += new System.EventHandler(this.ManageTitans_CheckedChanged);
-            // 
-            // SwapTitanDiggers
-            // 
-            resources.ApplyResources(this.SwapTitanDiggers, "SwapTitanDiggers");
-            this.SwapTitanDiggers.Name = "SwapTitanDiggers";
-            this.SwapTitanDiggers.UseVisualStyleBackColor = true;
-            this.SwapTitanDiggers.CheckedChanged += new System.EventHandler(this.SwapTitanDiggers_CheckedChanged);
-            // 
-            // SwapTitanBeards
-            // 
-            resources.ApplyResources(this.SwapTitanBeards, "SwapTitanBeards");
-            this.SwapTitanBeards.Name = "SwapTitanBeards";
-            this.SwapTitanBeards.UseVisualStyleBackColor = true;
-            this.SwapTitanBeards.CheckedChanged += new System.EventHandler(this.SwapTitanBeards_CheckedChanged);
-            // 
-            // SwapYggdrasilDiggers
-            // 
-            resources.ApplyResources(this.SwapYggdrasilDiggers, "SwapYggdrasilDiggers");
-            this.SwapYggdrasilDiggers.Name = "SwapYggdrasilDiggers";
-            this.SwapYggdrasilDiggers.UseVisualStyleBackColor = true;
-            this.SwapYggdrasilDiggers.CheckedChanged += new System.EventHandler(this.YggdrasilSwapDiggers_CheckedChanged);
-            // 
-            // SwapYggdrasilBeards
-            // 
-            resources.ApplyResources(this.SwapYggdrasilBeards, "SwapYggdrasilBeards");
-            this.SwapYggdrasilBeards.Name = "SwapYggdrasilBeards";
-            this.SwapYggdrasilBeards.UseVisualStyleBackColor = true;
-            this.SwapYggdrasilBeards.CheckedChanged += new System.EventHandler(this.YggdrasilSwapBeards_CheckedChanged);
-            // 
-            // SwapPitDiggers
-            // 
-            resources.ApplyResources(this.SwapPitDiggers, "SwapPitDiggers");
-            this.SwapPitDiggers.Name = "SwapPitDiggers";
-            this.SwapPitDiggers.UseVisualStyleBackColor = true;
-            this.SwapPitDiggers.CheckedChanged += new System.EventHandler(this.SwapPitDiggers_CheckedChanged);
-            // 
             // SettingsForm
             // 
             resources.ApplyResources(this, "$this");
@@ -3929,6 +3929,8 @@
             this.tableLayoutPanel63.PerformLayout();
             this.tableLayoutPanel16.ResumeLayout(false);
             this.tableLayoutPanel16.PerformLayout();
+            this.flowLayoutPanel16.ResumeLayout(false);
+            this.flowLayoutPanel16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TitanAddItem)).EndInit();
             this.flowLayoutPanel29.ResumeLayout(false);
             this.flowLayoutPanel29.PerformLayout();
@@ -3941,6 +3943,8 @@
             this.tableLayoutPanel15.PerformLayout();
             this.tableLayoutPanel17.ResumeLayout(false);
             this.tableLayoutPanel17.PerformLayout();
+            this.flowLayoutPanel35.ResumeLayout(false);
+            this.flowLayoutPanel35.PerformLayout();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
             this.tableLayoutPanel18.ResumeLayout(false);
@@ -4011,6 +4015,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.WishEnergy)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishMagic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.WishR3)).EndInit();
+            this.tableLayoutPanel29.ResumeLayout(false);
+            this.tableLayoutPanel29.PerformLayout();
             this.flowLayoutPanel32.ResumeLayout(false);
             this.flowLayoutPanel32.PerformLayout();
             this.flowLayoutPanel33.ResumeLayout(false);
@@ -4064,12 +4070,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.cookingErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.shockwaveErrorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.yggErrorProvider)).EndInit();
-            this.tableLayoutPanel29.ResumeLayout(false);
-            this.tableLayoutPanel29.PerformLayout();
-            this.flowLayoutPanel16.ResumeLayout(false);
-            this.flowLayoutPanel16.PerformLayout();
-            this.flowLayoutPanel35.ResumeLayout(false);
-            this.flowLayoutPanel35.PerformLayout();
             this.ResumeLayout(false);
 
         }
