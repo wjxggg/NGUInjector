@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static NGUInjector.Main;
@@ -29,10 +29,7 @@ namespace NGUInjector.Managers
             if (gearIds?.Length > 0 == false)
                 return;
 
-            var curGear = GetCurrentGear();
-            curGear.Sort();
-            Array.Sort(gearIds);
-            if (curGear.SequenceEqual(gearIds))
+            if (GetCurrentGear().Where(x => x > 0).OrderBy(x => x).SequenceEqual(gearIds.Where(x => x > 0).Distinct().OrderBy(x => x)))
                 return;
 
             Log($"Received New Gear for {LockManager.GetLockTypeName()}: {string.Join(", ", gearIds)}");
