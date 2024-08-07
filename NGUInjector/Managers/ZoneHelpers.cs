@@ -254,7 +254,7 @@ namespace NGUInjector.Managers
         private static TitanSnapshot GetTitanSnapshot(int titanIndex)
         {
             DateTime? spawnSoonTimestamp = IsTitanSpawningSoon(titanIndex) ? (DateTime?)DateTime.Now : null;
-            bool shouldUseTitanLoadout = Settings.ManageTitans && Settings.SwapTitanLoadouts && Settings.TitanSwapTargets[titanIndex];
+            bool shouldUseTitanLoadout = Settings.ManageTitans && Settings.TitanSwapTargets[titanIndex];
             bool shouldUseGoldLoadout = Settings.ManageGoldLoadouts && Settings.TitanGoldTargets[titanIndex] && !Settings.TitanMoneyDone[titanIndex];
 
             var titanSnapshot = new TitanSnapshot(titanIndex, spawnSoonTimestamp, shouldUseTitanLoadout, shouldUseGoldLoadout);
