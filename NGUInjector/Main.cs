@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.1a";
+        public const string Version = "4.1.1b";
         private static int _furthestZone;
 
         private static string _dir;
@@ -845,7 +845,7 @@ namespace NGUInjector
                 }
 
                 ZoneHelpers.RefreshTitanSnapshots();
-                if (Settings.ManageTitans && Settings.SwapTitanLoadouts || Settings.ManageGoldLoadouts && Settings.NeedsGoldSwap())
+                if (Settings.ManageTitans || Settings.NeedsGoldSwap())
                 {
                     if (ZoneHelpers.AnyTitansSpawningSoon() != LockManager.HasTitanLock())
                         LockManager.TryTitanSwap();
