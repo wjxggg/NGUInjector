@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
@@ -15,7 +15,7 @@ namespace NGUInjector.Managers
 
             protected abstract double Time { get; }
 
-            protected abstract IComparable Threshold { get; }
+            protected abstract double Threshold { get; }
 
             protected abstract bool CastOnRebirth { get; }
 
@@ -26,7 +26,7 @@ namespace NGUInjector.Managers
                 this.minBlood = minBlood;
             }
 
-            protected abstract IComparable Effect(double bloodPoints);
+            protected abstract double Effect(double bloodPoints);
 
             protected abstract void CastSpell();
 
@@ -39,8 +39,8 @@ namespace NGUInjector.Managers
                     return;
 
                 var forced = rebirth && CastOnRebirth;
-                IComparable threshold = Threshold;
-                if (!forced && threshold == default)
+                double threshold = Threshold;
+                if (!forced && threshold < 1.0)
                     return;
 
                 if (Time < cooldown)
@@ -54,20 +54,20 @@ namespace NGUInjector.Managers
                 if (bloodPoints < minBlood)
                 {
                     if (forced || Time < cooldown + 10f)
-                        Log($"Casting Failed: Blood Spell {name} - Below minimum blood threshold of {minBlood}");
+                        Log($"Casting Failed: Blood Spell {name} - Below minimum blood threshold of {minBlood:F0}");
                     return;
                 }
 
-                IComparable effect = Effect(bloodPoints);
+                double effect = Effect(bloodPoints);
                 if (!forced && threshold.CompareTo(effect) > 0)
                 {
                     if (Time < cooldown + 10f)
-                        Log($"Casting Failed: Blood Spell {name} - Below configured power threshold ({effect} of {threshold}) and not force cast on rebirth");
+                        Log($"Casting Failed: Blood Spell {name} - Below configured power threshold ({effect:F0} of {threshold:F0}) and not force cast on rebirth");
                     return;
                 }
 
                 CastSpell();
-                Log($"Casting Blood Spell {name} @ {effect} power");
+                Log($"Casting Blood Spell {name} @ {effect:F0} power");
             }
         }
 
@@ -77,13 +77,13 @@ namespace NGUInjector.Managers
 
             protected override double Time => _character.bloodMagic.adventureSpellTime.totalseconds;
 
-            protected override IComparable Threshold => Settings.IronPillThreshold;
+            protected override double Threshold => Settings.IronPillThreshold;
 
             protected override bool CastOnRebirth => Settings.IronPillOnRebirth;
 
             public IronPill(string name, int cooldown, double minBlood) : base(name, cooldown, minBlood) { }
 
-            protected override IComparable Effect(double bloodPoints)
+            protected override double Effect(double bloodPoints)
             {
                 var result = Math.Floor(Math.Pow(bloodPoints, 0.25));
                 if (_character.settings.rebirthDifficulty >= difficulty.evil)
@@ -100,13 +100,13 @@ namespace NGUInjector.Managers
 
             protected override double Time => _character.bloodMagic.macguffin1Time.totalseconds;
 
-            protected override IComparable Threshold => Settings.BloodMacGuffinAThreshold;
+            protected override double Threshold => Settings.BloodMacGuffinAThreshold;
 
             protected override bool CastOnRebirth => Settings.BloodMacGuffinAOnRebirth;
 
             public GuffA(string name, int cooldown, double minBlood) : base(name, cooldown, minBlood) { }
 
-            protected override IComparable Effect(double bloodPoints)
+            protected override double Effect(double bloodPoints)
             {
                 var result = Math.Log(bloodPoints / _bloodSpells.minMacguffin1Blood(), 10.0) + 1.0;
                 result *= _character.wishesController.totalBloodGuffbonus();
@@ -122,13 +122,13 @@ namespace NGUInjector.Managers
 
             protected override double Time => _character.bloodMagic.macguffin2Time.totalseconds;
 
-            protected override IComparable Threshold => Settings.BloodMacGuffinBThreshold;
+            protected override double Threshold => Settings.BloodMacGuffinBThreshold;
 
             protected override bool CastOnRebirth => Settings.BloodMacGuffinBOnRebirth;
 
             public GuffB(string name, int cooldown, double minBlood) : base(name, cooldown, minBlood) { }
 
-            protected override IComparable Effect(double bloodPoints) => Math.Floor(Math.Log(bloodPoints / _bloodSpells.minMacguffin2Blood(), 20.0) + 1.0);
+            protected override double Effect(double bloodPoints) => Math.Floor(Math.Log(bloodPoints / _bloodSpells.minMacguffin2Blood(), 20.0) + 1.0);
 
             protected override void CastSpell() => _bloodSpells.castMacguffin2Spell();
         }
