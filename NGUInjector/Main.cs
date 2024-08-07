@@ -986,8 +986,7 @@ namespace NGUInjector
                     ih[] converted = Character.inventory.GetConvertedInventory().ToArray();
                     if (!InventoryController.midDrag)
                         InventoryManager.ManageQuestItems(converted);
-                    QuestManager.CheckQuestTurnin();
-                    QuestManager.ResetCache();
+                    QuestManager.PerformSlowActions();
                 }
 
                 if (Character.adventure.zone >= 1000)
@@ -1139,8 +1138,19 @@ namespace NGUInjector
                     }
                 }
 
+                if (Settings.ManageTitans && LockManager.HasTitanLock())
+                {
+                    int? titanZone = ZoneHelpers.GetHighestSpawningTitanZone();
+                    if (titanZone.HasValue && !ZoneHelpers.AutokillAvailable(Array.IndexOf(ZoneHelpers.TitanZones, titanZone.Value)))
+                    {
+                        CombatHelpers.IsCurrentlyFightingTitan = true;
+                        CombatManager.DoZone(titanZone.Value);
+                        return;
+                    }
+                }
+
                 int questZone = QuestManager.IsQuesting();
-                if (questZone > 0)
+                if (questZone >= 0)
                 {
                     CombatHelpers.IsCurrentlyQuesting = true;
                     CombatManager.DoZone(questZone);
@@ -1154,26 +1164,11 @@ namespace NGUInjector
                 if (tempZone < 1000 && !CombatManager.IsZoneUnlocked(Settings.SnipeZone))
                     tempZone = Settings.AllowZoneFallback ? ZoneHelpers.GetMaxReachableZone(false) : 1000;
 
-                if (Settings.ManageTitans && LockManager.HasTitanLock())
-                {
-                    int? titanZone = ZoneHelpers.GetHighestSpawningTitanZone();
-                    if (titanZone.HasValue && !ZoneHelpers.AutokillAvailable(Array.IndexOf(ZoneHelpers.TitanZones, titanZone.Value)))
-                        tempZone = titanZone.Value;
-                }
+                CombatHelpers.IsCurrentlyAdventuring = true;
+                CombatManager.DoZone(tempZone);
 
                 if (tempZone >= 1000)
-                {
-                    CombatHelpers.IsCurrentlyAdventuring = true;
-                    CombatManager.DoZone(1000); // Checks fight timer and gold lock
                     ITOPODManager.Update();
-                    return;
-                }
-
-                if (ZoneHelpers.ZoneIsTitan(tempZone))
-                    CombatHelpers.IsCurrentlyFightingTitan = true;
-                else
-                    CombatHelpers.IsCurrentlyAdventuring = true;
-                CombatManager.DoZone(tempZone);
             }
             catch (Exception e)
             {
