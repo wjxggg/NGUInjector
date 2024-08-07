@@ -1,4 +1,4 @@
-﻿using static NGUInjector.Main;
+using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
 {
@@ -31,26 +31,6 @@ namespace NGUInjector.Managers
         public static bool HasCookingLock() => currentLock == LockType.Cooking;
 
         public static bool CanSwap() => currentLock == LockType.None || HasQuestLock();
-
-        /*public static bool CanSwapLoadout()
-        {
-            switch (currentLock)
-            {
-                case LockType.Titan:
-                    return !Settings.ManageTitans || !Settings.SwapTitanLoadouts;
-                case LockType.Yggdrasil:
-                    return !Settings.SwapYggdrasilLoadouts;
-                case LockType.MoneyPit:
-                    return false;
-                case LockType.Gold:
-                    return false;
-                case LockType.Quest:
-                    return !Settings.ManageQuestLoadouts;
-                case LockType.Cooking:
-                    return !Settings.ManageCookingLoadouts;
-            }
-            return true;
-        }*/
 
         private static void AcquireLock(LockType newLock)
         {
