@@ -57,7 +57,7 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
             return base.RebirthAvailable(out challenges);
         }
 
-        protected new bool PreRebirth()
+        protected override bool PreRebirth()
         {
             if (BaseRebirth.PreRebirth())
                 return true;
