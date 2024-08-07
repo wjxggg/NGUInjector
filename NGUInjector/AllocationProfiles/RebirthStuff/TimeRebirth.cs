@@ -68,15 +68,19 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
 
             return _character.rebirthTime.totalseconds >= RebirthTime;
         }
-
+        
         public bool DoRebirth()
         {
-            return BaseRebirth.DoRebirth();
+            if (PreRebirth())
+                return false;
+
+            if (!_character.challenges.inChallenge && BaseRebirth.TryStartChallenge())
+                return true;
+
+            BaseRebirth.EngageRebirth();
+            return true;
         }
 
-        protected virtual bool PreRebirth()
-        {
-            return BaseRebirth.PreRebirth();
-        }
+        protected virtual bool PreRebirth() => BaseRebirth.PreRebirth();
     }
 }
