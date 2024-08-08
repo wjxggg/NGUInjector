@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using static NGUInjector.Main;
 
 namespace NGUInjector.Managers
@@ -26,9 +26,7 @@ namespace NGUInjector.Managers
             if (!Settings.MoneyPitRunMode)
                 return 0.0;
 
-            Outcomes outcome;
-
-            outcome = PredictMoneyPit(1e50);
+            Outcomes outcome = PredictMoneyPit(1e50);
             if (outcome == Outcomes.Worn || outcome == Outcomes.Daycare)
                 return 1e50;
 
@@ -52,11 +50,15 @@ namespace NGUInjector.Managers
                 return false;
 
             var tier = ShockwaveTier();
+            double gold = _character.realGold;
+            if (tier == 1e18 && gold >= 1e50)
+                return true;
+            if (tier == 1e15 && gold >= 1e18)
+                return true;
+            if (tier == 1e13 && gold >= 1e15)
+                return true;
 
-            if (tier == 1e50 || tier == 0.0)
-                return false;
-
-            return true;
+            return false;
         }
 
         public static bool NeedsGold()
@@ -64,7 +66,10 @@ namespace NGUInjector.Managers
             if (!Settings.MoneyPitRunMode)
                 return false;
 
-            if (!NeedsLowerTier() || NeedsRebirth())
+            if (NeedsRebirth())
+                return false;
+
+            if (_character.machine.realBaseGold > 0.0)
                 return false;
 
             var tier = ShockwaveTier();
@@ -101,17 +106,8 @@ namespace NGUInjector.Managers
             if (gold < 1e5)
                 return;
 
-            if (Settings.MoneyPitRunMode)
-            {
-                if (NeedsRebirth() || NeedsGold())
-                    return;
-
-                var tier = ShockwaveTier();
-                if (tier == 1e15 && gold >= 1e18)
-                    return;
-                if (tier == 1e13 && gold >= 1e15)
-                    return;
-            }
+            if (Settings.MoneyPitRunMode && (NeedsRebirth() || NeedsGold()))
+                return;
 
             if (predictionEnabled)
             {
