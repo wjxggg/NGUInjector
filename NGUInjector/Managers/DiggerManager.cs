@@ -116,26 +116,22 @@ namespace NGUInjector.Managers
 
             var count = ActiveDiggers.Count;
 
-            for (var i = Diggers.Count - 1; i >= 0; i--)
-            {
-                if (Diggers[i].active)
-                    SetLevelMaxAffordable(i, gps / count);
-            }
+            foreach (var digger in ActiveDiggers)
+                SetLevelMaxAffordable(digger, gps / count);
 
-            for (var i = 0; i < _curDiggers?.Length; i++)
-            {
-                if (!Diggers[_curDiggers[i]].active)
-                    continue;
+            var ordered = ActiveDiggers?.OrderFrom(_curDiggers).ToArray();
 
-                long curLevel = Diggers[_curDiggers[i]].curLevel;
+            for (var i = 0; i < ordered?.Length; i++)
+            {
+                long curLevel = Diggers[ordered[i]].curLevel;
                 long num = curLevel + 1;
 
-                if (num > Diggers[_curDiggers[i]].maxLevel)
+                if (num > Diggers[ordered[i]].maxLevel)
                     continue;
 
-                Diggers[_curDiggers[i]].curLevel = num;
+                Diggers[ordered[i]].curLevel = num;
                 if (_character.totalGPSDrain() > gps)
-                    Diggers[_curDiggers[i]].curLevel = curLevel;
+                    Diggers[ordered[i]].curLevel = curLevel;
             }
 
             UpgradeCheapestDigger();
