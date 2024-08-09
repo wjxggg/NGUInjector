@@ -178,6 +178,14 @@ namespace NGUInjector.AllocationProfiles.RebirthStuff
                 delay = true;
             }
 
+            // To prevent delaying rebirth arbitrarily
+            if (delay)
+            {
+                _character.removeAllEnergy();
+                _character.removeAllMagic();
+                _character.removeAllRes3();
+            }
+            
             return delay;
         }
 
