@@ -183,6 +183,7 @@ An in game menu can be opened using the F1 button.
   - **Default** - Behaves almost like Lazy ITOPOD Shifter. If manual combat is enabled, will use regular attack instead of idle attack for the calculation.
   - **PP** - Uses buffs, strong attack, piercing attack and ultimate attack while shifting floors to maximize PP gain.
   - **EXP/AP** - Uses buffs, strong attack, piercing attack and ultimate attack while shifting floors to maximize EXP and AP gain.
+- **Auto Push** - When the highest reached floor is below optimal, this option will try to reach higher floor. If it fails, the option is automatically disabled.
 
 - **Blacklisted Enemies** - Allows you to blacklist enemies when searching for enemies in a zone.
 
