@@ -40,11 +40,9 @@ namespace NGUInjector.Managers
             if (!Settings.AutoQuest)
             {
                 shouldQuest = false;
-                return;
             }
-
             // Major quests take precedence over adventure zones
-            if (Quest.inQuest && !Quest.reducedRewards || Settings.QuestsFullBank && questBankOverfill)
+            else if (Quest.inQuest && !Quest.reducedRewards || Settings.QuestsFullBank && questBankOverfill)
             {
                 shouldQuest = true;
             }
@@ -144,10 +142,10 @@ namespace NGUInjector.Managers
                 return;
             }
 
-            var majorQuests = Settings.AllowMajorQuests;
+            var majorQuests = Settings.AllowMajorQuests && Quest.curBankedQuests > 0;
             // Check if Quest Bank will overfill before we can finish the current idle quest
-            if (Settings.QuestsFullBank)
-                majorQuests |= questBankOverfill;
+            majorQuests |= Settings.QuestsFullBank && questBankOverfill;
+            majorQuests &= shouldQuest;
 
             // First logic: not in a quest
             if (!Quest.inQuest)
@@ -155,7 +153,7 @@ namespace NGUInjector.Managers
                 var startQuest = false;
 
                 // If we're allowing major quests and we have a quest available and we should quest
-                if (majorQuests && Quest.curBankedQuests > 0 && shouldQuest)
+                if (majorQuests)
                 {
                     _character.settings.useMajorQuests = true;
                     SetIdleMode(false);
@@ -169,6 +167,8 @@ namespace NGUInjector.Managers
 
                     if (Settings.ManualMinors && shouldQuest)
                         EquipQuestingLoadout();
+                    else if (LockManager.HasQuestLock())
+                        LockManager.TryQuestSwap();
 
                     startQuest = true;
                 }
@@ -191,7 +191,7 @@ namespace NGUInjector.Managers
             if (Quest.reducedRewards)
             {
                 var abandonQuest = Settings.QuestsFullBank && questBankOverfill;
-                if (majorQuests && Settings.AbandonMinors && Quest.curBankedQuests > 0)
+                if (majorQuests && Settings.AbandonMinors)
                 {
                     float progress = Quest.curDrops / (float)Quest.targetDrops * 100;
                     // If all this is true get rid of this minor quest
@@ -219,6 +219,7 @@ namespace NGUInjector.Managers
         {
             if (!Settings.ManageQuestLoadouts)
                 return;
+
             if (!LockManager.HasQuestLock())
             {
                 if (!LockManager.TryQuestSwap())

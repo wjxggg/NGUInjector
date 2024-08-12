@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.1b";
+        public const string Version = "4.1.3";
         private static int _furthestZone;
 
         private static string _dir;
@@ -142,11 +142,16 @@ namespace NGUInjector
                 {
                     var temp = new SavedSettings(null)
                     {
-                        PriorityBoosts = new int[] { },
-                        YggdrasilLoadout = new int[] { },
+                        PriorityBoosts = new int[0],
+                        YggdrasilLoadout = new int[0],
                         SwapYggdrasilLoadouts = false,
+                        SwapYggdrasilDiggers = false,
+                        SwapYggdrasilBeards = false,
+                        ManageTitans = false,
                         SwapTitanLoadouts = false,
-                        TitanLoadout = new int[] { },
+                        SwapTitanDiggers = false,
+                        SwapTitanBeards = false,
+                        TitanLoadout = new int[0],
                         ManageBeards = true,
                         ManageDiggers = true,
                         ManageYggdrasil = false,
@@ -159,20 +164,21 @@ namespace NGUInjector
                         AutoFight = false,
                         AutoQuest = false,
                         ManageQuestLoadouts = false,
-                        QuestLoadout = new int[] { },
+                        QuestLoadout = new int[0],
                         AllowMajorQuests = false,
                         QuestsFullBank = false,
-                        GoldDropLoadout = new int[] { },
+                        GoldDropLoadout = new int[0],
                         AutoMoneyPit = false,
+                        SwapPitDiggers = false,
                         PredictMoneyPit = false,
                         MoneyPitDaycare = false,
                         AutoSpin = false,
-                        Shockwave = new int[] { },
+                        Shockwave = new int[0],
                         AutoRebirth = false,
                         ManageWandoos = false,
                         MoneyPitThreshold = 1e5,
                         DaycareThreshold = 80,
-                        BoostBlacklist = new int[] { },
+                        BoostBlacklist = new int[0],
                         CombatMode = 0,
                         SnipeBossOnly = true,
                         AllowZoneFallback = false,

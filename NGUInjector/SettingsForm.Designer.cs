@@ -255,7 +255,7 @@ namespace NGUInjector
             this.GoldSnipeNow = new System.Windows.Forms.Button();
             this.CBlockMode = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.ManageGoldLoadouts = new System.Windows.Forms.CheckBox();
+            this.ManageGold = new System.Windows.Forms.CheckBox();
             this.ResnipeInput = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel26 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel30 = new System.Windows.Forms.FlowLayoutPanel();
@@ -2379,7 +2379,7 @@ namespace NGUInjector
             this.tableLayoutPanel21.Controls.Add(this.GoldSnipeNow, 4, 0);
             this.tableLayoutPanel21.Controls.Add(this.CBlockMode, 3, 0);
             this.tableLayoutPanel21.Controls.Add(this.label10, 1, 0);
-            this.tableLayoutPanel21.Controls.Add(this.ManageGoldLoadouts, 0, 0);
+            this.tableLayoutPanel21.Controls.Add(this.ManageGold, 0, 0);
             this.tableLayoutPanel21.Controls.Add(this.ResnipeInput, 2, 0);
             this.tableLayoutPanel21.Name = "tableLayoutPanel21";
             // 
@@ -2402,12 +2402,12 @@ namespace NGUInjector
             resources.ApplyResources(this.label10, "label10");
             this.label10.Name = "label10";
             // 
-            // ManageGoldLoadouts
+            // ManageGold
             // 
-            resources.ApplyResources(this.ManageGoldLoadouts, "ManageGoldLoadouts");
-            this.ManageGoldLoadouts.Name = "ManageGoldLoadouts";
-            this.ManageGoldLoadouts.UseVisualStyleBackColor = true;
-            this.ManageGoldLoadouts.CheckedChanged += new System.EventHandler(this.ManageGoldLoadouts_CheckedChanged);
+            resources.ApplyResources(this.ManageGold, "ManageGold");
+            this.ManageGold.Name = "ManageGold";
+            this.ManageGold.UseVisualStyleBackColor = true;
+            this.ManageGold.CheckedChanged += new System.EventHandler(this.ManageGoldLoadouts_CheckedChanged);
             // 
             // ResnipeInput
             // 
@@ -4157,7 +4157,7 @@ namespace NGUInjector
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.NumericUpDown ResnipeInput;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.CheckBox ManageGoldLoadouts;
+        private System.Windows.Forms.CheckBox ManageGold;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button GoldLoadoutRemove;
         private System.Windows.Forms.NumericUpDown GoldItemBox;

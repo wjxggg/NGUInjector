@@ -90,7 +90,7 @@ namespace NGUInjector.Managers
 
         private static bool CheckBeastMode()
         {
-            if (mode == CombatMode.Farm && BeastModeAvailable() && !BeastModeActive())
+            if (mode == CombatMode.Farm && Settings.ITOPODBeastMode && BeastModeAvailable() && !BeastModeActive())
             {
                 if (Settings.ITOPODCombatMode == 0)
                 {

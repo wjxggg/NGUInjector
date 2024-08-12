@@ -345,7 +345,7 @@ namespace NGUInjector
             BlacklistAddEnemyButton.Size = BlacklistRemoveEnemyButton.Size;
 
             // Gold Tab
-            AlignHeight(label10, ManageGoldLoadouts);
+            AlignHeight(label10, ManageGold);
             GoldLoadoutAdd.Size = GoldLoadoutRemove.Size;
 
             // Wishes Tab
@@ -533,8 +533,8 @@ namespace NGUInjector
             UpdateItemList(BlacklistedBosses, newSettings.BlacklistedBosses, x => spriteEnemyList[x]);
 
             // Gold Tab
-            ManageGoldLoadouts.Enabled = !newSettings.MoneyPitRunMode;
-            ManageGoldLoadouts.Checked = newSettings.ManageGoldLoadouts;
+            ManageGold.Enabled = !newSettings.MoneyPitRunMode;
+            ManageGold.Checked = newSettings.ManageGoldLoadouts;
             ResnipeInput.Value = newSettings.ResnipeTime;
             CBlockMode.Enabled = !newSettings.MoneyPitRunMode;
             CBlockMode.Checked = newSettings.GoldCBlockMode;
@@ -1236,7 +1236,7 @@ namespace NGUInjector
         private void ManageGoldLoadouts_CheckedChanged(object sender, EventArgs e)
         {
             if (_initializing) return;
-            Settings.ManageGoldLoadouts = ManageGoldLoadouts.Checked;
+            Settings.ManageGoldLoadouts = ManageGold.Checked;
         }
 
         private void ResnipeInput_ValueChanged(object sender, EventArgs e)
