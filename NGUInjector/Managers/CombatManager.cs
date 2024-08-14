@@ -180,10 +180,12 @@ namespace NGUInjector.Managers
         public static void UpdateBlacklists()
         {
             blacklistZones.Clear();
+            if (Settings.BlacklistedBosses?.Length > 0 == false)
+                return;
             for (int i = 0; i < _ac.enemyList.Count; i++)
             {
                 var enemyList = _ac.enemyList[i];
-                if (enemyList.Any(x => Settings.BlacklistedBosses.Contains(x.spriteID)))
+                if (enemyList.Any(x => Settings.BlacklistedBosses?.Contains(x.spriteID) ?? false))
                     blacklistZones.Add(i);
             }
         }

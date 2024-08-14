@@ -98,7 +98,6 @@ namespace NGUInjector
         [SerializeField] private bool[] _titanSwapTargets;
         [SerializeField] private bool _goldSnipeComplete;
         [SerializeField] private bool _goldCBlockMode;
-        [SerializeField] private bool _debugAllocation;
         [SerializeField] private int _itopodCombatMode;
         [SerializeField] private int _itopodOptimizeMode;
         [SerializeField] private bool _itopodBeastMode;
@@ -295,7 +294,6 @@ namespace NGUInjector
             _resnipeTime = other.ResnipeTime;
             _goldSnipeComplete = other.GoldSnipeComplete;
             _goldCBlockMode = other._goldCBlockMode;
-            _debugAllocation = other.DebugAllocation;
             _adventureTargetItopod = other.AdventureTargetITOPOD;
             _titanCombatMode = other.TitanCombatMode;
             _titanBeastMode = other.TitanBeastMode;
@@ -1289,12 +1287,6 @@ namespace NGUInjector
             }
         }
 
-        public bool DebugAllocation
-        {
-            get => _debugAllocation;
-            set => _debugAllocation = value;
-        }
-
         public bool AdventureTargetITOPOD
         {
             get => _adventureTargetItopod;
@@ -1421,7 +1413,7 @@ namespace NGUInjector
             get => _blacklistedBosses;
             set
             {
-                if (_blacklistedBosses != null && _blacklistedBosses.SequenceEqual(value)) return;
+                if (_blacklistedBosses?.SequenceEqual(value) ?? false) return;
                 _blacklistedBosses = value;
                 SaveSettings();
                 CombatManager.UpdateBlacklists();

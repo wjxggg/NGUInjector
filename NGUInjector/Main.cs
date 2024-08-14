@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.3";
+        public const string Version = "4.1.3a";
         private static int _furthestZone;
 
         private static string _dir;
@@ -221,7 +221,6 @@ namespace NGUInjector
                         TitanMoneyDone = new bool[ZoneHelpers.TitanCount],
                         TitanSwapTargets = new bool[ZoneHelpers.TitanCount],
                         GoldCBlockMode = false,
-                        DebugAllocation = false,
                         AdventureTargetITOPOD = false,
                         TitanCombatMode = 0,
                         TitanBeastMode = false,
@@ -270,47 +269,27 @@ namespace NGUInjector
 
                 settingsForm = new SettingsForm();
 
+                Settings.SetSaveDisabled(true);
+
                 if (string.IsNullOrEmpty(Settings.AllocationFile))
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.AllocationFile = "default";
-                    Settings.SetSaveDisabled(false);
-                }
 
                 if (Settings.TitanGoldTargets?.Length > 0 == false)
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.TitanGoldTargets = new bool[ZoneHelpers.TitanCount];
-                    Settings.SetSaveDisabled(false);
-                }
 
                 if (Settings.TitanMoneyDone?.Length > 0 == false)
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.TitanMoneyDone = new bool[ZoneHelpers.TitanCount];
-                    Settings.SetSaveDisabled(false);
-                }
 
                 if (Settings.TitanSwapTargets?.Length > 0 == false)
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.TitanSwapTargets = new bool[ZoneHelpers.TitanCount];
-                    Settings.SetSaveDisabled(false);
-                }
 
                 if (Settings.SpecialBoostBlacklist == null)
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.SpecialBoostBlacklist = new int[0];
-                    Settings.SetSaveDisabled(false);
-                }
 
                 if (Settings.BlacklistedBosses == null)
-                {
-                    Settings.SetSaveDisabled(true);
                     Settings.BlacklistedBosses = new int[0];
-                    Settings.SetSaveDisabled(false);
-                }
+
+                Settings.SetSaveDisabled(false);
 
                 LoadAllocation();
                 LoadAllocationProfiles();
