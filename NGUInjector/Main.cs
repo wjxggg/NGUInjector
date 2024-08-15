@@ -685,7 +685,7 @@ namespace NGUInjector
                     if (!bc.isFighting && !bc.nukeBoss)
                     {
                         var canNuke = bc.character.attack / 5.0 > bc.character.bossDefense && bc.character.defense / 5.0 > bc.character.bossAttack;
-                        var shouldNuke = !Settings.MoneyPitRunMode || !MoneyPitManager.NeedsGold();
+                        var shouldNuke = !MoneyPitManager.NeedsGold();
                         if (canNuke && shouldNuke)
                         {
                             bc.startNuke();
@@ -1078,7 +1078,7 @@ namespace NGUInjector
                 }
 
                 // Pit run logic
-                if (MoneyPitManager.NeedsLowerTier() && !MoneyPitManager.NeedsRebirth())
+                if (MoneyPitManager.ShockwaveTier() <= 1e18 && MoneyPitManager.MoneyPitReady() && !MoneyPitManager.NeedsRebirth())
                 {
                     if (MoneyPitManager.NeedsGold())
                     {

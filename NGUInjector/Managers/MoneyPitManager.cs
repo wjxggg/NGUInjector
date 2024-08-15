@@ -51,12 +51,13 @@ namespace NGUInjector.Managers
 
             var tier = ShockwaveTier();
             double gold = _character.realGold;
-            if (tier == 1e18 && gold >= 1e50)
-                return true;
-            if (tier == 1e15 && gold >= 1e18)
-                return true;
-            if (tier == 1e13 && gold >= 1e15)
-                return true;
+            switch (tier)
+            {
+                case 1e18 when gold >= 1e50:
+                case 1e15 when gold >= 1e18:
+                case 1e13 when gold >= 1e15:
+                    return true;
+            }
 
             return false;
         }
@@ -76,9 +77,9 @@ namespace NGUInjector.Managers
             double gold = _character.realGold;
             var needGold = gold < tier;
             if (tier == 1e15)
-                needGold &= gold % 8e16 < 1e15;
+                needGold |= gold % 8e16 < 1e15;
             else if (tier == 1e13)
-                needGold &= gold % 4e14 < 1e13;
+                needGold |= gold % 4e14 < 1e13;
             return needGold;
         }
 
