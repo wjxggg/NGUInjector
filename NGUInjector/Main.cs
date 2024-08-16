@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.3a";
+        public const string Version = "4.1.3c";
         private static int _furthestZone;
 
         private static string _dir;
@@ -734,7 +734,7 @@ namespace NGUInjector
                 {
                     if (Character.buttons.bloodMagic.interactable)
                     {
-                        double tier = MoneyPitManager.ShockwaveTier();
+                        var tier = MoneyPitManager.ShockwaveTier();
 
                         var startIndex = 0;
                         if (tier == 1e15 && Character.realGold >= 1e18)

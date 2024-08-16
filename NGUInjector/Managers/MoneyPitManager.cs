@@ -21,10 +21,10 @@ namespace NGUInjector.Managers
 
         public static bool MoneyPitReady() => TimeUntilReady() <= 0f;
 
-        public static double ShockwaveTier()
+        public static double? ShockwaveTier()
         {
             if (!Settings.MoneyPitRunMode)
-                return 0.0;
+                return null;
 
             Outcomes outcome = PredictMoneyPit(1e50);
             if (outcome == Outcomes.Worn || outcome == Outcomes.Daycare)
@@ -38,7 +38,7 @@ namespace NGUInjector.Managers
             if (PredictMoneyPit(1e13) == Outcomes.Worn)
                 return 1e13;
 
-            return 0.0;
+            return null;
         }
 
         public static bool NeedsLowerTier()
