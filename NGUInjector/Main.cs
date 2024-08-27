@@ -679,7 +679,7 @@ namespace NGUInjector
                 if (Character.bossID == 0)
                     needsAllocation = true;
 
-                if (Settings.AutoFight)
+                if (Settings.AutoFight || Settings.MoneyPitRunMode)
                 {
                     var bc = Character.bossController;
                     if (!bc.isFighting && !bc.nukeBoss)

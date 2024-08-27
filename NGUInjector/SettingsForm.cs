@@ -445,6 +445,7 @@ namespace NGUInjector
             MasterEnable.Checked = newSettings.GlobalEnabled;
             DisableOverlay.Checked = newSettings.DisableOverlay;
             MoneyPitRunMode.Checked = newSettings.MoneyPitRunMode;
+            AutoFightBosses.Enabled = !newSettings.MoneyPitRunMode;
             AutoFightBosses.Checked = newSettings.AutoFight;
             AutoBuyAdv.Checked = newSettings.AutoBuyAdventure;
             AutoBuyEM.Checked = newSettings.AutoBuyEM;
