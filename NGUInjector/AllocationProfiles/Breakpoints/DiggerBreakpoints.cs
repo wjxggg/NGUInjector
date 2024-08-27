@@ -23,6 +23,10 @@ namespace NGUInjector.AllocationProfiles.Breakpoints
                 current = bp;
                 return true;
             }
+            else
+            {
+                Main.Log($"Failed to equip Diggers: {string.Join(", ", bp.priorities)}");
+            }
 
             return false;
         }

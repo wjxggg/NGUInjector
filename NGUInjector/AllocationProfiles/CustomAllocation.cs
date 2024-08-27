@@ -131,6 +131,8 @@ namespace NGUInjector.AllocationProfiles
 
                 if (Settings.ManageNGUDiff && Main.Character.buttons.ngu.interactable)
                     _wrapper.ngus.Swap();
+                if (Settings.ManageWandoos && Main.Character.buttons.wandoos.interactable)
+                    _wrapper.wandoos.Swap();
                 if (Settings.ManageGear && Main.Character.buttons.inventory.interactable)
                     _wrapper.gear.Swap();
                 if (Settings.ManageWishes && !preventMagicAllocation)
@@ -164,8 +166,6 @@ namespace NGUInjector.AllocationProfiles
                     _wrapper.diggers.Swap();
                     DiggerManager.RecapDiggers();
                 }
-                if (Settings.ManageWandoos && Main.Character.buttons.wandoos.interactable)
-                    _wrapper.wandoos.Swap();
 
                 Main.Character.energyMagicPanel.energyRequested.text = originalInput.ToString(CultureInfo.InvariantCulture);
                 Main.Character.energyMagicPanel.validateInput();

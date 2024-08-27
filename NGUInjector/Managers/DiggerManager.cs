@@ -65,8 +65,6 @@ namespace NGUInjector.Managers
                 return true;
             }
 
-            Log($"Equipping Diggers: {string.Join(", ", diggers)}");
-
             var gps = 0.0;
             if (!ignoreCap)
                 gps = _character.grossGoldPerSecond() * (100.0 - Settings.DiggerCap) / 100.0;

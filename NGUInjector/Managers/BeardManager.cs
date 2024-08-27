@@ -52,8 +52,6 @@ namespace NGUInjector.Managers
                 return true;
             }
 
-            Main.Log($"Equipping Beards: {string.Join(", ", beards)}");
-
             var allEquipped = true;
 
             // Trying to keep the golden beard on

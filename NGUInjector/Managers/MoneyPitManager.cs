@@ -107,8 +107,13 @@ namespace NGUInjector.Managers
             if (gold < 1e5)
                 return;
 
-            if (Settings.MoneyPitRunMode && (NeedsRebirth() || NeedsGold()))
-                return;
+            if (Settings.MoneyPitRunMode)
+            {
+                if (NeedsRebirth() && _character.rebirthTime.totalseconds < 300.0)
+                    return;
+                if (NeedsGold())
+                    return;
+            }
 
             if (predictionEnabled)
             {

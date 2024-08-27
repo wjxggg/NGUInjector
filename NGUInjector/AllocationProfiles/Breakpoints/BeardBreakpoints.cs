@@ -32,6 +32,10 @@ namespace NGUInjector.AllocationProfiles.Breakpoints
                 diggerbp.Reset(); // Diggers could turn off due to a deactivation of the Golden Beard
                 return true;
             }
+            else
+            {
+                Main.Log($"Failed to equip Beards: {string.Join(", ", bp.priorities)}");
+            }
 
             return false;
         }

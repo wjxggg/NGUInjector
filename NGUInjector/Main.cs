@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.3c";
+        public const string Version = "4.1.4";
         private static int _furthestZone;
 
         private static string _dir;
@@ -685,7 +685,7 @@ namespace NGUInjector
                     if (!bc.isFighting && !bc.nukeBoss)
                     {
                         var canNuke = bc.character.attack / 5.0 > bc.character.bossDefense && bc.character.defense / 5.0 > bc.character.bossAttack;
-                        var shouldNuke = !MoneyPitManager.NeedsGold();
+                        var shouldNuke = !MoneyPitManager.NeedsGold() && Character.rebirthTime.totalseconds < 180.0;
                         if (canNuke && shouldNuke)
                         {
                             bc.startNuke();

@@ -81,7 +81,7 @@ namespace NGUInjector
 
             public void SetError(string message) => ErrorProvider?.SetError(ItemLabel, message);
 
-            public void UpdateList(int[] newList) => SettingsForm.UpdateItemList(ItemList, newList, GetDisplayName);
+            public void UpdateList(int[] newList) => UpdateItemList(ItemList, newList, GetDisplayName);
         }
 
         private static readonly Character _character = Main.Character;
@@ -370,9 +370,9 @@ namespace NGUInjector
 
         public static void UpdateItemList(ListBox itemList, int[] newList, Func<int, string> getDisplayName)
         {
-            var temp = newList.ToDictionary(x => x, x => getDisplayName(x));
-            if (temp.Count > 0)
+            if (newList?.Length > 0)
             {
+                var temp = newList.ToDictionary(x => x, x => getDisplayName(x));
                 itemList.DataSource = null;
                 itemList.DataSource = new BindingSource(temp, null);
                 itemList.ValueMember = "Key";
