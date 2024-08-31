@@ -182,9 +182,6 @@ namespace NGUInjector
             if (equip.capDefense != 0.0)
                 n.toughness += Math.Max(CalcCap(equip.capDefense, equip.level) - equip.curDefense, 0f);
 
-            if (Settings.SpecialBoostBlacklist.Contains(equip.id))
-                return n;
-
             if (equip.spec1Type != specType.None)
                 n.special += Math.Max(CalcCap(equip.spec1Cap, equip.level) - equip.spec1Cur, 0f);
 

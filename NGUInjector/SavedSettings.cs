@@ -1,5 +1,6 @@
 ﻿using NGUInjector.Managers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -108,7 +109,6 @@ namespace NGUInjector
         [SerializeField] private bool _disableOverlay;
         [SerializeField] private bool _moneyPitRunMode;
         [SerializeField] private int _yggSwapThreshold;
-        [SerializeField] private int[] _specialBoostBlacklist;
         [SerializeField] private int[] _blacklistedBosses;
         [SerializeField] private bool _manageMayo;
         [SerializeField] private bool _trashCards;
@@ -117,7 +117,6 @@ namespace NGUInjector
         [SerializeField] private bool _trashProtectedCards;
         [SerializeField] private string[] _cardSortOrder;
         [SerializeField] private bool _cardSortEnabled;
-        [SerializeField] private bool _hackAdvance;
         [SerializeField] private bool _manageCooking;
         [SerializeField] private bool _manageQuestLoadouts;
         [SerializeField] private bool _manageCookingLoadouts;
@@ -127,7 +126,6 @@ namespace NGUInjector
         [SerializeField] private bool _autoBuyConsumables;
         [SerializeField] private bool _consumeIfAlreadyRunning;
         [SerializeField] private bool _autosave;
-        [SerializeField] private int[] _mergeBlacklist;
         [SerializeField] private string[] _boostPriority;
         [SerializeField] private int[] _cardRarities;
         [SerializeField] private int[] _cardCosts;
@@ -167,16 +165,6 @@ namespace NGUInjector
                 try
                 {
                     var newSettings = JsonUtility.FromJson<SavedSettings>(File.ReadAllText(_savePath));
-                    if (newSettings.TitanSwapTargets?.Length != ZoneHelpers.TitanCount)
-                        newSettings.TitanSwapTargets = new bool[ZoneHelpers.TitanCount];
-                    if (newSettings.TitanGoldTargets?.Length != ZoneHelpers.TitanCount)
-                        newSettings.TitanGoldTargets = new bool[ZoneHelpers.TitanCount];
-                    if (newSettings.WishLimit <= 0)
-                        newSettings.WishLimit = 4;
-                    if (newSettings.CardRarities?.Length != 14)
-                        newSettings.CardRarities = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-                    if (newSettings.CardCosts?.Length != 14)
-                        newSettings.CardCosts = new int[14];
                     MassUpdate(newSettings);
                     Main.Log("Loaded Settings");
                     Main.Log(JsonUtility.ToJson(this, true));
@@ -193,144 +181,232 @@ namespace NGUInjector
             return false;
         }
 
+        private void AssignValue<T>(ref T setting, T? newSetting, Func<T, bool> predicate, T defaultValue = default) where T : struct
+        {
+            if (newSetting.HasValue && predicate(newSetting.Value))
+                setting = newSetting.Value;
+            else
+                setting = defaultValue;
+        }
+
+        private void AssignValues<T>(ref T[] setting, T[] newSetting, int length, T defaultValue = default)
+        {
+            if (newSetting?.Length != length)
+            {
+                setting = new T[length];
+                for (var i = 0; i < length; i++)
+                    setting[i] = defaultValue;
+            }
+            else
+            {
+                setting = newSetting;
+            }
+        }
+
+        private void AssignValues<T>(ref T[] setting, T[] newSetting, Func<T, bool> predicate)
+        {
+            if (newSetting == null)
+            {
+                setting = new T[0];
+            }
+            else
+            {
+                var temp = new List<T>();
+                foreach (var item in newSetting)
+                {
+                    if (predicate(item)) 
+                        temp.Add(item);
+                }
+                setting = temp.ToArray();
+            }
+        }
+
+        private void AssignValues<T>(ref T[] setting, T[] newSetting, int length, Func<T, bool> predicate, T defaultValue = default)
+        {
+            if (newSetting?.Length != length)
+            {
+                setting = new T[length];
+                for (var i = 0; i < length; i++)
+                    setting[i] = defaultValue;
+            }
+            else
+            {
+                var temp = new List<T>();
+                foreach (var item in newSetting)
+                {
+                    if (predicate(item))
+                        temp.Add(item);
+                    else
+                        temp.Add(defaultValue);
+                }
+                setting = temp.ToArray();
+            }
+        }
+
+        private void AssignBoostPriority(string[] newSetting)
+        {
+            var boostPriority = new string[] { "Power", "Toughness", "Special" };
+            if (newSetting?.Length == 3 && newSetting.Intersect(boostPriority).Count() == 3)
+                _boostPriority = newSetting;
+            else
+                _boostPriority = boostPriority;
+        }
+
+        private bool IsEquipment(int id)
+        {
+            if (id < 0 || id > Consts.MAX_GEAR_ID)
+                return false;
+            return (int)Main.Character.itemInfo.type[id] <= 5;
+        }
+
+        private bool IsAdvEnemy(int id)
+        {
+            var enemyList = Main.Character.adventureController.enemyList;
+            for (var i = 0; i < enemyList.Count; i++)
+            {
+                if (ZoneHelpers.ZoneIsTitan(i))
+                    continue;
+                if (enemyList[i].Any(x => x.spriteID == id))
+                    return true;
+            }
+            return false;
+        }
+
         public void MassUpdate(SavedSettings other)
         {
-            _priorityBoosts = other.PriorityBoosts;
-            _boostBlacklist = other.BoostBlacklist;
+            _globalEnabled = other?.GlobalEnabled ?? false;
+            _disableOverlay = other?.DisableOverlay ?? false;
+            _moneyPitRunMode = other?.MoneyPitRunMode ?? false;
+            _autoFight = other?.AutoFight ?? false;
+            _autoBuyEm = other?.AutoBuyEM ?? false;
+            _autoBuyAdventure = other?.AutoBuyAdventure ?? false;
+            _autoBuyConsumables = other?.AutoBuyConsumables ?? false;
+            _consumeIfAlreadyRunning = other?.ConsumeIfAlreadyRunning ?? false;
+            _autosave = other?.Autosave ?? false;
 
-            _yggdrasilLoadout = other.YggdrasilLoadout;
-            _swapYggdrasilLoadouts = other.SwapYggdrasilLoadouts;
-            _swapTitanDiggers = other.SwapYggdrasilDiggers;
-            _swapTitanBeards = other.SwapYggdrasilBeards;
+            _allocationFile = other?.AllocationFile ?? "default";
+            _manageEnergy = other?.ManageEnergy ?? false;
+            _manageMagic = other?.ManageMagic ?? false;
+            _manageR3 = other?.ManageR3 ?? false;
+            _manageWandoos = other?.ManageWandoos ?? false;
+            _manageNguDiff = other?.ManageNGUDiff ?? false;
+            _manageBeards = other?.ManageBeards ?? false;
+            _manageDiggers = other?.ManageDiggers ?? false;
+            _upgradeDiggers = other?.UpgradeDiggers ?? false;
+            AssignValue(ref _diggerCap, other?.DiggerCap, (value) => value >= 0 && value <= 100, 100);
+            AssignValues(ref _quickDiggers, other?.QuickDiggers, (id) => id >= 0 && id <= Consts.MAX_DIGGER_ID);
+            _manageGear = other?.ManageGear ?? false;
+            AssignValues(ref _quickLoadout, other?.QuickLoadout, (id) => IsEquipment(id));
+            _manageConsumables = other?.ManageConsumables ?? false;
+            _autoRebirth = other?.AutoRebirth ?? false;
 
-            _manageTitans = other.ManageTitans;
-            _swapTitanLoadouts = other.SwapTitanLoadouts;
-            _swapTitanDiggers = other.SwapTitanDiggers;
-            _swapTitanBeards = other.SwapTitanBeards;
-            _titanLoadout = other.TitanLoadout;
+            _autoSpellSwap = other?.AutoSpellSwap ?? false;
+            AssignValue(ref _bloodNumberThreshold, other?.BloodNumberThreshold, (value) => value >= 0.0, 0.0);
+            AssignValue(ref _counterfeitThreshold, other?.CounterfeitThreshold, (value) => value >= 0);
+            AssignValue(ref _spaghettiThreshold, other?.SpaghettiThreshold, (value) => value >= 0);
+            _castBloodSpells = other?.CastBloodSpells ?? false;
+            AssignValue(ref _ironPillThreshold, other?.IronPillThreshold, (value) => value >= 0.0);
+            AssignValue(ref _bloodMacGuffinAThreshold, other?.BloodMacGuffinAThreshold, (value) => value >= 0);
+            AssignValue(ref _bloodMacGuffinBThreshold, other?.BloodMacGuffinBThreshold, (value) => value >= 0);
+            _ironPillOnRebirth = other?.IronPillOnRebirth ?? false;
+            _bloodMacGuffinAOnRebirth = other?.BloodMacGuffinAOnRebirth ?? false;
+            _bloodMacGuffinBOnRebirth = other?.BloodMacGuffinBOnRebirth ?? false;
 
-            _manageBeards = other.ManageBeards;
-            _manageDiggers = other.ManageDiggers;
-            _manageYggdrasil = other.ManageYggdrasil;
-            _manageEnergy = other.ManageEnergy;
-            _manageMagic = other.ManageMagic;
-            _manageInventory = other.ManageInventory;
-            _manageGear = other.ManageGear;
-            _manageWandoos = other.ManageWandoos;
-            _autoConvertBoosts = other.AutoConvertBoosts;
+            _manageYggdrasil = other?.ManageYggdrasil ?? false;
+            _swapYggdrasilLoadouts = other?.SwapYggdrasilLoadouts ?? false;
+            _swapYggdrasilDiggers = other?._swapYggdrasilDiggers ?? false;
+            _swapYggdrasilBeards = other?._swapYggdrasilBeards ?? false;
+            AssignValues(ref _yggdrasilLoadout, other?.YggdrasilLoadout, (id) => IsEquipment(id));
+            _activateFruits = other?.ActivateFruits ?? false;
+            AssignValue(ref _yggSwapThreshold, other?.YggSwapThreshold, (value) => value >= 1 && value <= 24, 1);
 
-            _snipeZone = other.SnipeZone;
+            _manageInventory = other?.ManageInventory ?? false;
+            _autoConvertBoosts = other?.AutoConvertBoosts ?? false;
+            AssignValue(ref _cubePriority, other?.CubePriority, (mode) => mode >= 0 && mode <= 4);
+            AssignValue(ref _favoredMacguffin, other?.FavoredMacguffin, (id) => InventoryManager.macguffinList.ContainsKey(id), -1);
+            AssignValues(ref _priorityBoosts, other?.PriorityBoosts, (id) => IsEquipment(id));
+            AssignBoostPriority(other?.BoostPriority);
+            AssignValues(ref _boostBlacklist, other?.BoostBlacklist, (id) => id >= 0 && id <= Consts.MAX_GEAR_ID);
 
-            _autoFight = other.AutoFight;
+            _manageTitans = other?.ManageTitans ?? false;
+            _swapTitanLoadouts = other?.SwapTitanLoadouts ?? false;
+            _swapTitanDiggers = other?.SwapTitanDiggers ?? false;
+            _swapTitanBeards = other?.SwapTitanBeards ?? false;
+            AssignValues(ref _titanLoadout, other?.TitanLoadout, (id) => IsEquipment(id));
+            AssignValue(ref _titanCombatMode, other?.TitanCombatMode, (mode) => mode >= 0 && mode <= 4);
+            AssignValues(ref _titanSwapTargets, other?.TitanSwapTargets, 14);
 
-            _autoQuest = other.AutoQuest;
-            _allowMajorQuests = other.AllowMajorQuests;
-            _questsFullBank = other.QuestsFullBank;
+            _combatEnabled = other?.CombatEnabled ?? false;
+            AssignValue(ref _combatMode, other.CombatMode, (mode) => mode >= 0 && mode <= 4);
+            _beastMode = other?.BeastMode ?? false;
+            AssignValue(ref _snipeZone, other?.SnipeZone, (id) => ZoneHelpers.ZoneList.ContainsKey(id) && !ZoneHelpers.ZoneIsTitan(id));
+            _snipeBossOnly = other?.SnipeBossOnly ?? false;
+            _allowZoneFallback = other?.AllowZoneFallback ?? false;
 
-            _goldDropLoadout = other.GoldDropLoadout;
+            _adventureTargetItopod = other?.AdventureTargetITOPOD ?? false;
+            AssignValue(ref _itopodCombatMode, other?.ITOPODCombatMode, (mode) => mode >= 0 && mode <= 1);
+            _titanBeastMode = other?.TitanBeastMode ?? false;
+            _itopodBeastMode = other?.ITOPODBeastMode ?? false;
+            AssignValue(ref _itopodOptimizeMode, other?.ITOPODOptimizeMode, (mode) => mode >= 0 && mode <= 3);
+            _itopodAutoPush = other?.ITOPODAutoPush ?? false;
 
-            _autoMoneyPit = other.AutoMoneyPit;
-            _swapPitDiggers = other.SwapPitDiggers;
-            _predictMoneyPit = other.PredictMoneyPit;
-            _moneyPitDaycare = other.MoneyPitDaycare;
-            _autoSpin = other.AutoSpin;
-            _shockwave = other.Shockwave;
-            _moneyPitThreshold = other.MoneyPitThreshold;
-            _daycareThreshold = other.DaycareThreshold;
-
-            _autoRebirth = other.AutoRebirth;
-            _manageWandoos = other.ManageWandoos;
-
-            _combatMode = other.CombatMode;
-            _snipeBossOnly = other.SnipeBossOnly;
-            _allowZoneFallback = other.AllowZoneFallback;
-            _abandonMinors = other.AbandonMinors;
-            _minorAbandonThreshold = other.MinorAbandonThreshold;
-            _questCombatMode = other.QuestCombatMode;
-            _questBeastMode = other.QuestBeastMode;
-            _autoSpellSwap = other.AutoSpellSwap;
-            _counterfeitThreshold = other.CounterfeitThreshold;
-            _spaghettiThreshold = other.SpaghettiThreshold;
-            _castBloodSpells = other.CastBloodSpells;
-            _ironPillThreshold = other.IronPillThreshold;
-            _bloodMacGuffinAThreshold = other.BloodMacGuffinAThreshold;
-            _bloodMacGuffinBThreshold = other.BloodMacGuffinBThreshold;
-            _ironPillOnRebirth = other.IronPillOnRebirth;
-            _bloodMacGuffinAOnRebirth = other.BloodMacGuffinAOnRebirth;
-            _bloodMacGuffinBOnRebirth = other.BloodMacGuffinBOnRebirth;
-            _autoBuyEm = other.AutoBuyEM;
-            _autoBuyAdventure = other.AutoBuyAdventure;
-            _bloodNumberThreshold = other.BloodNumberThreshold;
-            _quickDiggers = other.QuickDiggers;
-            _quickLoadout = other.QuickLoadout;
-            _combatEnabled = other.CombatEnabled;
-            _globalEnabled = other.GlobalEnabled;
-            _useButterMajor = other.UseButterMajor;
-            _useButterMinor = other.UseButterMinor;
-            _manualMinors = other.ManualMinors;
-            _fiftyItemMinors = other.FiftyItemMinors;
-            _manageR3 = other.ManageR3;
-            _activateFruits = other.ActivateFruits;
-            _wishPriorities = other.WishPriorities;
-            _wishBlacklist = other.WishBlacklist;
-            _weakPriorities = other.WeakPriorities;
-            _manageWishes = other.ManageWishes;
-            _wishLimit = other.WishLimit;
-            _wishMode = other.WishMode;
-            _wishEnergy = other.WishEnergy;
-            _wishMagic = other.WishMagic;
-            _wishR3 = other.WishR3;
-            _beastMode = other.BeastMode;
-            _cubePriority = other.CubePriority;
-            _favoredMacguffin = other.FavoredMacguffin;
-            _manageNguDiff = other.ManageNGUDiff;
-            _allocationFile = other.AllocationFile;
-            _manageGoldLoadouts = other._manageGoldLoadouts;
-
-            _titanGoldTargets = other.TitanGoldTargets;
-            _titanSwapTargets = other.TitanSwapTargets;
-            _titanMoneyDone = other.TitanMoneyDone;
-
-            _resnipeTime = other.ResnipeTime;
-            _goldSnipeComplete = other.GoldSnipeComplete;
-            _goldCBlockMode = other._goldCBlockMode;
-            _adventureTargetItopod = other.AdventureTargetITOPOD;
-            _titanCombatMode = other.TitanCombatMode;
-            _titanBeastMode = other.TitanBeastMode;
-            _itopodBeastMode = other.ITOPODBeastMode;
-            _itopodAutoPush = other.ITOPODAutoPush;
-            _itopodCombatMode = other.ITOPODCombatMode;
-            _itopodOptimizeMode = other.ITOPODOptimizeMode;
-            _disableOverlay = other.DisableOverlay;
-            _moneyPitRunMode = other.MoneyPitRunMode;
-            _upgradeDiggers = other._upgradeDiggers;
-            _diggerCap = other.DiggerCap;
-            _yggSwapThreshold = other.YggSwapThreshold;
-            _specialBoostBlacklist = other.SpecialBoostBlacklist;
-
-            _blacklistedBosses = other.BlacklistedBosses;
+            AssignValues(ref _blacklistedBosses, other?.BlacklistedBosses, (id) => IsAdvEnemy(id));
             CombatManager.UpdateBlacklists();
 
-            _manageMayo = other.ManageMayo;
-            _trashCards = other.TrashCards;
-            _autoCastCards = other.AutoCastCards;
-            _castProtectedCards = other.CastProtectedCards;
-            _cardRarities = other.CardRarities;
-            _cardCosts = other.CardCosts;
-            _cardSortOrder = other.CardSortOrder;
-            _boostPriority = other.BoostPriority;
-            _cardSortEnabled = other.CardSortEnabled;
-            _hackAdvance = other.HackAdvance;
-            _manageCooking = other.ManageCooking;
-            _manageQuestLoadouts = other.ManageQuestLoadouts;
-            _manageCookingLoadouts = other.ManageCookingLoadouts;
-            _questLoadout = other.QuestLoadout;
-            _cookingLoadout = other.CookingLoadout;
-            _manageConsumables = other.ManageConsumables;
-            _autoBuyConsumables = other.AutoBuyConsumables;
-            _consumeIfAlreadyRunning = other.ConsumeIfAlreadyRunning;
-            _autosave = other.Autosave;
-            _mergeBlacklist = other.MergeBlacklist;
+            _manageGoldLoadouts = other?.ManageGoldLoadouts ?? false;
+            AssignValue(ref _resnipeTime, other?.ResnipeTime, (value) => value >= 0, 3600);
+            _goldSnipeComplete = other?.GoldSnipeComplete ?? false;
+            _goldCBlockMode = other?.GoldCBlockMode ?? false;
+            AssignValues(ref _goldDropLoadout, other?.GoldDropLoadout, (id) => IsEquipment(id));
+            AssignValues(ref _titanGoldTargets, other?.TitanGoldTargets, 14);
+            AssignValues(ref _titanMoneyDone, other?.TitanMoneyDone, 14);
+
+            _autoQuest = other?.AutoQuest ?? false;
+            _allowMajorQuests = other?.AllowMajorQuests ?? false;
+            _useButterMajor = other?.UseButterMajor ?? false;
+            _questsFullBank = other?.QuestsFullBank ?? false;
+            _manualMinors = other?.ManualMinors ?? false;
+            _useButterMinor = other?.UseButterMinor ?? false;
+            _fiftyItemMinors = other?.FiftyItemMinors ?? false;
+            _abandonMinors = other?.AbandonMinors ?? false;
+            AssignValue(ref _minorAbandonThreshold, other?.MinorAbandonThreshold, (value) => value >= 0 && value <= 100, 30);
+            _manageQuestLoadouts = other?.ManageQuestLoadouts ?? false;
+            AssignValues(ref _questLoadout, other?.QuestLoadout, (id) => IsEquipment(id));
+            AssignValue(ref _questCombatMode, other?.QuestCombatMode, (mode) => mode >= 0 && mode <= 4);
+            _questBeastMode = other?.QuestBeastMode ?? false;
+
+            _manageWishes = other?.ManageWishes ?? false;
+            AssignValue(ref _wishLimit, other?.WishLimit, (value) => value > 0 && value <= 4, 4);
+            AssignValue(ref _wishEnergy, other?.WishEnergy, (value) => value >= 0.0 && value <= 100.0);
+            AssignValue(ref _wishMagic, other?.WishMagic, (value) => value >= 0.0 && value <= 100.0);
+            AssignValue(ref _wishR3, other?.WishR3, (value) => value >= 0.0 && value <= 100.0);
+            AssignValue(ref _wishMode, other?.WishMode, (mode) => mode >= 0 && mode <= 3);
+            _weakPriorities = other?.WeakPriorities ?? false;
+            AssignValues(ref _wishPriorities, other?.WishPriorities, (id) => id >= 0 && id <= Consts.MAX_WISH_ID);
+            AssignValues(ref _wishBlacklist, other?.WishBlacklist, (id) => id >= 0 && id <= Consts.MAX_WISH_ID);
+
+            _autoSpin = other?.AutoSpin ?? false;
+            _autoMoneyPit = other?.AutoMoneyPit ?? false;
+            _predictMoneyPit = other?.PredictMoneyPit ?? false;
+            _moneyPitDaycare = other?.MoneyPitDaycare ?? false;
+            AssignValue(ref _moneyPitThreshold, other?.MoneyPitThreshold, (value) => MoneyPitManager.moneyPitThresholds.Contains(value), 1e5);
+            AssignValue(ref _daycareThreshold, other?.DaycareThreshold, (value) => value >= 0 && value <= 100, 80);
+            _swapPitDiggers = other?.SwapPitDiggers ?? false;
+            AssignValues(ref _shockwave, other?.Shockwave, (id) => id >= 0 && id <= Consts.MAX_GEAR_ID);
+
+            _manageMayo = other?.ManageMayo ?? false;
+            _autoCastCards = other?.AutoCastCards ?? false;
+            _castProtectedCards = other?.CastProtectedCards ?? false;
+            _cardSortEnabled = other?.CardSortEnabled ?? false;
+            _trashCards = other?.TrashCards ?? false;
+            _trashProtectedCards = other?.TrashProtectedCards ?? false;
+            AssignValues(ref _cardSortOrder, other?.CardSortOrder, (item) => Array.IndexOf(CardManager.sortList, item) >= 0);
+            AssignValues(ref _cardRarities, other?.CardRarities, 14, (id) => CardManager.rarityList.ContainsKey(id), -1);
+            AssignValues(ref _cardCosts, other?.CardCosts, 14, (cost) => Array.IndexOf(CardManager.costList, cost) >= 0);
+
+            _manageCooking = other?.ManageCooking ?? false;
+            _manageCookingLoadouts = other?.ManageCookingLoadouts ?? false;
+            AssignValues(ref _cookingLoadout, other?.CookingLoadout, (id) => IsEquipment(id));
         }
 
         public int SnipeZone
@@ -1397,17 +1473,6 @@ namespace NGUInjector
             }
         }
 
-        public int[] SpecialBoostBlacklist
-        {
-            get => _specialBoostBlacklist;
-            set
-            {
-                if (_specialBoostBlacklist != null && _specialBoostBlacklist.SequenceEqual(value)) return;
-                _specialBoostBlacklist = value;
-                SaveSettings();
-            }
-        }
-
         public int[] BlacklistedBosses
         {
             get => _blacklistedBosses;
@@ -1558,17 +1623,6 @@ namespace NGUInjector
             return false;
         }
 
-        public bool HackAdvance
-        {
-            get => _hackAdvance;
-            set
-            {
-                if (value == _hackAdvance) return;
-                _hackAdvance = value;
-                SaveSettings();
-            }
-        }
-
         public bool ManageCooking
         {
             get => _manageCooking;
@@ -1662,16 +1716,6 @@ namespace NGUInjector
             {
                 if (value == _manageConsumables) return;
                 _manageConsumables = value;
-                SaveSettings();
-            }
-        }
-
-        public int[] MergeBlacklist
-        {
-            get => _mergeBlacklist;
-            set
-            {
-                _mergeBlacklist = value;
                 SaveSettings();
             }
         }

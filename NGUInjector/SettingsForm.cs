@@ -92,9 +92,6 @@ namespace NGUInjector
         private readonly Dictionary<int, string> titanZoneList;
         private readonly Dictionary<int, string> spriteEnemyList;
 
-        private readonly List<double> _moneyPitThresholds = new List<double>
-            { 1e5, 1e7, 1e9, 1e11, 1e13, 1e15, 1e18, 1e21, 1e24, 1e27, 1e30, 1e50, 1e55, 1e60, 1e65, 1e70 };
-
         private readonly ItemControlGroup _yggControls;
         private readonly ItemControlGroup _priorityControls;
         private readonly ItemControlGroup _blacklistControls;
@@ -171,7 +168,7 @@ namespace NGUInjector
                     _cardRarity[i].ValueMember = "Key";
                     _cardRarity[i].DisplayMember = "Value";
 
-                    _cardCost[i].DataSource = new BindingSource(CardManager.tierList, null);
+                    _cardCost[i].DataSource = new BindingSource(CardManager.costList, null);
                 }
 
                 FavoredMacguffin.DataSource = new BindingSource(InventoryManager.macguffinList, null);
@@ -194,7 +191,7 @@ namespace NGUInjector
                 EnemyBlacklistZone.DisplayMember = "Value";
                 EnemyBlacklistZone.SelectedIndex = 0;
 
-                MoneyPitThreshold.DataSource = new BindingSource(_moneyPitThresholds, null);
+                MoneyPitThreshold.DataSource = new BindingSource(MoneyPitManager.moneyPitThresholds, null);
                 MoneyPitThreshold.ValueMember = "Key";
                 MoneyPitThreshold.DisplayMember = "Value";
 
@@ -416,9 +413,9 @@ namespace NGUInjector
 
         private void SetMoneyPitThreshold(ComboBox control, SavedSettings newSettings)
         {
-            if (newSettings.MoneyPitThreshold == _moneyPitThresholds[MoneyPitThreshold.SelectedIndex])
+            if (newSettings.MoneyPitThreshold == MoneyPitManager.moneyPitThresholds[MoneyPitThreshold.SelectedIndex])
                 return;
-            var i = _moneyPitThresholds.BinarySearch(newSettings.MoneyPitThreshold);
+            var i = MoneyPitManager.moneyPitThresholds.BinarySearch(newSettings.MoneyPitThreshold);
             if (i < 0)
                 i = -i - 2;
             if (i < 0)
@@ -601,7 +598,7 @@ namespace NGUInjector
             for (int i = 0; i <= 13; i++)
             {
                 _cardRarity[i].SelectedIndex = CardManager.rarityList.Keys.ToList().IndexOf(newSettings.CardRarities[i]);
-                _cardCost[i].SelectedIndex = Array.IndexOf(CardManager.tierList, newSettings.CardCosts[i]);
+                _cardCost[i].SelectedIndex = Array.IndexOf(CardManager.costList, newSettings.CardCosts[i]);
             }
 
             // Cooking Tab
@@ -644,8 +641,7 @@ namespace NGUInjector
 
             if (controls.CheckIsEquipment)
             {
-                var itemType = _character.itemInfo.type[val];
-                isValid = itemType == part.Head || itemType == part.Chest || itemType == part.Legs || itemType == part.Boots || itemType == part.Weapon || itemType == part.Accessory;
+                isValid = (int)_character.itemInfo.type[val] <= 5;
                 if (!isValid)
                     itemName += " (UNEQUIPPABLE)";
             }

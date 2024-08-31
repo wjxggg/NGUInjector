@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using static NGUInjector.Main;
 
@@ -16,6 +17,9 @@ namespace NGUInjector.Managers
         }
 
         private static readonly Character _character = Main.Character;
+
+        public static readonly List<double> moneyPitThresholds = new List<double>
+            { 1e5, 1e7, 1e9, 1e11, 1e13, 1e15, 1e18, 1e21, 1e24, 1e27, 1e30, 1e50, 1e55, 1e60, 1e65, 1e70 };
 
         public static float TimeUntilReady() => Mathf.Max(0f, _character.pitController.currentPitTime() - (float)_character.pit.pitTime.totalseconds);
 

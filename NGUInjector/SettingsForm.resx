@@ -400,7 +400,7 @@
     <value>15</value>
   </data>
   <data name="VersionLabel.Text" xml:space="preserve">
-    <value>Version: 4.1.4</value>
+    <value>Version: 4.1.5</value>
   </data>
   <data name="VersionLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>
@@ -4687,7 +4687,7 @@
     <value>5, 0, 5, 0</value>
   </data>
   <data name="label64.Size" type="System.Drawing.Size, System.Drawing">
-    <value>415, 23</value>
+    <value>413, 23</value>
   </data>
   <data name="label64.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -4714,13 +4714,13 @@
     <value>Left, Right</value>
   </data>
   <data name="label65.Location" type="System.Drawing.Point, System.Drawing">
-    <value>432, 1</value>
+    <value>430, 1</value>
   </data>
   <data name="label65.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 0, 5, 0</value>
   </data>
   <data name="label65.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 23</value>
+    <value>95, 23</value>
   </data>
   <data name="label65.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -4774,7 +4774,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel22.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label64" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label65" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,80,Percent,20,Absolute,53" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label64" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label65" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,80,Percent,20,Absolute,56" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tableLayoutPanel15.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13447,13 +13447,13 @@
     <value>NoControl</value>
   </data>
   <data name="label17.Location" type="System.Drawing.Point, System.Drawing">
-    <value>427, 3</value>
+    <value>424, 3</value>
   </data>
   <data name="label17.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 0, 5, 0</value>
   </data>
   <data name="label17.Size" type="System.Drawing.Size, System.Drawing">
-    <value>95, 25</value>
+    <value>94, 25</value>
   </data>
   <data name="label17.TabIndex" type="System.Int32, mscorlib">
     <value>38</value>
@@ -13489,13 +13489,13 @@
     <value>NoControl</value>
   </data>
   <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 3</value>
+    <value>241, 3</value>
   </data>
   <data name="label13.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 0, 5, 0</value>
   </data>
   <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 25</value>
+    <value>172, 25</value>
   </data>
   <data name="label13.TabIndex" type="System.Int32, mscorlib">
     <value>37</value>
@@ -13534,7 +13534,7 @@
     <value>5, 0, 5, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 30</value>
+    <value>224, 30</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
@@ -13585,7 +13585,7 @@
     <value>7</value>
   </data>
   <data name="tableLayoutPanel14.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label17" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label13" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,45,Percent,35,Percent,20,Absolute,59" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label17" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label13" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,45,Percent,35,Percent,20,Absolute,63" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tableLayoutPanel6.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

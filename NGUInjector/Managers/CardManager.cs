@@ -10,7 +10,8 @@ namespace NGUInjector.Managers
         private static readonly Character _character = Main.Character;
         private static readonly CardsController _cc = _character.cardsController;
         private static readonly IDictionary<cardBonus, float> _cardValues = new Dictionary<cardBonus, float>();
-        public static readonly int[] tierList = new int[]
+        public static readonly string[] sortList;
+        public static readonly int[] costList = new int[]
             { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
 
         public static readonly Dictionary<int, string> rarityList = new Dictionary<int, string>
@@ -39,6 +40,21 @@ namespace NGUInjector.Managers
                     float bonusValue = _cc.generateCardEffect(bonus, 6, 1, 1, false);
                     _cardValues.Add(bonus, bonusValue);
                 }
+
+                var temp = new List<string>();
+                string[] cardBonusTypes = typeof(cardBonus).GetEnumNames().Where(x => x != "none").ToArray();
+                var cardSortOptions = new List<string> { "RARITY", "TIER", "COST", "PROTECTED", "CHANGE", "VALUE", "NORMALVALUE" };
+                foreach (string sortOption in cardSortOptions)
+                {
+                    temp.Add(sortOption);
+                    temp.Add($"{sortOption}-ASC");
+                }
+                foreach (string bonus in cardBonusTypes)
+                {
+                    temp.Add($"TYPE:{bonus}");
+                    temp.Add($"TYPE-ASC:{bonus}");
+                }
+                sortList = temp.ToArray();
             }
             catch (Exception e)
             {

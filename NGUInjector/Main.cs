@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.4";
+        public const string Version = "4.1.5";
         private static int _furthestZone;
 
         private static string _dir;
@@ -140,127 +140,7 @@ namespace NGUInjector
 
                 if (!Settings.LoadSettings())
                 {
-                    var temp = new SavedSettings(null)
-                    {
-                        PriorityBoosts = new int[0],
-                        YggdrasilLoadout = new int[0],
-                        SwapYggdrasilLoadouts = false,
-                        SwapYggdrasilDiggers = false,
-                        SwapYggdrasilBeards = false,
-                        ManageTitans = false,
-                        SwapTitanLoadouts = false,
-                        SwapTitanDiggers = false,
-                        SwapTitanBeards = false,
-                        TitanLoadout = new int[0],
-                        ManageBeards = true,
-                        ManageDiggers = true,
-                        ManageYggdrasil = false,
-                        ManageEnergy = true,
-                        ManageMagic = true,
-                        ManageInventory = true,
-                        ManageGear = true,
-                        AutoConvertBoosts = true,
-                        SnipeZone = 0,
-                        AutoFight = false,
-                        AutoQuest = false,
-                        ManageQuestLoadouts = false,
-                        QuestLoadout = new int[0],
-                        AllowMajorQuests = false,
-                        QuestsFullBank = false,
-                        GoldDropLoadout = new int[0],
-                        AutoMoneyPit = false,
-                        SwapPitDiggers = false,
-                        PredictMoneyPit = false,
-                        MoneyPitDaycare = false,
-                        AutoSpin = false,
-                        Shockwave = new int[0],
-                        AutoRebirth = false,
-                        ManageWandoos = false,
-                        MoneyPitThreshold = 1e5,
-                        DaycareThreshold = 80,
-                        BoostBlacklist = new int[0],
-                        CombatMode = 0,
-                        SnipeBossOnly = true,
-                        AllowZoneFallback = false,
-                        QuestBeastMode = false,
-                        AbandonMinors = false,
-                        MinorAbandonThreshold = 30,
-                        QuestCombatMode = 0,
-                        AutoBuyEM = false,
-                        AutoBuyAdventure = false,
-                        AutoSpellSwap = false,
-                        CounterfeitThreshold = 400,
-                        SpaghettiThreshold = 30,
-                        BloodNumberThreshold = 1e10,
-                        CastBloodSpells = false,
-                        IronPillThreshold = 10000,
-                        BloodMacGuffinAThreshold = 6,
-                        BloodMacGuffinBThreshold = 6,
-                        IronPillOnRebirth = false,
-                        BloodMacGuffinAOnRebirth = false,
-                        BloodMacGuffinBOnRebirth = false,
-                        CubePriority = 0,
-                        FavoredMacguffin = -1,
-                        CombatEnabled = false,
-                        GlobalEnabled = false,
-                        QuickDiggers = new int[0],
-                        QuickLoadout = new int[0],
-                        UseButterMajor = false,
-                        ManualMinors = false,
-                        UseButterMinor = false,
-                        ActivateFruits = false,
-                        ManageR3 = true,
-                        WishPriorities = new int[0],
-                        WishBlacklist = new int[0],
-                        BeastMode = false,
-                        ManageNGUDiff = true,
-                        AllocationFile = "default",
-                        TitanGoldTargets = new bool[ZoneHelpers.TitanCount],
-                        ManageGoldLoadouts = false,
-                        ResnipeTime = 3600,
-                        TitanMoneyDone = new bool[ZoneHelpers.TitanCount],
-                        TitanSwapTargets = new bool[ZoneHelpers.TitanCount],
-                        GoldCBlockMode = false,
-                        AdventureTargetITOPOD = false,
-                        TitanCombatMode = 0,
-                        TitanBeastMode = false,
-                        ITOPODCombatMode = 0,
-                        ITOPODOptimizeMode = 0,
-                        ITOPODBeastMode = false,
-                        DisableOverlay = false,
-                        MoneyPitRunMode = false,
-                        YggSwapThreshold = 1,
-                        UpgradeDiggers = true,
-                        DiggerCap = 100,
-                        BlacklistedBosses = new int[0],
-                        SpecialBoostBlacklist = new int[0],
-                        WeakPriorities = false,
-                        ManageWishes = false,
-                        WishLimit = 4,
-                        WishMode = 0,
-                        WishEnergy = 0.0,
-                        WishMagic = 0.0,
-                        WishR3 = 0.0,
-                        ManageMayo = false,
-                        TrashCards = false,
-                        TrashProtectedCards = false,
-                        AutoCastCards = false,
-                        CastProtectedCards = false,
-                        CardSortOrder = new string[0],
-                        BoostPriority = new string[0],
-                        CardSortEnabled = false,
-                        CardRarities = new int[14] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                        CardCosts = new int[14],
-                        HackAdvance = false,
-                        MergeBlacklist = new int[0],
-                        ManageConsumables = false,
-                        AutoBuyConsumables = false,
-                        ConsumeIfAlreadyRunning = false,
-                        Autosave = false,
-                        ManageCooking = false,
-                        ManageCookingLoadouts = false,
-                        CookingLoadout = new int[0]
-                    };
+                    var temp = new SavedSettings(null);
 
                     Settings.MassUpdate(temp);
 
@@ -273,21 +153,6 @@ namespace NGUInjector
 
                 if (string.IsNullOrEmpty(Settings.AllocationFile))
                     Settings.AllocationFile = "default";
-
-                if (Settings.TitanGoldTargets?.Length > 0 == false)
-                    Settings.TitanGoldTargets = new bool[ZoneHelpers.TitanCount];
-
-                if (Settings.TitanMoneyDone?.Length > 0 == false)
-                    Settings.TitanMoneyDone = new bool[ZoneHelpers.TitanCount];
-
-                if (Settings.TitanSwapTargets?.Length > 0 == false)
-                    Settings.TitanSwapTargets = new bool[ZoneHelpers.TitanCount];
-
-                if (Settings.SpecialBoostBlacklist == null)
-                    Settings.SpecialBoostBlacklist = new int[0];
-
-                if (Settings.BlacklistedBosses == null)
-                    Settings.BlacklistedBosses = new int[0];
 
                 Settings.SetSaveDisabled(false);
 
