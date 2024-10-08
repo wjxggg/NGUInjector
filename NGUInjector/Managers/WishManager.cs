@@ -167,7 +167,7 @@ namespace NGUInjector.Managers
             if (progress > 1f)
                 progress = 1f;
 
-            if (ppt / progress <= 5.9604644E-8f) // Math.Pow(2, -24)
+            if (ppt / progress <= 2.9802322E-8f) // Math.Pow(2, -25)
                 return 0f;
 
             return ppt;
