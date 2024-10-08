@@ -63,7 +63,7 @@
     "Rebirth": [
 	  {
 	    "Type": "Number",
-	    "Time": 1000
+	    "Target": 1000
 	  }
 	],
 	"Challenges": [ "BASIC-1" ]
