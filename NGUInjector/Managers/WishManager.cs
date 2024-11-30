@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using static NGUInjector.Main;
@@ -18,7 +17,16 @@ namespace NGUInjector.Managers
 
         private static List<Wish> Wishes => _character.wishes.wishes;
 
-        private static int MaxSlots => _wc.curWishSlots() > Settings.WishLimit ? Settings.WishLimit : _wc.curWishSlots();
+        private static int MaxSlots()
+        {
+            var slots = _wc.curWishSlots();
+            if (slots > Settings.WishLimit)
+                slots = Settings.WishLimit;
+            var validWishes = GetValidWishes().Count;
+            if (slots > validWishes)
+                slots = validWishes;
+            return slots;
+        }
 
         private static bool Allocated(Wish wish) => wish.energy > 0 || wish.magic > 0 || wish.res3 > 0;
 
@@ -72,7 +80,7 @@ namespace NGUInjector.Managers
                 remainingRes3 = _character.res3.idleRes3;
 
             var validWishes = GetValidWishes();
-            for (var slots = MaxSlots - _wc.numAllocatedWishes(); slots > 0; slots--)
+            for (var slots = MaxSlots() - _wc.numAllocatedWishes(); slots > 0; slots--)
             {
                 if (validWishes.Count <= 0)
                     return;
@@ -116,14 +124,14 @@ namespace NGUInjector.Managers
             switch (Settings.WishMode)
             {
                 case 1: // Cheapest
-                case 3 when _wc.numAllocatedWishes() == 0 && MaxSlots > 1: // Balanced, first slot
+                case 3 when _wc.numAllocatedWishes() == 0 && MaxSlots() > 1: // Balanced, first slot
                     maxima = maxima.AllMinBy(id => _wc.wishSpeedDivider(id));
                     break;
                 case 2: // Fastest
                     maxima = maxima.AllMaxBy(id => ProgressPerTick(id, out _) / (1f - Wishes[id].progress));
                     break;
                 case 3: // Balanced
-                    if (_wc.numAllocatedWishes() == MaxSlots - 1) // Last slot
+                    if (_wc.numAllocatedWishes() == MaxSlots() - 1) // Last slot
                         maxima = maxima.AllMaxBy(id => BaseProgressPerTick(id) <= _wc.minimumWishTime() * 1.1f);
                     maxima = maxima.AllMaxBy(id => ProgressPerTick(id, out _)).AllMaxBy(id => _wc.wishSpeedDivider(id));
                     break;

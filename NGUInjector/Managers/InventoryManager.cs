@@ -172,7 +172,7 @@ namespace NGUInjector.Managers
             for (var i = 10000; _ic.accessoryID(i) < _ic.accessorySpaces(); i++)
             {
                 int id = _ic.accessoryID(i);
-                if (!IsBlacklisted(id) && Array.Exists(ci, x => x.id == Inventory.accs[id].id))
+                if (!IsBlacklisted(Inventory.accs[id].id) && Array.Exists(ci, x => x.id == Inventory.accs[id].id))
                     _ic.mergeAll(i);
             }
         }

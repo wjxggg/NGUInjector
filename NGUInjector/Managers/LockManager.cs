@@ -58,6 +58,8 @@ namespace NGUInjector.Managers
 
         private static void RestoreConfiguration()
         {
+            LoadoutManager.RestoreGear();
+
             if (_swappedFromQuest)
             {
                 _swappedFromQuest = false;
@@ -71,7 +73,6 @@ namespace NGUInjector.Managers
             else
             {
                 ReleaseLock();
-                LoadoutManager.RestoreGear();
             }
 
             if (_swappedBeards)

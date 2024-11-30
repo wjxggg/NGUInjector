@@ -325,7 +325,7 @@ namespace NGUInjector.Managers
                     return index;
             }
 
-            return 0;
+            return c1.cardName.CompareTo(c2.cardName);
         }
     }
 }

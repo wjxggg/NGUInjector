@@ -25,7 +25,7 @@ namespace NGUInjector
         private static CustomAllocation _profile;
         private float _timeLeft = 10.0f;
         public static SettingsForm settingsForm;
-        public const string Version = "4.1.5c";
+        public const string Version = "4.1.6";
         private static int _furthestZone;
 
         private static string _dir;
@@ -1000,6 +1000,20 @@ namespace NGUInjector
                     CombatHelpers.IsCurrentlyQuesting = true;
                     CombatManager.DoZone(questZone);
                     return;
+                }
+
+                if (Settings.GoldCBlockMode)
+                {
+                    if (!Character.buttons.brokenTimeMachine.interactable || Character.challenges.timeMachineChallenge.inChallenge)
+                    {
+                        int zone = ZoneStatHelper.GetBestZone().Zone;
+                        if (zone > _furthestZone)
+                            _furthestZone = zone;
+
+                        CombatHelpers.IsCurrentlyAdventuring = true; // Not equipping gold loadout
+                        CombatManager.DoZone(_furthestZone);
+                        return;
+                    }
                 }
 
                 if (!Settings.CombatEnabled)
