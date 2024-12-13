@@ -558,7 +558,7 @@ namespace NGUInjector.Managers
                     {
                         Inventory.item1 = i + 1000000;
                         // Equip highest level MacGuffins
-                        Inventory.item2 = allMacguffins.AllMaxBy(x => x.equip.level).First(x => x.equip.id == _savedMacguffins[i]).i;
+                        Inventory.item2 = allMacguffins.Where(x => x.equip.id == _savedMacguffins[i]).AllMaxBy(x => x.equip.level).First().i;
 
                         _ic.swapMacguffin();
                     }
