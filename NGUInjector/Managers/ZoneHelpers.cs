@@ -59,6 +59,11 @@ namespace NGUInjector.Managers
             {45, "THE TRAITOR"}
         };
 
+        public static int[] ZoneUnlocks = new int[] {
+            0, 7, 17, 37, 48, 58, 58, 66, 66, 74, 82, 82, 90, 100, 100, 108, 116, 116, 124, 132, 137, // Normal
+            359, 401, 426, 459, 467, 467, 475, 483, 491, 501,                                         // Evil
+            727, 752, 777, 810, 818, 826, 834, 842, 850, 850, 871, 897, 902};                         // Sadistic
+
         private static readonly Character _character = Main.Character;
 
         public static readonly int[] TitanZones = { 6, 8, 11, 14, 16, 19, 23, 26, 30, 34, 38, 42, 44, 45 };
@@ -273,7 +278,12 @@ namespace NGUInjector.Managers
 
         public static int GetMaxReachableZone(bool includingTitans)
         {
-            for (int i = Main.Character.adventureController.zoneDropdown.options.Count - 2; i >= 0; i--)
+            int effectiveBoss = _character.effectiveBossID();
+            int maxZone = Array.BinarySearch(ZoneUnlocks, _character.effectiveBossID());
+            if (maxZone < 0)
+                maxZone = -maxZone - 2;
+
+            for (int i = maxZone; i >= 0; i--)
             {
                 if (!ZoneIsTitan(i))
                     return i;

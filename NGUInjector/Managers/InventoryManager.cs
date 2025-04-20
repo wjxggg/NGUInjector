@@ -203,33 +203,24 @@ namespace NGUInjector.Managers
 
             var questItems = Array.FindAll(ci, x => IsQuest(x));
 
-            // Merge quest items first
-            var toMerge = Array.FindAll(questItems, x => !IsBlacklisted(x) && IsLocked(x) && !IsMaxxed(x)).GroupBy(x => x.id).Where(x => x.Count() > 1);
-            foreach (var target in toMerge)
+            // Consume quest items that dont need to be merged first
+            var quest = Main.Character.beastQuest;
+            if (quest.inQuest)
             {
-                if (target.All(x => x.locked))
+                int num = quest.curDrops;
+                _ic.dumpAllIntoQuest(quest.questID);
+                if (quest.curDrops > num)
+                    Log($"Turning in {quest.curDrops - num} quest items");
+            }
+
+            // Merge quest items
+            foreach (var item in questItems)
+            {
+                if (IsBlacklisted(item) || !IsLocked(item) || IsMaxxed(item) || !IsQuest(item))
                     continue;
-                var item = target.First();
                 Log($"Merging {SanitizeName(item.name)} in slot {item.slot}");
                 _ic.mergeAll(item.slot);
             }
-
-            // Consume quest items that dont need to be merged
-            var quest = Main.Character.beastQuest;
-            if (!quest.inQuest)
-                return;
-
-            int num = quest.targetDrops - quest.curDrops;
-            var handin = Array.FindAll(questItems, x => x.id == quest.questID && !IsLocked(x)).Take(num);
-
-            if (handin.Any())
-                Log($"Turning in {handin.Count()} quest items");
-            foreach (var target in handin)
-            {
-                var newSlot = ChangePage(target.slot);
-                _ic.inventory[newSlot].CallMethod("consumeItem");
-            }
-            _ic.changePage(curPage);
         }
 
         public static void MergeInventory(ih[] ci)
