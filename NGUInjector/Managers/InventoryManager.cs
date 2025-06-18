@@ -201,9 +201,16 @@ namespace NGUInjector.Managers
         {
             int curPage = _ic.inventory[0].id / 60;
 
-            var questItems = Array.FindAll(ci, x => IsQuest(x));
+            var questItems = Array.FindAll(ci, x => IsQuest(x) && !IsBlacklisted(x) && IsLocked(x) && !IsMaxxed(x));
 
-            // Consume quest items that dont need to be merged first
+            // Merge non-maxxed quest items first
+            foreach (var item in questItems)
+            {
+                Log($"Merging {SanitizeName(item.name)} in slot {item.slot}");
+                _ic.mergeAll(item.slot);
+            }
+
+            // Consume quest items that dont need to be merged
             var quest = Main.Character.beastQuest;
             if (quest.inQuest)
             {
@@ -211,15 +218,6 @@ namespace NGUInjector.Managers
                 _ic.dumpAllIntoQuest(quest.questID);
                 if (quest.curDrops > num)
                     Log($"Turning in {quest.curDrops - num} quest items");
-            }
-
-            // Merge quest items
-            foreach (var item in questItems)
-            {
-                if (IsBlacklisted(item) || !IsLocked(item) || IsMaxxed(item) || !IsQuest(item))
-                    continue;
-                Log($"Merging {SanitizeName(item.name)} in slot {item.slot}");
-                _ic.mergeAll(item.slot);
             }
         }
 
